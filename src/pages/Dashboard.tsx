@@ -34,15 +34,15 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
+        <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
           Vizualizare generală a operațiunilor de producție
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
           <Card key={stat.title}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -52,7 +52,7 @@ const Dashboard = () => {
               <stat.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
+              <div className="text-xl sm:text-2xl font-bold">{stat.value}</div>
               <p className={`text-xs ${stat.trend === "up" ? "text-green-600" : "text-red-600"}`}>
                 {stat.change} față de luna trecută
               </p>
@@ -61,24 +61,24 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Activitate Recentă</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-lg sm:text-xl">Activitate Recentă</CardTitle>
+            <CardDescription className="text-sm">
               Ultimele operațiuni înregistrate
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Livrare #{1234 + i}</p>
-                    <p className="text-xs text-muted-foreground">Asfalt tip A - 45t</p>
+                <div key={i} className="flex items-center gap-3 sm:gap-4 p-2 sm:p-3 bg-muted/50 rounded-lg">
+                  <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">Livrare #{1234 + i}</p>
+                    <p className="text-xs text-muted-foreground truncate">Asfalt tip A - 45t</p>
                   </div>
-                  <span className="text-xs text-muted-foreground">Acum {i}h</span>
+                  <span className="text-xs text-muted-foreground whitespace-nowrap">Acum {i}h</span>
                 </div>
               ))}
             </div>
@@ -87,8 +87,8 @@ const Dashboard = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Producție pe Tipuri</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-lg sm:text-xl">Producție pe Tipuri</CardTitle>
+            <CardDescription className="text-sm">
               Distribuție producție ultimele 30 zile
             </CardDescription>
           </CardHeader>

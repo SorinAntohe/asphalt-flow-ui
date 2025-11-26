@@ -139,10 +139,10 @@ export default function Comenzi() {
     });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Comenzi</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Comenzi</h1>
+        <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
           Gestionează comenzile de materii prime și produse finite
         </p>
       </div>
@@ -155,15 +155,15 @@ export default function Comenzi() {
 
         <TabsContent value="materie-prima">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Comenzi Materie Primă</CardTitle>
-              <Button size="sm">
+            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+              <CardTitle className="text-lg sm:text-xl">Comenzi Materie Primă</CardTitle>
+              <Button size="sm" className="w-full sm:w-auto">
                 <Plus className="mr-2 h-4 w-4" />
                 Adaugă Comandă
               </Button>
             </CardHeader>
-            <CardContent>
-              <Table>
+            <CardContent className="overflow-x-auto">
+              <Table className="min-w-[1200px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead className="h-10 text-xs">
@@ -456,15 +456,15 @@ export default function Comenzi() {
 
         <TabsContent value="produse-finite">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Comenzi Produse Finite</CardTitle>
-              <Button size="sm">
+            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+              <CardTitle className="text-lg sm:text-xl">Comenzi Produse Finite</CardTitle>
+              <Button size="sm" className="w-full sm:w-auto">
                 <Plus className="mr-2 h-4 w-4" />
                 Adaugă Comandă
               </Button>
             </CardHeader>
-            <CardContent>
-              <Table>
+            <CardContent className="overflow-x-auto">
+              <Table className="min-w-[1200px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead className="h-10 text-xs">

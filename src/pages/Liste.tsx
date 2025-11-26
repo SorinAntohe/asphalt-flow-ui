@@ -309,37 +309,37 @@ const Liste = () => {
   const paginatedFurnizori = getPaginatedData(sortedFurnizori, furnizoriPage, furnizoriPerPage);
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Liste</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Liste</h1>
+          <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
             Gestionare nomenclatoare și registre
           </p>
         </div>
       </div>
 
       <Tabs defaultValue="autoturisme" className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="autoturisme">Autoturisme</TabsTrigger>
-          <TabsTrigger value="soferi">Șoferi</TabsTrigger>
-          <TabsTrigger value="materii">Materii Prime</TabsTrigger>
-          <TabsTrigger value="produse">Produse Finite</TabsTrigger>
-          <TabsTrigger value="clienti">Clienți</TabsTrigger>
-          <TabsTrigger value="furnizori">Furnizori</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 h-auto">
+          <TabsTrigger value="autoturisme" className="text-xs sm:text-sm">Autoturisme</TabsTrigger>
+          <TabsTrigger value="soferi" className="text-xs sm:text-sm">Șoferi</TabsTrigger>
+          <TabsTrigger value="materii" className="text-xs sm:text-sm">Materii</TabsTrigger>
+          <TabsTrigger value="produse" className="text-xs sm:text-sm">Produse</TabsTrigger>
+          <TabsTrigger value="clienti" className="text-xs sm:text-sm">Clienți</TabsTrigger>
+          <TabsTrigger value="furnizori" className="text-xs sm:text-sm">Furnizori</TabsTrigger>
         </TabsList>
 
         <TabsContent value="autoturisme">
           <Card>
             <CardHeader>
-              <div className="flex flex-row items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
                 <div>
-                  <CardTitle>Lista Autoturisme</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="text-lg sm:text-xl">Lista Autoturisme</CardTitle>
+                  <CardDescription className="text-sm">
                     Parcul auto disponibil pentru transport
                   </CardDescription>
                 </div>
-                <Button className="gap-2" onClick={() => {
+                <Button className="gap-2 w-full sm:w-auto" onClick={() => {
                   setAutoturismeFormData({ tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "", tara: "" });
                   setAutoturismeDialog({ open: true, mode: 'add' });
                 }}>
@@ -347,10 +347,10 @@ const Liste = () => {
                   Adaugă Autoturism
                 </Button>
               </div>
-              <div className="flex items-center gap-2 mt-4">
-                <span className="text-sm text-muted-foreground">Afișează:</span>
+              <div className="flex items-center gap-2 mt-3 sm:mt-4 text-xs sm:text-sm">
+                <span className="text-muted-foreground">Afișează:</span>
                 <Select value={autoturismePerPage.toString()} onValueChange={(value) => { setAutoturismePerPage(Number(value)); setAutoturismePage(1); }}>
-                  <SelectTrigger className="w-20">
+                  <SelectTrigger className="w-16 sm:w-20 h-8">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -360,11 +360,11 @@ const Liste = () => {
                     <SelectItem value="100">100</SelectItem>
                   </SelectContent>
                 </Select>
-                <span className="text-sm text-muted-foreground">înregistrări</span>
+                <span className="text-muted-foreground">înregistrări</span>
               </div>
             </CardHeader>
-            <CardContent>
-              <Table>
+            <CardContent className="overflow-x-auto">
+              <Table className="min-w-[800px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead className="h-10 text-xs">
