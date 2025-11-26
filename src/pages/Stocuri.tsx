@@ -36,30 +36,23 @@ export default function Stocuri() {
     direction: "asc" | "desc";
   } | null>(null);
 
-  // Fetch stocuri from API
+  // Mock stocuri data
   useEffect(() => {
-    const fetchStocuri = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('http://192.168.1.22:8002/liste/returneaza/stocuri');
-        if (!response.ok) {
-          throw new Error('Failed to fetch stocuri');
-        }
-        const data = await response.json();
-        setStocuri(data);
-      } catch (error) {
-        console.error('Error fetching stocuri:', error);
-        toast({
-          title: "Eroare",
-          description: "Nu s-au putut încărca datele despre stocuri",
-          variant: "destructive"
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchStocuri();
-  }, [toast]);
+    const mockData = [
+      { id: 1, materiale_prime: "0/4 NAT", stoc: 150.75 },
+      { id: 2, materiale_prime: "0/4 CONC", stoc: 230.50 },
+      { id: 3, materiale_prime: "8/16 CONC", stoc: 180.25 },
+      { id: 4, materiale_prime: "BITUM 50/70", stoc: 45.00 },
+      { id: 5, materiale_prime: "FILLER", stoc: 80.00 },
+      { id: 6, materiale_prime: "MOTORINA", stoc: 1200.00 },
+      { id: 7, materiale_prime: "CTL", stoc: 95.50 },
+      { id: 8, materiale_prime: "16/22.4 CONC", stoc: 120.00 },
+      { id: 9, materiale_prime: "4/8 CONC", stoc: 200.75 },
+      { id: 10, materiale_prime: "CURENT ELECTRIC", stoc: null },
+    ];
+    setStocuri(mockData);
+    setLoading(false);
+  }, []);
 
   const filteredAndSortedStocuri = stocuri
     .filter((item) => {

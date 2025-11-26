@@ -118,96 +118,38 @@ export default function Receptii() {
     field: '', direction: null 
   });
 
-  // Fetch data from API
+  // Mock receptii data
   const fetchReceptii = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('http://192.168.1.22:8002/receptii/returneaza/materiale');
-      if (!response.ok) {
-        throw new Error('Failed to fetch receptii');
-      }
-      const data = await response.json();
-      setReceptii(data);
-    } catch (error) {
-      console.error('Error fetching receptii:', error);
-      toast({
-        title: "Eroare",
-        description: "Nu s-au putut încărca recepțiile",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
+    const mockData = [
+      { id: 1, data: "26/11/2024", cod: "CM000001", furnizor: "AGREGATE ROMANIA", material: "0/4 NAT", nr_aviz_provizoriu: "AP12345", nr_aviz_intrare: "AI001", nume_sofer: "Ion Popescu", nr_inmatriculare: "B-123-ABC", tip_masina: "Articulata", cantitate_livrata: 40.0, cantitate_receptionata: 39.5, diferenta: 0.5, pret_material_total: 2000.00, pret_total: 2250.00, pret_transport_total: 250.00, observatii: "Diferență acceptată" },
+      { id: 2, data: "25/11/2024", cod: "CM000002", furnizor: "BITUM INVEST", material: "BITUM 50/70", nr_aviz_provizoriu: "AP12346", nr_aviz_intrare: "AI002", nume_sofer: "Maria Ionescu", nr_inmatriculare: "B-456-DEF", tip_masina: "8X4", cantitate_livrata: 30.0, cantitate_receptionata: 30.0, diferenta: 0.0, pret_material_total: 12000.00, pret_total: 13200.00, pret_transport_total: 1200.00, observatii: "" },
+      { id: 3, data: "24/11/2024", cod: "CM000003", furnizor: "MATERIALE CONSTRUCT", material: "8/16 CONC", nr_aviz_provizoriu: "AP12347", nr_aviz_intrare: "AI003", nume_sofer: "Gheorghe Popa", nr_inmatriculare: "B-789-GHI", tip_masina: "4X2", cantitate_livrata: 12.0, cantitate_receptionata: 11.8, diferenta: 0.2, pret_material_total: 720.00, pret_total: 792.00, pret_transport_total: 72.00, observatii: "Mică diferență din cauza umidității" },
+      { id: 4, data: "23/11/2024", cod: "CM000004", furnizor: "AGREGATE ROMANIA", material: "FILLER", nr_aviz_provizoriu: "AP12348", nr_aviz_intrare: "AI004", nume_sofer: "Ana Muresan", nr_inmatriculare: "CT-111-XYZ", tip_masina: "Articulata", cantitate_livrata: 40.0, cantitate_receptionata: 40.0, diferenta: 0.0, pret_material_total: 4000.00, pret_total: 4400.00, pret_transport_total: 400.00, observatii: "Recepție completă" },
+    ];
+    setReceptii(mockData);
+    setLoading(false);
   };
   
   useEffect(() => {
     fetchReceptii();
   }, []);
 
-  // Fetch available codes for dropdown
+  // Mock available codes
   useEffect(() => {
-    const fetchCodes = async () => {
-      try {
-        const response = await fetch('http://192.168.1.22:8002/receptii/materiale/returneaza_coduri');
-        if (!response.ok) {
-          throw new Error('Failed to fetch codes');
-        }
-        const data = await response.json();
-        setAvailableCodes(data);
-      } catch (error) {
-        console.error('Error fetching codes:', error);
-        toast({
-          title: "Eroare",
-          description: "Nu s-au putut încărca codurile disponibile",
-          variant: "destructive"
-        });
-      }
-    };
-    fetchCodes();
+    const mockCodes = ["CM000001", "CM000002", "CM000003", "CM000004", "CM000005"];
+    setAvailableCodes(mockCodes);
   }, []);
 
-  // Fetch available drivers for dropdown
+  // Mock available drivers
   useEffect(() => {
-    const fetchDrivers = async () => {
-      try {
-        const response = await fetch('http://192.168.1.22:8002/receptii/materiale/returneaza_nume_soferi');
-        if (!response.ok) {
-          throw new Error('Failed to fetch drivers');
-        }
-        const data = await response.json();
-        setAvailableDrivers(data);
-      } catch (error) {
-        console.error('Error fetching drivers:', error);
-        toast({
-          title: "Eroare",
-          description: "Nu s-au putut încărca numele șoferilor disponibili",
-          variant: "destructive"
-        });
-      }
-    };
-    fetchDrivers();
+    const mockDrivers = ["Ion Popescu", "Maria Ionescu", "Gheorghe Popa", "Ana Muresan", "Vasile Constantin", "Elena Dumitru"];
+    setAvailableDrivers(mockDrivers);
   }, []);
 
-  // Fetch available registration numbers for dropdown
+  // Mock available registration numbers
   useEffect(() => {
-    const fetchRegistrationNumbers = async () => {
-      try {
-        const response = await fetch('http://192.168.1.22:8002/receptii/materiale/returneaza_nr_inmatriculare');
-        if (!response.ok) {
-          throw new Error('Failed to fetch registration numbers');
-        }
-        const data = await response.json();
-        setAvailableRegistrationNumbers(data);
-      } catch (error) {
-        console.error('Error fetching registration numbers:', error);
-        toast({
-          title: "Eroare",
-          description: "Nu s-au putut încărca numerele de înmatriculare disponibile",
-          variant: "destructive"
-        });
-      }
-    };
-    fetchRegistrationNumbers();
+    const mockRegistrationNumbers = ["B-123-ABC", "B-456-DEF", "B-789-GHI", "CT-111-XYZ", "IF-222-MNO", "CJ-333-PQR"];
+    setAvailableRegistrationNumbers(mockRegistrationNumbers);
   }, []);
 
   // Calculate diferenta when cantitate values change
@@ -216,105 +158,50 @@ export default function Receptii() {
     setForm(prev => ({ ...prev, diferenta }));
   }, [form.cantitate_livrata, form.cantitate_receptionata]);
 
-  // Fetch tip_masina based on selected nr_inmatriculare
+  // Mock fetch tip_masina based on selected nr_inmatriculare
   useEffect(() => {
-    const fetchTipMasina = async () => {
-      if (!form.nr_inmatriculare) {
-        return;
-      }
-      
-      try {
-        const response = await fetch(`http://192.168.1.22:8002/receptii/materiale/returneaza_tip_masina_dupa_nr/${encodeURIComponent(form.nr_inmatriculare)}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch tip masina');
-        }
-        const data = await response.json();
-        
-        // API should return the tip_masina value
-        if (data && typeof data === 'string') {
-          setForm(prev => ({ ...prev, tip_masina: data }));
-        } else if (Array.isArray(data) && data.length > 0) {
-          setForm(prev => ({ ...prev, tip_masina: data[0] }));
-        }
-      } catch (error) {
-        console.error('Error fetching tip masina:', error);
-        toast({
-          title: "Eroare",
-          description: "Nu s-a putut încărca tipul mașinii",
-          variant: "destructive"
-        });
-      }
+    const mockTipMasinaMap: Record<string, string> = {
+      "B-123-ABC": "Articulata",
+      "B-456-DEF": "8X4",
+      "B-789-GHI": "4X2",
+      "CT-111-XYZ": "Articulata",
+      "IF-222-MNO": "8X4",
+      "CJ-333-PQR": "4X2",
     };
     
-    fetchTipMasina();
+    if (form.nr_inmatriculare && mockTipMasinaMap[form.nr_inmatriculare]) {
+      setForm(prev => ({ ...prev, tip_masina: mockTipMasinaMap[form.nr_inmatriculare] }));
+    }
   }, [form.nr_inmatriculare]);
 
-  // Fetch cantitate_receptionata based on selected cod
+  // Mock fetch cantitate_receptionata based on selected cod
   useEffect(() => {
-    const fetchCantitateReceptionata = async () => {
-      if (!form.cod) {
-        return;
-      }
-      
-      try {
-        const response = await fetch(`http://192.168.1.22:8002/receptii/materiale/returneaza_cantitate_dupa_cod/${encodeURIComponent(form.cod)}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch cantitate receptionata');
-        }
-        const data = await response.json();
-        
-        // API should return the cantitate_receptionata value
-        if (typeof data === 'number') {
-          setForm(prev => ({ ...prev, cantitate_receptionata: data }));
-        } else if (typeof data === 'string') {
-          setForm(prev => ({ ...prev, cantitate_receptionata: parseFloat(data) || 0 }));
-        } else if (Array.isArray(data) && data.length > 0) {
-          setForm(prev => ({ ...prev, cantitate_receptionata: parseFloat(data[0]) || 0 }));
-        }
-      } catch (error) {
-        console.error('Error fetching cantitate receptionata:', error);
-        toast({
-          title: "Eroare",
-          description: "Nu s-a putut încărca cantitatea recepționată",
-          variant: "destructive"
-        });
-      }
+    const mockCantitateMap: Record<string, number> = {
+      "CM000001": 39.5,
+      "CM000002": 30.0,
+      "CM000003": 11.8,
+      "CM000004": 40.0,
+      "CM000005": 25.0,
     };
     
-    fetchCantitateReceptionata();
+    if (form.cod && mockCantitateMap[form.cod]) {
+      setForm(prev => ({ ...prev, cantitate_receptionata: mockCantitateMap[form.cod] }));
+    }
   }, [form.cod]);
 
-  // Fetch furnizor based on selected cod
+  // Mock fetch furnizor based on selected cod
   useEffect(() => {
-    const fetchFurnizor = async () => {
-      if (!form.cod) {
-        return;
-      }
-      
-      try {
-        const response = await fetch(`http://192.168.1.22:8002/receptii/materiale/returneaza_furnizor_dupa_cod/${encodeURIComponent(form.cod)}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch furnizor');
-        }
-        const data = await response.json();
-        
-        // API should return the furnizor value
-        if (data && typeof data === 'string') {
-          setForm(prev => ({ ...prev, furnizor: data }));
-        } else if (Array.isArray(data) && data.length > 0) {
-          setForm(prev => ({ ...prev, furnizor: data[0] }));
-        }
-      } catch (error) {
-        console.error('Error fetching furnizor:', error);
-        toast({
-          title: "Eroare",
-          description: "Nu s-a putut încărca furnizorul",
-          variant: "destructive"
-        });
-      }
+    const mockFurnizorMap: Record<string, string> = {
+      "CM000001": "AGREGATE ROMANIA",
+      "CM000002": "BITUM INVEST",
+      "CM000003": "MATERIALE CONSTRUCT",
+      "CM000004": "AGREGATE ROMANIA",
+      "CM000005": "FILLER PRO",
     };
     
-    fetchFurnizor();
+    if (form.cod && mockFurnizorMap[form.cod]) {
+      setForm(prev => ({ ...prev, furnizor: mockFurnizorMap[form.cod] }));
+    }
   }, [form.cod]);
 
   // Add/Edit handlers

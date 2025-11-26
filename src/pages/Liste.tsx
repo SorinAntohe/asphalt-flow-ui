@@ -85,148 +85,82 @@ const Liste = () => {
   const [clienti, setClienti] = useState<any[]>([]);
   const [furnizori, setFurnizori] = useState<any[]>([]);
 
-  // Fetch autoturisme from API
+  // Mock autoturisme data
   useEffect(() => {
-    const fetchAutoturisme = async () => {
-      try {
-        const response = await fetch('http://192.168.1.22:8002/liste/returneaza/masini');
-        const data = await response.json();
-        const mappedData = data.map((item: any) => ({
-          id: item.id,
-          nrAuto: item.nr_inmatriculare,
-          tipMasina: item.tip_masina,
-          tipTransport: item.tip_transport,
-          sarcinaMax: item.masa_max_admisa.toString(),
-          tara: item.tara.toString()
-        }));
-        setAutoturisme(mappedData);
-      } catch (error) {
-        toast({
-          title: "Eroare",
-          description: "Nu s-au putut încărca datele despre autoturisme",
-          variant: "destructive"
-        });
-      }
-    };
-    fetchAutoturisme();
-  }, [toast]);
+    const mockData = [
+      { id: 1, nrAuto: "B-123-ABC", tipMasina: "Articulata", tipTransport: "Propriu", sarcinaMax: "40", tara: "15" },
+      { id: 2, nrAuto: "B-456-DEF", tipMasina: "8X4", tipTransport: "Inchiriat", sarcinaMax: "30", tara: "12" },
+      { id: 3, nrAuto: "B-789-GHI", tipMasina: "4X2", tipTransport: "Extern", sarcinaMax: "12", tara: "6" },
+      { id: 4, nrAuto: "CT-111-XYZ", tipMasina: "Articulata", tipTransport: "Propriu", sarcinaMax: "40", tara: "15" },
+      { id: 5, nrAuto: "IF-222-MNO", tipMasina: "8X4", tipTransport: "Propriu", sarcinaMax: "30", tara: "12" },
+      { id: 6, nrAuto: "CJ-333-PQR", tipMasina: "4X2", tipTransport: "Inchiriat", sarcinaMax: "12", tara: "6" },
+      { id: 7, nrAuto: "TM-444-STU", tipMasina: "Articulata", tipTransport: "Propriu", sarcinaMax: "40", tara: "15" },
+      { id: 8, nrAuto: "BV-555-VWX", tipMasina: "8X4", tipTransport: "Extern", sarcinaMax: "30", tara: "12" },
+    ];
+    setAutoturisme(mockData);
+  }, []);
 
-  // Fetch soferi from API
+  // Mock soferi data
   useEffect(() => {
-    const fetchSoferi = async () => {
-      try {
-        const response = await fetch('http://192.168.1.22:8002/liste/returneaza/soferi');
-        const data = await response.json();
-        const mappedData = data.map((item: any) => ({
-          id: item.id,
-          nume: item.nume_sofer,
-          ci: item.ci.toString()
-        }));
-        setSoferi(mappedData);
-      } catch (error) {
-        toast({
-          title: "Eroare",
-          description: "Nu s-au putut încărca datele despre șoferi",
-          variant: "destructive"
-        });
-      }
-    };
-    fetchSoferi();
-  }, [toast]);
+    const mockData = [
+      { id: 1, nume: "Ion Popescu", ci: "1234567890123" },
+      { id: 2, nume: "Maria Ionescu", ci: "2345678901234" },
+      { id: 3, nume: "Gheorghe Popa", ci: "3456789012345" },
+      { id: 4, nume: "Ana Muresan", ci: "4567890123456" },
+      { id: 5, nume: "Vasile Constantin", ci: "5678901234567" },
+      { id: 6, nume: "Elena Dumitru", ci: "6789012345678" },
+    ];
+    setSoferi(mockData);
+  }, []);
 
-  // Fetch materii prime from API
+  // Mock materii prime data
   useEffect(() => {
-    const fetchMateriiPrime = async () => {
-      try {
-        const response = await fetch('http://192.168.1.22:8002/liste/returneaza/materiale');
-        const data = await response.json();
-        const mappedData = data.map((item: any) => ({
-          id: item.id,
-          denumire: item.materiale_prime
-        }));
-        setMateriiPrime(mappedData);
-      } catch (error) {
-        toast({
-          title: "Eroare",
-          description: "Nu s-au putut încărca datele despre materiile prime",
-          variant: "destructive"
-        });
-      }
-    };
-    fetchMateriiPrime();
-  }, [toast]);
+    const mockData = [
+      { id: 1, denumire: "0/4 NAT" },
+      { id: 2, denumire: "0/4 CONC" },
+      { id: 3, denumire: "8/16 CONC" },
+      { id: 4, denumire: "BITUM 50/70" },
+      { id: 5, denumire: "FILLER" },
+      { id: 6, denumire: "MOTORINA" },
+      { id: 7, denumire: "CTL" },
+      { id: 8, denumire: "16/22.4 CONC" },
+    ];
+    setMateriiPrime(mockData);
+  }, []);
 
-  // Fetch produse finite from API
+  // Mock produse finite data
   useEffect(() => {
-    const fetchProduseFinite = async () => {
-      try {
-        const response = await fetch('http://192.168.1.22:8002/liste/returneaza/produse');
-        const data = await response.json();
-        const mappedData = data.map((item: any) => ({
-          id: item.id,
-          denumire: item.produs
-        }));
-        setProduseFinite(mappedData);
-      } catch (error) {
-        toast({
-          title: "Eroare",
-          description: "Nu s-au putut încărca datele despre produsele finite",
-          variant: "destructive"
-        });
-      }
-    };
-    fetchProduseFinite();
-  }, [toast]);
+    const mockData = [
+      { id: 1, denumire: "Asfalt BA16" },
+      { id: 2, denumire: "Asfalt BA8" },
+      { id: 3, denumire: "Beton Stabilizat BSC" },
+      { id: 4, denumire: "Emulsie Cationica" },
+      { id: 5, denumire: "Beton Rutier C25/30" },
+    ];
+    setProduseFinite(mockData);
+  }, []);
 
-  // Fetch clienti from API
+  // Mock clienti data
   useEffect(() => {
-    const fetchClienti = async () => {
-      try {
-        const response = await fetch('http://192.168.1.22:8002/liste/returneaza/clienti');
-        const data = await response.json();
-        const mappedData = data.map((item: any) => ({
-          id: item.id,
-          denumire: item.nume,
-          sediu: item.adresa,
-          cui: item.cui,
-          nrReg: item.nr_reg
-        }));
-        setClienti(mappedData);
-      } catch (error) {
-        toast({
-          title: "Eroare",
-          description: "Nu s-au putut încărca datele despre clienți",
-          variant: "destructive"
-        });
-      }
-    };
-    fetchClienti();
-  }, [toast]);
+    const mockData = [
+      { id: 1, denumire: "CONSTRUCT SRL", sediu: "București, Str. Industrială 23", cui: "RO12345678", nrReg: "J40/1234/2020" },
+      { id: 2, denumire: "DRUMURI SA", sediu: "Cluj-Napoca, Bd. Muncii 45", cui: "RO23456789", nrReg: "J12/2345/2019" },
+      { id: 3, denumire: "INFRASTRUCTURA TOTAL", sediu: "Timișoara, Str. Fabricii 10", cui: "RO34567890", nrReg: "J35/3456/2021" },
+      { id: 4, denumire: "BETON PLUS", sediu: "Iași, Str. Cimentului 67", cui: "RO45678901", nrReg: "J22/4567/2018" },
+    ];
+    setClienti(mockData);
+  }, []);
 
-  // Fetch furnizori from API
+  // Mock furnizori data
   useEffect(() => {
-    const fetchFurnizori = async () => {
-      try {
-        const response = await fetch('http://192.168.1.22:8002/liste/returneaza/furnizori');
-        const data = await response.json();
-        const mappedData = data.map((item: any) => ({
-          id: item.id,
-          denumire: item.nume,
-          sediu: item.adresa,
-          cui: item.cui,
-          nrReg: item.nr_reg
-        }));
-        setFurnizori(mappedData);
-      } catch (error) {
-        toast({
-          title: "Eroare",
-          description: "Nu s-au putut încărca datele despre furnizori",
-          variant: "destructive"
-        });
-      }
-    };
-    fetchFurnizori();
-  }, [toast]);
+    const mockData = [
+      { id: 1, denumire: "AGREGATE ROMANIA", sediu: "Brașov, Str. Carierelor 5", cui: "RO98765432", nrReg: "J08/9876/2017" },
+      { id: 2, denumire: "BITUM INVEST", sediu: "Ploiești, Bd. Petrolului 100", cui: "RO87654321", nrReg: "J29/8765/2016" },
+      { id: 3, denumire: "MATERIALE CONSTRUCT", sediu: "Constanța, Str. Portului 15", cui: "RO76543210", nrReg: "J13/7654/2019" },
+      { id: 4, denumire: "FILLER PRO", sediu: "Galați, Str. Industriei 88", cui: "RO65432109", nrReg: "J17/6543/2020" },
+    ];
+    setFurnizori(mockData);
+  }, []);
 
 
 
