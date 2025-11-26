@@ -30,10 +30,6 @@ interface Client {
   nr_reg: string;
 }
 
-interface Material {
-  materiale_prime: string;
-}
-
 interface ComandaMateriePrima {
   id: number;
   cod: string;
@@ -94,8 +90,6 @@ export default function Comenzi() {
   const [loadingFurnizori, setLoadingFurnizori] = useState(true);
   const [clienti, setClienti] = useState<Client[]>([]);
   const [loadingClienti, setLoadingClienti] = useState(true);
-  const [materiale, setMateriale] = useState<Material[]>([]);
-  const [loadingMateriale, setLoadingMateriale] = useState(true);
   
   // Dialog states for MP
   const [openAddEditMP, setOpenAddEditMP] = useState(false);
@@ -177,28 +171,6 @@ export default function Comenzi() {
     }
   };
 
-  // Fetch materiale from API
-  const fetchMateriale = async () => {
-    try {
-      setLoadingMateriale(true);
-      const response = await fetch('http://192.168.1.22:8002/comenzi/returneaza_materiale/material');
-      if (!response.ok) {
-        throw new Error('Failed to fetch materiale');
-      }
-      const data = await response.json();
-      setMateriale(data);
-    } catch (error) {
-      console.error('Error fetching materiale:', error);
-      toast({
-        title: "Eroare",
-        description: "Nu s-au putut încărca materialele",
-        variant: "destructive"
-      });
-    } finally {
-      setLoadingMateriale(false);
-    }
-  };
-
   // Fetch comenzi materie prima from API
   const fetchComenziMP = async () => {
     try {
@@ -224,7 +196,6 @@ export default function Comenzi() {
   useEffect(() => {
     fetchFurnizori();
     fetchClienti();
-    fetchMateriale();
     fetchComenziMP();
   }, [toast]);
   
@@ -1135,7 +1106,7 @@ export default function Comenzi() {
                 <SelectTrigger className={formErrorsMP.furnizor ? "border-destructive" : ""}>
                   <SelectValue placeholder="Selectează furnizor" />
                 </SelectTrigger>
-                <SelectContent className="bg-popover z-50">
+                <SelectContent>
                   {loadingFurnizori ? (
                     <SelectItem value="loading" disabled>Se încarcă...</SelectItem>
                   ) : furnizori.length === 0 ? (
@@ -1153,27 +1124,12 @@ export default function Comenzi() {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="material">Material *</Label>
-              <Select
+              <Input
+                id="material"
                 value={formMP.material}
-                onValueChange={(value) => setFormMP({ ...formMP, material: value })}
-              >
-                <SelectTrigger className={formErrorsMP.material ? "border-destructive" : ""}>
-                  <SelectValue placeholder="Selectează material" />
-                </SelectTrigger>
-                <SelectContent className="bg-popover z-50">
-                  {loadingMateriale ? (
-                    <SelectItem value="loading" disabled>Se încarcă...</SelectItem>
-                  ) : materiale.length === 0 ? (
-                    <SelectItem value="empty" disabled>Fără materiale</SelectItem>
-                  ) : (
-                    materiale.map((material, index) => (
-                      <SelectItem key={index} value={material.materiale_prime}>
-                        {material.materiale_prime}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
+                onChange={(e) => setFormMP({ ...formMP, material: e.target.value })}
+                className={formErrorsMP.material ? "border-destructive" : ""}
+              />
               {formErrorsMP.material && <p className="text-sm text-destructive">{formErrorsMP.material}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -1290,7 +1246,7 @@ export default function Comenzi() {
                 <SelectTrigger className={formErrorsPF.client ? "border-destructive" : ""}>
                   <SelectValue placeholder="Selectează client" />
                 </SelectTrigger>
-                <SelectContent className="bg-popover z-50">
+                <SelectContent>
                   {loadingClienti ? (
                     <SelectItem value="loading" disabled>Se încarcă...</SelectItem>
                   ) : clienti.length === 0 ? (
