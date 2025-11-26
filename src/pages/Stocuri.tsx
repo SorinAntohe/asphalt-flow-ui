@@ -1,17 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useToast } from "@/hooks/use-toast";
+
+interface StocItem {
+  id: number;
+  materiale_prime: string;
+  stoc: number | null;
+}
 
 export default function Stocuri() {
-  const [stocuri] = useState([
-    { id: 1, tipMaterial: "0/4 NAT", cantitateStoc: 1500 },
-    { id: 2, tipMaterial: "0/4 CONC", cantitateStoc: 2300 },
-    { id: 3, tipMaterial: "BITUM 50/70", cantitateStoc: 450 },
-  ]);
+  const { toast } = useToast();
+  const [stocuri, setStocuri] = useState<StocItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [filters, setFilters] = useState({
     tipMaterial: "",
@@ -23,26 +28,57 @@ export default function Stocuri() {
     direction: "asc" | "desc";
   } | null>(null);
 
-  const handleSort = (key: string) => {
-    let direction: "asc" | "desc" = "asc";
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    setSortConfig({ key, direction });
-  };
+  // Fetch stocuri from API
+  useEffect(() => {
+    const fetchStocuri = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://192.168.1.22:8002/liste/returneaza/stocuri');
+        if (!response.ok) {
+          throw new Error('Failed to fetch stocuri');
+        }
+        const data = await response.json();
+        setStocuri(data);
+      } catch (error) {
+        console.error('Error fetching stocuri:', error);
+        toast({
+          title: "Eroare",
+          description: "Nu s-au putut încărca datele despre stocuri",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStocuri();
+  }, [toast]);
 
   const filteredAndSortedStocuri = stocuri
     .filter((item) => {
       return (
-        item.tipMaterial.toLowerCase().includes(filters.tipMaterial.toLowerCase()) &&
-        item.cantitateStoc.toString().includes(filters.cantitateStoc)
+        item.materiale_prime.toLowerCase().includes(filters.tipMaterial.toLowerCase()) &&
+        (item.stoc?.toString() || '').includes(filters.cantitateStoc)
       );
     })
     .sort((a, b) => {
       if (!sortConfig) return 0;
       const { key, direction } = sortConfig;
-      const aVal = a[key as keyof typeof a];
-      const bVal = b[key as keyof typeof b];
+      
+      let aVal: string | number | null;
+      let bVal: string | number | null;
+      
+      if (key === 'materiale_prime') {
+        aVal = a.materiale_prime;
+        bVal = b.materiale_prime;
+      } else {
+        aVal = a.stoc ?? 0;
+        bVal = b.stoc ?? 0;
+      }
+      
+      if (aVal === null && bVal === null) return 0;
+      if (aVal === null) return direction === "asc" ? 1 : -1;
+      if (bVal === null) return direction === "asc" ? -1 : 1;
+      
       if (aVal < bVal) return direction === "asc" ? -1 : 1;
       if (aVal > bVal) return direction === "asc" ? 1 : -1;
       return 0;
@@ -71,7 +107,7 @@ export default function Stocuri() {
                       <PopoverTrigger asChild>
                         <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                           <span>Tip Material</span>
-                          {sortConfig?.key === 'tipMaterial' ? (sortConfig.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                          {sortConfig?.key === 'materiale_prime' ? (sortConfig.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-56 p-2">
@@ -83,10 +119,10 @@ export default function Stocuri() {
                             className="h-7 text-xs" 
                           />
                           <div className="flex gap-1">
-                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'tipMaterial', direction: 'asc' })}>
+                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'materiale_prime', direction: 'asc' })}>
                               <ArrowUp className="h-3 w-3 mr-1" /> A-Z
                             </Button>
-                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'tipMaterial', direction: 'desc' })}>
+                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'materiale_prime', direction: 'desc' })}>
                               <ArrowDown className="h-3 w-3 mr-1" /> Z-A
                             </Button>
                           </div>
@@ -101,7 +137,7 @@ export default function Stocuri() {
                       <PopoverTrigger asChild>
                         <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                           <span>Cantitate Stoc</span>
-                          {sortConfig?.key === 'cantitateStoc' ? (sortConfig.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                          {sortConfig?.key === 'stoc' ? (sortConfig.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-56 p-2">
@@ -113,10 +149,10 @@ export default function Stocuri() {
                             className="h-7 text-xs" 
                           />
                           <div className="flex gap-1">
-                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'cantitateStoc', direction: 'asc' })}>
+                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'stoc', direction: 'asc' })}>
                               <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
                             </Button>
-                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'cantitateStoc', direction: 'desc' })}>
+                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'stoc', direction: 'desc' })}>
                               <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
                             </Button>
                           </div>
@@ -128,12 +164,28 @@ export default function Stocuri() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredAndSortedStocuri.map((item) => (
-                <TableRow key={item.id} className="h-10">
-                  <TableCell className="py-1 text-xs">{item.tipMaterial}</TableCell>
-                  <TableCell className="py-1 text-xs">{item.cantitateStoc}</TableCell>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={2} className="h-24 text-center">
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    </div>
+                  </TableCell>
                 </TableRow>
-              ))}
+              ) : filteredAndSortedStocuri.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={2} className="h-24 text-center text-muted-foreground">
+                    Nu există date disponibile
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredAndSortedStocuri.map((item) => (
+                  <TableRow key={item.id} className="h-10">
+                    <TableCell className="py-1 text-xs">{item.materiale_prime}</TableCell>
+                    <TableCell className="py-1 text-xs">{item.stoc ?? '-'}</TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>
