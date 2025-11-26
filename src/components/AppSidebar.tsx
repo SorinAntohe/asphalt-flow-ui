@@ -103,12 +103,22 @@ export function AppSidebar() {
               <Collapsible open={gestiuneOpen} onOpenChange={setGestiuneOpen}>
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors hover:bg-sidebar-accent text-sidebar-foreground">
+                    <SidebarMenuButton 
+                      className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-300 ease-in-out hover:bg-sidebar-accent text-sidebar-foreground"
+                      style={{
+                        background: gestiuneOpen ? 'hsl(var(--sidebar-accent))' : 'transparent',
+                      }}
+                    >
                       <FolderCog className="w-5 h-5" />
                       {isOpen && (
                         <>
                           <span className="flex-1">Gestiune</span>
-                          <ChevronDown className={`w-4 h-4 transition-transform ${gestiuneOpen ? 'rotate-180' : ''}`} />
+                          <ChevronDown 
+                            className="w-4 h-4 transition-transform duration-300" 
+                            style={{
+                              transform: gestiuneOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+                            }}
+                          />
                         </>
                       )}
                     </SidebarMenuButton>
