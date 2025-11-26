@@ -130,14 +130,15 @@ export function AppSidebar() {
                     transition: 'all 0.3s ease',
                     opacity: gestiuneOpen ? 1 : 0,
                     visibility: gestiuneOpen ? 'visible' : 'hidden',
-                    transform: gestiuneOpen ? 'translateY(20px)' : 'translateY(0)',
+                    transform: gestiuneOpen ? 'translateY(0)' : 'translateY(-10px)',
                     background: gestiuneOpen ? 'hsl(var(--sidebar-accent) / 0.3)' : 'transparent',
-                    padding: gestiuneOpen ? '8px 0' : '0',
-                    marginTop: gestiuneOpen ? '8px' : '0',
-                    marginLeft: isOpen ? '0' : '-16px',
+                    padding: gestiuneOpen ? '4px' : '0',
+                    marginTop: gestiuneOpen ? '4px' : '0',
+                    marginLeft: isOpen ? '0' : '0',
+                    marginRight: isOpen ? '0' : '0',
                   }}
                 >
-                  <SidebarMenu className="ml-4 space-y-1 mt-1">
+                  <SidebarMenu className={isOpen ? "ml-4 space-y-1" : "space-y-1"}>
                     {gestiuneItems.map((item, index) => (
                       <SidebarMenuItem 
                         key={item.title}
@@ -149,7 +150,9 @@ export function AppSidebar() {
                         <SidebarMenuButton asChild isActive={isActive(item.url)}>
                           <NavLink
                             to={item.url}
-                            className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors hover:bg-sidebar-accent text-sidebar-foreground"
+                            className={`flex items-center gap-3 rounded-lg transition-colors hover:bg-sidebar-accent text-sidebar-foreground ${
+                              isOpen ? 'px-4 py-2.5' : 'px-2 py-2 justify-center'
+                            }`}
                             activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
                             title={!isOpen ? item.title : undefined}
                           >
