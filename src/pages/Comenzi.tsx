@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { z } from "zod";
 
 interface Furnizor {
@@ -143,6 +144,12 @@ export default function Comenzi() {
   const [loadingMateriale, setLoadingMateriale] = useState(true);
   const [produse, setProduse] = useState<Produs[]>([]);
   const [loadingProduse, setLoadingProduse] = useState(true);
+  
+  // Pagination
+  const [itemsPerPageMP, setItemsPerPageMP] = useState(10);
+  const [currentPageMP, setCurrentPageMP] = useState(1);
+  const [itemsPerPagePF, setItemsPerPagePF] = useState(10);
+  const [currentPagePF, setCurrentPagePF] = useState(1);
   
   // Dialog states for MP
   const [openAddEditMP, setOpenAddEditMP] = useState(false);
@@ -572,6 +579,42 @@ export default function Comenzi() {
     field: '', direction: null 
   });
 
+  // Filtering and sorting for MP
+  const filteredAndSortedMP = comenziMateriePrima
+    .filter((item) => {
+      return (
+        item.id.toString().includes(filtersMP.id) &&
+        item.cod.toLowerCase().includes(filtersMP.cod.toLowerCase()) &&
+        item.data.toLowerCase().includes(filtersMP.data.toLowerCase()) &&
+        item.furnizor.toLowerCase().includes(filtersMP.furnizor.toLowerCase()) &&
+        item.material.toLowerCase().includes(filtersMP.material.toLowerCase()) &&
+        item.cantitate.toString().includes(filtersMP.cantitate) &&
+        item.pret_fara_tva.toString().includes(filtersMP.pret_fara_tva)
+      );
+    })
+    .sort((a, b) => {
+      if (!sortMP.field || !sortMP.direction) return 0;
+      const aVal = a[sortMP.field as keyof ComandaMateriePrima];
+      const bVal = b[sortMP.field as keyof ComandaMateriePrima];
+      if (aVal === null && bVal === null) return 0;
+      if (aVal === null) return sortMP.direction === 'asc' ? 1 : -1;
+      if (bVal === null) return sortMP.direction === 'asc' ? -1 : 1;
+      if (aVal < bVal) return sortMP.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortMP.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+  // Pagination for MP
+  const totalPagesMP = Math.ceil(filteredAndSortedMP.length / itemsPerPageMP);
+  const startIndexMP = (currentPageMP - 1) * itemsPerPageMP;
+  const endIndexMP = startIndexMP + itemsPerPageMP;
+  const paginatedDataMP = filteredAndSortedMP.slice(startIndexMP, endIndexMP);
+
+  // Reset to page 1 when MP filters change
+  useEffect(() => {
+    setCurrentPageMP(1);
+  }, [filtersMP]);
+
   // Filters for Produs Finit
   const fetchComenziPF = async () => {
     try {
@@ -609,36 +652,7 @@ export default function Comenzi() {
     field: '', direction: null 
   });
 
-  // Filtering and sorting logic for Materie Prima
-  const filteredAndSortedMP = comenziMateriePrima
-    .filter((item) => {
-      return (
-        item.id.toString().includes(filtersMP.id) &&
-        item.cod.toLowerCase().includes(filtersMP.cod.toLowerCase()) &&
-        item.data.toLowerCase().includes(filtersMP.data.toLowerCase()) &&
-        item.furnizor.toLowerCase().includes(filtersMP.furnizor.toLowerCase()) &&
-        item.material.toLowerCase().includes(filtersMP.material.toLowerCase()) &&
-        item.cantitate.toString().includes(filtersMP.cantitate) &&
-        item.pret_fara_tva.toString().includes(filtersMP.pret_fara_tva)
-      );
-    })
-    .sort((a, b) => {
-      if (!sortMP.field || !sortMP.direction) return 0;
-      
-      let aVal: any = a[sortMP.field as keyof ComandaMateriePrima];
-      let bVal: any = b[sortMP.field as keyof ComandaMateriePrima];
-      
-      // Handle null values
-      if (aVal === null && bVal === null) return 0;
-      if (aVal === null) return sortMP.direction === 'asc' ? 1 : -1;
-      if (bVal === null) return sortMP.direction === 'asc' ? -1 : 1;
-      
-      if (aVal < bVal) return sortMP.direction === 'asc' ? -1 : 1;
-      if (aVal > bVal) return sortMP.direction === 'asc' ? 1 : -1;
-      return 0;
-    });
-
-  // Filtering and sorting logic for Produs Finit
+  // Filtering and sorting for PF
   const filteredAndSortedPF = comenziProduseFinite
     .filter((item) => {
       return (
@@ -648,25 +662,32 @@ export default function Comenzi() {
         item.client.toLowerCase().includes(filtersPF.client.toLowerCase()) &&
         item.produs.toLowerCase().includes(filtersPF.produs.toLowerCase()) &&
         item.cantitate.toString().includes(filtersPF.cantitate) &&
-        (item.punct_descarcare || '').toLowerCase().includes(filtersPF.punct_descarcare.toLowerCase()) &&
+        (item.punct_descarcare || "").toLowerCase().includes(filtersPF.punct_descarcare.toLowerCase()) &&
         item.pret_fara_tva.toString().includes(filtersPF.pret_fara_tva)
       );
     })
     .sort((a, b) => {
       if (!sortPF.field || !sortPF.direction) return 0;
-      
-      let aVal: any = a[sortPF.field as keyof ComandaProdusFinal];
-      let bVal: any = b[sortPF.field as keyof ComandaProdusFinal];
-      
-      // Handle null values
+      const aVal = a[sortPF.field as keyof ComandaProdusFinal];
+      const bVal = b[sortPF.field as keyof ComandaProdusFinal];
       if (aVal === null && bVal === null) return 0;
       if (aVal === null) return sortPF.direction === 'asc' ? 1 : -1;
       if (bVal === null) return sortPF.direction === 'asc' ? -1 : 1;
-      
       if (aVal < bVal) return sortPF.direction === 'asc' ? -1 : 1;
       if (aVal > bVal) return sortPF.direction === 'asc' ? 1 : -1;
       return 0;
     });
+
+  // Pagination for PF
+  const totalPagesPF = Math.ceil(filteredAndSortedPF.length / itemsPerPagePF);
+  const startIndexPF = (currentPagePF - 1) * itemsPerPagePF;
+  const endIndexPF = startIndexPF + itemsPerPagePF;
+  const paginatedDataPF = filteredAndSortedPF.slice(startIndexPF, endIndexPF);
+
+  // Reset to page 1 when PF filters change
+  useEffect(() => {
+    setCurrentPagePF(1);
+  }, [filtersPF]);
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -882,14 +903,14 @@ export default function Comenzi() {
                         </div>
                       </TableCell>
                     </TableRow>
-                  ) : filteredAndSortedMP.length === 0 ? (
+                  ) : paginatedDataMP.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                         Nu există comenzi disponibile
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredAndSortedMP.map((comanda) => (
+                    paginatedDataMP.map((comanda) => (
                       <TableRow 
                         key={comanda.id} 
                         className="h-10 cursor-pointer hover:bg-muted/50"
@@ -905,9 +926,65 @@ export default function Comenzi() {
                       </TableRow>
                     ))
                   )}
-                </TableBody>
+                 </TableBody>
               </Table>
             </CardContent>
+            
+            {/* Pagination Controls MP */}
+            <div className="flex items-center justify-between px-6 py-4">
+              <div className="flex items-center gap-2">
+                <Label className="text-sm">Înregistrări per pagină:</Label>
+                <Select
+                  value={itemsPerPageMP.toString()}
+                  onValueChange={(value) => {
+                    setItemsPerPageMP(Number(value));
+                    setCurrentPageMP(1);
+                  }}
+                >
+                  <SelectTrigger className="w-[70px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+                <span className="text-sm text-muted-foreground">
+                  Afișare {startIndexMP + 1}-{Math.min(endIndexMP, filteredAndSortedMP.length)} din {filteredAndSortedMP.length}
+                </span>
+              </div>
+              
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      onClick={() => setCurrentPageMP(Math.max(1, currentPageMP - 1))}
+                      className={currentPageMP === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                  {Array.from({ length: totalPagesMP }, (_, i) => i + 1).map((page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => setCurrentPageMP(page)}
+                        isActive={currentPageMP === page}
+                        className="cursor-pointer"
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  <PaginationItem>
+                    <PaginationNext 
+                      onClick={() => setCurrentPageMP(Math.min(totalPagesMP, currentPageMP + 1))}
+                      className={currentPageMP === totalPagesMP ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
           </Card>
         </TabsContent>
 
@@ -1135,14 +1212,14 @@ export default function Comenzi() {
                         </div>
                       </TableCell>
                     </TableRow>
-                  ) : filteredAndSortedPF.length === 0 ? (
+                  ) : paginatedDataPF.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
                         Nu există comenzi disponibile
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredAndSortedPF.map((comanda) => (
+                    paginatedDataPF.map((comanda) => (
                       <TableRow 
                         key={comanda.id} 
                         className="h-10 cursor-pointer hover:bg-muted/50"
@@ -1162,6 +1239,62 @@ export default function Comenzi() {
                 </TableBody>
               </Table>
             </CardContent>
+            
+            {/* Pagination Controls PF */}
+            <div className="flex items-center justify-between px-6 py-4">
+              <div className="flex items-center gap-2">
+                <Label className="text-sm">Înregistrări per pagină:</Label>
+                <Select
+                  value={itemsPerPagePF.toString()}
+                  onValueChange={(value) => {
+                    setItemsPerPagePF(Number(value));
+                    setCurrentPagePF(1);
+                  }}
+                >
+                  <SelectTrigger className="w-[70px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+                <span className="text-sm text-muted-foreground">
+                  Afișare {startIndexPF + 1}-{Math.min(endIndexPF, filteredAndSortedPF.length)} din {filteredAndSortedPF.length}
+                </span>
+              </div>
+              
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      onClick={() => setCurrentPagePF(Math.max(1, currentPagePF - 1))}
+                      className={currentPagePF === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                  {Array.from({ length: totalPagesPF }, (_, i) => i + 1).map((page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => setCurrentPagePF(page)}
+                        isActive={currentPagePF === page}
+                        className="cursor-pointer"
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  <PaginationItem>
+                    <PaginationNext 
+                      onClick={() => setCurrentPagePF(Math.min(totalPagesPF, currentPagePF + 1))}
+                      className={currentPagePF === totalPagesPF ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
           </Card>
         </TabsContent>
       </Tabs>
