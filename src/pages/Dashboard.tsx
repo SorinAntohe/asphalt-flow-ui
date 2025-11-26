@@ -43,13 +43,13 @@ const Dashboard = () => {
       </div>
 
       <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <Card key={stat.title}>
+        {stats.map((stat, index) => (
+          <Card key={stat.title} className="transition-all duration-300 hover:shadow-lg hover:-translate-y-1" style={{ animationDelay: `${index * 100}ms` }}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 {stat.title}
               </CardTitle>
-              <stat.icon className="h-4 w-4 text-muted-foreground" />
+              <stat.icon className="h-4 w-4 text-muted-foreground transition-transform duration-300 group-hover:scale-110" />
             </CardHeader>
             <CardContent>
               <div className="text-xl sm:text-2xl font-bold">{stat.value}</div>
@@ -62,7 +62,7 @@ const Dashboard = () => {
       </div>
 
       <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2">
-        <Card>
+        <Card className="transition-all duration-300 hover:shadow-lg">
           <CardHeader>
             <CardTitle className="text-lg sm:text-xl">Activitate Recentă</CardTitle>
             <CardDescription className="text-sm">
@@ -72,8 +72,8 @@ const Dashboard = () => {
           <CardContent>
             <div className="space-y-3 sm:space-y-4">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="flex items-center gap-3 sm:gap-4 p-2 sm:p-3 bg-muted/50 rounded-lg">
-                  <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
+                <div key={i} className="flex items-center gap-3 sm:gap-4 p-2 sm:p-3 bg-muted/50 rounded-lg transition-all duration-200 hover:bg-muted/70 hover:translate-x-1 cursor-pointer">
+                  <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0 animate-pulse"></div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">Livrare #{1234 + i}</p>
                     <p className="text-xs text-muted-foreground truncate">Asfalt tip A - 45t</p>
@@ -85,7 +85,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="transition-all duration-300 hover:shadow-lg">
           <CardHeader>
             <CardTitle className="text-lg sm:text-xl">Producție pe Tipuri</CardTitle>
             <CardDescription className="text-sm">
@@ -100,7 +100,7 @@ const Dashboard = () => {
                   <span className="font-medium">45%</span>
                 </div>
                 <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <div className="h-full bg-primary" style={{ width: "45%" }}></div>
+                  <div className="h-full bg-primary transition-all duration-1000 ease-out" style={{ width: "45%" }}></div>
                 </div>
               </div>
               <div className="space-y-2">
@@ -109,7 +109,7 @@ const Dashboard = () => {
                   <span className="font-medium">30%</span>
                 </div>
                 <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <div className="h-full bg-chart-2" style={{ width: "30%" }}></div>
+                  <div className="h-full bg-chart-2 transition-all duration-1000 ease-out" style={{ width: "30%" }}></div>
                 </div>
               </div>
               <div className="space-y-2">
@@ -118,7 +118,7 @@ const Dashboard = () => {
                   <span className="font-medium">25%</span>
                 </div>
                 <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <div className="h-full bg-chart-3" style={{ width: "25%" }}></div>
+                  <div className="h-full bg-chart-3 transition-all duration-1000 ease-out" style={{ width: "25%" }}></div>
                 </div>
               </div>
             </div>
