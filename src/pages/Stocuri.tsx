@@ -239,7 +239,7 @@ export default function Stocuri() {
                 </TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
+            <TableBody key={`stocuri-page-${currentPage}`} className="animate-fade-in">
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={3} className="h-24 text-center">

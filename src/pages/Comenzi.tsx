@@ -876,7 +876,7 @@ export default function Comenzi() {
                     </TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody key={`mp-page-${currentPageMP}`} className="animate-fade-in">
                   {loadingMP ? (
                     <TableRow>
                       <TableCell colSpan={7} className="h-24 text-center">
@@ -1189,7 +1189,7 @@ export default function Comenzi() {
                     </TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody key={`pf-page-${currentPagePF}`} className="animate-fade-in">
                   {loadingPF ? (
                     <TableRow>
                       <TableCell colSpan={8} className="h-24 text-center">

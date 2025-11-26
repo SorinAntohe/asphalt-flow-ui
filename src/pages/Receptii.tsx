@@ -627,7 +627,7 @@ export default function Receptii() {
                   <FilterHeader field="observatii" label="Observații" />
                 </TableRow>
               </TableHeader>
-              <TableBody>
+              <TableBody key={`receptii-page-${currentPage}`} className="animate-fade-in">
                 {loading ? (
                   <TableRow className="h-10">
                     <TableCell colSpan={17} className="text-center py-1 text-xs">

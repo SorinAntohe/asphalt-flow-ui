@@ -519,7 +519,7 @@ const Liste = () => {
                     </TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody key={`autoturisme-page-${autoturismePage}`} className="animate-fade-in">
                   {paginatedAutoturisme.map(auto => <TableRow key={auto.id} className="h-10">
                       <TableCell className="font-medium py-1 text-xs">{auto.id}</TableCell>
                       <TableCell className="py-1 text-xs">{auto.tipMasina}</TableCell>
@@ -936,7 +936,7 @@ const Liste = () => {
                     </TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody key={`soferi-page-${soferiPage}`} className="animate-fade-in">
                   {paginatedSoferi.map(sofer => <TableRow key={sofer.id} className="h-10">
                       <TableCell className="font-medium py-1 text-xs">{sofer.id}</TableCell>
                       <TableCell className="py-1 text-xs">{sofer.nume}</TableCell>
@@ -1262,7 +1262,7 @@ const Liste = () => {
                     </TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody key={`materii-page-${materiiPrimePage}`} className="animate-fade-in">
                   {paginatedMateriiPrime.map(materie => <TableRow key={materie.id} className="h-10">
                       <TableCell className="font-medium py-1 text-xs">{materie.id}</TableCell>
                       <TableCell className="py-1 text-xs">{materie.denumire}</TableCell>
@@ -1574,7 +1574,7 @@ const Liste = () => {
                     </TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody key={`produse-page-${produseFinitePage}`} className="animate-fade-in">
                   {paginatedProduseFinite.map(produs => <TableRow key={produs.id} className="h-10">
                       <TableCell className="font-medium py-1 text-xs">{produs.id}</TableCell>
                       <TableCell className="py-1 text-xs">{produs.denumire}</TableCell>
@@ -1961,7 +1961,7 @@ const Liste = () => {
                     </TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody key={`clienti-page-${clientiPage}`} className="animate-fade-in">
                   {paginatedClienti.map(client => <TableRow key={client.id} className="h-10">
                       <TableCell className="font-medium py-1 text-xs">{client.id}</TableCell>
                       <TableCell className="py-1 text-xs">{client.denumire}</TableCell>
@@ -2390,7 +2390,7 @@ const Liste = () => {
                     </TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody key={`furnizori-page-${furnizoriPage}`} className="animate-fade-in">
                   {paginatedFurnizori.map(furnizor => <TableRow key={furnizor.id} className="h-10">
                       <TableCell className="font-medium py-1 text-xs">{furnizor.id}</TableCell>
                       <TableCell className="py-1 text-xs">{furnizor.denumire}</TableCell>
