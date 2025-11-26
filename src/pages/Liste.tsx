@@ -179,29 +179,29 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Tip Mașină</TableHead>
-                    <TableHead>Nr. Auto</TableHead>
-                    <TableHead>Sarcină Max</TableHead>
-                    <TableHead>Tip Transport</TableHead>
-                    <TableHead className="text-right">Acțiuni</TableHead>
+                    <TableHead className="h-8 text-xs">ID</TableHead>
+                    <TableHead className="h-8 text-xs">Tip Mașină</TableHead>
+                    <TableHead className="h-8 text-xs">Nr. Auto</TableHead>
+                    <TableHead className="h-8 text-xs">Sarcină Max</TableHead>
+                    <TableHead className="h-8 text-xs">Tip Transport</TableHead>
+                    <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paginatedAutoturisme.map(auto => <TableRow key={auto.id}>
-                      <TableCell className="font-medium">{auto.id}</TableCell>
-                      <TableCell>{auto.tipMasina}</TableCell>
-                      <TableCell>{auto.nrAuto}</TableCell>
-                      <TableCell>{auto.sarcinaMax}</TableCell>
-                      <TableCell>{auto.tipTransport}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button variant="ghost" size="sm" className="gap-2">
-                            <Pencil className="w-4 h-4" />
+                  {paginatedAutoturisme.map(auto => <TableRow key={auto.id} className="h-10">
+                      <TableCell className="font-medium py-1 text-xs">{auto.id}</TableCell>
+                      <TableCell className="py-1 text-xs">{auto.tipMasina}</TableCell>
+                      <TableCell className="py-1 text-xs">{auto.nrAuto}</TableCell>
+                      <TableCell className="py-1 text-xs">{auto.sarcinaMax}</TableCell>
+                      <TableCell className="py-1 text-xs">{auto.tipTransport}</TableCell>
+                      <TableCell className="text-right py-1">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
+                            <Pencil className="w-3 h-3" />
                             Editează
                           </Button>
-                          <Button variant="destructive" size="sm" className="gap-2 bg-red-700 hover:bg-red-600">
-                            <Trash2 className="w-4 h-4" />
+                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
+                            <Trash2 className="w-3 h-3" />
                             Șterge
                           </Button>
                         </div>
@@ -277,25 +277,25 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Nume Șofer</TableHead>
-                    <TableHead>C.I.</TableHead>
-                    <TableHead className="text-right">Acțiuni</TableHead>
+                    <TableHead className="h-8 text-xs">ID</TableHead>
+                    <TableHead className="h-8 text-xs">Nume Șofer</TableHead>
+                    <TableHead className="h-8 text-xs">C.I.</TableHead>
+                    <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paginatedSoferi.map(sofer => <TableRow key={sofer.id}>
-                      <TableCell className="font-medium">{sofer.id}</TableCell>
-                      <TableCell>{sofer.nume}</TableCell>
-                      <TableCell>{sofer.ci}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button variant="ghost" size="sm" className="gap-2">
-                            <Pencil className="w-4 h-4" />
+                  {paginatedSoferi.map(sofer => <TableRow key={sofer.id} className="h-10">
+                      <TableCell className="font-medium py-1 text-xs">{sofer.id}</TableCell>
+                      <TableCell className="py-1 text-xs">{sofer.nume}</TableCell>
+                      <TableCell className="py-1 text-xs">{sofer.ci}</TableCell>
+                      <TableCell className="text-right py-1">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
+                            <Pencil className="w-3 h-3" />
                             Editează
                           </Button>
-                          <Button variant="destructive" size="sm" className="gap-2 bg-red-700 hover:bg-red-600">
-                            <Trash2 className="w-4 h-4" />
+                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
+                            <Trash2 className="w-3 h-3" />
                             Șterge
                           </Button>
                         </div>
@@ -371,23 +371,23 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Denumire</TableHead>
-                    <TableHead className="text-right">Acțiuni</TableHead>
+                    <TableHead className="h-8 text-xs">ID</TableHead>
+                    <TableHead className="h-8 text-xs">Denumire</TableHead>
+                    <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paginatedMateriiPrime.map(materie => <TableRow key={materie.id}>
-                      <TableCell className="font-medium">{materie.id}</TableCell>
-                      <TableCell>{materie.denumire}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button variant="ghost" size="sm" className="gap-2">
-                            <Pencil className="w-4 h-4" />
+                  {paginatedMateriiPrime.map(materie => <TableRow key={materie.id} className="h-10">
+                      <TableCell className="font-medium py-1 text-xs">{materie.id}</TableCell>
+                      <TableCell className="py-1 text-xs">{materie.denumire}</TableCell>
+                      <TableCell className="text-right py-1">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
+                            <Pencil className="w-3 h-3" />
                             Editează
                           </Button>
-                          <Button variant="destructive" size="sm" className="gap-2 bg-red-700 hover:bg-red-600">
-                            <Trash2 className="w-4 h-4" />
+                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
+                            <Trash2 className="w-3 h-3" />
                             Șterge
                           </Button>
                         </div>
@@ -463,23 +463,23 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Denumire</TableHead>
-                    <TableHead className="text-right">Acțiuni</TableHead>
+                    <TableHead className="h-8 text-xs">ID</TableHead>
+                    <TableHead className="h-8 text-xs">Denumire</TableHead>
+                    <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paginatedProduseFinite.map(produs => <TableRow key={produs.id}>
-                      <TableCell className="font-medium">{produs.id}</TableCell>
-                      <TableCell>{produs.denumire}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button variant="ghost" size="sm" className="gap-2">
-                            <Pencil className="w-4 h-4" />
+                  {paginatedProduseFinite.map(produs => <TableRow key={produs.id} className="h-10">
+                      <TableCell className="font-medium py-1 text-xs">{produs.id}</TableCell>
+                      <TableCell className="py-1 text-xs">{produs.denumire}</TableCell>
+                      <TableCell className="text-right py-1">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
+                            <Pencil className="w-3 h-3" />
                             Editează
                           </Button>
-                          <Button variant="destructive" size="sm" className="gap-2 bg-red-700 hover:bg-red-600">
-                            <Trash2 className="w-4 h-4" />
+                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
+                            <Trash2 className="w-3 h-3" />
                             Șterge
                           </Button>
                         </div>
@@ -555,29 +555,29 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Denumire</TableHead>
-                    <TableHead>Sediu</TableHead>
-                    <TableHead>CUI</TableHead>
-                    <TableHead>Nr. REG</TableHead>
-                    <TableHead className="text-right">Acțiuni</TableHead>
+                    <TableHead className="h-8 text-xs">ID</TableHead>
+                    <TableHead className="h-8 text-xs">Denumire</TableHead>
+                    <TableHead className="h-8 text-xs">Sediu</TableHead>
+                    <TableHead className="h-8 text-xs">CUI</TableHead>
+                    <TableHead className="h-8 text-xs">Nr. REG</TableHead>
+                    <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paginatedClienti.map(client => <TableRow key={client.id}>
-                      <TableCell className="font-medium">{client.id}</TableCell>
-                      <TableCell>{client.denumire}</TableCell>
-                      <TableCell>{client.sediu}</TableCell>
-                      <TableCell>{client.cui}</TableCell>
-                      <TableCell>{client.nrReg}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button variant="ghost" size="sm" className="gap-2">
-                            <Pencil className="w-4 h-4" />
+                  {paginatedClienti.map(client => <TableRow key={client.id} className="h-10">
+                      <TableCell className="font-medium py-1 text-xs">{client.id}</TableCell>
+                      <TableCell className="py-1 text-xs">{client.denumire}</TableCell>
+                      <TableCell className="py-1 text-xs">{client.sediu}</TableCell>
+                      <TableCell className="py-1 text-xs">{client.cui}</TableCell>
+                      <TableCell className="py-1 text-xs">{client.nrReg}</TableCell>
+                      <TableCell className="text-right py-1">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
+                            <Pencil className="w-3 h-3" />
                             Editează
                           </Button>
-                          <Button variant="destructive" size="sm" className="gap-2 bg-red-700 hover:bg-red-600">
-                            <Trash2 className="w-4 h-4" />
+                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
+                            <Trash2 className="w-3 h-3" />
                             Șterge
                           </Button>
                         </div>
@@ -653,29 +653,29 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Denumire</TableHead>
-                    <TableHead>Sediu</TableHead>
-                    <TableHead>CUI</TableHead>
-                    <TableHead>Nr. REG</TableHead>
-                    <TableHead className="text-right">Acțiuni</TableHead>
+                    <TableHead className="h-8 text-xs">ID</TableHead>
+                    <TableHead className="h-8 text-xs">Denumire</TableHead>
+                    <TableHead className="h-8 text-xs">Sediu</TableHead>
+                    <TableHead className="h-8 text-xs">CUI</TableHead>
+                    <TableHead className="h-8 text-xs">Nr. REG</TableHead>
+                    <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paginatedFurnizori.map(furnizor => <TableRow key={furnizor.id}>
-                      <TableCell className="font-medium">{furnizor.id}</TableCell>
-                      <TableCell>{furnizor.denumire}</TableCell>
-                      <TableCell>{furnizor.sediu}</TableCell>
-                      <TableCell>{furnizor.cui}</TableCell>
-                      <TableCell>{furnizor.nrReg}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button variant="ghost" size="sm" className="gap-2">
-                            <Pencil className="w-4 h-4" />
+                  {paginatedFurnizori.map(furnizor => <TableRow key={furnizor.id} className="h-10">
+                      <TableCell className="font-medium py-1 text-xs">{furnizor.id}</TableCell>
+                      <TableCell className="py-1 text-xs">{furnizor.denumire}</TableCell>
+                      <TableCell className="py-1 text-xs">{furnizor.sediu}</TableCell>
+                      <TableCell className="py-1 text-xs">{furnizor.cui}</TableCell>
+                      <TableCell className="py-1 text-xs">{furnizor.nrReg}</TableCell>
+                      <TableCell className="text-right py-1">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
+                            <Pencil className="w-3 h-3" />
                             Editează
                           </Button>
-                          <Button variant="destructive" size="sm" className="gap-2 bg-red-700 hover:bg-red-600">
-                            <Trash2 className="w-4 h-4" />
+                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
+                            <Trash2 className="w-3 h-3" />
                             Șterge
                           </Button>
                         </div>
