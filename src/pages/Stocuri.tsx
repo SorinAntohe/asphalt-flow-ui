@@ -3,8 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
 interface StocItem {
@@ -17,6 +20,10 @@ export default function Stocuri() {
   const { toast } = useToast();
   const [stocuri, setStocuri] = useState<StocItem[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Pagination
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [filters, setFilters] = useState({
     id: "",
@@ -88,6 +95,17 @@ export default function Stocuri() {
       if (aVal > bVal) return direction === "asc" ? 1 : -1;
       return 0;
     });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredAndSortedStocuri.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedData = filteredAndSortedStocuri.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -207,14 +225,14 @@ export default function Stocuri() {
                     </div>
                   </TableCell>
                 </TableRow>
-              ) : filteredAndSortedStocuri.length === 0 ? (
+              ) : paginatedData.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={3} className="h-24 text-center text-muted-foreground">
                     Nu există date disponibile
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredAndSortedStocuri.map((item) => (
+                paginatedData.map((item) => (
                   <TableRow key={item.id} className="h-10">
                     <TableCell className="py-1 text-xs">{item.id}</TableCell>
                     <TableCell className="py-1 text-xs">{item.materiale_prime}</TableCell>
@@ -224,6 +242,62 @@ export default function Stocuri() {
               )}
             </TableBody>
           </Table>
+          
+          {/* Pagination Controls */}
+          <div className="flex items-center justify-between px-2 py-4">
+            <div className="flex items-center gap-2">
+              <Label className="text-sm">Înregistrări per pagină:</Label>
+              <Select
+                value={itemsPerPage.toString()}
+                onValueChange={(value) => {
+                  setItemsPerPage(Number(value));
+                  setCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="w-[70px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+              <span className="text-sm text-muted-foreground">
+                Afișare {startIndex + 1}-{Math.min(endIndex, filteredAndSortedStocuri.length)} din {filteredAndSortedStocuri.length}
+              </span>
+            </div>
+            
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      onClick={() => setCurrentPage(page)}
+                      isActive={currentPage === page}
+                      className="cursor-pointer"
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
         </CardContent>
       </Card>
     </div>
