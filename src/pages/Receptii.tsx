@@ -55,6 +55,7 @@ export default function Receptii() {
   const { toast } = useToast();
   const [receptii, setReceptii] = useState<ReceptieMaterial[]>([]);
   const [loading, setLoading] = useState(false);
+  const [availableCodes, setAvailableCodes] = useState<string[]>([]);
   
   // Pagination
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -135,6 +136,28 @@ export default function Receptii() {
   
   useEffect(() => {
     fetchReceptii();
+  }, []);
+
+  // Fetch available codes for dropdown
+  useEffect(() => {
+    const fetchCodes = async () => {
+      try {
+        const response = await fetch('http://192.168.1.22:8002/receptii/materiale/returneaza_coduri');
+        if (!response.ok) {
+          throw new Error('Failed to fetch codes');
+        }
+        const data = await response.json();
+        setAvailableCodes(data);
+      } catch (error) {
+        console.error('Error fetching codes:', error);
+        toast({
+          title: "Eroare",
+          description: "Nu s-au putut încărca codurile disponibile",
+          variant: "destructive"
+        });
+      }
+    };
+    fetchCodes();
   }, []);
 
   // Calculate diferenta when cantitate values change
@@ -556,12 +579,24 @@ export default function Receptii() {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="cod">Cod *</Label>
-                <Input
-                  id="cod"
+                <Select
                   value={form.cod}
-                  onChange={(e) => setForm({ ...form, cod: e.target.value })}
-                  className={formErrors.cod ? "border-destructive" : ""}
-                />
+                  onValueChange={(value) => setForm({ ...form, cod: value })}
+                >
+                  <SelectTrigger 
+                    id="cod"
+                    className={formErrors.cod ? "border-destructive" : ""}
+                  >
+                    <SelectValue placeholder="Selectează cod" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover z-50">
+                    {availableCodes.map((code) => (
+                      <SelectItem key={code} value={code}>
+                        {code}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 {formErrors.cod && <p className="text-sm text-destructive">{formErrors.cod}</p>}
               </div>
             </div>
