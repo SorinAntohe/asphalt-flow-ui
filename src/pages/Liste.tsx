@@ -613,18 +613,54 @@ const Liste = () => {
                    Sigur doriți să ștergeți acest autoturism? Această acțiune nu poate fi anulată.
                  </AlertDialogDescription>
                </AlertDialogHeader>
-               <AlertDialogFooter>
-                 <AlertDialogCancel>Anulează</AlertDialogCancel>
-                 <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => {
-                   toast({
-                     title: "Succes",
-                     description: "Autoturismul a fost șters cu succes"
-                   });
-                   setAutoturismeDeleteDialog({ open: false });
-                 }}>
-                   Șterge
-                 </AlertDialogAction>
-               </AlertDialogFooter>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Anulează</AlertDialogCancel>
+                  <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
+                    try {
+                      const response = await fetch('http://192.168.1.22:8002/sterge', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          tabel: "masini",
+                          id: autoturismeDeleteDialog.id
+                        })
+                      });
+
+                      if (!response.ok) {
+                        throw new Error('Eroare la ștergerea autoturismului');
+                      }
+
+                      toast({
+                        title: "Succes",
+                        description: "Autoturismul a fost șters cu succes"
+                      });
+
+                      // Refresh the list
+                      const refreshResponse = await fetch('http://192.168.1.22:8002/liste/returneaza/masini');
+                      const data = await refreshResponse.json();
+                      const mappedData = data.map((item: any) => ({
+                        id: item.id,
+                        nrAuto: item.nr_inmatriculare,
+                        tipMasina: item.tip_masina,
+                        tipTransport: item.tip_transport,
+                        sarcinaMax: item.masa_max_admisa.toString(),
+                        tara: item.tara.toString()
+                      }));
+                      setAutoturisme(mappedData);
+                      setAutoturismeDeleteDialog({ open: false });
+                    } catch (error) {
+                      toast({
+                        title: "Eroare",
+                        description: "Nu s-a putut șterge autoturismul",
+                        variant: "destructive"
+                      });
+                    }
+                  }}>
+                    Șterge
+                  </AlertDialogAction>
+                </AlertDialogFooter>
              </AlertDialogContent>
            </AlertDialog>
          </TabsContent>
@@ -855,18 +891,41 @@ const Liste = () => {
                    Sigur doriți să ștergeți acest șofer? Această acțiune nu poate fi anulată.
                  </AlertDialogDescription>
                </AlertDialogHeader>
-               <AlertDialogFooter>
-                 <AlertDialogCancel>Anulează</AlertDialogCancel>
-                 <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => {
-                   toast({
-                     title: "Succes",
-                     description: "Șoferul a fost șters cu succes"
-                   });
-                   setSoferiDeleteDialog({ open: false });
-                 }}>
-                   Șterge
-                 </AlertDialogAction>
-               </AlertDialogFooter>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Anulează</AlertDialogCancel>
+                  <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
+                    try {
+                      const response = await fetch('http://192.168.1.22:8002/sterge', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          tabel: "soferi",
+                          id: soferiDeleteDialog.id
+                        })
+                      });
+
+                      if (!response.ok) {
+                        throw new Error('Eroare la ștergerea șoferului');
+                      }
+
+                      toast({
+                        title: "Succes",
+                        description: "Șoferul a fost șters cu succes"
+                      });
+                      setSoferiDeleteDialog({ open: false });
+                    } catch (error) {
+                      toast({
+                        title: "Eroare",
+                        description: "Nu s-a putut șterge șoferul",
+                        variant: "destructive"
+                      });
+                    }
+                  }}>
+                    Șterge
+                  </AlertDialogAction>
+                </AlertDialogFooter>
              </AlertDialogContent>
            </AlertDialog>
          </TabsContent>
@@ -1062,18 +1121,41 @@ const Liste = () => {
                    Sigur doriți să ștergeți această materie primă? Această acțiune nu poate fi anulată.
                  </AlertDialogDescription>
                </AlertDialogHeader>
-               <AlertDialogFooter>
-                 <AlertDialogCancel>Anulează</AlertDialogCancel>
-                 <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => {
-                   toast({
-                     title: "Succes",
-                     description: "Materia primă a fost ștearsă cu succes"
-                   });
-                   setMateriiPrimeDeleteDialog({ open: false });
-                 }}>
-                   Șterge
-                 </AlertDialogAction>
-               </AlertDialogFooter>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Anulează</AlertDialogCancel>
+                  <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
+                    try {
+                      const response = await fetch('http://192.168.1.22:8002/sterge', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          tabel: "materii_prime",
+                          id: materiiPrimeDeleteDialog.id
+                        })
+                      });
+
+                      if (!response.ok) {
+                        throw new Error('Eroare la ștergerea materiei prime');
+                      }
+
+                      toast({
+                        title: "Succes",
+                        description: "Materia primă a fost ștearsă cu succes"
+                      });
+                      setMateriiPrimeDeleteDialog({ open: false });
+                    } catch (error) {
+                      toast({
+                        title: "Eroare",
+                        description: "Nu s-a putut șterge materia primă",
+                        variant: "destructive"
+                      });
+                    }
+                  }}>
+                    Șterge
+                  </AlertDialogAction>
+                </AlertDialogFooter>
              </AlertDialogContent>
            </AlertDialog>
          </TabsContent>
@@ -1269,18 +1351,41 @@ const Liste = () => {
                    Sigur doriți să ștergeți acest produs finit? Această acțiune nu poate fi anulată.
                  </AlertDialogDescription>
                </AlertDialogHeader>
-               <AlertDialogFooter>
-                 <AlertDialogCancel>Anulează</AlertDialogCancel>
-                 <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => {
-                   toast({
-                     title: "Succes",
-                     description: "Produsul finit a fost șters cu succes"
-                   });
-                   setProduseFiniteDeleteDialog({ open: false });
-                 }}>
-                   Șterge
-                 </AlertDialogAction>
-               </AlertDialogFooter>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Anulează</AlertDialogCancel>
+                  <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
+                    try {
+                      const response = await fetch('http://192.168.1.22:8002/sterge', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          tabel: "produse_finite",
+                          id: produseFiniteDeleteDialog.id
+                        })
+                      });
+
+                      if (!response.ok) {
+                        throw new Error('Eroare la ștergerea produsului finit');
+                      }
+
+                      toast({
+                        title: "Succes",
+                        description: "Produsul finit a fost șters cu succes"
+                      });
+                      setProduseFiniteDeleteDialog({ open: false });
+                    } catch (error) {
+                      toast({
+                        title: "Eroare",
+                        description: "Nu s-a putut șterge produsul finit",
+                        variant: "destructive"
+                      });
+                    }
+                  }}>
+                    Șterge
+                  </AlertDialogAction>
+                </AlertDialogFooter>
              </AlertDialogContent>
            </AlertDialog>
          </TabsContent>
@@ -1581,18 +1686,41 @@ const Liste = () => {
                    Sigur doriți să ștergeți acest client? Această acțiune nu poate fi anulată.
                  </AlertDialogDescription>
                </AlertDialogHeader>
-               <AlertDialogFooter>
-                 <AlertDialogCancel>Anulează</AlertDialogCancel>
-                 <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => {
-                   toast({
-                     title: "Succes",
-                     description: "Clientul a fost șters cu succes"
-                   });
-                   setClientiDeleteDialog({ open: false });
-                 }}>
-                   Șterge
-                 </AlertDialogAction>
-               </AlertDialogFooter>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Anulează</AlertDialogCancel>
+                  <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
+                    try {
+                      const response = await fetch('http://192.168.1.22:8002/sterge', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          tabel: "clienti",
+                          id: clientiDeleteDialog.id
+                        })
+                      });
+
+                      if (!response.ok) {
+                        throw new Error('Eroare la ștergerea clientului');
+                      }
+
+                      toast({
+                        title: "Succes",
+                        description: "Clientul a fost șters cu succes"
+                      });
+                      setClientiDeleteDialog({ open: false });
+                    } catch (error) {
+                      toast({
+                        title: "Eroare",
+                        description: "Nu s-a putut șterge clientul",
+                        variant: "destructive"
+                      });
+                    }
+                  }}>
+                    Șterge
+                  </AlertDialogAction>
+                </AlertDialogFooter>
              </AlertDialogContent>
            </AlertDialog>
          </TabsContent>
@@ -1893,18 +2021,41 @@ const Liste = () => {
                    Sigur doriți să ștergeți acest furnizor? Această acțiune nu poate fi anulată.
                  </AlertDialogDescription>
                </AlertDialogHeader>
-               <AlertDialogFooter>
-                 <AlertDialogCancel>Anulează</AlertDialogCancel>
-                 <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => {
-                   toast({
-                     title: "Succes",
-                     description: "Furnizorul a fost șters cu succes"
-                   });
-                   setFurnizoriDeleteDialog({ open: false });
-                 }}>
-                   Șterge
-                 </AlertDialogAction>
-               </AlertDialogFooter>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Anulează</AlertDialogCancel>
+                  <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
+                    try {
+                      const response = await fetch('http://192.168.1.22:8002/sterge', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          tabel: "furnizori",
+                          id: furnizoriDeleteDialog.id
+                        })
+                      });
+
+                      if (!response.ok) {
+                        throw new Error('Eroare la ștergerea furnizorului');
+                      }
+
+                      toast({
+                        title: "Succes",
+                        description: "Furnizorul a fost șters cu succes"
+                      });
+                      setFurnizoriDeleteDialog({ open: false });
+                    } catch (error) {
+                      toast({
+                        title: "Eroare",
+                        description: "Nu s-a putut șterge furnizorul",
+                        variant: "destructive"
+                      });
+                    }
+                  }}>
+                    Șterge
+                  </AlertDialogAction>
+                </AlertDialogFooter>
              </AlertDialogContent>
            </AlertDialog>
          </TabsContent>
