@@ -4,9 +4,15 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 const Liste = () => {
-  const ITEMS_PER_PAGE = 10;
+  const [autoturismePerPage, setAutoturismePerPage] = useState(10);
+  const [soferiPerPage, setSoferiPerPage] = useState(10);
+  const [materiiPrimePerPage, setMateriiPrimePerPage] = useState(10);
+  const [produseFinitePerPage, setProduseFinitePerPage] = useState(10);
+  const [clientiPerPage, setClientiPerPage] = useState(10);
+  const [furnizoriPerPage, setFurnizoriPerPage] = useState(10);
   
   const [autoturismePage, setAutoturismePage] = useState(1);
   const [soferiPage, setSoferiPage] = useState(1);
@@ -58,17 +64,25 @@ const Liste = () => {
     { id: 9, denumire: "16/22.4 CONC" },
     { id: 10, denumire: "16/22.4 CRIBLURI" },
     { id: 11, denumire: "16/31.5 CRIBLURI" },
-    { id: 12, denumire: "CTL" },
-    { id: 13, denumire: "BITUM 50/70" },
-    { id: 14, denumire: "FILLER" },
-    { id: 15, denumire: "CURENT ELECTRIC" },
-    { id: 16, denumire: "MOTORINA" },
-    { id: 17, denumire: "16/31.5 CONC" },
-    { id: 18, denumire: "APA" },
-    { id: 19, denumire: "ACID CLORHIDRIC" },
-    { id: 20, denumire: "EMULGATOR" },
-    { id: 21, denumire: "SARE" },
-    { id: 22, denumire: "CELULOZA TOPCEL/TECHNOCEL" }
+    { id: 12, denumire: "16/31.5 CONC" },
+    { id: 13, denumire: "CTL" },
+    { id: 14, denumire: "BITUM 50/70" },
+    { id: 15, denumire: "BITUM 70/100" },
+    { id: 16, denumire: "FILLER CALCAR" },
+    { id: 17, denumire: "FILLER CIMENT" },
+    { id: 18, denumire: "CURENT ELECTRIC" },
+    { id: 19, denumire: "MOTORINA" },
+    { id: 20, denumire: "APA" },
+    { id: 21, denumire: "ACID CLORHIDRIC" },
+    { id: 22, denumire: "EMULGATOR CATIONIC" },
+    { id: 23, denumire: "EMULGATOR ANIONIC" },
+    { id: 24, denumire: "SARE DE DRUM" },
+    { id: 25, denumire: "CELULOZA TOPCEL" },
+    { id: 26, denumire: "CELULOZA TECHNOCEL" },
+    { id: 27, denumire: "ADITIV ADEZIUNE" },
+    { id: 28, denumire: "POLIMER SBS" },
+    { id: 29, denumire: "FIBRĂ CELULOZICĂ" },
+    { id: 30, denumire: "NISIP SILICOS" }
   ];
   const produseFinite = [{
     id: 1,
@@ -129,20 +143,20 @@ const Liste = () => {
   }];
 
   // Pagination helpers
-  const getPaginatedData = (data: any[], page: number) => {
-    const startIndex = (page - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
+  const getPaginatedData = (data: any[], page: number, itemsPerPage: number) => {
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
     return data.slice(startIndex, endIndex);
   };
 
-  const getTotalPages = (dataLength: number) => Math.ceil(dataLength / ITEMS_PER_PAGE);
+  const getTotalPages = (dataLength: number, itemsPerPage: number) => Math.ceil(dataLength / itemsPerPage);
 
-  const paginatedAutoturisme = getPaginatedData(autoturisme, autoturismePage);
-  const paginatedSoferi = getPaginatedData(soferi, soferiPage);
-  const paginatedMateriiPrime = getPaginatedData(materiiPrime, materiiPrimePage);
-  const paginatedProduseFinite = getPaginatedData(produseFinite, produseFinitePage);
-  const paginatedClienti = getPaginatedData(clienti, clientiPage);
-  const paginatedFurnizori = getPaginatedData(furnizori, furnizoriPage);
+  const paginatedAutoturisme = getPaginatedData(autoturisme, autoturismePage, autoturismePerPage);
+  const paginatedSoferi = getPaginatedData(soferi, soferiPage, soferiPerPage);
+  const paginatedMateriiPrime = getPaginatedData(materiiPrime, materiiPrimePage, materiiPrimePerPage);
+  const paginatedProduseFinite = getPaginatedData(produseFinite, produseFinitePage, produseFinitePerPage);
+  const paginatedClienti = getPaginatedData(clienti, clientiPage, clientiPerPage);
+  const paginatedFurnizori = getPaginatedData(furnizori, furnizoriPage, furnizoriPerPage);
   return <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -165,17 +179,34 @@ const Liste = () => {
 
         <TabsContent value="autoturisme">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Lista Autoturisme</CardTitle>
-                <CardDescription>
-                  Parcul auto disponibil pentru transport
-                </CardDescription>
+            <CardHeader>
+              <div className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Lista Autoturisme</CardTitle>
+                  <CardDescription>
+                    Parcul auto disponibil pentru transport
+                  </CardDescription>
+                </div>
+                <Button className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Adaugă Autoturism
+                </Button>
               </div>
-              <Button className="gap-2">
-                <Plus className="w-4 h-4" />
-                Adaugă Autoturism
-              </Button>
+              <div className="flex items-center gap-2 mt-4">
+                <span className="text-sm text-muted-foreground">Afișează:</span>
+                <Select value={autoturismePerPage.toString()} onValueChange={(value) => { setAutoturismePerPage(Number(value)); setAutoturismePage(1); }}>
+                  <SelectTrigger className="w-20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="25">25</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+                <span className="text-sm text-muted-foreground">înregistrări</span>
+              </div>
             </CardHeader>
             <CardContent>
               <Table>
@@ -211,7 +242,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(autoturisme.length) > 1 && (
+              {getTotalPages(autoturisme.length, autoturismePerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -220,7 +251,7 @@ const Liste = () => {
                         className={autoturismePage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(autoturisme.length) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(autoturisme.length, autoturismePerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setAutoturismePage(page)}
@@ -233,8 +264,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setAutoturismePage(p => Math.min(getTotalPages(autoturisme.length), p + 1))}
-                        className={autoturismePage === getTotalPages(autoturisme.length) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setAutoturismePage(p => Math.min(getTotalPages(autoturisme.length, autoturismePerPage), p + 1))}
+                        className={autoturismePage === getTotalPages(autoturisme.length, autoturismePerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -246,17 +277,34 @@ const Liste = () => {
 
         <TabsContent value="soferi">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Lista Șoferi</CardTitle>
-                <CardDescription>
-                  Personal autorizat pentru conducere
-                </CardDescription>
+            <CardHeader>
+              <div className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Lista Șoferi</CardTitle>
+                  <CardDescription>
+                    Personal autorizat pentru conducere
+                  </CardDescription>
+                </div>
+                <Button className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Adaugă Șofer
+                </Button>
               </div>
-              <Button className="gap-2">
-                <Plus className="w-4 h-4" />
-                Adaugă Șofer
-              </Button>
+              <div className="flex items-center gap-2 mt-4">
+                <span className="text-sm text-muted-foreground">Afișează:</span>
+                <Select value={soferiPerPage.toString()} onValueChange={(value) => { setSoferiPerPage(Number(value)); setSoferiPage(1); }}>
+                  <SelectTrigger className="w-20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="25">25</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+                <span className="text-sm text-muted-foreground">înregistrări</span>
+              </div>
             </CardHeader>
             <CardContent>
               <Table>
@@ -288,7 +336,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(soferi.length) > 1 && (
+              {getTotalPages(soferi.length, soferiPerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -297,7 +345,7 @@ const Liste = () => {
                         className={soferiPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(soferi.length) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(soferi.length, soferiPerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setSoferiPage(page)}
@@ -310,8 +358,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setSoferiPage(p => Math.min(getTotalPages(soferi.length), p + 1))}
-                        className={soferiPage === getTotalPages(soferi.length) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setSoferiPage(p => Math.min(getTotalPages(soferi.length, soferiPerPage), p + 1))}
+                        className={soferiPage === getTotalPages(soferi.length, soferiPerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -323,17 +371,34 @@ const Liste = () => {
 
         <TabsContent value="materii">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Lista Materii Prime</CardTitle>
-                <CardDescription>
-                  Materii prime utilizate în producție
-                </CardDescription>
+            <CardHeader>
+              <div className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Lista Materii Prime</CardTitle>
+                  <CardDescription>
+                    Materii prime utilizate în producție
+                  </CardDescription>
+                </div>
+                <Button className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Adaugă Materie Primă
+                </Button>
               </div>
-              <Button className="gap-2">
-                <Plus className="w-4 h-4" />
-                Adaugă Materie Primă
-              </Button>
+              <div className="flex items-center gap-2 mt-4">
+                <span className="text-sm text-muted-foreground">Afișează:</span>
+                <Select value={materiiPrimePerPage.toString()} onValueChange={(value) => { setMateriiPrimePerPage(Number(value)); setMateriiPrimePage(1); }}>
+                  <SelectTrigger className="w-20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="25">25</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+                <span className="text-sm text-muted-foreground">înregistrări</span>
+              </div>
             </CardHeader>
             <CardContent>
               <Table>
@@ -363,7 +428,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(materiiPrime.length) > 1 && (
+              {getTotalPages(materiiPrime.length, materiiPrimePerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -372,7 +437,7 @@ const Liste = () => {
                         className={materiiPrimePage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(materiiPrime.length) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(materiiPrime.length, materiiPrimePerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setMateriiPrimePage(page)}
@@ -385,8 +450,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setMateriiPrimePage(p => Math.min(getTotalPages(materiiPrime.length), p + 1))}
-                        className={materiiPrimePage === getTotalPages(materiiPrime.length) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setMateriiPrimePage(p => Math.min(getTotalPages(materiiPrime.length, materiiPrimePerPage), p + 1))}
+                        className={materiiPrimePage === getTotalPages(materiiPrime.length, materiiPrimePerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -398,17 +463,34 @@ const Liste = () => {
 
         <TabsContent value="produse">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Lista Produse Finite</CardTitle>
-                <CardDescription>
-                  Produse finite disponibile pentru livrare
-                </CardDescription>
+            <CardHeader>
+              <div className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Lista Produse Finite</CardTitle>
+                  <CardDescription>
+                    Produse finite disponibile pentru livrare
+                  </CardDescription>
+                </div>
+                <Button className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Adaugă Produs
+                </Button>
               </div>
-              <Button className="gap-2">
-                <Plus className="w-4 h-4" />
-                Adaugă Produs
-              </Button>
+              <div className="flex items-center gap-2 mt-4">
+                <span className="text-sm text-muted-foreground">Afișează:</span>
+                <Select value={produseFinitePerPage.toString()} onValueChange={(value) => { setProduseFinitePerPage(Number(value)); setProduseFinitePage(1); }}>
+                  <SelectTrigger className="w-20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="25">25</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+                <span className="text-sm text-muted-foreground">înregistrări</span>
+              </div>
             </CardHeader>
             <CardContent>
               <Table>
@@ -442,7 +524,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(produseFinite.length) > 1 && (
+              {getTotalPages(produseFinite.length, produseFinitePerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -451,7 +533,7 @@ const Liste = () => {
                         className={produseFinitePage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(produseFinite.length) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(produseFinite.length, produseFinitePerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setProduseFinitePage(page)}
@@ -464,8 +546,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setProduseFinitePage(p => Math.min(getTotalPages(produseFinite.length), p + 1))}
-                        className={produseFinitePage === getTotalPages(produseFinite.length) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setProduseFinitePage(p => Math.min(getTotalPages(produseFinite.length, produseFinitePerPage), p + 1))}
+                        className={produseFinitePage === getTotalPages(produseFinite.length, produseFinitePerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -477,17 +559,34 @@ const Liste = () => {
 
         <TabsContent value="clienti">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Lista Clienți</CardTitle>
-                <CardDescription>
-                  Clienți activi și parteneri comerciali
-                </CardDescription>
+            <CardHeader>
+              <div className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Lista Clienți</CardTitle>
+                  <CardDescription>
+                    Clienți activi și parteneri comerciali
+                  </CardDescription>
+                </div>
+                <Button className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Adaugă Client
+                </Button>
               </div>
-              <Button className="gap-2">
-                <Plus className="w-4 h-4" />
-                Adaugă Client
-              </Button>
+              <div className="flex items-center gap-2 mt-4">
+                <span className="text-sm text-muted-foreground">Afișează:</span>
+                <Select value={clientiPerPage.toString()} onValueChange={(value) => { setClientiPerPage(Number(value)); setClientiPage(1); }}>
+                  <SelectTrigger className="w-20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="25">25</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+                <span className="text-sm text-muted-foreground">înregistrări</span>
+              </div>
             </CardHeader>
             <CardContent>
               <Table>
@@ -521,7 +620,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(clienti.length) > 1 && (
+              {getTotalPages(clienti.length, clientiPerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -530,7 +629,7 @@ const Liste = () => {
                         className={clientiPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(clienti.length) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(clienti.length, clientiPerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setClientiPage(page)}
@@ -543,8 +642,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setClientiPage(p => Math.min(getTotalPages(clienti.length), p + 1))}
-                        className={clientiPage === getTotalPages(clienti.length) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setClientiPage(p => Math.min(getTotalPages(clienti.length, clientiPerPage), p + 1))}
+                        className={clientiPage === getTotalPages(clienti.length, clientiPerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -556,17 +655,34 @@ const Liste = () => {
 
         <TabsContent value="furnizori">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Lista Furnizori</CardTitle>
-                <CardDescription>
-                  Furnizori de materii prime și materiale
-                </CardDescription>
+            <CardHeader>
+              <div className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Lista Furnizori</CardTitle>
+                  <CardDescription>
+                    Furnizori de materii prime și materiale
+                  </CardDescription>
+                </div>
+                <Button className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Adaugă Furnizor
+                </Button>
               </div>
-              <Button className="gap-2">
-                <Plus className="w-4 h-4" />
-                Adaugă Furnizor
-              </Button>
+              <div className="flex items-center gap-2 mt-4">
+                <span className="text-sm text-muted-foreground">Afișează:</span>
+                <Select value={furnizoriPerPage.toString()} onValueChange={(value) => { setFurnizoriPerPage(Number(value)); setFurnizoriPage(1); }}>
+                  <SelectTrigger className="w-20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="25">25</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+                <span className="text-sm text-muted-foreground">înregistrări</span>
+              </div>
             </CardHeader>
             <CardContent>
               <Table>
@@ -600,7 +716,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(furnizori.length) > 1 && (
+              {getTotalPages(furnizori.length, furnizoriPerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -609,7 +725,7 @@ const Liste = () => {
                         className={furnizoriPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(furnizori.length) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(furnizori.length, furnizoriPerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setFurnizoriPage(page)}
@@ -622,8 +738,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setFurnizoriPage(p => Math.min(getTotalPages(furnizori.length), p + 1))}
-                        className={furnizoriPage === getTotalPages(furnizori.length) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setFurnizoriPage(p => Math.min(getTotalPages(furnizori.length, furnizoriPerPage), p + 1))}
+                        className={furnizoriPage === getTotalPages(furnizori.length, furnizoriPerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
