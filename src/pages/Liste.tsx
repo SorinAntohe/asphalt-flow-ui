@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
@@ -102,9 +102,16 @@ const Liste = () => {
                       <TableCell>{auto.numar}</TableCell>
                       <TableCell>{auto.an}</TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">
-                          Editează
-                        </Button>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button variant="ghost" size="sm" className="gap-2">
+                            <Pencil className="w-4 h-4" />
+                            Editează
+                          </Button>
+                          <Button variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive">
+                            <Trash2 className="w-4 h-4" />
+                            Șterge
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -147,9 +154,16 @@ const Liste = () => {
                       <TableCell>{sofer.telefon}</TableCell>
                       <TableCell>{sofer.permis}</TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">
-                          Editează
-                        </Button>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button variant="ghost" size="sm" className="gap-2">
+                            <Pencil className="w-4 h-4" />
+                            Editează
+                          </Button>
+                          <Button variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive">
+                            <Trash2 className="w-4 h-4" />
+                            Șterge
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -194,9 +208,16 @@ const Liste = () => {
                       <TableCell>{materie.stoc}</TableCell>
                       <TableCell>{materie.pret}</TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">
-                          Editează
-                        </Button>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button variant="ghost" size="sm" className="gap-2">
+                            <Pencil className="w-4 h-4" />
+                            Editează
+                          </Button>
+                          <Button variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive">
+                            <Trash2 className="w-4 h-4" />
+                            Șterge
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -239,9 +260,16 @@ const Liste = () => {
                       <TableCell>{produs.stoc}</TableCell>
                       <TableCell>{produs.pret}</TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">
-                          Editează
-                        </Button>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button variant="ghost" size="sm" className="gap-2">
+                            <Pencil className="w-4 h-4" />
+                            Editează
+                          </Button>
+                          <Button variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive">
+                            <Trash2 className="w-4 h-4" />
+                            Șterge
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -284,9 +312,16 @@ const Liste = () => {
                       <TableCell>{client.telefon}</TableCell>
                       <TableCell>{client.oras}</TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">
-                          Editează
-                        </Button>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button variant="ghost" size="sm" className="gap-2">
+                            <Pencil className="w-4 h-4" />
+                            Editează
+                          </Button>
+                          <Button variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive">
+                            <Trash2 className="w-4 h-4" />
+                            Șterge
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -329,9 +364,16 @@ const Liste = () => {
                       <TableCell>{furnizor.telefon}</TableCell>
                       <TableCell>{furnizor.produse}</TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">
-                          Editează
-                        </Button>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button variant="ghost" size="sm" className="gap-2">
+                            <Pencil className="w-4 h-4" />
+                            Editează
+                          </Button>
+                          <Button variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive">
+                            <Trash2 className="w-4 h-4" />
+                            Șterge
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
