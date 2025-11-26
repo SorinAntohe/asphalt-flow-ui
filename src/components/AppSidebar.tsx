@@ -114,17 +114,16 @@ export function AppSidebar() {
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
-                <CollapsibleContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
-                  <SidebarMenu className="ml-4 space-y-1">
+                <CollapsibleContent className="overflow-hidden transition-all duration-300 data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                  <SidebarMenu className="ml-4 space-y-1 mt-1">
                     {gestiuneItems.map((item, index) => (
                       <SidebarMenuItem 
                         key={item.title}
-                        className="opacity-0 data-[parent-open=true]:animate-fade-in"
+                        className="animate-in fade-in slide-in-from-left-2"
                         style={{ 
-                          animationDelay: `${index * 80}ms`,
-                          animationFillMode: 'forwards'
+                          animationDelay: `${index * 50}ms`,
+                          animationDuration: '200ms'
                         }}
-                        data-parent-open={gestiuneOpen}
                       >
                         <SidebarMenuButton asChild isActive={isActive(item.url)}>
                           <NavLink
