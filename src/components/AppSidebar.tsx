@@ -134,6 +134,7 @@ export function AppSidebar() {
                     background: gestiuneOpen ? 'hsl(var(--sidebar-accent) / 0.3)' : 'transparent',
                     padding: gestiuneOpen ? '8px 0' : '0',
                     marginTop: gestiuneOpen ? '8px' : '0',
+                    marginLeft: isOpen ? '0' : '-16px',
                   }}
                 >
                   <SidebarMenu className="ml-4 space-y-1 mt-1">
@@ -150,8 +151,9 @@ export function AppSidebar() {
                             to={item.url}
                             className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors hover:bg-sidebar-accent text-sidebar-foreground"
                             activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                            title={!isOpen ? item.title : undefined}
                           >
-                            <item.icon className="w-5 h-5" />
+                            <item.icon className="w-5 h-5 flex-shrink-0" />
                             {isOpen && <span>{item.title}</span>}
                           </NavLink>
                         </SidebarMenuButton>
