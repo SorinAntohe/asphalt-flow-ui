@@ -11,6 +11,7 @@ import Receptii from "./pages/Receptii";
 import Livrari from "./pages/Livrari";
 import Consumuri from "./pages/Consumuri";
 import Comenzi from "./pages/Comenzi";
+import Stocuri from "./pages/Stocuri";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -68,6 +69,14 @@ const App = () => (
             element={
               <Layout>
                 <Comenzi />
+              </Layout>
+            }
+          />
+          <Route
+            path="/stocuri"
+            element={
+              <Layout>
+                <Stocuri />
               </Layout>
             }
           />

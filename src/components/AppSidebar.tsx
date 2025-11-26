@@ -1,4 +1,4 @@
-import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList } from "lucide-react";
+import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -21,6 +21,7 @@ const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Liste", url: "/liste", icon: ListChecks },
   { title: "Comenzi", url: "/comenzi", icon: ClipboardList },
+  { title: "Stocuri", url: "/stocuri", icon: Package },
   { title: "Receptii", url: "/receptii", icon: PackageCheck },
   { title: "Livrari", url: "/livrari", icon: Truck },
   { title: "Consumuri", url: "/consumuri", icon: BarChart3 },
