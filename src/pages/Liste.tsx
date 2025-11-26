@@ -38,25 +38,13 @@ const Liste = () => {
   }];
   const materiiPrime = [{
     id: 1,
-    cod: "BIT-001",
-    denumire: "Bitum rutier",
-    um: "tone",
-    stoc: "120t",
-    pret: "350 RON/t"
+    denumire: "Bitum rutier"
   }, {
     id: 2,
-    cod: "AGR-001",
-    denumire: "Agregate minerale",
-    um: "tone",
-    stoc: "560t",
-    pret: "80 RON/t"
+    denumire: "Agregate minerale"
   }, {
     id: 3,
-    cod: "ADD-001",
-    denumire: "Aditivi speciali",
-    um: "kg",
-    stoc: "450kg",
-    pret: "25 RON/kg"
+    denumire: "Aditivi speciali"
   }];
   const produseFinite = [{
     id: 1,
@@ -253,21 +241,15 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Cod</TableHead>
+                    <TableHead>ID</TableHead>
                     <TableHead>Denumire</TableHead>
-                    <TableHead>UM</TableHead>
-                    <TableHead>Stoc</TableHead>
-                    <TableHead>Preț Unitar</TableHead>
                     <TableHead className="text-right">Acțiuni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {materiiPrime.map(materie => <TableRow key={materie.id}>
-                      <TableCell className="font-medium">{materie.cod}</TableCell>
+                      <TableCell className="font-medium">{materie.id}</TableCell>
                       <TableCell>{materie.denumire}</TableCell>
-                      <TableCell>{materie.um}</TableCell>
-                      <TableCell>{materie.stoc}</TableCell>
-                      <TableCell>{materie.pret}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Button variant="ghost" size="sm" className="gap-2">
