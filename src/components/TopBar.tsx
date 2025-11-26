@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Search, Bell, User, Moon, Sun, Factory } from "lucide-react";
+import { Search, Bell, User, Moon, Sun } from "lucide-react";
+import logo from "@/assets/logo.jpg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -35,10 +36,7 @@ export function TopBar() {
         <SidebarTrigger className="-ml-1" />
         
         <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-            <Factory className="w-6 h-6 text-primary-foreground" />
-          </div>
-          <span className="font-semibold text-lg hidden md:inline">AsphaltPro</span>
+          <img src={logo} alt="Duotip Solutions" className="h-10 object-contain" />
         </div>
 
         <div className="flex-1 flex items-center gap-4 ml-4">
