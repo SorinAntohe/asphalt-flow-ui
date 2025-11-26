@@ -114,7 +114,7 @@ export function AppSidebar() {
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
-                <CollapsibleContent>
+                <CollapsibleContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
                   <SidebarMenu className="ml-4">
                     {gestiuneItems.map((item) => (
                       <SidebarMenuItem key={item.title}>
