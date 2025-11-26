@@ -82,7 +82,7 @@ const Liste = () => {
   const [soferi, setSoferi] = useState<any[]>([]);
   const [materiiPrime, setMateriiPrime] = useState<any[]>([]);
   const [produseFinite, setProduseFinite] = useState<any[]>([]);
-  const clienti: any[] = [];
+  const [clienti, setClienti] = useState<any[]>([]);
   const furnizori: any[] = [];
 
   // Fetch autoturisme from API
@@ -177,6 +177,32 @@ const Liste = () => {
     };
     fetchProduseFinite();
   }, [toast]);
+
+  // Fetch clienti from API
+  useEffect(() => {
+    const fetchClienti = async () => {
+      try {
+        const response = await fetch('http://192.168.1.22:8002/liste/returneaza/clienti');
+        const data = await response.json();
+        const mappedData = data.map((item: any) => ({
+          id: item.id,
+          denumire: item.nume,
+          sediu: item.adresa,
+          cui: item.cui,
+          nrReg: item.nr_reg
+        }));
+        setClienti(mappedData);
+      } catch (error) {
+        toast({
+          title: "Eroare",
+          description: "Nu s-au putut încărca datele despre clienți",
+          variant: "destructive"
+        });
+      }
+    };
+    fetchClienti();
+  }, [toast]);
+
 
   // Pagination helpers
   const getPaginatedData = (data: any[], page: number, itemsPerPage: number) => {
