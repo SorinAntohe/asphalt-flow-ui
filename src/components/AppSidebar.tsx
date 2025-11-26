@@ -28,10 +28,11 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
-  const { open } = useSidebar();
+  const { state } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
   const [isDark, setIsDark] = useState(false);
+  const isOpen = state === "expanded";
 
   useEffect(() => {
     const checkTheme = () => {
@@ -54,7 +55,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       <SidebarHeader className="border-b border-sidebar-border py-3">
         <div className="flex items-center gap-3 px-3">
-          {open ? (
+          {isOpen ? (
             <>
               <img 
                 src={logoDWhite} 
@@ -91,7 +92,7 @@ export function AppSidebar() {
                       activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
                     >
                       <item.icon className="w-5 h-5" />
-                      {open && <span>{item.title}</span>}
+                      {isOpen && <span>{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
