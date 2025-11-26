@@ -245,6 +245,41 @@ export default function Receptii() {
     fetchTipMasina();
   }, [form.nr_inmatriculare]);
 
+  // Fetch cantitate_receptionata based on selected cod
+  useEffect(() => {
+    const fetchCantitateReceptionata = async () => {
+      if (!form.cod) {
+        return;
+      }
+      
+      try {
+        const response = await fetch(`http://192.168.1.22:8002/receptii/materiale/returneaza_cantitate_dupa_cod/${encodeURIComponent(form.cod)}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch cantitate receptionata');
+        }
+        const data = await response.json();
+        
+        // API should return the cantitate_receptionata value
+        if (typeof data === 'number') {
+          setForm(prev => ({ ...prev, cantitate_receptionata: data }));
+        } else if (typeof data === 'string') {
+          setForm(prev => ({ ...prev, cantitate_receptionata: parseFloat(data) || 0 }));
+        } else if (Array.isArray(data) && data.length > 0) {
+          setForm(prev => ({ ...prev, cantitate_receptionata: parseFloat(data[0]) || 0 }));
+        }
+      } catch (error) {
+        console.error('Error fetching cantitate receptionata:', error);
+        toast({
+          title: "Eroare",
+          description: "Nu s-a putut încărca cantitatea recepționată",
+          variant: "destructive"
+        });
+      }
+    };
+    
+    fetchCantitateReceptionata();
+  }, [form.cod]);
+
   // Add/Edit handlers
   const handleOpenAdd = () => {
     setEditing(null);
@@ -773,8 +808,8 @@ export default function Receptii() {
                   type="number"
                   step="0.01"
                   value={form.cantitate_receptionata}
-                  onChange={(e) => setForm({ ...form, cantitate_receptionata: parseFloat(e.target.value) || 0 })}
-                  className={formErrors.cantitate_receptionata ? "border-destructive" : ""}
+                  disabled
+                  className="bg-muted"
                 />
                 {formErrors.cantitate_receptionata && <p className="text-sm text-destructive">{formErrors.cantitate_receptionata}</p>}
               </div>
