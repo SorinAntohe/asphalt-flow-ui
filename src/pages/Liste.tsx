@@ -618,7 +618,7 @@ const Liste = () => {
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
                       const response = await fetch('http://192.168.1.22:8002/sterge', {
-                        method: 'POST',
+                        method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
                         },
@@ -896,7 +896,7 @@ const Liste = () => {
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
                       const response = await fetch('http://192.168.1.22:8002/sterge', {
-                        method: 'POST',
+                        method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
                         },
@@ -1126,7 +1126,7 @@ const Liste = () => {
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
                       const response = await fetch('http://192.168.1.22:8002/sterge', {
-                        method: 'POST',
+                        method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
                         },
@@ -1356,7 +1356,7 @@ const Liste = () => {
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
                       const response = await fetch('http://192.168.1.22:8002/sterge', {
-                        method: 'POST',
+                        method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
                         },
@@ -1691,7 +1691,7 @@ const Liste = () => {
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
                       const response = await fetch('http://192.168.1.22:8002/sterge', {
-                        method: 'POST',
+                        method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
                         },
@@ -2026,7 +2026,7 @@ const Liste = () => {
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
                       const response = await fetch('http://192.168.1.22:8002/sterge', {
-                        method: 'POST',
+                        method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
                         },
