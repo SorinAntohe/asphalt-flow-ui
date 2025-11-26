@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Filter } from "lucide-react";
+import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export default function Stocuri() {
@@ -65,87 +65,73 @@ export default function Stocuri() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-8 px-2 hover:bg-muted/50">
-                        <span>Tip Material</span>
-                        <Filter className="ml-2 h-4 w-4" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-56">
-                      <div className="space-y-2">
-                        <Input
-                          placeholder="Filtrează..."
-                          value={filters.tipMaterial}
-                          onChange={(e) =>
-                            setFilters({ ...filters, tipMaterial: e.target.value })
-                          }
-                        />
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleSort("tipMaterial")}
-                          >
-                            Cresc.
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleSort("tipMaterial")}
-                          >
-                            Descresc.
-                          </Button>
+                <TableHead className="h-10 text-xs">
+                  <div className="flex items-center gap-1">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                          <span>Tip Material</span>
+                          {sortConfig?.key === 'tipMaterial' ? (sortConfig.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-56 p-2">
+                        <div className="space-y-2">
+                          <Input 
+                            placeholder="Caută material..." 
+                            value={filters.tipMaterial}
+                            onChange={(e) => setFilters({ ...filters, tipMaterial: e.target.value })} 
+                            className="h-7 text-xs" 
+                          />
+                          <div className="flex gap-1">
+                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'tipMaterial', direction: 'asc' })}>
+                              <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                            </Button>
+                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'tipMaterial', direction: 'desc' })}>
+                              <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 </TableHead>
-                <TableHead>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-8 px-2 hover:bg-muted/50">
-                        <span>Cantitate Stoc</span>
-                        <Filter className="ml-2 h-4 w-4" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-56">
-                      <div className="space-y-2">
-                        <Input
-                          placeholder="Filtrează..."
-                          value={filters.cantitateStoc}
-                          onChange={(e) =>
-                            setFilters({ ...filters, cantitateStoc: e.target.value })
-                          }
-                        />
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleSort("cantitateStoc")}
-                          >
-                            Cresc.
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleSort("cantitateStoc")}
-                          >
-                            Descresc.
-                          </Button>
+                <TableHead className="h-10 text-xs">
+                  <div className="flex items-center gap-1">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                          <span>Cantitate Stoc</span>
+                          {sortConfig?.key === 'cantitateStoc' ? (sortConfig.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-56 p-2">
+                        <div className="space-y-2">
+                          <Input 
+                            placeholder="Caută cantitate..." 
+                            value={filters.cantitateStoc}
+                            onChange={(e) => setFilters({ ...filters, cantitateStoc: e.target.value })} 
+                            className="h-7 text-xs" 
+                          />
+                          <div className="flex gap-1">
+                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'cantitateStoc', direction: 'asc' })}>
+                              <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
+                            </Button>
+                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'cantitateStoc', direction: 'desc' })}>
+                              <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredAndSortedStocuri.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>{item.tipMaterial}</TableCell>
-                  <TableCell>{item.cantitateStoc}</TableCell>
+                <TableRow key={item.id} className="h-10">
+                  <TableCell className="py-1 text-xs">{item.tipMaterial}</TableCell>
+                  <TableCell className="py-1 text-xs">{item.cantitateStoc}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
