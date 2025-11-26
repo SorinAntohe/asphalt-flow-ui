@@ -272,10 +272,10 @@ const Liste = () => {
                               <Input placeholder="Caută ID..." value={autoturismeFilters.id} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, id: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
                               <div className="flex gap-1">
                                 <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAutoturismeSort({ field: 'id', direction: 'asc' })}>
-                                  <ArrowUp className="h-3 w-3 mr-1" /> Crescător
+                                  <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
                                 </Button>
                                 <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAutoturismeSort({ field: 'id', direction: 'desc' })}>
-                                  <ArrowDown className="h-3 w-3 mr-1" /> Descrescător
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
                                 </Button>
                               </div>
                             </div>
@@ -347,10 +347,10 @@ const Liste = () => {
                               <Input placeholder="Caută sarcină..." value={autoturismeFilters.sarcinaMax} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, sarcinaMax: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
                               <div className="flex gap-1">
                                 <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAutoturismeSort({ field: 'sarcinaMax', direction: 'asc' })}>
-                                  <ArrowUp className="h-3 w-3 mr-1" /> Crescător
+                                  <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
                                 </Button>
                                 <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAutoturismeSort({ field: 'sarcinaMax', direction: 'desc' })}>
-                                  <ArrowDown className="h-3 w-3 mr-1" /> Descrescător
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
                                 </Button>
                               </div>
                             </div>
@@ -478,25 +478,82 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>ID</span>
-                        <Input placeholder="Caută..." value={soferiFilters.id} onChange={(e) => { setSoferiFilters({...soferiFilters, id: e.target.value}); setSoferiPage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {soferiSort.field === 'id' ? (soferiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută ID..." value={soferiFilters.id} onChange={(e) => { setSoferiFilters({...soferiFilters, id: e.target.value}); setSoferiPage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSoferiSort({ field: 'id', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSoferiSort({ field: 'id', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>Nume Șofer</span>
-                        <Input placeholder="Caută..." value={soferiFilters.nume} onChange={(e) => { setSoferiFilters({...soferiFilters, nume: e.target.value}); setSoferiPage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {soferiSort.field === 'nume' ? (soferiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută nume..." value={soferiFilters.nume} onChange={(e) => { setSoferiFilters({...soferiFilters, nume: e.target.value}); setSoferiPage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSoferiSort({ field: 'nume', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSoferiSort({ field: 'nume', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>C.I.</span>
-                        <Input placeholder="Caută..." value={soferiFilters.ci} onChange={(e) => { setSoferiFilters({...soferiFilters, ci: e.target.value}); setSoferiPage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {soferiSort.field === 'ci' ? (soferiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută C.I...." value={soferiFilters.ci} onChange={(e) => { setSoferiFilters({...soferiFilters, ci: e.target.value}); setSoferiPage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSoferiSort({ field: 'ci', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSoferiSort({ field: 'ci', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="text-right h-14 text-xs">
+                    <TableHead className="text-right h-10 text-xs">
                       <span>Acțiuni</span>
                     </TableHead>
                   </TableRow>
@@ -521,7 +578,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(filterSoferi.length, soferiPerPage) > 1 && (
+              {getTotalPages(sortedSoferi.length, soferiPerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -530,7 +587,7 @@ const Liste = () => {
                         className={soferiPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(filterSoferi.length, soferiPerPage) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(sortedSoferi.length, soferiPerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setSoferiPage(page)}
@@ -543,8 +600,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setSoferiPage(p => Math.min(getTotalPages(filterSoferi.length, soferiPerPage), p + 1))}
-                        className={soferiPage === getTotalPages(filterSoferi.length, soferiPerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setSoferiPage(p => Math.min(getTotalPages(sortedSoferi.length, soferiPerPage), p + 1))}
+                        className={soferiPage === getTotalPages(sortedSoferi.length, soferiPerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -589,19 +646,57 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>ID</span>
-                        <Input placeholder="Caută..." value={materiiPrimeFilters.id} onChange={(e) => { setMateriiPrimeFilters({...materiiPrimeFilters, id: e.target.value}); setMateriiPrimePage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {materiiPrimeSort.field === 'id' ? (materiiPrimeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută ID..." value={materiiPrimeFilters.id} onChange={(e) => { setMateriiPrimeFilters({...materiiPrimeFilters, id: e.target.value}); setMateriiPrimePage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setMateriiPrimeSort({ field: 'id', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setMateriiPrimeSort({ field: 'id', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>Denumire</span>
-                        <Input placeholder="Caută..." value={materiiPrimeFilters.denumire} onChange={(e) => { setMateriiPrimeFilters({...materiiPrimeFilters, denumire: e.target.value}); setMateriiPrimePage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {materiiPrimeSort.field === 'denumire' ? (materiiPrimeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută denumire..." value={materiiPrimeFilters.denumire} onChange={(e) => { setMateriiPrimeFilters({...materiiPrimeFilters, denumire: e.target.value}); setMateriiPrimePage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setMateriiPrimeSort({ field: 'denumire', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setMateriiPrimeSort({ field: 'denumire', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="text-right h-14 text-xs">
+                    <TableHead className="text-right h-10 text-xs">
                       <span>Acțiuni</span>
                     </TableHead>
                   </TableRow>
@@ -625,7 +720,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(filterMateriiPrime.length, materiiPrimePerPage) > 1 && (
+              {getTotalPages(sortedMateriiPrime.length, materiiPrimePerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -634,7 +729,7 @@ const Liste = () => {
                         className={materiiPrimePage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(filterMateriiPrime.length, materiiPrimePerPage) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(sortedMateriiPrime.length, materiiPrimePerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setMateriiPrimePage(page)}
@@ -647,8 +742,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setMateriiPrimePage(p => Math.min(getTotalPages(filterMateriiPrime.length, materiiPrimePerPage), p + 1))}
-                        className={materiiPrimePage === getTotalPages(filterMateriiPrime.length, materiiPrimePerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setMateriiPrimePage(p => Math.min(getTotalPages(sortedMateriiPrime.length, materiiPrimePerPage), p + 1))}
+                        className={materiiPrimePage === getTotalPages(sortedMateriiPrime.length, materiiPrimePerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -693,19 +788,57 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>ID</span>
-                        <Input placeholder="Caută..." value={produseFiniteFilters.id} onChange={(e) => { setProduseFiniteFilters({...produseFiniteFilters, id: e.target.value}); setProduseFinitePage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {produseFiniteSort.field === 'id' ? (produseFiniteSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută ID..." value={produseFiniteFilters.id} onChange={(e) => { setProduseFiniteFilters({...produseFiniteFilters, id: e.target.value}); setProduseFinitePage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setProduseFiniteSort({ field: 'id', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setProduseFiniteSort({ field: 'id', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>Denumire</span>
-                        <Input placeholder="Caută..." value={produseFiniteFilters.denumire} onChange={(e) => { setProduseFiniteFilters({...produseFiniteFilters, denumire: e.target.value}); setProduseFinitePage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {produseFiniteSort.field === 'denumire' ? (produseFiniteSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută denumire..." value={produseFiniteFilters.denumire} onChange={(e) => { setProduseFiniteFilters({...produseFiniteFilters, denumire: e.target.value}); setProduseFinitePage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setProduseFiniteSort({ field: 'denumire', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setProduseFiniteSort({ field: 'denumire', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="text-right h-14 text-xs">
+                    <TableHead className="text-right h-10 text-xs">
                       <span>Acțiuni</span>
                     </TableHead>
                   </TableRow>
@@ -729,7 +862,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(filterProduseFinite.length, produseFinitePerPage) > 1 && (
+              {getTotalPages(sortedProduseFinite.length, produseFinitePerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -738,7 +871,7 @@ const Liste = () => {
                         className={produseFinitePage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(filterProduseFinite.length, produseFinitePerPage) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(sortedProduseFinite.length, produseFinitePerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setProduseFinitePage(page)}
@@ -751,8 +884,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setProduseFinitePage(p => Math.min(getTotalPages(filterProduseFinite.length, produseFinitePerPage), p + 1))}
-                        className={produseFinitePage === getTotalPages(filterProduseFinite.length, produseFinitePerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setProduseFinitePage(p => Math.min(getTotalPages(sortedProduseFinite.length, produseFinitePerPage), p + 1))}
+                        className={produseFinitePage === getTotalPages(sortedProduseFinite.length, produseFinitePerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -797,37 +930,132 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>ID</span>
-                        <Input placeholder="Caută..." value={clientiFilters.id} onChange={(e) => { setClientiFilters({...clientiFilters, id: e.target.value}); setClientiPage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {clientiSort.field === 'id' ? (clientiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută ID..." value={clientiFilters.id} onChange={(e) => { setClientiFilters({...clientiFilters, id: e.target.value}); setClientiPage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setClientiSort({ field: 'id', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setClientiSort({ field: 'id', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>Denumire</span>
-                        <Input placeholder="Caută..." value={clientiFilters.denumire} onChange={(e) => { setClientiFilters({...clientiFilters, denumire: e.target.value}); setClientiPage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {clientiSort.field === 'denumire' ? (clientiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută denumire..." value={clientiFilters.denumire} onChange={(e) => { setClientiFilters({...clientiFilters, denumire: e.target.value}); setClientiPage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setClientiSort({ field: 'denumire', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setClientiSort({ field: 'denumire', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>Sediu</span>
-                        <Input placeholder="Caută..." value={clientiFilters.sediu} onChange={(e) => { setClientiFilters({...clientiFilters, sediu: e.target.value}); setClientiPage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {clientiSort.field === 'sediu' ? (clientiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută sediu..." value={clientiFilters.sediu} onChange={(e) => { setClientiFilters({...clientiFilters, sediu: e.target.value}); setClientiPage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setClientiSort({ field: 'sediu', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setClientiSort({ field: 'sediu', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>CUI</span>
-                        <Input placeholder="Caută..." value={clientiFilters.cui} onChange={(e) => { setClientiFilters({...clientiFilters, cui: e.target.value}); setClientiPage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {clientiSort.field === 'cui' ? (clientiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută CUI..." value={clientiFilters.cui} onChange={(e) => { setClientiFilters({...clientiFilters, cui: e.target.value}); setClientiPage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setClientiSort({ field: 'cui', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setClientiSort({ field: 'cui', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>Nr. REG</span>
-                        <Input placeholder="Caută..." value={clientiFilters.nrReg} onChange={(e) => { setClientiFilters({...clientiFilters, nrReg: e.target.value}); setClientiPage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {clientiSort.field === 'nrReg' ? (clientiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută Nr. REG..." value={clientiFilters.nrReg} onChange={(e) => { setClientiFilters({...clientiFilters, nrReg: e.target.value}); setClientiPage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setClientiSort({ field: 'nrReg', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setClientiSort({ field: 'nrReg', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="text-right h-14 text-xs">
+                    <TableHead className="text-right h-10 text-xs">
                       <span>Acțiuni</span>
                     </TableHead>
                   </TableRow>
@@ -854,7 +1082,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(filterClienti.length, clientiPerPage) > 1 && (
+              {getTotalPages(sortedClienti.length, clientiPerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -863,7 +1091,7 @@ const Liste = () => {
                         className={clientiPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(filterClienti.length, clientiPerPage) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(sortedClienti.length, clientiPerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setClientiPage(page)}
@@ -876,8 +1104,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setClientiPage(p => Math.min(getTotalPages(filterClienti.length, clientiPerPage), p + 1))}
-                        className={clientiPage === getTotalPages(filterClienti.length, clientiPerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setClientiPage(p => Math.min(getTotalPages(sortedClienti.length, clientiPerPage), p + 1))}
+                        className={clientiPage === getTotalPages(sortedClienti.length, clientiPerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -922,37 +1150,132 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>ID</span>
-                        <Input placeholder="Caută..." value={furnizoriFilters.id} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, id: e.target.value}); setFurnizoriPage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {furnizoriSort.field === 'id' ? (furnizoriSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută ID..." value={furnizoriFilters.id} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, id: e.target.value}); setFurnizoriPage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setFurnizoriSort({ field: 'id', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setFurnizoriSort({ field: 'id', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>Denumire</span>
-                        <Input placeholder="Caută..." value={furnizoriFilters.denumire} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, denumire: e.target.value}); setFurnizoriPage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {furnizoriSort.field === 'denumire' ? (furnizoriSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută denumire..." value={furnizoriFilters.denumire} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, denumire: e.target.value}); setFurnizoriPage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setFurnizoriSort({ field: 'denumire', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setFurnizoriSort({ field: 'denumire', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>Sediu</span>
-                        <Input placeholder="Caută..." value={furnizoriFilters.sediu} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, sediu: e.target.value}); setFurnizoriPage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {furnizoriSort.field === 'sediu' ? (furnizoriSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută sediu..." value={furnizoriFilters.sediu} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, sediu: e.target.value}); setFurnizoriPage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setFurnizoriSort({ field: 'sediu', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setFurnizoriSort({ field: 'sediu', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>CUI</span>
-                        <Input placeholder="Caută..." value={furnizoriFilters.cui} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, cui: e.target.value}); setFurnizoriPage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {furnizoriSort.field === 'cui' ? (furnizoriSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută CUI..." value={furnizoriFilters.cui} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, cui: e.target.value}); setFurnizoriPage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setFurnizoriSort({ field: 'cui', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setFurnizoriSort({ field: 'cui', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>Nr. REG</span>
-                        <Input placeholder="Caută..." value={furnizoriFilters.nrReg} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, nrReg: e.target.value}); setFurnizoriPage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {furnizoriSort.field === 'nrReg' ? (furnizoriSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută Nr. REG..." value={furnizoriFilters.nrReg} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, nrReg: e.target.value}); setFurnizoriPage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setFurnizoriSort({ field: 'nrReg', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setFurnizoriSort({ field: 'nrReg', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="text-right h-14 text-xs">
+                    <TableHead className="text-right h-10 text-xs">
                       <span>Acțiuni</span>
                     </TableHead>
                   </TableRow>
@@ -979,7 +1302,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(filterFurnizori.length, furnizoriPerPage) > 1 && (
+              {getTotalPages(sortedFurnizori.length, furnizoriPerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -988,7 +1311,7 @@ const Liste = () => {
                         className={furnizoriPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(filterFurnizori.length, furnizoriPerPage) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(sortedFurnizori.length, furnizoriPerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setFurnizoriPage(page)}
@@ -1001,8 +1324,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setFurnizoriPage(p => Math.min(getTotalPages(filterFurnizori.length, furnizoriPerPage), p + 1))}
-                        className={furnizoriPage === getTotalPages(filterFurnizori.length, furnizoriPerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setFurnizoriPage(p => Math.min(getTotalPages(sortedFurnizori.length, furnizoriPerPage), p + 1))}
+                        className={furnizoriPage === getTotalPages(sortedFurnizori.length, furnizoriPerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
