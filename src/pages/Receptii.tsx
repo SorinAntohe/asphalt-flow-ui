@@ -56,6 +56,7 @@ export default function Receptii() {
   const [receptii, setReceptii] = useState<ReceptieMaterial[]>([]);
   const [loading, setLoading] = useState(false);
   const [availableCodes, setAvailableCodes] = useState<string[]>([]);
+  const [availableDrivers, setAvailableDrivers] = useState<string[]>([]);
   
   // Pagination
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -158,6 +159,28 @@ export default function Receptii() {
       }
     };
     fetchCodes();
+  }, []);
+
+  // Fetch available drivers for dropdown
+  useEffect(() => {
+    const fetchDrivers = async () => {
+      try {
+        const response = await fetch('http://192.168.1.22:8002/receptii/materiale/returneaza_nume_soferi');
+        if (!response.ok) {
+          throw new Error('Failed to fetch drivers');
+        }
+        const data = await response.json();
+        setAvailableDrivers(data);
+      } catch (error) {
+        console.error('Error fetching drivers:', error);
+        toast({
+          title: "Eroare",
+          description: "Nu s-au putut încărca numele șoferilor disponibili",
+          variant: "destructive"
+        });
+      }
+    };
+    fetchDrivers();
   }, []);
 
   // Calculate diferenta when cantitate values change
@@ -621,12 +644,24 @@ export default function Receptii() {
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="nume_sofer">Nume Șofer *</Label>
-                <Input
-                  id="nume_sofer"
+                <Select
                   value={form.nume_sofer}
-                  onChange={(e) => setForm({ ...form, nume_sofer: e.target.value })}
-                  className={formErrors.nume_sofer ? "border-destructive" : ""}
-                />
+                  onValueChange={(value) => setForm({ ...form, nume_sofer: value })}
+                >
+                  <SelectTrigger 
+                    id="nume_sofer"
+                    className={formErrors.nume_sofer ? "border-destructive" : ""}
+                  >
+                    <SelectValue placeholder="Selectează șofer" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover z-50">
+                    {availableDrivers.map((driver) => (
+                      <SelectItem key={driver} value={driver}>
+                        {driver}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 {formErrors.nume_sofer && <p className="text-sm text-destructive">{formErrors.nume_sofer}</p>}
               </div>
               <div className="grid gap-2">
