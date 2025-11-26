@@ -118,9 +118,25 @@ export default function Receptii() {
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  // Filters (only for visible columns)
+  // Filters (for all columns)
   const [filters, setFilters] = useState({
-    id: "", data: "", cod: "", furnizor: "", material: "", cantitate_livrata: ""
+    id: "", 
+    data: "", 
+    cod: "", 
+    furnizor: "", 
+    material: "", 
+    nr_aviz_provizoriu: "",
+    nr_aviz_intrare: "",
+    nume_sofer: "",
+    nr_inmatriculare: "",
+    tip_masina: "",
+    cantitate_livrata: "",
+    cantitate_receptionata: "",
+    diferenta: "",
+    pret_material_total: "",
+    pret_transport_total: "",
+    pret_total: "",
+    observatii: ""
   });
 
   // Sort
@@ -312,7 +328,18 @@ export default function Receptii() {
         item.cod.toLowerCase().includes(filters.cod.toLowerCase()) &&
         item.furnizor.toLowerCase().includes(filters.furnizor.toLowerCase()) &&
         item.material.toLowerCase().includes(filters.material.toLowerCase()) &&
-        item.cantitate_livrata.toString().includes(filters.cantitate_livrata)
+        (item.nr_aviz_provizoriu || "").toLowerCase().includes(filters.nr_aviz_provizoriu.toLowerCase()) &&
+        (item.nr_aviz_intrare || "").toLowerCase().includes(filters.nr_aviz_intrare.toLowerCase()) &&
+        item.nume_sofer.toLowerCase().includes(filters.nume_sofer.toLowerCase()) &&
+        item.nr_inmatriculare.toLowerCase().includes(filters.nr_inmatriculare.toLowerCase()) &&
+        item.tip_masina.toLowerCase().includes(filters.tip_masina.toLowerCase()) &&
+        item.cantitate_livrata.toString().includes(filters.cantitate_livrata) &&
+        item.cantitate_receptionata.toString().includes(filters.cantitate_receptionata) &&
+        item.diferenta.toString().includes(filters.diferenta) &&
+        item.pret_material_total.toString().includes(filters.pret_material_total) &&
+        item.pret_transport_total.toString().includes(filters.pret_transport_total) &&
+        item.pret_total.toString().includes(filters.pret_total) &&
+        (item.observatii || "").toLowerCase().includes(filters.observatii.toLowerCase())
       );
     })
     .sort((a, b) => {
@@ -409,19 +436,30 @@ export default function Receptii() {
                   <FilterHeader field="cod" label="Cod" />
                   <FilterHeader field="furnizor" label="Furnizor" />
                   <FilterHeader field="material" label="Material" />
-                  <FilterHeader field="cantitate_livrata" label="Cantitate Livrată" />
+                  <FilterHeader field="nr_aviz_provizoriu" label="Nr. Aviz Provizoriu" />
+                  <FilterHeader field="nr_aviz_intrare" label="Nr. Aviz Intrare" />
+                  <FilterHeader field="nume_sofer" label="Nume Șofer" />
+                  <FilterHeader field="nr_inmatriculare" label="Nr. Înmatriculare" />
+                  <FilterHeader field="tip_masina" label="Tip Mașină" />
+                  <FilterHeader field="cantitate_livrata" label="Cant. Livrată" />
+                  <FilterHeader field="cantitate_receptionata" label="Cant. Recepționată" />
+                  <FilterHeader field="diferenta" label="Diferență" />
+                  <FilterHeader field="pret_material_total" label="Preț Material" />
+                  <FilterHeader field="pret_transport_total" label="Preț Transport" />
+                  <FilterHeader field="pret_total" label="Preț Total" />
+                  <FilterHeader field="observatii" label="Observații" />
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8">
+                    <TableCell colSpan={17} className="text-center py-8">
                       Se încarcă...
                     </TableCell>
                   </TableRow>
                 ) : filteredAndSorted.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8">
+                    <TableCell colSpan={17} className="text-center py-8">
                       Nu există recepții înregistrate
                     </TableCell>
                   </TableRow>
@@ -437,7 +475,18 @@ export default function Receptii() {
                       <TableCell>{receptie.cod}</TableCell>
                       <TableCell>{receptie.furnizor}</TableCell>
                       <TableCell>{receptie.material}</TableCell>
+                      <TableCell>{receptie.nr_aviz_provizoriu || "-"}</TableCell>
+                      <TableCell>{receptie.nr_aviz_intrare || "-"}</TableCell>
+                      <TableCell>{receptie.nume_sofer}</TableCell>
+                      <TableCell>{receptie.nr_inmatriculare}</TableCell>
+                      <TableCell>{receptie.tip_masina}</TableCell>
                       <TableCell>{receptie.cantitate_livrata}</TableCell>
+                      <TableCell>{receptie.cantitate_receptionata}</TableCell>
+                      <TableCell>{receptie.diferenta}</TableCell>
+                      <TableCell>{receptie.pret_material_total}</TableCell>
+                      <TableCell>{receptie.pret_transport_total}</TableCell>
+                      <TableCell>{receptie.pret_total}</TableCell>
+                      <TableCell className="max-w-xs truncate">{receptie.observatii || "-"}</TableCell>
                     </TableRow>
                   ))
                 )}
