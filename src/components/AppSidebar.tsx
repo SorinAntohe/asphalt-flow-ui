@@ -81,11 +81,8 @@ export function AppSidebar() {
           )}
         </div>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sm font-semibold px-4 py-3 text-sidebar-foreground">
-            Meniu Principal
-          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {/* Dashboard */}
