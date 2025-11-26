@@ -119,9 +119,13 @@ export function AppSidebar() {
                     {gestiuneItems.map((item, index) => (
                       <SidebarMenuItem 
                         key={item.title}
-                        className="animate-in fade-in slide-in-from-left-2"
+                        className={`transition-all duration-200 ${
+                          gestiuneOpen 
+                            ? 'animate-in fade-in slide-in-from-left-2' 
+                            : 'animate-out fade-out slide-out-to-left-2'
+                        }`}
                         style={{ 
-                          animationDelay: `${index * 50}ms`,
+                          animationDelay: gestiuneOpen ? `${index * 50}ms` : `${(gestiuneItems.length - index - 1) * 30}ms`,
                           animationDuration: '200ms'
                         }}
                       >
