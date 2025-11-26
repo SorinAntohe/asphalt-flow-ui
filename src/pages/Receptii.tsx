@@ -16,6 +16,8 @@ interface ReceptieMaterial {
   id: number;
   data: string;
   cod: string;
+  furnizor: string;
+  material: string;
   nr_aviz_provizoriu: string;
   nr_aviz_intrare: string;
   nume_sofer: string;
@@ -54,6 +56,8 @@ export default function Receptii() {
       id: 1,
       data: "2024-11-26",
       cod: "REC-001",
+      furnizor: "SC ALFA CONSTRUCT SRL",
+      material: "BITUM 50/70",
       nr_aviz_provizoriu: "AP-12345",
       nr_aviz_intrare: "AI-67890",
       nume_sofer: "Ion Popescu",
@@ -71,6 +75,8 @@ export default function Receptii() {
       id: 2,
       data: "2024-11-25",
       cod: "REC-002",
+      furnizor: "SC BETA MATERIALS SRL",
+      material: "0/4 CONC",
       nr_aviz_provizoriu: "AP-12346",
       nr_aviz_intrare: "AI-67891",
       nume_sofer: "Maria Ionescu",
@@ -114,7 +120,7 @@ export default function Receptii() {
 
   // Filters (only for visible columns)
   const [filters, setFilters] = useState({
-    id: "", data: "", cod: ""
+    id: "", data: "", cod: "", furnizor: "", material: "", cantitate_livrata: ""
   });
 
   // Sort
@@ -303,7 +309,10 @@ export default function Receptii() {
       return (
         item.id.toString().includes(filters.id) &&
         item.data.toLowerCase().includes(filters.data.toLowerCase()) &&
-        item.cod.toLowerCase().includes(filters.cod.toLowerCase())
+        item.cod.toLowerCase().includes(filters.cod.toLowerCase()) &&
+        item.furnizor.toLowerCase().includes(filters.furnizor.toLowerCase()) &&
+        item.material.toLowerCase().includes(filters.material.toLowerCase()) &&
+        item.cantitate_livrata.toString().includes(filters.cantitate_livrata)
       );
     })
     .sort((a, b) => {
@@ -398,18 +407,21 @@ export default function Receptii() {
                   <FilterHeader field="id" label="ID" />
                   <FilterHeader field="data" label="Data" />
                   <FilterHeader field="cod" label="Cod" />
+                  <FilterHeader field="furnizor" label="Furnizor" />
+                  <FilterHeader field="material" label="Material" />
+                  <FilterHeader field="cantitate_livrata" label="Cantitate Livrată" />
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center py-8">
+                    <TableCell colSpan={6} className="text-center py-8">
                       Se încarcă...
                     </TableCell>
                   </TableRow>
                 ) : filteredAndSorted.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center py-8">
+                    <TableCell colSpan={6} className="text-center py-8">
                       Nu există recepții înregistrate
                     </TableCell>
                   </TableRow>
@@ -423,6 +435,9 @@ export default function Receptii() {
                       <TableCell>{receptie.id}</TableCell>
                       <TableCell>{receptie.data}</TableCell>
                       <TableCell>{receptie.cod}</TableCell>
+                      <TableCell>{receptie.furnizor}</TableCell>
+                      <TableCell>{receptie.material}</TableCell>
+                      <TableCell>{receptie.cantitate_livrata}</TableCell>
                     </TableRow>
                   ))
                 )}
