@@ -1,11 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useState } from "react";
 const Liste = () => {
   const [autoturismePerPage, setAutoturismePerPage] = useState(10);
@@ -29,6 +30,14 @@ const Liste = () => {
   const [produseFiniteFilters, setProduseFiniteFilters] = useState({ id: "", denumire: "" });
   const [clientiFilters, setClientiFilters] = useState({ id: "", denumire: "", sediu: "", cui: "", nrReg: "" });
   const [furnizoriFilters, setFurnizoriFilters] = useState({ id: "", denumire: "", sediu: "", cui: "", nrReg: "" });
+
+  // Sorting
+  const [autoturismeSort, setAutoturismeSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
+  const [soferiSort, setSoferiSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
+  const [materiiPrimeSort, setMateriiPrimeSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
+  const [produseFiniteSort, setProduseFiniteSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
+  const [clientiSort, setClientiSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
+  const [furnizoriSort, setFurnizoriSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
   const autoturisme = [{
     id: 1,
     tipMasina: "Camion cisternă",
@@ -127,6 +136,19 @@ const Liste = () => {
 
   const getTotalPages = (dataLength: number, itemsPerPage: number) => Math.ceil(dataLength / itemsPerPage);
 
+  // Sort helper
+  const sortData = (data: any[], field: string, direction: 'asc' | 'desc' | null) => {
+    if (!field || !direction) return data;
+    return [...data].sort((a, b) => {
+      const aVal = a[field];
+      const bVal = b[field];
+      if (direction === 'asc') {
+        return aVal > bVal ? 1 : -1;
+      }
+      return aVal < bVal ? 1 : -1;
+    });
+  };
+
   // Filter helpers
   const filterAutoturisme = autoturisme.filter(item => 
     item.id.toString().includes(autoturismeFilters.id) &&
@@ -168,12 +190,19 @@ const Liste = () => {
     item.nrReg.toLowerCase().includes(furnizoriFilters.nrReg.toLowerCase())
   );
 
-  const paginatedAutoturisme = getPaginatedData(filterAutoturisme, autoturismePage, autoturismePerPage);
-  const paginatedSoferi = getPaginatedData(filterSoferi, soferiPage, soferiPerPage);
-  const paginatedMateriiPrime = getPaginatedData(filterMateriiPrime, materiiPrimePage, materiiPrimePerPage);
-  const paginatedProduseFinite = getPaginatedData(filterProduseFinite, produseFinitePage, produseFinitePerPage);
-  const paginatedClienti = getPaginatedData(filterClienti, clientiPage, clientiPerPage);
-  const paginatedFurnizori = getPaginatedData(filterFurnizori, furnizoriPage, furnizoriPerPage);
+  const sortedAutoturisme = sortData(filterAutoturisme, autoturismeSort.field, autoturismeSort.direction);
+  const sortedSoferi = sortData(filterSoferi, soferiSort.field, soferiSort.direction);
+  const sortedMateriiPrime = sortData(filterMateriiPrime, materiiPrimeSort.field, materiiPrimeSort.direction);
+  const sortedProduseFinite = sortData(filterProduseFinite, produseFiniteSort.field, produseFiniteSort.direction);
+  const sortedClienti = sortData(filterClienti, clientiSort.field, clientiSort.direction);
+  const sortedFurnizori = sortData(filterFurnizori, furnizoriSort.field, furnizoriSort.direction);
+
+  const paginatedAutoturisme = getPaginatedData(sortedAutoturisme, autoturismePage, autoturismePerPage);
+  const paginatedSoferi = getPaginatedData(sortedSoferi, soferiPage, soferiPerPage);
+  const paginatedMateriiPrime = getPaginatedData(sortedMateriiPrime, materiiPrimePage, materiiPrimePerPage);
+  const paginatedProduseFinite = getPaginatedData(sortedProduseFinite, produseFinitePage, produseFinitePerPage);
+  const paginatedClienti = getPaginatedData(sortedClienti, clientiPage, clientiPerPage);
+  const paginatedFurnizori = getPaginatedData(sortedFurnizori, furnizoriPage, furnizoriPerPage);
   return <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -229,37 +258,132 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>ID</span>
-                        <Input placeholder="Caută..." value={autoturismeFilters.id} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, id: e.target.value}); setAutoturismePage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {autoturismeSort.field === 'id' ? (autoturismeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută ID..." value={autoturismeFilters.id} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, id: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAutoturismeSort({ field: 'id', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> Crescător
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAutoturismeSort({ field: 'id', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Descrescător
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>Tip Mașină</span>
-                        <Input placeholder="Caută..." value={autoturismeFilters.tipMasina} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, tipMasina: e.target.value}); setAutoturismePage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {autoturismeSort.field === 'tipMasina' ? (autoturismeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută tip..." value={autoturismeFilters.tipMasina} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, tipMasina: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAutoturismeSort({ field: 'tipMasina', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAutoturismeSort({ field: 'tipMasina', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>Nr. Auto</span>
-                        <Input placeholder="Caută..." value={autoturismeFilters.nrAuto} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, nrAuto: e.target.value}); setAutoturismePage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {autoturismeSort.field === 'nrAuto' ? (autoturismeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută număr..." value={autoturismeFilters.nrAuto} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, nrAuto: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAutoturismeSort({ field: 'nrAuto', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAutoturismeSort({ field: 'nrAuto', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>Sarcină Max</span>
-                        <Input placeholder="Caută..." value={autoturismeFilters.sarcinaMax} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, sarcinaMax: e.target.value}); setAutoturismePage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {autoturismeSort.field === 'sarcinaMax' ? (autoturismeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută sarcină..." value={autoturismeFilters.sarcinaMax} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, sarcinaMax: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAutoturismeSort({ field: 'sarcinaMax', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> Crescător
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAutoturismeSort({ field: 'sarcinaMax', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Descrescător
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="h-14 text-xs">
-                      <div className="flex flex-col gap-1">
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
                         <span>Tip Transport</span>
-                        <Input placeholder="Caută..." value={autoturismeFilters.tipTransport} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, tipTransport: e.target.value}); setAutoturismePage(1); }} className="h-6 text-xs" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {autoturismeSort.field === 'tipTransport' ? (autoturismeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută tip..." value={autoturismeFilters.tipTransport} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, tipTransport: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAutoturismeSort({ field: 'tipTransport', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAutoturismeSort({ field: 'tipTransport', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="text-right h-14 text-xs">
+                    <TableHead className="text-right h-10 text-xs">
                       <span>Acțiuni</span>
                     </TableHead>
                   </TableRow>
@@ -286,7 +410,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(filterAutoturisme.length, autoturismePerPage) > 1 && (
+              {getTotalPages(sortedAutoturisme.length, autoturismePerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -295,7 +419,7 @@ const Liste = () => {
                         className={autoturismePage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(filterAutoturisme.length, autoturismePerPage) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(sortedAutoturisme.length, autoturismePerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setAutoturismePage(page)}
@@ -308,8 +432,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setAutoturismePage(p => Math.min(getTotalPages(filterAutoturisme.length, autoturismePerPage), p + 1))}
-                        className={autoturismePage === getTotalPages(filterAutoturisme.length, autoturismePerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setAutoturismePage(p => Math.min(getTotalPages(sortedAutoturisme.length, autoturismePerPage), p + 1))}
+                        className={autoturismePage === getTotalPages(sortedAutoturisme.length, autoturismePerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
