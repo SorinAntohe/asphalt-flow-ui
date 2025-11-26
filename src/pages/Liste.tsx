@@ -250,12 +250,11 @@ const Liste = () => {
                   <TableRow>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>ID</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>ID</span>
                               {autoturismeSort.field === 'id' ? (autoturismeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -276,12 +275,11 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>Tip Mașină</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Tip Mașină</span>
                               {autoturismeSort.field === 'tipMasina' ? (autoturismeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -302,12 +300,11 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>Nr. Auto</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Nr. Auto</span>
                               {autoturismeSort.field === 'nrAuto' ? (autoturismeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -328,12 +325,11 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>Sarcină Max</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Sarcină Max</span>
                               {autoturismeSort.field === 'sarcinaMax' ? (autoturismeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -354,12 +350,11 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>Tip Transport</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Tip Transport</span>
                               {autoturismeSort.field === 'tipTransport' ? (autoturismeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -380,12 +375,11 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>Tara</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Tara</span>
                               {autoturismeSort.field === 'tara' ? (autoturismeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -625,12 +619,11 @@ const Liste = () => {
                   <TableRow>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>ID</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>ID</span>
                               {soferiSort.field === 'id' ? (soferiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -651,12 +644,11 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>Nume Șofer</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Nume Șofer</span>
                               {soferiSort.field === 'nume' ? (soferiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -677,12 +669,11 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>C.I.</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>C.I.</span>
                               {soferiSort.field === 'ci' ? (soferiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -870,12 +861,11 @@ const Liste = () => {
                   <TableRow>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>ID</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>ID</span>
                               {materiiPrimeSort.field === 'id' ? (materiiPrimeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -896,12 +886,11 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>Denumire</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Denumire</span>
                               {materiiPrimeSort.field === 'denumire' ? (materiiPrimeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -1079,12 +1068,11 @@ const Liste = () => {
                   <TableRow>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>ID</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>ID</span>
                               {produseFiniteSort.field === 'id' ? (produseFiniteSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -1105,12 +1093,11 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>Denumire</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Denumire</span>
                               {produseFiniteSort.field === 'denumire' ? (produseFiniteSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -1288,12 +1275,11 @@ const Liste = () => {
                   <TableRow>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>ID</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>ID</span>
                               {clientiSort.field === 'id' ? (clientiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -1314,12 +1300,11 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>Denumire</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Denumire</span>
                               {clientiSort.field === 'denumire' ? (clientiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -1340,12 +1325,11 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>Sediu</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Sediu</span>
                               {clientiSort.field === 'sediu' ? (clientiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -1366,12 +1350,11 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>CUI</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>CUI</span>
                               {clientiSort.field === 'cui' ? (clientiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -1392,12 +1375,11 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>Nr. REG</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Nr. REG</span>
                               {clientiSort.field === 'nrReg' ? (clientiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -1605,12 +1587,11 @@ const Liste = () => {
                   <TableRow>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>ID</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>ID</span>
                               {furnizoriSort.field === 'id' ? (furnizoriSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -1631,12 +1612,11 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>Denumire</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Denumire</span>
                               {furnizoriSort.field === 'denumire' ? (furnizoriSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -1657,12 +1637,11 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>Sediu</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Sediu</span>
                               {furnizoriSort.field === 'sediu' ? (furnizoriSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -1683,12 +1662,11 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>CUI</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>CUI</span>
                               {furnizoriSort.field === 'cui' ? (furnizoriSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
@@ -1709,12 +1687,11 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>Nr. REG</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Nr. REG</span>
                               {furnizoriSort.field === 'nrReg' ? (furnizoriSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                              <span className="text-xs">Filtrează</span>
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
