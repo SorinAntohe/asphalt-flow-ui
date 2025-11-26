@@ -1643,7 +1643,7 @@ const Liste = () => {
                             tabel: "lista_produse",
                             id: produseFiniteDialog.data.id,
                             update: {
-                              denumire: produseFiniteFormData.denumire
+                              produs: produseFiniteFormData.denumire
                             }
                           })
                         });
@@ -1657,11 +1657,34 @@ const Liste = () => {
                           description: "Produsul finit a fost editat cu succes"
                         });
                       } else {
+                        const response = await fetch('http://192.168.1.22:8002/liste/adauga/produs', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            produs: produseFiniteFormData.denumire
+                          })
+                        });
+
+                        if (!response.ok) {
+                          throw new Error('Eroare la adăugarea produsului finit');
+                        }
+
                         toast({
                           title: "Succes",
                           description: "Produsul finit a fost adăugat cu succes"
                         });
                       }
+
+                      // Refresh the list
+                      const refreshResponse = await fetch('http://192.168.1.22:8002/liste/returneaza/produse');
+                      const data = await refreshResponse.json();
+                      const mappedData = data.map((item: any) => ({
+                        id: item.id,
+                        denumire: item.produs
+                      }));
+                      setProduseFinite(mappedData);
                       setProduseFiniteDialog({ ...produseFiniteDialog, open: false });
                     } catch (error) {
                       toast({
@@ -1709,6 +1732,15 @@ const Liste = () => {
                         description: "Produsul finit a fost șters cu succes"
                       });
                       setProduseFiniteDeleteDialog({ open: false });
+                      
+                      // Refresh the list
+                      const refreshResponse = await fetch('http://192.168.1.22:8002/liste/returneaza/produse');
+                      const data = await refreshResponse.json();
+                      const mappedData = data.map((item: any) => ({
+                        id: item.id,
+                        denumire: item.produs
+                      }));
+                      setProduseFinite(mappedData);
                     } catch (error) {
                       toast({
                         title: "Eroare",
