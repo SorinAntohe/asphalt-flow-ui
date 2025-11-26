@@ -84,7 +84,7 @@ export default function Comenzi() {
   const [formMP, setFormMP] = useState({
     furnizor: "",
     material: "",
-    unitate_de_masura: "",
+    unitate_masura: "",
     cantitate: 0,
     punct_descarcare: "",
     pret_fara_tva: 0,
@@ -97,7 +97,7 @@ export default function Comenzi() {
   const [formPF, setFormPF] = useState({
     client: "",
     produs: "",
-    unitate_de_masura: "",
+    unitate_masura: "",
     cantitate: 0,
     punct_descarcare: "",
     pret_fara_tva: 0,
@@ -138,7 +138,7 @@ export default function Comenzi() {
     setFormMP({
       furnizor: "",
       material: "",
-      unitate_de_masura: "",
+      unitate_masura: "",
       cantitate: 0,
       punct_descarcare: "",
       pret_fara_tva: 0,
@@ -154,7 +154,7 @@ export default function Comenzi() {
     setFormMP({
       furnizor: comanda.furnizor,
       material: comanda.material,
-      unitate_de_masura: comanda.unitate_masura,
+      unitate_masura: comanda.unitate_masura,
       cantitate: comanda.cantitate,
       punct_descarcare: comanda.punct_descarcare || "",
       pret_fara_tva: comanda.pret_fara_tva,
@@ -269,7 +269,7 @@ export default function Comenzi() {
     setFormPF({
       client: "",
       produs: "",
-      unitate_de_masura: "",
+      unitate_masura: "",
       cantitate: 0,
       punct_descarcare: "",
       pret_fara_tva: 0,
@@ -285,7 +285,7 @@ export default function Comenzi() {
     setFormPF({
       client: comanda.client,
       produs: comanda.produs,
-      unitate_de_masura: comanda.unitate_masura,
+      unitate_masura: comanda.unitate_masura,
       cantitate: comanda.cantitate,
       punct_descarcare: comanda.punct_descarcare || "",
       pret_fara_tva: comanda.pret_fara_tva,
@@ -1243,14 +1243,14 @@ export default function Comenzi() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="unitate_de_masura">Unitate Măsură *</Label>
+                <Label htmlFor="unitate_masura">Unitate Măsură *</Label>
                 <Input
-                  id="unitate_de_masura"
-                  value={formMP.unitate_de_masura}
-                  onChange={(e) => setFormMP({ ...formMP, unitate_de_masura: e.target.value })}
-                  className={formErrorsMP.unitate_de_masura ? "border-destructive" : ""}
+                  id="unitate_masura"
+                  value={formMP.unitate_masura}
+                  onChange={(e) => setFormMP({ ...formMP, unitate_masura: e.target.value })}
+                  className={formErrorsMP.unitate_masura ? "border-destructive" : ""}
                 />
-                {formErrorsMP.unitate_de_masura && <p className="text-sm text-destructive">{formErrorsMP.unitate_de_masura}</p>}
+                {formErrorsMP.unitate_masura && <p className="text-sm text-destructive">{formErrorsMP.unitate_masura}</p>}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="cantitate">Cantitate *</Label>
@@ -1368,14 +1368,14 @@ export default function Comenzi() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="unitate_de_masura_pf">Unitate Măsură *</Label>
+                <Label htmlFor="unitate_masura_pf">Unitate Măsură *</Label>
                 <Input
-                  id="unitate_de_masura_pf"
-                  value={formPF.unitate_de_masura}
-                  onChange={(e) => setFormPF({ ...formPF, unitate_de_masura: e.target.value })}
-                  className={formErrorsPF.unitate_de_masura ? "border-destructive" : ""}
+                  id="unitate_masura_pf"
+                  value={formPF.unitate_masura}
+                  onChange={(e) => setFormPF({ ...formPF, unitate_masura: e.target.value })}
+                  className={formErrorsPF.unitate_masura ? "border-destructive" : ""}
                 />
-                {formErrorsPF.unitate_de_masura && <p className="text-sm text-destructive">{formErrorsPF.unitate_de_masura}</p>}
+                {formErrorsPF.unitate_masura && <p className="text-sm text-destructive">{formErrorsPF.unitate_masura}</p>}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="cantitate_pf">Cantitate *</Label>
