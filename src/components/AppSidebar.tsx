@@ -3,8 +3,7 @@ import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import logoFull from "@/assets/logo-full.png";
-import logoIconDark from "@/assets/logo-icon-dark.png";
-import logoIconLight from "@/assets/logo-icon-light.png";
+import logoDWhite from "@/assets/logo-d-white.png";
 import {
   Sidebar,
   SidebarContent,
@@ -56,7 +55,7 @@ export function AppSidebar() {
           {open ? (
             <>
               <img 
-                src={logoIconLight} 
+                src={logoDWhite} 
                 alt="D" 
                 className="h-10 w-10 object-contain flex-shrink-0"
               />
@@ -67,7 +66,7 @@ export function AppSidebar() {
             </>
           ) : (
             <img 
-              src={logoIconLight} 
+              src={logoDWhite} 
               alt="D" 
               className="h-6 w-6 object-contain"
             />
