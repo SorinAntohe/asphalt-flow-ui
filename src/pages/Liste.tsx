@@ -965,7 +965,7 @@ const Liste = () => {
                             tabel: "lista_soferi",
                             id: soferiDialog.data.id,
                             update: {
-                              nume: soferiFormData.numeSofer,
+                              nume_sofer: soferiFormData.numeSofer,
                               ci: soferiFormData.ci
                             }
                           })
@@ -980,12 +980,37 @@ const Liste = () => {
                           description: "Șoferul a fost editat cu succes"
                         });
                       } else {
+                        const response = await fetch('http://192.168.1.22:8002/liste/adauga/sofer', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            nume_sofer: soferiFormData.numeSofer,
+                            ci: soferiFormData.ci
+                          })
+                        });
+
+                        if (!response.ok) {
+                          throw new Error('Eroare la adăugarea șoferului');
+                        }
+
                         toast({
                           title: "Succes",
                           description: "Șoferul a fost adăugat cu succes"
                         });
                       }
                       setSoferiDialog({ ...soferiDialog, open: false });
+                      
+                      // Refresh the list
+                      const response = await fetch('http://192.168.1.22:8002/liste/returneaza/soferi');
+                      const data = await response.json();
+                      const mappedData = data.map((item: any) => ({
+                        id: item.id,
+                        nume: item.nume_sofer,
+                        ci: item.ci.toString()
+                      }));
+                      setSoferi(mappedData);
                     } catch (error) {
                       toast({
                         title: "Eroare",
@@ -1032,6 +1057,16 @@ const Liste = () => {
                         description: "Șoferul a fost șters cu succes"
                       });
                       setSoferiDeleteDialog({ open: false });
+                      
+                      // Refresh the list
+                      const refreshResponse = await fetch('http://192.168.1.22:8002/liste/returneaza/soferi');
+                      const data = await refreshResponse.json();
+                      const mappedData = data.map((item: any) => ({
+                        id: item.id,
+                        nume: item.nume_sofer,
+                        ci: item.ci.toString()
+                      }));
+                      setSoferi(mappedData);
                     } catch (error) {
                       toast({
                         title: "Eroare",
