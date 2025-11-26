@@ -18,14 +18,15 @@ export function TopBar() {
         <SidebarTrigger className="-ml-1" />
         
         <div className="flex-1 flex items-center gap-2 sm:gap-4">
-          <Select defaultValue="gestiune1">
+          <Select defaultValue="asfalt-emulsie">
             <SelectTrigger className="w-[120px] sm:w-[200px] text-xs sm:text-sm">
               <SelectValue placeholder="Gestiune" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="gestiune1">Gestiune 1</SelectItem>
-              <SelectItem value="gestiune2">Gestiune 2</SelectItem>
-              <SelectItem value="gestiune3">Gestiune 3</SelectItem>
+              <SelectItem value="asfalt-emulsie">Asfalt + Emulsie</SelectItem>
+              <SelectItem value="beton-stabilizat">Beton Stabilizat(BSC)</SelectItem>
+              <SelectItem value="betoane">Betoane</SelectItem>
+              <SelectItem value="beton-concasat">Beton Concasat</SelectItem>
             </SelectContent>
           </Select>
 
