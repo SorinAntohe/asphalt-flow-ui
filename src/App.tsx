@@ -7,12 +7,6 @@ import { Layout } from "./components/Layout";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Liste from "./pages/Liste";
-import AutoturismeAdd from "./pages/AutoturismeAdd";
-import SoferiAdd from "./pages/SoferiAdd";
-import MateriiPrimeAdd from "./pages/MateriiPrimeAdd";
-import ProduseFiniteAdd from "./pages/ProduseFiniteAdd";
-import ClientiAdd from "./pages/ClientiAdd";
-import FurnizoriAdd from "./pages/FurnizoriAdd";
 import Receptii from "./pages/Receptii";
 import Livrari from "./pages/Livrari";
 import Consumuri from "./pages/Consumuri";
@@ -41,54 +35,6 @@ const App = () => (
             element={
               <Layout>
                 <Liste />
-              </Layout>
-            }
-          />
-          <Route
-            path="/liste/autoturisme/add"
-            element={
-              <Layout>
-                <AutoturismeAdd />
-              </Layout>
-            }
-          />
-          <Route
-            path="/liste/soferi/add"
-            element={
-              <Layout>
-                <SoferiAdd />
-              </Layout>
-            }
-          />
-          <Route
-            path="/liste/materii-prime/add"
-            element={
-              <Layout>
-                <MateriiPrimeAdd />
-              </Layout>
-            }
-          />
-          <Route
-            path="/liste/produse-finite/add"
-            element={
-              <Layout>
-                <ProduseFiniteAdd />
-              </Layout>
-            }
-          />
-          <Route
-            path="/liste/clienti/add"
-            element={
-              <Layout>
-                <ClientiAdd />
-              </Layout>
-            }
-          />
-          <Route
-            path="/liste/furnizori/add"
-            element={
-              <Layout>
-                <FurnizoriAdd />
               </Layout>
             }
           />
