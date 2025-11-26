@@ -22,6 +22,14 @@ interface Furnizor {
   nr_reg: string;
 }
 
+interface Client {
+  id: number;
+  nume: string;
+  adresa: string;
+  cui: string;
+  nr_reg: string;
+}
+
 interface ComandaMateriePrima {
   id: number;
   cod: string;
@@ -80,6 +88,8 @@ export default function Comenzi() {
   const [loadingPF, setLoadingPF] = useState(true);
   const [furnizori, setFurnizori] = useState<Furnizor[]>([]);
   const [loadingFurnizori, setLoadingFurnizori] = useState(true);
+  const [clienti, setClienti] = useState<Client[]>([]);
+  const [loadingClienti, setLoadingClienti] = useState(true);
   
   // Dialog states for MP
   const [openAddEditMP, setOpenAddEditMP] = useState(false);
@@ -139,6 +149,28 @@ export default function Comenzi() {
     }
   };
 
+  // Fetch clienti from API
+  const fetchClienti = async () => {
+    try {
+      setLoadingClienti(true);
+      const response = await fetch('http://192.168.1.22:8002/comenzi/returneaza_clienti/produs');
+      if (!response.ok) {
+        throw new Error('Failed to fetch clienti');
+      }
+      const data = await response.json();
+      setClienti(data);
+    } catch (error) {
+      console.error('Error fetching clienti:', error);
+      toast({
+        title: "Eroare",
+        description: "Nu s-au putut încărca clienții",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingClienti(false);
+    }
+  };
+
   // Fetch comenzi materie prima from API
   const fetchComenziMP = async () => {
     try {
@@ -163,6 +195,7 @@ export default function Comenzi() {
   
   useEffect(() => {
     fetchFurnizori();
+    fetchClienti();
     fetchComenziMP();
   }, [toast]);
   
@@ -1397,12 +1430,27 @@ export default function Comenzi() {
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="client">Client *</Label>
-              <Input
-                id="client"
+              <Select
                 value={formPF.client}
-                onChange={(e) => setFormPF({ ...formPF, client: e.target.value })}
-                className={formErrorsPF.client ? "border-destructive" : ""}
-              />
+                onValueChange={(value) => setFormPF({ ...formPF, client: value })}
+              >
+                <SelectTrigger className={formErrorsPF.client ? "border-destructive" : ""}>
+                  <SelectValue placeholder="Selectează client" />
+                </SelectTrigger>
+                <SelectContent>
+                  {loadingClienti ? (
+                    <SelectItem value="loading" disabled>Se încarcă...</SelectItem>
+                  ) : clienti.length === 0 ? (
+                    <SelectItem value="empty" disabled>Fără clienți</SelectItem>
+                  ) : (
+                    clienti.map((client) => (
+                      <SelectItem key={client.id} value={client.nume}>
+                        {client.nume}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
               {formErrorsPF.client && <p className="text-sm text-destructive">{formErrorsPF.client}</p>}
             </div>
             <div className="grid gap-2">
