@@ -417,33 +417,51 @@ const Liste = () => {
                  </DialogDescription>
                </DialogHeader>
                <div className="grid gap-4 py-4">
-                 <div className="grid gap-2">
-                   <Label htmlFor="tipMasina">Tip Mașină *</Label>
-                   <Input
-                     id="tipMasina"
-                     placeholder="Ex: Camion cisternă"
-                     value={autoturismeFormData.tipMasina}
-                     onChange={(e) => setAutoturismeFormData({ ...autoturismeFormData, tipMasina: e.target.value })}
-                   />
-                 </div>
-                 <div className="grid gap-2">
-                   <Label htmlFor="nrAuto">Număr Auto *</Label>
-                   <Input
-                     id="nrAuto"
-                     placeholder="Ex: B-123-ABC"
-                     value={autoturismeFormData.nrAuto}
-                     onChange={(e) => setAutoturismeFormData({ ...autoturismeFormData, nrAuto: e.target.value })}
-                   />
-                 </div>
-                 <div className="grid gap-2">
-                   <Label htmlFor="sarcinaMax">Sarcină Maximă *</Label>
-                   <Input
-                     id="sarcinaMax"
-                     placeholder="Ex: 25t"
-                     value={autoturismeFormData.sarcinaMax}
-                     onChange={(e) => setAutoturismeFormData({ ...autoturismeFormData, sarcinaMax: e.target.value })}
-                   />
-                 </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="tipMasina">Tip Mașină *</Label>
+                    <Select 
+                      value={autoturismeFormData.tipMasina} 
+                      onValueChange={(value) => {
+                        const sarcinaMap: Record<string, string> = {
+                          "Articulata": "40t",
+                          "8X4": "30t",
+                          "4X2": "12t"
+                        };
+                        setAutoturismeFormData({ 
+                          ...autoturismeFormData, 
+                          tipMasina: value,
+                          sarcinaMax: sarcinaMap[value] || ""
+                        });
+                      }}
+                    >
+                      <SelectTrigger id="tipMasina">
+                        <SelectValue placeholder="Selectează tip mașină" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Articulata">Articulata</SelectItem>
+                        <SelectItem value="8X4">8X4</SelectItem>
+                        <SelectItem value="4X2">4X2</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="nrAuto">Număr Auto *</Label>
+                    <Input
+                      id="nrAuto"
+                      placeholder="Ex: B-123-ABC"
+                      value={autoturismeFormData.nrAuto}
+                      onChange={(e) => setAutoturismeFormData({ ...autoturismeFormData, nrAuto: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="sarcinaMax">Sarcină Maximă *</Label>
+                    <Input
+                      id="sarcinaMax"
+                      placeholder="Se completează automat"
+                      value={autoturismeFormData.sarcinaMax}
+                      disabled
+                    />
+                  </div>
                  <div className="grid gap-2">
                    <Label htmlFor="tipTransport">Tip Transport *</Label>
                    <Select value={autoturismeFormData.tipTransport} onValueChange={(value) => setAutoturismeFormData({ ...autoturismeFormData, tipTransport: value })}>
