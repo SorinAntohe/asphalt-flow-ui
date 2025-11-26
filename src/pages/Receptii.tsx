@@ -382,30 +382,28 @@ export default function Receptii() {
   };
 
   const FilterHeader = ({ field, label }: { field: keyof typeof filters; label: string }) => (
-    <TableHead>
+    <TableHead className="h-10 text-xs">
       <Popover>
         <PopoverTrigger asChild>
           <div className="flex items-center cursor-pointer hover:text-primary">
             <span>{label}</span>
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="ml-2 h-3 w-3" />
           </div>
         </PopoverTrigger>
-        <PopoverContent className="w-56">
+        <PopoverContent className="w-56 p-2">
           <div className="space-y-2">
-            <div>
-              <Label>Filtrează</Label>
-              <Input
-                value={filters[field]}
-                onChange={(e) => setFilters({ ...filters, [field]: e.target.value })}
-                placeholder={`Caută ${label.toLowerCase()}...`}
-              />
-            </div>
-            <div className="flex gap-2">
+            <Input
+              value={filters[field]}
+              onChange={(e) => setFilters({ ...filters, [field]: e.target.value })}
+              placeholder={`Caută ${label.toLowerCase()}...`}
+              className="h-7 text-xs"
+            />
+            <div className="flex gap-1">
               <Button
                 size="sm"
                 variant="outline"
                 onClick={() => handleSort(field)}
-                className="flex-1"
+                className="flex-1 h-7 text-xs"
               >
                 Cresc.
               </Button>
@@ -413,7 +411,7 @@ export default function Receptii() {
                 size="sm"
                 variant="outline"
                 onClick={() => handleSort(field)}
-                className="flex-1"
+                className="flex-1 h-7 text-xs"
               >
                 Descresc.
               </Button>
@@ -492,14 +490,14 @@ export default function Receptii() {
               </TableHeader>
               <TableBody>
                 {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={17} className="text-center py-8">
+                  <TableRow className="h-10">
+                    <TableCell colSpan={17} className="text-center py-1 text-xs">
                       Se încarcă...
                     </TableCell>
                   </TableRow>
                 ) : paginatedData.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={17} className="text-center py-8">
+                  <TableRow className="h-10">
+                    <TableCell colSpan={17} className="text-center py-1 text-xs">
                       Nu există recepții înregistrate
                     </TableCell>
                   </TableRow>
@@ -507,26 +505,26 @@ export default function Receptii() {
                   paginatedData.map((receptie) => (
                     <TableRow 
                       key={receptie.id}
-                      className="cursor-pointer hover:bg-muted/50"
+                      className="h-10 cursor-pointer hover:bg-muted/50"
                       onClick={() => setViewingDetails(receptie)}
                     >
-                      <TableCell>{receptie.id}</TableCell>
-                      <TableCell>{receptie.data}</TableCell>
-                      <TableCell>{receptie.cod}</TableCell>
-                      <TableCell>{receptie.furnizor}</TableCell>
-                      <TableCell>{receptie.material}</TableCell>
-                      <TableCell>{receptie.nr_aviz_provizoriu || "-"}</TableCell>
-                      <TableCell>{receptie.nr_aviz_intrare || "-"}</TableCell>
-                      <TableCell>{receptie.nume_sofer}</TableCell>
-                      <TableCell>{receptie.nr_inmatriculare}</TableCell>
-                      <TableCell>{receptie.tip_masina}</TableCell>
-                      <TableCell>{receptie.cantitate_livrata}</TableCell>
-                      <TableCell>{receptie.cantitate_receptionata}</TableCell>
-                      <TableCell>{receptie.diferenta}</TableCell>
-                      <TableCell>{receptie.pret_material_total}</TableCell>
-                      <TableCell>{receptie.pret_transport_total}</TableCell>
-                      <TableCell>{receptie.pret_total}</TableCell>
-                      <TableCell className="max-w-xs truncate">{receptie.observatii || "-"}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.id}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.data}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.cod}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.furnizor}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.material}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.nr_aviz_provizoriu || "-"}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.nr_aviz_intrare || "-"}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.nume_sofer}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.nr_inmatriculare}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.tip_masina}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.cantitate_livrata}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.cantitate_receptionata}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.diferenta}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.pret_material_total}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.pret_transport_total}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.pret_total}</TableCell>
+                      <TableCell className="py-1 text-xs max-w-xs truncate">{receptie.observatii || "-"}</TableCell>
                     </TableRow>
                   ))
                 )}
