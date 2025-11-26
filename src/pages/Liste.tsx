@@ -1306,7 +1306,7 @@ const Liste = () => {
                              tabel: "lista_materiale",
                              id: materiiPrimeDialog.data.id,
                              update: {
-                               denumire: materiiPrimeFormData.denumire
+                               materiale_prime: materiiPrimeFormData.denumire
                              }
                            })
                          });
@@ -1320,12 +1320,35 @@ const Liste = () => {
                            description: "Materia primă a fost editată cu succes"
                          });
                        } else {
+                         const response = await fetch('http://192.168.1.22:8002/liste/adauga/materiale', {
+                           method: 'POST',
+                           headers: {
+                             'Content-Type': 'application/json',
+                           },
+                           body: JSON.stringify({
+                             materiale_prime: materiiPrimeFormData.denumire
+                           })
+                         });
+
+                         if (!response.ok) {
+                           throw new Error('Eroare la adăugarea materiei prime');
+                         }
+
                          toast({
                            title: "Succes",
                            description: "Materia primă a fost adăugată cu succes"
                          });
                        }
                        setMateriiPrimeDialog({ ...materiiPrimeDialog, open: false });
+                       
+                       // Refresh the list
+                       const refreshResponse = await fetch('http://192.168.1.22:8002/liste/returneaza/materiale');
+                       const data = await refreshResponse.json();
+                       const mappedData = data.map((item: any) => ({
+                         id: item.id,
+                         denumire: item.materiale_prime
+                       }));
+                       setMateriiPrime(mappedData);
                      } catch (error) {
                        toast({
                          title: "Eroare",
@@ -1372,6 +1395,15 @@ const Liste = () => {
                         description: "Materia primă a fost ștearsă cu succes"
                       });
                       setMateriiPrimeDeleteDialog({ open: false });
+                      
+                      // Refresh the list
+                      const refreshResponse = await fetch('http://192.168.1.22:8002/liste/returneaza/materiale');
+                      const data = await refreshResponse.json();
+                      const mappedData = data.map((item: any) => ({
+                        id: item.id,
+                        denumire: item.materiale_prime
+                      }));
+                      setMateriiPrime(mappedData);
                     } catch (error) {
                       toast({
                         title: "Eroare",
