@@ -56,6 +56,7 @@ export default function Receptii() {
   const [openAddEdit, setOpenAddEdit] = useState(false);
   const [editing, setEditing] = useState<ReceptieMaterial | null>(null);
   const [deleting, setDeleting] = useState<ReceptieMaterial | null>(null);
+  const [viewingDetails, setViewingDetails] = useState<ReceptieMaterial | null>(null);
   
   // Form state
   const [form, setForm] = useState({
@@ -76,12 +77,9 @@ export default function Receptii() {
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  // Filters
+  // Filters (only for visible columns)
   const [filters, setFilters] = useState({
-    id: "", data: "", cod: "", nr_aviz_provizoriu: "", nr_aviz_intrare: "",
-    nume_sofer: "", nr_inmatriculare: "", tip_masina: "", cantitate_livrata: "",
-    cantitate_receptionata: "", diferenta: "", pret_material_total: "",
-    pret_total: "", pret_transport_total: "", observatii: ""
+    id: "", data: "", cod: ""
   });
 
   // Sort
@@ -270,19 +268,7 @@ export default function Receptii() {
       return (
         item.id.toString().includes(filters.id) &&
         item.data.toLowerCase().includes(filters.data.toLowerCase()) &&
-        item.cod.toLowerCase().includes(filters.cod.toLowerCase()) &&
-        (item.nr_aviz_provizoriu || '').toLowerCase().includes(filters.nr_aviz_provizoriu.toLowerCase()) &&
-        (item.nr_aviz_intrare || '').toLowerCase().includes(filters.nr_aviz_intrare.toLowerCase()) &&
-        item.nume_sofer.toLowerCase().includes(filters.nume_sofer.toLowerCase()) &&
-        item.nr_inmatriculare.toLowerCase().includes(filters.nr_inmatriculare.toLowerCase()) &&
-        item.tip_masina.toLowerCase().includes(filters.tip_masina.toLowerCase()) &&
-        item.cantitate_livrata.toString().includes(filters.cantitate_livrata) &&
-        item.cantitate_receptionata.toString().includes(filters.cantitate_receptionata) &&
-        item.diferenta.toString().includes(filters.diferenta) &&
-        item.pret_material_total.toString().includes(filters.pret_material_total) &&
-        item.pret_total.toString().includes(filters.pret_total) &&
-        item.pret_transport_total.toString().includes(filters.pret_transport_total) &&
-        (item.observatii || '').toLowerCase().includes(filters.observatii.toLowerCase())
+        item.cod.toLowerCase().includes(filters.cod.toLowerCase())
       );
     })
     .sort((a, b) => {
@@ -377,71 +363,31 @@ export default function Receptii() {
                   <FilterHeader field="id" label="ID" />
                   <FilterHeader field="data" label="Data" />
                   <FilterHeader field="cod" label="Cod" />
-                  <FilterHeader field="nr_aviz_provizoriu" label="Nr. Aviz Provizoriu" />
-                  <FilterHeader field="nr_aviz_intrare" label="Nr. Aviz Intrare" />
-                  <FilterHeader field="nume_sofer" label="Nume Șofer" />
-                  <FilterHeader field="nr_inmatriculare" label="Nr. Înmatriculare" />
-                  <FilterHeader field="tip_masina" label="Tip Mașină" />
-                  <FilterHeader field="cantitate_livrata" label="Cant. Livrată" />
-                  <FilterHeader field="cantitate_receptionata" label="Cant. Recepționată" />
-                  <FilterHeader field="diferenta" label="Diferență" />
-                  <FilterHeader field="pret_material_total" label="Preț Material" />
-                  <FilterHeader field="pret_total" label="Preț Total" />
-                  <FilterHeader field="pret_transport_total" label="Preț Transport" />
-                  <FilterHeader field="observatii" label="Observații" />
-                  <TableHead className="text-right">Acțiuni</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={16} className="text-center py-8">
+                    <TableCell colSpan={3} className="text-center py-8">
                       Se încarcă...
                     </TableCell>
                   </TableRow>
                 ) : filteredAndSorted.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={16} className="text-center py-8">
+                    <TableCell colSpan={3} className="text-center py-8">
                       Nu există recepții înregistrate
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredAndSorted.map((receptie) => (
-                    <TableRow key={receptie.id}>
+                    <TableRow 
+                      key={receptie.id}
+                      className="cursor-pointer hover:bg-muted/50"
+                      onClick={() => setViewingDetails(receptie)}
+                    >
                       <TableCell>{receptie.id}</TableCell>
                       <TableCell>{receptie.data}</TableCell>
                       <TableCell>{receptie.cod}</TableCell>
-                      <TableCell>{receptie.nr_aviz_provizoriu || "-"}</TableCell>
-                      <TableCell>{receptie.nr_aviz_intrare || "-"}</TableCell>
-                      <TableCell>{receptie.nume_sofer}</TableCell>
-                      <TableCell>{receptie.nr_inmatriculare}</TableCell>
-                      <TableCell>{receptie.tip_masina}</TableCell>
-                      <TableCell>{receptie.cantitate_livrata}</TableCell>
-                      <TableCell>{receptie.cantitate_receptionata}</TableCell>
-                      <TableCell>{receptie.diferenta}</TableCell>
-                      <TableCell>{receptie.pret_material_total}</TableCell>
-                      <TableCell>{receptie.pret_total}</TableCell>
-                      <TableCell>{receptie.pret_transport_total}</TableCell>
-                      <TableCell className="max-w-xs truncate">{receptie.observatii || "-"}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex gap-2 justify-end">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleOpenEdit(receptie)}
-                          >
-                            <Pencil className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setDeleting(receptie)}
-                            className="text-red-700 hover:text-red-700"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
                     </TableRow>
                   ))
                 )}
@@ -625,6 +571,123 @@ export default function Receptii() {
             </Button>
             <Button onClick={handleSave}>
               {editing ? "Salvează Modificările" : "Adaugă Recepția"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Details View Dialog */}
+      <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Detalii Recepție - Cod: {viewingDetails?.cod}</DialogTitle>
+            <DialogDescription>
+              Informații complete despre recepție
+            </DialogDescription>
+          </DialogHeader>
+          {viewingDetails && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">ID</Label>
+                  <p className="font-medium">{viewingDetails.id}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Data</Label>
+                  <p className="font-medium">{viewingDetails.data}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Cod</Label>
+                  <p className="font-medium">{viewingDetails.cod}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Nr. Aviz Provizoriu</Label>
+                  <p className="font-medium">{viewingDetails.nr_aviz_provizoriu || "-"}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Nr. Aviz Intrare</Label>
+                  <p className="font-medium">{viewingDetails.nr_aviz_intrare || "-"}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Nume Șofer</Label>
+                  <p className="font-medium">{viewingDetails.nume_sofer}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Nr. Înmatriculare</Label>
+                  <p className="font-medium">{viewingDetails.nr_inmatriculare}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Tip Mașină</Label>
+                  <p className="font-medium">{viewingDetails.tip_masina}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Cantitate Livrată</Label>
+                  <p className="font-medium">{viewingDetails.cantitate_livrata}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Cantitate Recepționată</Label>
+                  <p className="font-medium">{viewingDetails.cantitate_receptionata}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Diferență</Label>
+                  <p className="font-medium">{viewingDetails.diferenta}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Preț Material Total</Label>
+                  <p className="font-medium">{viewingDetails.pret_material_total}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Preț Transport Total</Label>
+                  <p className="font-medium">{viewingDetails.pret_transport_total}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Preț Total</Label>
+                  <p className="font-medium">{viewingDetails.pret_total}</p>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-muted-foreground">Observații</Label>
+                <p className="font-medium">{viewingDetails.observatii || "-"}</p>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="flex gap-2">
+            <Button variant="outline" onClick={() => setViewingDetails(null)}>
+              Închide
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => {
+                if (viewingDetails) {
+                  handleOpenEdit(viewingDetails);
+                  setViewingDetails(null);
+                }
+              }}
+            >
+              <Pencil className="w-4 h-4 mr-2" />
+              Editează
+            </Button>
+            <Button 
+              variant="destructive"
+              onClick={() => {
+                if (viewingDetails) {
+                  setDeleting(viewingDetails);
+                  setViewingDetails(null);
+                }
+              }}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Șterge
             </Button>
           </DialogFooter>
         </DialogContent>
