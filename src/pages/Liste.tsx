@@ -6,11 +6,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+
 const Liste = () => {
-  const navigate = useNavigate();
+  const { toast } = useToast();
   const [autoturismePerPage, setAutoturismePerPage] = useState(10);
   const [soferiPerPage, setSoferiPerPage] = useState(10);
   const [materiiPrimePerPage, setMateriiPrimePerPage] = useState(10);
@@ -40,6 +44,40 @@ const Liste = () => {
   const [produseFiniteSort, setProduseFiniteSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
   const [clientiSort, setClientiSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
   const [furnizoriSort, setFurnizoriSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
+
+  // Dialog states
+  const [autoturismeDialog, setAutoturismeDialog] = useState<{ open: boolean; mode: 'add' | 'edit'; data?: any }>({ open: false, mode: 'add' });
+  const [soferiDialog, setSoferiDialog] = useState<{ open: boolean; mode: 'add' | 'edit'; data?: any }>({ open: false, mode: 'add' });
+  const [materiiPrimeDialog, setMateriiPrimeDialog] = useState<{ open: boolean; mode: 'add' | 'edit'; data?: any }>({ open: false, mode: 'add' });
+  const [produseFiniteDialog, setProduseFiniteDialog] = useState<{ open: boolean; mode: 'add' | 'edit'; data?: any }>({ open: false, mode: 'add' });
+  const [clientiDialog, setClientiDialog] = useState<{ open: boolean; mode: 'add' | 'edit'; data?: any }>({ open: false, mode: 'add' });
+  const [furnizoriDialog, setFurnizoriDialog] = useState<{ open: boolean; mode: 'add' | 'edit'; data?: any }>({ open: false, mode: 'add' });
+
+  // Delete dialog states
+  const [autoturismeDeleteDialog, setAutoturismeDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
+  const [soferiDeleteDialog, setSoferiDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
+  const [materiiPrimeDeleteDialog, setMateriiPrimeDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
+  const [produseFiniteDeleteDialog, setProduseFiniteDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
+  const [clientiDeleteDialog, setClientiDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
+  const [furnizoriDeleteDialog, setFurnizoriDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
+
+  // Form data states
+  const [autoturismeFormData, setAutoturismeFormData] = useState({ tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "" });
+  const [soferiFormData, setSoferiFormData] = useState({ numeSofer: "", ci: "" });
+  const [materiiPrimeFormData, setMateriiPrimeFormData] = useState({ denumire: "" });
+  const [produseFiniteFormData, setProduseFiniteFormData] = useState({ denumire: "" });
+  const [clientiFormData, setClientiFormData] = useState({ denumire: "", sediu: "", cui: "", nrReg: "" });
+  const [furnizoriFormData, setFurnizoriFormData] = useState({ denumire: "", sediu: "", cui: "", nrReg: "" });
+  
+  const materiiPrimeList = [
+    "0/4 NAT", "0/4 CONC", "0/4 CRIBLURI", "4/8 CONC", "4/8 CRIBLURI", "4/8 NAT",
+    "8/16 CONC", "8/16 CRIBLURI", "16/22.4 CONC", "16/22.4 CRIBLURI",
+    "16/31.5 CRIBLURI", "16/31.5 CONC", "CTL", "BITUM 50/70", "BITUM 70/100",
+    "FILLER CALCAR", "FILLER CIMENT", "CURENT ELECTRIC", "MOTORINA", "APA",
+    "ACID CLORHIDRIC", "EMULGATOR CATIONIC", "EMULGATOR ANIONIC", "SARE DE DRUM",
+    "CELULOZA TOPCEL", "CELULOZA TECHNOCEL", "ADITIV ADEZIUNE", "POLIMER SBS",
+    "FIBRĂ CELULOZICĂ", "NISIP SILICOS"
+  ];
   const autoturisme = [{
     id: 1,
     tipMasina: "Camion cisternă",
@@ -205,7 +243,9 @@ const Liste = () => {
   const paginatedProduseFinite = getPaginatedData(sortedProduseFinite, produseFinitePage, produseFinitePerPage);
   const paginatedClienti = getPaginatedData(sortedClienti, clientiPage, clientiPerPage);
   const paginatedFurnizori = getPaginatedData(sortedFurnizori, furnizoriPage, furnizoriPerPage);
-  return <div className="space-y-6">
+  
+  return (
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Liste</h1>
@@ -235,7 +275,10 @@ const Liste = () => {
                     Parcul auto disponibil pentru transport
                   </CardDescription>
                 </div>
-                <Button className="gap-2" onClick={() => navigate("/liste/autoturisme/add")}>
+                <Button className="gap-2" onClick={() => {
+                  setAutoturismeFormData({ tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "" });
+                  setAutoturismeDialog({ open: true, mode: 'add' });
+                }}>
                   <Plus className="w-4 h-4" />
                   Adaugă Autoturism
                 </Button>
@@ -399,11 +442,14 @@ const Liste = () => {
                       <TableCell className="py-1 text-xs">{auto.tipTransport}</TableCell>
                       <TableCell className="text-right py-1">
                         <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
+                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
+                            setAutoturismeFormData({ tipMasina: auto.tipMasina, nrAuto: auto.nrAuto, sarcinaMax: auto.sarcinaMax, tipTransport: auto.tipTransport });
+                            setAutoturismeDialog({ open: true, mode: 'edit', data: auto });
+                          }}>
                             <Pencil className="w-3 h-3" />
                             Editează
                           </Button>
-                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
+                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs" onClick={() => setAutoturismeDeleteDialog({ open: true, id: auto.id })}>
                             <Trash2 className="w-3 h-3" />
                             Șterge
                           </Button>
@@ -441,9 +487,99 @@ const Liste = () => {
                   </PaginationContent>
                 </Pagination>
               )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+             </CardContent>
+           </Card>
+
+           <Dialog open={autoturismeDialog.open} onOpenChange={(open) => setAutoturismeDialog({ ...autoturismeDialog, open })}>
+             <DialogContent className="sm:max-w-[500px]">
+               <DialogHeader>
+                 <DialogTitle>{autoturismeDialog.mode === 'add' ? 'Adaugă Autoturism' : 'Editează Autoturism'}</DialogTitle>
+                 <DialogDescription>
+                   {autoturismeDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un autoturism nou.' : 'Modificați detaliile autoturismului.'}
+                 </DialogDescription>
+               </DialogHeader>
+               <div className="grid gap-4 py-4">
+                 <div className="grid gap-2">
+                   <Label htmlFor="tipMasina">Tip Mașină *</Label>
+                   <Input
+                     id="tipMasina"
+                     placeholder="Ex: Camion cisternă"
+                     value={autoturismeFormData.tipMasina}
+                     onChange={(e) => setAutoturismeFormData({ ...autoturismeFormData, tipMasina: e.target.value })}
+                   />
+                 </div>
+                 <div className="grid gap-2">
+                   <Label htmlFor="nrAuto">Număr Auto *</Label>
+                   <Input
+                     id="nrAuto"
+                     placeholder="Ex: B-123-ABC"
+                     value={autoturismeFormData.nrAuto}
+                     onChange={(e) => setAutoturismeFormData({ ...autoturismeFormData, nrAuto: e.target.value })}
+                   />
+                 </div>
+                 <div className="grid gap-2">
+                   <Label htmlFor="sarcinaMax">Sarcină Maximă *</Label>
+                   <Input
+                     id="sarcinaMax"
+                     placeholder="Ex: 25t"
+                     value={autoturismeFormData.sarcinaMax}
+                     onChange={(e) => setAutoturismeFormData({ ...autoturismeFormData, sarcinaMax: e.target.value })}
+                   />
+                 </div>
+                 <div className="grid gap-2">
+                   <Label htmlFor="tipTransport">Tip Transport *</Label>
+                   <Select value={autoturismeFormData.tipTransport} onValueChange={(value) => setAutoturismeFormData({ ...autoturismeFormData, tipTransport: value })}>
+                     <SelectTrigger id="tipTransport">
+                       <SelectValue placeholder="Selectează tip transport" />
+                     </SelectTrigger>
+                     <SelectContent>
+                       <SelectItem value="Propriu">Propriu</SelectItem>
+                       <SelectItem value="Inchiriat">Închiriat</SelectItem>
+                       <SelectItem value="Extern">Extern</SelectItem>
+                     </SelectContent>
+                   </Select>
+                 </div>
+               </div>
+               <DialogFooter>
+                 <Button variant="outline" onClick={() => setAutoturismeDialog({ ...autoturismeDialog, open: false })}>
+                   Anulează
+                 </Button>
+                 <Button onClick={() => {
+                   toast({
+                     title: "Succes",
+                     description: `Autoturismul a fost ${autoturismeDialog.mode === 'add' ? 'adăugat' : 'actualizat'} cu succes`
+                   });
+                   setAutoturismeDialog({ ...autoturismeDialog, open: false });
+                 }}>
+                   {autoturismeDialog.mode === 'add' ? 'Adaugă' : 'Salvează'}
+                 </Button>
+               </DialogFooter>
+             </DialogContent>
+           </Dialog>
+
+           <AlertDialog open={autoturismeDeleteDialog.open} onOpenChange={(open) => setAutoturismeDeleteDialog({ ...autoturismeDeleteDialog, open })}>
+             <AlertDialogContent>
+               <AlertDialogHeader>
+                 <AlertDialogTitle>Confirmare ștergere</AlertDialogTitle>
+                 <AlertDialogDescription>
+                   Sigur doriți să ștergeți acest autoturism? Această acțiune nu poate fi anulată.
+                 </AlertDialogDescription>
+               </AlertDialogHeader>
+               <AlertDialogFooter>
+                 <AlertDialogCancel>Anulează</AlertDialogCancel>
+                 <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => {
+                   toast({
+                     title: "Succes",
+                     description: "Autoturismul a fost șters cu succes"
+                   });
+                   setAutoturismeDeleteDialog({ open: false });
+                 }}>
+                   Șterge
+                 </AlertDialogAction>
+               </AlertDialogFooter>
+             </AlertDialogContent>
+           </AlertDialog>
+         </TabsContent>
 
         <TabsContent value="soferi">
           <Card>
@@ -455,7 +591,10 @@ const Liste = () => {
                     Personal autorizat pentru conducere
                   </CardDescription>
                 </div>
-                <Button className="gap-2" onClick={() => navigate("/liste/soferi/add")}>
+                <Button className="gap-2" onClick={() => {
+                  setSoferiFormData({ numeSofer: "", ci: "" });
+                  setSoferiDialog({ open: true, mode: 'add' });
+                }}>
                   <Plus className="w-4 h-4" />
                   Adaugă Șofer
                 </Button>
@@ -567,11 +706,14 @@ const Liste = () => {
                       <TableCell className="py-1 text-xs">{sofer.ci}</TableCell>
                       <TableCell className="text-right py-1">
                         <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
+                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
+                            setSoferiFormData({ numeSofer: sofer.nume, ci: sofer.ci });
+                            setSoferiDialog({ open: true, mode: 'edit', data: sofer });
+                          }}>
                             <Pencil className="w-3 h-3" />
                             Editează
                           </Button>
-                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
+                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs" onClick={() => setSoferiDeleteDialog({ open: true, id: sofer.id })}>
                             <Trash2 className="w-3 h-3" />
                             Șterge
                           </Button>
@@ -609,12 +751,80 @@ const Liste = () => {
                   </PaginationContent>
                 </Pagination>
               )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+             </CardContent>
+           </Card>
 
-        <TabsContent value="materii">
-          <Card>
+           <Dialog open={soferiDialog.open} onOpenChange={(open) => setSoferiDialog({ ...soferiDialog, open })}>
+             <DialogContent className="sm:max-w-[500px]">
+               <DialogHeader>
+                 <DialogTitle>{soferiDialog.mode === 'add' ? 'Adaugă Șofer' : 'Editează Șofer'}</DialogTitle>
+                 <DialogDescription>
+                   {soferiDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un șofer nou.' : 'Modificați detaliile șoferului.'}
+                 </DialogDescription>
+               </DialogHeader>
+               <div className="grid gap-4 py-4">
+                 <div className="grid gap-2">
+                   <Label htmlFor="numeSofer">Nume Șofer *</Label>
+                   <Input
+                     id="numeSofer"
+                     placeholder="Ex: Ion Popescu"
+                     value={soferiFormData.numeSofer}
+                     onChange={(e) => setSoferiFormData({ ...soferiFormData, numeSofer: e.target.value })}
+                   />
+                 </div>
+                 <div className="grid gap-2">
+                   <Label htmlFor="ci">C.I. *</Label>
+                   <Input
+                     id="ci"
+                     placeholder="Ex: AB123456"
+                     value={soferiFormData.ci}
+                     onChange={(e) => setSoferiFormData({ ...soferiFormData, ci: e.target.value })}
+                   />
+                 </div>
+               </div>
+               <DialogFooter>
+                 <Button variant="outline" onClick={() => setSoferiDialog({ ...soferiDialog, open: false })}>
+                   Anulează
+                 </Button>
+                 <Button onClick={() => {
+                   toast({
+                     title: "Succes",
+                     description: `Șoferul a fost ${soferiDialog.mode === 'add' ? 'adăugat' : 'actualizat'} cu succes`
+                   });
+                   setSoferiDialog({ ...soferiDialog, open: false });
+                 }}>
+                   {soferiDialog.mode === 'add' ? 'Adaugă' : 'Salvează'}
+                 </Button>
+               </DialogFooter>
+             </DialogContent>
+           </Dialog>
+
+           <AlertDialog open={soferiDeleteDialog.open} onOpenChange={(open) => setSoferiDeleteDialog({ ...soferiDeleteDialog, open })}>
+             <AlertDialogContent>
+               <AlertDialogHeader>
+                 <AlertDialogTitle>Confirmare ștergere</AlertDialogTitle>
+                 <AlertDialogDescription>
+                   Sigur doriți să ștergeți acest șofer? Această acțiune nu poate fi anulată.
+                 </AlertDialogDescription>
+               </AlertDialogHeader>
+               <AlertDialogFooter>
+                 <AlertDialogCancel>Anulează</AlertDialogCancel>
+                 <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => {
+                   toast({
+                     title: "Succes",
+                     description: "Șoferul a fost șters cu succes"
+                   });
+                   setSoferiDeleteDialog({ open: false });
+                 }}>
+                   Șterge
+                 </AlertDialogAction>
+               </AlertDialogFooter>
+             </AlertDialogContent>
+           </AlertDialog>
+         </TabsContent>
+
+         <TabsContent value="materii">
+           <Card>
             <CardHeader>
               <div className="flex flex-row items-center justify-between">
                 <div>
@@ -623,7 +833,10 @@ const Liste = () => {
                     Materii prime utilizate în producție
                   </CardDescription>
                 </div>
-                <Button className="gap-2" onClick={() => navigate("/liste/materii-prime/add")}>
+                <Button className="gap-2" onClick={() => {
+                  setMateriiPrimeFormData({ denumire: "" });
+                  setMateriiPrimeDialog({ open: true, mode: 'add' });
+                }}>
                   <Plus className="w-4 h-4" />
                   Adaugă Materie Primă
                 </Button>
@@ -709,11 +922,14 @@ const Liste = () => {
                       <TableCell className="py-1 text-xs">{materie.denumire}</TableCell>
                       <TableCell className="text-right py-1">
                         <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
+                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
+                            setMateriiPrimeFormData({ denumire: materie.denumire });
+                            setMateriiPrimeDialog({ open: true, mode: 'edit', data: materie });
+                          }}>
                             <Pencil className="w-3 h-3" />
                             Editează
                           </Button>
-                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
+                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs" onClick={() => setMateriiPrimeDeleteDialog({ open: true, id: materie.id })}>
                             <Trash2 className="w-3 h-3" />
                             Șterge
                           </Button>
@@ -751,12 +967,75 @@ const Liste = () => {
                   </PaginationContent>
                 </Pagination>
               )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+             </CardContent>
+           </Card>
 
-        <TabsContent value="produse">
-          <Card>
+           <Dialog open={materiiPrimeDialog.open} onOpenChange={(open) => setMateriiPrimeDialog({ ...materiiPrimeDialog, open })}>
+             <DialogContent className="sm:max-w-[500px]">
+               <DialogHeader>
+                 <DialogTitle>{materiiPrimeDialog.mode === 'add' ? 'Adaugă Materie Primă' : 'Editează Materie Primă'}</DialogTitle>
+                 <DialogDescription>
+                   {materiiPrimeDialog.mode === 'add' ? 'Selectați materia primă din lista disponibilă.' : 'Modificați materia primă selectată.'}
+                 </DialogDescription>
+               </DialogHeader>
+               <div className="grid gap-4 py-4">
+                 <div className="grid gap-2">
+                   <Label htmlFor="denumire">Denumire *</Label>
+                   <Select value={materiiPrimeFormData.denumire} onValueChange={(value) => setMateriiPrimeFormData({ denumire: value })}>
+                     <SelectTrigger id="denumire">
+                       <SelectValue placeholder="Selectează materie primă" />
+                     </SelectTrigger>
+                     <SelectContent>
+                       {materiiPrimeList.map(mp => (
+                         <SelectItem key={mp} value={mp}>{mp}</SelectItem>
+                       ))}
+                     </SelectContent>
+                   </Select>
+                 </div>
+               </div>
+               <DialogFooter>
+                 <Button variant="outline" onClick={() => setMateriiPrimeDialog({ ...materiiPrimeDialog, open: false })}>
+                   Anulează
+                 </Button>
+                 <Button onClick={() => {
+                   toast({
+                     title: "Succes",
+                     description: `Materia primă a fost ${materiiPrimeDialog.mode === 'add' ? 'adăugată' : 'actualizată'} cu succes`
+                   });
+                   setMateriiPrimeDialog({ ...materiiPrimeDialog, open: false });
+                 }}>
+                   {materiiPrimeDialog.mode === 'add' ? 'Adaugă' : 'Salvează'}
+                 </Button>
+               </DialogFooter>
+             </DialogContent>
+           </Dialog>
+
+           <AlertDialog open={materiiPrimeDeleteDialog.open} onOpenChange={(open) => setMateriiPrimeDeleteDialog({ ...materiiPrimeDeleteDialog, open })}>
+             <AlertDialogContent>
+               <AlertDialogHeader>
+                 <AlertDialogTitle>Confirmare ștergere</AlertDialogTitle>
+                 <AlertDialogDescription>
+                   Sigur doriți să ștergeți această materie primă? Această acțiune nu poate fi anulată.
+                 </AlertDialogDescription>
+               </AlertDialogHeader>
+               <AlertDialogFooter>
+                 <AlertDialogCancel>Anulează</AlertDialogCancel>
+                 <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => {
+                   toast({
+                     title: "Succes",
+                     description: "Materia primă a fost ștearsă cu succes"
+                   });
+                   setMateriiPrimeDeleteDialog({ open: false });
+                 }}>
+                   Șterge
+                 </AlertDialogAction>
+               </AlertDialogFooter>
+             </AlertDialogContent>
+           </AlertDialog>
+         </TabsContent>
+
+         <TabsContent value="produse">
+           <Card>
             <CardHeader>
               <div className="flex flex-row items-center justify-between">
                 <div>
@@ -765,7 +1044,10 @@ const Liste = () => {
                     Produse finite disponibile pentru livrare
                   </CardDescription>
                 </div>
-                <Button className="gap-2" onClick={() => navigate("/liste/produse-finite/add")}>
+                <Button className="gap-2" onClick={() => {
+                  setProduseFiniteFormData({ denumire: "" });
+                  setProduseFiniteDialog({ open: true, mode: 'add' });
+                }}>
                   <Plus className="w-4 h-4" />
                   Adaugă Produs
                 </Button>
@@ -851,11 +1133,14 @@ const Liste = () => {
                       <TableCell className="py-1 text-xs">{produs.denumire}</TableCell>
                       <TableCell className="text-right py-1">
                         <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
+                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
+                            setProduseFiniteFormData({ denumire: produs.denumire });
+                            setProduseFiniteDialog({ open: true, mode: 'edit', data: produs });
+                          }}>
                             <Pencil className="w-3 h-3" />
                             Editează
                           </Button>
-                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
+                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs" onClick={() => setProduseFiniteDeleteDialog({ open: true, id: produs.id })}>
                             <Trash2 className="w-3 h-3" />
                             Șterge
                           </Button>
@@ -893,12 +1178,71 @@ const Liste = () => {
                   </PaginationContent>
                 </Pagination>
               )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+             </CardContent>
+           </Card>
 
-        <TabsContent value="clienti">
-          <Card>
+           <Dialog open={produseFiniteDialog.open} onOpenChange={(open) => setProduseFiniteDialog({ ...produseFiniteDialog, open })}>
+             <DialogContent className="sm:max-w-[500px]">
+               <DialogHeader>
+                 <DialogTitle>{produseFiniteDialog.mode === 'add' ? 'Adaugă Produs Finit' : 'Editează Produs Finit'}</DialogTitle>
+                 <DialogDescription>
+                   {produseFiniteDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un produs finit nou.' : 'Modificați detaliile produsului finit.'}
+                 </DialogDescription>
+               </DialogHeader>
+               <div className="grid gap-4 py-4">
+                 <div className="grid gap-2">
+                   <Label htmlFor="denumire">Denumire *</Label>
+                   <Input
+                     id="denumire"
+                     placeholder="Ex: Asfalt tip A"
+                     value={produseFiniteFormData.denumire}
+                     onChange={(e) => setProduseFiniteFormData({ denumire: e.target.value })}
+                   />
+                 </div>
+               </div>
+               <DialogFooter>
+                 <Button variant="outline" onClick={() => setProduseFiniteDialog({ ...produseFiniteDialog, open: false })}>
+                   Anulează
+                 </Button>
+                 <Button onClick={() => {
+                   toast({
+                     title: "Succes",
+                     description: `Produsul finit a fost ${produseFiniteDialog.mode === 'add' ? 'adăugat' : 'actualizat'} cu succes`
+                   });
+                   setProduseFiniteDialog({ ...produseFiniteDialog, open: false });
+                 }}>
+                   {produseFiniteDialog.mode === 'add' ? 'Adaugă' : 'Salvează'}
+                 </Button>
+               </DialogFooter>
+             </DialogContent>
+           </Dialog>
+
+           <AlertDialog open={produseFiniteDeleteDialog.open} onOpenChange={(open) => setProduseFiniteDeleteDialog({ ...produseFiniteDeleteDialog, open })}>
+             <AlertDialogContent>
+               <AlertDialogHeader>
+                 <AlertDialogTitle>Confirmare ștergere</AlertDialogTitle>
+                 <AlertDialogDescription>
+                   Sigur doriți să ștergeți acest produs finit? Această acțiune nu poate fi anulată.
+                 </AlertDialogDescription>
+               </AlertDialogHeader>
+               <AlertDialogFooter>
+                 <AlertDialogCancel>Anulează</AlertDialogCancel>
+                 <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => {
+                   toast({
+                     title: "Succes",
+                     description: "Produsul finit a fost șters cu succes"
+                   });
+                   setProduseFiniteDeleteDialog({ open: false });
+                 }}>
+                   Șterge
+                 </AlertDialogAction>
+               </AlertDialogFooter>
+             </AlertDialogContent>
+           </AlertDialog>
+         </TabsContent>
+
+         <TabsContent value="clienti">
+           <Card>
             <CardHeader>
               <div className="flex flex-row items-center justify-between">
                 <div>
@@ -907,7 +1251,10 @@ const Liste = () => {
                     Clienți activi și parteneri comerciali
                   </CardDescription>
                 </div>
-                <Button className="gap-2" onClick={() => navigate("/liste/clienti/add")}>
+                <Button className="gap-2" onClick={() => {
+                  setClientiFormData({ denumire: "", sediu: "", cui: "", nrReg: "" });
+                  setClientiDialog({ open: true, mode: 'add' });
+                }}>
                   <Plus className="w-4 h-4" />
                   Adaugă Client
                 </Button>
@@ -1071,11 +1418,14 @@ const Liste = () => {
                       <TableCell className="py-1 text-xs">{client.nrReg}</TableCell>
                       <TableCell className="text-right py-1">
                         <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
+                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
+                            setClientiFormData({ denumire: client.denumire, sediu: client.sediu, cui: client.cui, nrReg: client.nrReg });
+                            setClientiDialog({ open: true, mode: 'edit', data: client });
+                          }}>
                             <Pencil className="w-3 h-3" />
                             Editează
                           </Button>
-                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
+                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs" onClick={() => setClientiDeleteDialog({ open: true, id: client.id })}>
                             <Trash2 className="w-3 h-3" />
                             Șterge
                           </Button>
@@ -1113,12 +1463,98 @@ const Liste = () => {
                   </PaginationContent>
                 </Pagination>
               )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+             </CardContent>
+           </Card>
 
-        <TabsContent value="furnizori">
-          <Card>
+           <Dialog open={clientiDialog.open} onOpenChange={(open) => setClientiDialog({ ...clientiDialog, open })}>
+             <DialogContent className="sm:max-w-[500px]">
+               <DialogHeader>
+                 <DialogTitle>{clientiDialog.mode === 'add' ? 'Adaugă Client' : 'Editează Client'}</DialogTitle>
+                 <DialogDescription>
+                   {clientiDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un client nou.' : 'Modificați detaliile clientului.'}
+                 </DialogDescription>
+               </DialogHeader>
+               <div className="grid gap-4 py-4">
+                 <div className="grid gap-2">
+                   <Label htmlFor="denumire">Denumire *</Label>
+                   <Input
+                     id="denumire"
+                     placeholder="Ex: Construct Pro SRL"
+                     value={clientiFormData.denumire}
+                     onChange={(e) => setClientiFormData({ ...clientiFormData, denumire: e.target.value })}
+                   />
+                 </div>
+                 <div className="grid gap-2">
+                   <Label htmlFor="sediu">Sediu *</Label>
+                   <Input
+                     id="sediu"
+                     placeholder="Ex: București"
+                     value={clientiFormData.sediu}
+                     onChange={(e) => setClientiFormData({ ...clientiFormData, sediu: e.target.value })}
+                   />
+                 </div>
+                 <div className="grid gap-2">
+                   <Label htmlFor="cui">CUI *</Label>
+                   <Input
+                     id="cui"
+                     placeholder="Ex: RO12345678"
+                     value={clientiFormData.cui}
+                     onChange={(e) => setClientiFormData({ ...clientiFormData, cui: e.target.value })}
+                   />
+                 </div>
+                 <div className="grid gap-2">
+                   <Label htmlFor="nrReg">Nr. REG *</Label>
+                   <Input
+                     id="nrReg"
+                     placeholder="Ex: J40/1234/2020"
+                     value={clientiFormData.nrReg}
+                     onChange={(e) => setClientiFormData({ ...clientiFormData, nrReg: e.target.value })}
+                   />
+                 </div>
+               </div>
+               <DialogFooter>
+                 <Button variant="outline" onClick={() => setClientiDialog({ ...clientiDialog, open: false })}>
+                   Anulează
+                 </Button>
+                 <Button onClick={() => {
+                   toast({
+                     title: "Succes",
+                     description: `Clientul a fost ${clientiDialog.mode === 'add' ? 'adăugat' : 'actualizat'} cu succes`
+                   });
+                   setClientiDialog({ ...clientiDialog, open: false });
+                 }}>
+                   {clientiDialog.mode === 'add' ? 'Adaugă' : 'Salvează'}
+                 </Button>
+               </DialogFooter>
+             </DialogContent>
+           </Dialog>
+
+           <AlertDialog open={clientiDeleteDialog.open} onOpenChange={(open) => setClientiDeleteDialog({ ...clientiDeleteDialog, open })}>
+             <AlertDialogContent>
+               <AlertDialogHeader>
+                 <AlertDialogTitle>Confirmare ștergere</AlertDialogTitle>
+                 <AlertDialogDescription>
+                   Sigur doriți să ștergeți acest client? Această acțiune nu poate fi anulată.
+                 </AlertDialogDescription>
+               </AlertDialogHeader>
+               <AlertDialogFooter>
+                 <AlertDialogCancel>Anulează</AlertDialogCancel>
+                 <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => {
+                   toast({
+                     title: "Succes",
+                     description: "Clientul a fost șters cu succes"
+                   });
+                   setClientiDeleteDialog({ open: false });
+                 }}>
+                   Șterge
+                 </AlertDialogAction>
+               </AlertDialogFooter>
+             </AlertDialogContent>
+           </AlertDialog>
+         </TabsContent>
+
+         <TabsContent value="furnizori">
+           <Card>
             <CardHeader>
               <div className="flex flex-row items-center justify-between">
                 <div>
@@ -1127,7 +1563,10 @@ const Liste = () => {
                     Furnizori de materii prime și materiale
                   </CardDescription>
                 </div>
-                <Button className="gap-2" onClick={() => navigate("/liste/furnizori/add")}>
+                <Button className="gap-2" onClick={() => {
+                  setFurnizoriFormData({ denumire: "", sediu: "", cui: "", nrReg: "" });
+                  setFurnizoriDialog({ open: true, mode: 'add' });
+                }}>
                   <Plus className="w-4 h-4" />
                   Adaugă Furnizor
                 </Button>
@@ -1291,11 +1730,14 @@ const Liste = () => {
                       <TableCell className="py-1 text-xs">{furnizor.nrReg}</TableCell>
                       <TableCell className="text-right py-1">
                         <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
+                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
+                            setFurnizoriFormData({ denumire: furnizor.denumire, sediu: furnizor.sediu, cui: furnizor.cui, nrReg: furnizor.nrReg });
+                            setFurnizoriDialog({ open: true, mode: 'edit', data: furnizor });
+                          }}>
                             <Pencil className="w-3 h-3" />
                             Editează
                           </Button>
-                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
+                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs" onClick={() => setFurnizoriDeleteDialog({ open: true, id: furnizor.id })}>
                             <Trash2 className="w-3 h-3" />
                             Șterge
                           </Button>
@@ -1333,10 +1775,97 @@ const Liste = () => {
                   </PaginationContent>
                 </Pagination>
               )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>;
+             </CardContent>
+           </Card>
+
+           <Dialog open={furnizoriDialog.open} onOpenChange={(open) => setFurnizoriDialog({ ...furnizoriDialog, open })}>
+             <DialogContent className="sm:max-w-[500px]">
+               <DialogHeader>
+                 <DialogTitle>{furnizoriDialog.mode === 'add' ? 'Adaugă Furnizor' : 'Editează Furnizor'}</DialogTitle>
+                 <DialogDescription>
+                   {furnizoriDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un furnizor nou.' : 'Modificați detaliile furnizorului.'}
+                 </DialogDescription>
+               </DialogHeader>
+               <div className="grid gap-4 py-4">
+                 <div className="grid gap-2">
+                   <Label htmlFor="denumire">Denumire *</Label>
+                   <Input
+                     id="denumire"
+                     placeholder="Ex: Agregat SRL"
+                     value={furnizoriFormData.denumire}
+                     onChange={(e) => setFurnizoriFormData({ ...furnizoriFormData, denumire: e.target.value })}
+                   />
+                 </div>
+                 <div className="grid gap-2">
+                   <Label htmlFor="sediu">Sediu *</Label>
+                   <Input
+                     id="sediu"
+                     placeholder="Ex: Ploiești"
+                     value={furnizoriFormData.sediu}
+                     onChange={(e) => setFurnizoriFormData({ ...furnizoriFormData, sediu: e.target.value })}
+                   />
+                 </div>
+                 <div className="grid gap-2">
+                   <Label htmlFor="cui">CUI *</Label>
+                   <Input
+                     id="cui"
+                     placeholder="Ex: RO11111111"
+                     value={furnizoriFormData.cui}
+                     onChange={(e) => setFurnizoriFormData({ ...furnizoriFormData, cui: e.target.value })}
+                   />
+                 </div>
+                 <div className="grid gap-2">
+                   <Label htmlFor="nrReg">Nr. REG *</Label>
+                   <Input
+                     id="nrReg"
+                     placeholder="Ex: J29/1111/2017"
+                     value={furnizoriFormData.nrReg}
+                     onChange={(e) => setFurnizoriFormData({ ...furnizoriFormData, nrReg: e.target.value })}
+                   />
+                 </div>
+               </div>
+               <DialogFooter>
+                 <Button variant="outline" onClick={() => setFurnizoriDialog({ ...furnizoriDialog, open: false })}>
+                   Anulează
+                 </Button>
+                 <Button onClick={() => {
+                   toast({
+                     title: "Succes",
+                     description: `Furnizorul a fost ${furnizoriDialog.mode === 'add' ? 'adăugat' : 'actualizat'} cu succes`
+                   });
+                   setFurnizoriDialog({ ...furnizoriDialog, open: false });
+                 }}>
+                   {furnizoriDialog.mode === 'add' ? 'Adaugă' : 'Salvează'}
+                 </Button>
+               </DialogFooter>
+             </DialogContent>
+           </Dialog>
+
+           <AlertDialog open={furnizoriDeleteDialog.open} onOpenChange={(open) => setFurnizoriDeleteDialog({ ...furnizoriDeleteDialog, open })}>
+             <AlertDialogContent>
+               <AlertDialogHeader>
+                 <AlertDialogTitle>Confirmare ștergere</AlertDialogTitle>
+                 <AlertDialogDescription>
+                   Sigur doriți să ștergeți acest furnizor? Această acțiune nu poate fi anulată.
+                 </AlertDialogDescription>
+               </AlertDialogHeader>
+               <AlertDialogFooter>
+                 <AlertDialogCancel>Anulează</AlertDialogCancel>
+                 <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => {
+                   toast({
+                     title: "Succes",
+                     description: "Furnizorul a fost șters cu succes"
+                   });
+                   setFurnizoriDeleteDialog({ open: false });
+                 }}>
+                   Șterge
+                 </AlertDialogAction>
+               </AlertDialogFooter>
+             </AlertDialogContent>
+           </AlertDialog>
+         </TabsContent>
+       </Tabs>
+     </div>
+ );
 };
 export default Liste;
