@@ -20,10 +20,10 @@ import {
 const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Liste", url: "/liste", icon: ListChecks },
+  { title: "Comenzi", url: "/comenzi", icon: ClipboardList },
   { title: "Receptii", url: "/receptii", icon: PackageCheck },
   { title: "Livrari", url: "/livrari", icon: Truck },
   { title: "Consumuri", url: "/consumuri", icon: BarChart3 },
-  { title: "Comenzi", url: "/comenzi", icon: ClipboardList },
 ];
 
 export function AppSidebar() {
