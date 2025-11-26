@@ -19,6 +19,7 @@ export default function Stocuri() {
   const [loading, setLoading] = useState(true);
 
   const [filters, setFilters] = useState({
+    id: "",
     tipMaterial: "",
     cantitateStoc: "",
   });
@@ -56,6 +57,7 @@ export default function Stocuri() {
   const filteredAndSortedStocuri = stocuri
     .filter((item) => {
       return (
+        item.id.toString().includes(filters.id) &&
         item.materiale_prime.toLowerCase().includes(filters.tipMaterial.toLowerCase()) &&
         (item.stoc?.toString() || '').includes(filters.cantitateStoc)
       );
@@ -67,7 +69,10 @@ export default function Stocuri() {
       let aVal: string | number | null;
       let bVal: string | number | null;
       
-      if (key === 'materiale_prime') {
+      if (key === 'id') {
+        aVal = a.id;
+        bVal = b.id;
+      } else if (key === 'materiale_prime') {
         aVal = a.materiale_prime;
         bVal = b.materiale_prime;
       } else {
@@ -101,6 +106,36 @@ export default function Stocuri() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="h-10 text-xs">
+                  <div className="flex items-center gap-1">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                          <span>ID</span>
+                          {sortConfig?.key === 'id' ? (sortConfig.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-56 p-2">
+                        <div className="space-y-2">
+                          <Input 
+                            placeholder="Caută ID..." 
+                            value={filters.id}
+                            onChange={(e) => setFilters({ ...filters, id: e.target.value })} 
+                            className="h-7 text-xs" 
+                          />
+                          <div className="flex gap-1">
+                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'id', direction: 'asc' })}>
+                              <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
+                            </Button>
+                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'id', direction: 'desc' })}>
+                              <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
+                            </Button>
+                          </div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </TableHead>
                 <TableHead className="h-10 text-xs">
                   <div className="flex items-center gap-1">
                     <Popover>
@@ -166,7 +201,7 @@ export default function Stocuri() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={2} className="h-24 text-center">
+                  <TableCell colSpan={3} className="h-24 text-center">
                     <div className="flex items-center justify-center">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                     </div>
@@ -174,13 +209,14 @@ export default function Stocuri() {
                 </TableRow>
               ) : filteredAndSortedStocuri.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={2} className="h-24 text-center text-muted-foreground">
+                  <TableCell colSpan={3} className="h-24 text-center text-muted-foreground">
                     Nu există date disponibile
                   </TableCell>
                 </TableRow>
               ) : (
                 filteredAndSortedStocuri.map((item) => (
                   <TableRow key={item.id} className="h-10">
+                    <TableCell className="py-1 text-xs">{item.id}</TableCell>
                     <TableCell className="py-1 text-xs">{item.materiale_prime}</TableCell>
                     <TableCell className="py-1 text-xs">{item.stoc ?? '-'}</TableCell>
                   </TableRow>
