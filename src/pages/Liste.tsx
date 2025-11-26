@@ -84,25 +84,16 @@ const Liste = () => {
     { id: 29, denumire: "FIBRĂ CELULOZICĂ" },
     { id: 30, denumire: "NISIP SILICOS" }
   ];
-  const produseFinite = [{
-    id: 1,
-    cod: "ASF-A-001",
-    denumire: "Asfalt tip A",
-    stoc: "450t",
-    pret: "250 RON/t"
-  }, {
-    id: 2,
-    cod: "ASF-B-002",
-    denumire: "Asfalt tip B",
-    stoc: "320t",
-    pret: "220 RON/t"
-  }, {
-    id: 3,
-    cod: "ASF-C-003",
-    denumire: "Asfalt tip C",
-    stoc: "180t",
-    pret: "200 RON/t"
-  }];
+  const produseFinite = [
+    { id: 1, denumire: "Asfalt tip A" },
+    { id: 2, denumire: "Asfalt tip B" },
+    { id: 3, denumire: "Asfalt tip C" },
+    { id: 4, denumire: "Asfalt tip D" },
+    { id: 5, denumire: "Asfalt modificat SBS" },
+    { id: 6, denumire: "Mixturi asfaltice rutiere" },
+    { id: 7, denumire: "Emulsie bituminoasă cationică" },
+    { id: 8, denumire: "Emulsie bituminoasă anionică" }
+  ];
   const clienti = [{
     id: 1,
     denumire: "Construct Pro SRL",
@@ -496,19 +487,15 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Cod</TableHead>
+                    <TableHead>ID</TableHead>
                     <TableHead>Denumire</TableHead>
-                    <TableHead>Stoc Disponibil</TableHead>
-                    <TableHead>Preț Unitar</TableHead>
                     <TableHead className="text-right">Acțiuni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginatedProduseFinite.map(produs => <TableRow key={produs.id}>
-                      <TableCell className="font-medium">{produs.cod}</TableCell>
+                      <TableCell className="font-medium">{produs.id}</TableCell>
                       <TableCell>{produs.denumire}</TableCell>
-                      <TableCell>{produs.stoc}</TableCell>
-                      <TableCell>{produs.pret}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Button variant="ghost" size="sm" className="gap-2">
