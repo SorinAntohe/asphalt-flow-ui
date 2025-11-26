@@ -22,6 +22,20 @@ interface ComandaMateriePrima {
   observatii: string;
 }
 
+interface ComandaProdusFinal {
+  id: number;
+  cod: string;
+  data: string;
+  client: string;
+  produs: string;
+  unitate_masura: string;
+  cantitate: number;
+  punct_descarcare: string | null;
+  pret_fara_tva: number;
+  pret_transport: number | null;
+  observatii: string;
+}
+
 export default function Comenzi() {
   const { toast } = useToast();
   const [comenziMateriePrima, setComenziMateriePrima] = useState<ComandaMateriePrima[]>([]);
@@ -63,34 +77,33 @@ export default function Comenzi() {
     field: '', direction: null 
   });
 
-  const [comenziProduseFinite] = useState([
-    { 
-      id: 1, 
-      cod: "CPF-001", 
-      data: "2024-01-15", 
-      client: "Client A", 
-      produs: "Asfalt BA16", 
-      unitate_masura: "tone",
-      cantitate: 1000, 
-      punct_descarcare: "Șantier X",
-      pret_fara_tva: 280.5,
-      pret_transport: 35.0,
-      observatii: "Transport cu basculantă"
-    },
-    { 
-      id: 2, 
-      cod: "CPF-002", 
-      data: "2024-01-16", 
-      client: "Client B", 
-      produs: "Asfalt BA8", 
-      unitate_masura: "tone",
-      cantitate: 750, 
-      punct_descarcare: "Șantier Y",
-      pret_fara_tva: 195.0,
-      pret_transport: 30.0,
-      observatii: ""
-    },
-  ]);
+  const [comenziProduseFinite, setComenziProduseFinite] = useState<ComandaProdusFinal[]>([]);
+  const [loadingPF, setLoadingPF] = useState(true);
+
+  // Fetch comenzi produse finite from API
+  useEffect(() => {
+    const fetchComenziPF = async () => {
+      try {
+        setLoadingPF(true);
+        const response = await fetch('http://192.168.1.22:8002/comenzi/returneaza/produs');
+        if (!response.ok) {
+          throw new Error('Failed to fetch comenzi produse finite');
+        }
+        const data = await response.json();
+        setComenziProduseFinite(data);
+      } catch (error) {
+        console.error('Error fetching comenzi produse finite:', error);
+        toast({
+          title: "Eroare",
+          description: "Nu s-au putut încărca comenzile de produse finite",
+          variant: "destructive"
+        });
+      } finally {
+        setLoadingPF(false);
+      }
+    };
+    fetchComenziPF();
+  }, [toast]);
 
   // Filters for Produs Finit
   const [filtersPF, setFiltersPF] = useState({
@@ -145,16 +158,23 @@ export default function Comenzi() {
         item.produs.toLowerCase().includes(filtersPF.produs.toLowerCase()) &&
         item.unitate_masura.toLowerCase().includes(filtersPF.unitate_masura.toLowerCase()) &&
         item.cantitate.toString().includes(filtersPF.cantitate) &&
-        item.punct_descarcare.toLowerCase().includes(filtersPF.punct_descarcare.toLowerCase()) &&
+        (item.punct_descarcare || '').toLowerCase().includes(filtersPF.punct_descarcare.toLowerCase()) &&
         item.pret_fara_tva.toString().includes(filtersPF.pret_fara_tva) &&
-        item.pret_transport.toString().includes(filtersPF.pret_transport) &&
+        (item.pret_transport?.toString() || '').includes(filtersPF.pret_transport) &&
         item.observatii.toLowerCase().includes(filtersPF.observatii.toLowerCase())
       );
     })
     .sort((a, b) => {
       if (!sortPF.field || !sortPF.direction) return 0;
-      const aVal = a[sortPF.field as keyof typeof a];
-      const bVal = b[sortPF.field as keyof typeof b];
+      
+      let aVal: any = a[sortPF.field as keyof ComandaProdusFinal];
+      let bVal: any = b[sortPF.field as keyof ComandaProdusFinal];
+      
+      // Handle null values
+      if (aVal === null && bVal === null) return 0;
+      if (aVal === null) return sortPF.direction === 'asc' ? 1 : -1;
+      if (bVal === null) return sortPF.direction === 'asc' ? -1 : 1;
+      
       if (aVal < bVal) return sortPF.direction === 'asc' ? -1 : 1;
       if (aVal > bVal) return sortPF.direction === 'asc' ? 1 : -1;
       return 0;
@@ -761,32 +781,48 @@ export default function Comenzi() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredAndSortedPF.map((comanda) => (
-                    <TableRow key={comanda.id} className="h-10">
-                      <TableCell className="font-medium py-1 text-xs">{comanda.cod}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.data}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.client}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.produs}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.unitate_masura}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.cantitate}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.punct_descarcare}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.pret_fara_tva}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.pret_transport}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.observatii}</TableCell>
-                      <TableCell className="text-right py-1">
-                        <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
-                            <Pencil className="w-3 h-3" />
-                            Editează
-                          </Button>
-                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
-                            <Trash2 className="w-3 h-3" />
-                            Șterge
-                          </Button>
+                  {loadingPF ? (
+                    <TableRow>
+                      <TableCell colSpan={11} className="h-24 text-center">
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : filteredAndSortedPF.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={11} className="h-24 text-center text-muted-foreground">
+                        Nu există comenzi disponibile
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredAndSortedPF.map((comanda) => (
+                      <TableRow key={comanda.id} className="h-10">
+                        <TableCell className="font-medium py-1 text-xs">{comanda.cod}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.data}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.client}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.produs}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.unitate_masura}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.cantitate}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.punct_descarcare || '-'}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.pret_fara_tva}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.pret_transport ?? '-'}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.observatii}</TableCell>
+                        <TableCell className="text-right py-1">
+                          <div className="flex items-center justify-end gap-1">
+                            <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
+                              <Pencil className="w-3 h-3" />
+                              Editează
+                            </Button>
+                            <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
+                              <Trash2 className="w-3 h-3" />
+                              Șterge
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </CardContent>
