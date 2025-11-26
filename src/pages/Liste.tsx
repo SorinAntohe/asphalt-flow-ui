@@ -330,37 +330,36 @@ const Liste = () => {
         </TabsList>
 
         <TabsContent value="autoturisme">
-          <div className="flex items-center justify-between mb-4">
-            <div></div>
-            <Button className="gap-2" onClick={() => {
-              setAutoturismeFormData({ tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "", tara: "" });
-              setAutoturismeDialog({ open: true, mode: 'add' });
-            }}>
-              <Plus className="w-4 h-4" />
-              Adaugă Autoturism
-            </Button>
-          </div>
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Lista Autoturisme</CardTitle>
-                <div className="flex items-center gap-2">
-                  <Label className="text-sm">Înregistrări per pagină:</Label>
-                  <Select value={autoturismePerPage.toString()} onValueChange={(value) => { setAutoturismePerPage(Number(value)); setAutoturismePage(1); }}>
-                    <SelectTrigger className="w-[70px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Button className="gap-2" onClick={() => {
+                  setAutoturismeFormData({ tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "", tara: "" });
+                  setAutoturismeDialog({ open: true, mode: 'add' });
+                }}>
+                  <Plus className="w-4 h-4" />
+                  Adaugă Autoturism
+                </Button>
               </div>
             </CardHeader>
+            <div className="px-6 pb-4">
+              <div className="flex items-center gap-2">
+                <Label className="text-sm">Înregistrări per pagină:</Label>
+                <Select value={autoturismePerPage.toString()} onValueChange={(value) => { setAutoturismePerPage(Number(value)); setAutoturismePage(1); }}>
+                  <SelectTrigger className="w-[70px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             <CardContent className="overflow-x-auto">
               <Table className="min-w-[800px]">
                 <TableHeader>
@@ -823,37 +822,36 @@ const Liste = () => {
          </TabsContent>
 
         <TabsContent value="soferi">
-          <div className="flex items-center justify-between mb-4">
-            <div></div>
-            <Button className="gap-2" onClick={() => {
-              setSoferiFormData({ numeSofer: "", ci: "" });
-              setSoferiDialog({ open: true, mode: 'add' });
-            }}>
-              <Plus className="w-4 h-4" />
-              Adaugă Șofer
-            </Button>
-          </div>
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Lista Șoferi</CardTitle>
-                <div className="flex items-center gap-2">
-                  <Label className="text-sm">Înregistrări per pagină:</Label>
-                  <Select value={soferiPerPage.toString()} onValueChange={(value) => { setSoferiPerPage(Number(value)); setSoferiPage(1); }}>
-                    <SelectTrigger className="w-[70px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Button className="gap-2" onClick={() => {
+                  setSoferiFormData({ numeSofer: "", ci: "" });
+                  setSoferiDialog({ open: true, mode: 'add' });
+                }}>
+                  <Plus className="w-4 h-4" />
+                  Adaugă Șofer
+                </Button>
               </div>
             </CardHeader>
+            <div className="px-6 pb-4">
+              <div className="flex items-center gap-2">
+                <Label className="text-sm">Înregistrări per pagină:</Label>
+                <Select value={soferiPerPage.toString()} onValueChange={(value) => { setSoferiPerPage(Number(value)); setSoferiPage(1); }}>
+                  <SelectTrigger className="w-[70px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             <CardContent>
               <Table>
                 <TableHeader>
@@ -1175,37 +1173,36 @@ const Liste = () => {
          </TabsContent>
 
          <TabsContent value="materii">
-          <div className="flex items-center justify-between mb-4">
-            <div></div>
-            <Button className="gap-2" onClick={() => {
-              setMateriiPrimeFormData({ denumire: "" });
-              setMateriiPrimeDialog({ open: true, mode: 'add' });
-            }}>
-              <Plus className="w-4 h-4" />
-              Adaugă Materie Primă
-            </Button>
-          </div>
-           <Card>
+          <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Lista Materii Prime</CardTitle>
-                <div className="flex items-center gap-2">
-                  <Label className="text-sm">Înregistrări per pagină:</Label>
-                  <Select value={materiiPrimePerPage.toString()} onValueChange={(value) => { setMateriiPrimePerPage(Number(value)); setMateriiPrimePage(1); }}>
-                    <SelectTrigger className="w-[70px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Button className="gap-2" onClick={() => {
+                  setMateriiPrimeFormData({ denumire: "" });
+                  setMateriiPrimeDialog({ open: true, mode: 'add' });
+                }}>
+                  <Plus className="w-4 h-4" />
+                  Adaugă Materie Primă
+                </Button>
               </div>
             </CardHeader>
+            <div className="px-6 pb-4">
+              <div className="flex items-center gap-2">
+                <Label className="text-sm">Înregistrări per pagină:</Label>
+                <Select value={materiiPrimePerPage.toString()} onValueChange={(value) => { setMateriiPrimePerPage(Number(value)); setMateriiPrimePage(1); }}>
+                  <SelectTrigger className="w-[70px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             <CardContent>
               <Table>
                 <TableHeader>
@@ -1488,37 +1485,36 @@ const Liste = () => {
          </TabsContent>
 
          <TabsContent value="produse">
-          <div className="flex items-center justify-between mb-4">
-            <div></div>
-            <Button className="gap-2" onClick={() => {
-              setProduseFiniteFormData({ denumire: "" });
-              setProduseFiniteDialog({ open: true, mode: 'add' });
-            }}>
-              <Plus className="w-4 h-4" />
-              Adaugă Produs
-            </Button>
-          </div>
-           <Card>
+          <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Lista Produse Finite</CardTitle>
-                <div className="flex items-center gap-2">
-                  <Label className="text-sm">Înregistrări per pagină:</Label>
-                  <Select value={produseFinitePerPage.toString()} onValueChange={(value) => { setProduseFinitePerPage(Number(value)); setProduseFinitePage(1); }}>
-                    <SelectTrigger className="w-[70px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Button className="gap-2" onClick={() => {
+                  setProduseFiniteFormData({ denumire: "" });
+                  setProduseFiniteDialog({ open: true, mode: 'add' });
+                }}>
+                  <Plus className="w-4 h-4" />
+                  Adaugă Produs
+                </Button>
               </div>
             </CardHeader>
+            <div className="px-6 pb-4">
+              <div className="flex items-center gap-2">
+                <Label className="text-sm">Înregistrări per pagină:</Label>
+                <Select value={produseFinitePerPage.toString()} onValueChange={(value) => { setProduseFinitePerPage(Number(value)); setProduseFinitePage(1); }}>
+                  <SelectTrigger className="w-[70px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             <CardContent>
               <Table>
                 <TableHeader>
@@ -1800,38 +1796,37 @@ const Liste = () => {
            </AlertDialog>
          </TabsContent>
 
-         <TabsContent value="clienti">
-          <div className="flex items-center justify-between mb-4">
-            <div></div>
-            <Button className="gap-2" onClick={() => {
-              setClientiFormData({ denumire: "", sediu: "", cui: "", nrReg: "" });
-              setClientiDialog({ open: true, mode: 'add' });
-            }}>
-              <Plus className="w-4 h-4" />
-              Adaugă Client
-            </Button>
-          </div>
-           <Card>
+        <TabsContent value="clienti">
+          <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Lista Clienți</CardTitle>
-                <div className="flex items-center gap-2">
-                  <Label className="text-sm">Înregistrări per pagină:</Label>
-                  <Select value={clientiPerPage.toString()} onValueChange={(value) => { setClientiPerPage(Number(value)); setClientiPage(1); }}>
-                    <SelectTrigger className="w-[70px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Button className="gap-2" onClick={() => {
+                  setClientiFormData({ denumire: "", sediu: "", cui: "", nrReg: "" });
+                  setClientiDialog({ open: true, mode: 'add' });
+                }}>
+                  <Plus className="w-4 h-4" />
+                  Adaugă Client
+                </Button>
               </div>
             </CardHeader>
+            <div className="px-6 pb-4">
+              <div className="flex items-center gap-2">
+                <Label className="text-sm">Înregistrări per pagină:</Label>
+                <Select value={clientiPerPage.toString()} onValueChange={(value) => { setClientiPerPage(Number(value)); setClientiPage(1); }}>
+                  <SelectTrigger className="w-[70px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             <CardContent>
               <Table>
                 <TableHeader>
@@ -2230,38 +2225,37 @@ const Liste = () => {
            </AlertDialog>
          </TabsContent>
 
-         <TabsContent value="furnizori">
-          <div className="flex items-center justify-between mb-4">
-            <div></div>
-            <Button className="gap-2" onClick={() => {
-              setFurnizoriFormData({ denumire: "", sediu: "", cui: "", nrReg: "" });
-              setFurnizoriDialog({ open: true, mode: 'add' });
-            }}>
-              <Plus className="w-4 h-4" />
-              Adaugă Furnizor
-            </Button>
-          </div>
-           <Card>
+        <TabsContent value="furnizori">
+          <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Lista Furnizori</CardTitle>
-                <div className="flex items-center gap-2">
-                  <Label className="text-sm">Înregistrări per pagină:</Label>
-                  <Select value={furnizoriPerPage.toString()} onValueChange={(value) => { setFurnizoriPerPage(Number(value)); setFurnizoriPage(1); }}>
-                    <SelectTrigger className="w-[70px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Button className="gap-2" onClick={() => {
+                  setFurnizoriFormData({ denumire: "", sediu: "", cui: "", nrReg: "" });
+                  setFurnizoriDialog({ open: true, mode: 'add' });
+                }}>
+                  <Plus className="w-4 h-4" />
+                  Adaugă Furnizor
+                </Button>
               </div>
             </CardHeader>
+            <div className="px-6 pb-4">
+              <div className="flex items-center gap-2">
+                <Label className="text-sm">Înregistrări per pagină:</Label>
+                <Select value={furnizoriPerPage.toString()} onValueChange={(value) => { setFurnizoriPerPage(Number(value)); setFurnizoriPage(1); }}>
+                  <SelectTrigger className="w-[70px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             <CardContent>
               <Table>
                 <TableHeader>
