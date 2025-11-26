@@ -91,50 +91,9 @@ const comandaPFSchema = z.object({
 
 export default function Comenzi() {
   const { toast } = useToast();
-  const [comenziMateriePrima, setComenziMateriePrima] = useState<ComandaMateriePrima[]>([
-    {
-      id: 1,
-      cod: "CMD-MP-001",
-      data: "26/11/2024",
-      furnizor: "SC ALFA CONSTRUCT SRL",
-      material: "BITUM 50/70",
-      unitate_masura: "tone",
-      cantitate: 40.5,
-      punct_descarcare: "Depozit Central",
-      pret_fara_tva: 15000,
-      pret_transport: 1500,
-      observatii: "Comandă urgentă, livrare rapidă solicitată"
-    },
-    {
-      id: 2,
-      cod: "CMD-MP-002",
-      data: "25/11/2024",
-      furnizor: "SC BETA MATERIALS SRL",
-      material: "0/4 CONC",
-      unitate_masura: "tone",
-      cantitate: 30.0,
-      punct_descarcare: null,
-      pret_fara_tva: 12000,
-      pret_transport: 1200,
-      observatii: ""
-    }
-  ]);
+  const [comenziMateriePrima, setComenziMateriePrima] = useState<ComandaMateriePrima[]>([]);
   const [loadingMP, setLoadingMP] = useState(false);
-  const [comenziProduseFinite, setComenziProduseFinite] = useState<ComandaProdusFinal[]>([
-    {
-      id: 1,
-      cod: "CMD-PF-001",
-      data: "26/11/2024",
-      client: "SC DRUMURI MODERNE SRL",
-      produs: "Asfalt BA16",
-      unitate_masura: "tone",
-      cantitate: 50.0,
-      punct_descarcare: "Șantier Autostrada A1",
-      pret_fara_tva: 25000,
-      pret_transport: 2000,
-      observatii: "Livrare în 3 tranșe"
-    }
-  ]);
+  const [comenziProduseFinite, setComenziProduseFinite] = useState<ComandaProdusFinal[]>([]);
   const [loadingPF, setLoadingPF] = useState(false);
   const [furnizori, setFurnizori] = useState<Furnizor[]>([]);
   const [loadingFurnizori, setLoadingFurnizori] = useState(true);
