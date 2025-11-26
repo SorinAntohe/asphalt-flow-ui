@@ -49,8 +49,43 @@ const receptieSchema = z.object({
 
 export default function Receptii() {
   const { toast } = useToast();
-  const [receptii, setReceptii] = useState<ReceptieMaterial[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [receptii, setReceptii] = useState<ReceptieMaterial[]>([
+    {
+      id: 1,
+      data: "2024-11-26",
+      cod: "REC-001",
+      nr_aviz_provizoriu: "AP-12345",
+      nr_aviz_intrare: "AI-67890",
+      nume_sofer: "Ion Popescu",
+      nr_inmatriculare: "B-123-ABC",
+      tip_masina: "Articulata",
+      cantitate_livrata: 40.5,
+      cantitate_receptionata: 40.0,
+      diferenta: 0.5,
+      pret_material_total: 15000,
+      pret_total: 16500,
+      pret_transport_total: 1500,
+      observatii: "Transport fără probleme, diferență mică de cantitate"
+    },
+    {
+      id: 2,
+      data: "2024-11-25",
+      cod: "REC-002",
+      nr_aviz_provizoriu: "AP-12346",
+      nr_aviz_intrare: "AI-67891",
+      nume_sofer: "Maria Ionescu",
+      nr_inmatriculare: "B-456-DEF",
+      tip_masina: "8X4",
+      cantitate_livrata: 30.0,
+      cantitate_receptionata: 30.0,
+      diferenta: 0,
+      pret_material_total: 12000,
+      pret_total: 13200,
+      pret_transport_total: 1200,
+      observatii: "Recepție completă, fără observații"
+    }
+  ]);
+  const [loading, setLoading] = useState(false);
   
   // Dialog states
   const [openAddEdit, setOpenAddEdit] = useState(false);
