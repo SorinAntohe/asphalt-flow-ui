@@ -6,22 +6,22 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 const Liste = () => {
   const autoturisme = [{
     id: 1,
-    marca: "Mercedes",
-    model: "Actros",
-    numar: "B-123-ABC",
-    an: "2020"
+    tipMasina: "Camion cisternă",
+    nrAuto: "B-123-ABC",
+    sarcinaMax: "25t",
+    tipTransport: "Propriu"
   }, {
     id: 2,
-    marca: "Volvo",
-    model: "FH16",
-    numar: "B-456-DEF",
-    an: "2019"
+    tipMasina: "Camion basculantă",
+    nrAuto: "B-456-DEF",
+    sarcinaMax: "20t",
+    tipTransport: "Închiriat"
   }, {
     id: 3,
-    marca: "MAN",
-    model: "TGX",
-    numar: "B-789-GHI",
-    an: "2021"
+    tipMasina: "Camion remorcă",
+    nrAuto: "B-789-GHI",
+    sarcinaMax: "30t",
+    tipTransport: "Extern"
   }];
   const soferi = [{
     id: 1,
@@ -159,19 +159,21 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Marcă</TableHead>
-                    <TableHead>Model</TableHead>
-                    <TableHead>Număr Înmatriculare</TableHead>
-                    <TableHead>An Fabricație</TableHead>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Tip Mașină</TableHead>
+                    <TableHead>Nr. Auto</TableHead>
+                    <TableHead>Sarcină Max</TableHead>
+                    <TableHead>Tip Transport</TableHead>
                     <TableHead className="text-right">Acțiuni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {autoturisme.map(auto => <TableRow key={auto.id}>
-                      <TableCell className="font-medium">{auto.marca}</TableCell>
-                      <TableCell>{auto.model}</TableCell>
-                      <TableCell>{auto.numar}</TableCell>
-                      <TableCell>{auto.an}</TableCell>
+                      <TableCell className="font-medium">{auto.id}</TableCell>
+                      <TableCell>{auto.tipMasina}</TableCell>
+                      <TableCell>{auto.nrAuto}</TableCell>
+                      <TableCell>{auto.sarcinaMax}</TableCell>
+                      <TableCell>{auto.tipTransport}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Button variant="ghost" size="sm" className="gap-2">
