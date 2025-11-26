@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Factory } from "lucide-react";
+import logo from "@/assets/logo.jpg";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -18,11 +18,11 @@ const Auth = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background p-4">
       <Card className="w-full max-w-md shadow-lg">
-        <CardHeader className="space-y-3 text-center">
-          <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
-            <Factory className="w-10 h-10 text-primary-foreground" />
+        <CardHeader className="space-y-4 text-center">
+          <div className="mx-auto">
+            <img src={logo} alt="Duotip Solutions" className="h-16 object-contain mx-auto" />
           </div>
-          <CardTitle className="text-2xl font-bold">AsphaltPro</CardTitle>
+          <CardTitle className="text-2xl font-bold">Management Producție</CardTitle>
           <CardDescription>Autentificare în sistem</CardDescription>
         </CardHeader>
         <CardContent>
