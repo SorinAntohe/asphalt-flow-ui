@@ -9,12 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-
-interface StocItem {
-  id: number;
-  materiale_prime: string;
-  stoc: number | null;
-}
+import { StocItem } from "./types";
 
 export default function Stocuri() {
   const { toast } = useToast();
