@@ -125,12 +125,15 @@ export function AppSidebar() {
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
                 <CollapsibleContent 
-                  className="overflow-hidden"
+                  className="overflow-hidden rounded-lg"
                   style={{
                     transition: 'all 0.3s ease',
                     opacity: gestiuneOpen ? 1 : 0,
                     visibility: gestiuneOpen ? 'visible' : 'hidden',
-                    transform: gestiuneOpen ? 'translateY(20px)' : 'translateY(0)'
+                    transform: gestiuneOpen ? 'translateY(20px)' : 'translateY(0)',
+                    background: gestiuneOpen ? 'hsl(var(--sidebar-accent) / 0.3)' : 'transparent',
+                    padding: gestiuneOpen ? '8px 0' : '0',
+                    marginTop: gestiuneOpen ? '8px' : '0',
                   }}
                 >
                   <SidebarMenu className="ml-4 space-y-1 mt-1">
