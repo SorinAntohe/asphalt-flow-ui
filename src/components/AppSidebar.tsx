@@ -134,8 +134,9 @@ export function AppSidebar() {
                     background: gestiuneOpen ? 'hsl(var(--sidebar-accent) / 0.3)' : 'transparent',
                     padding: gestiuneOpen ? '4px' : '0',
                     marginTop: gestiuneOpen ? '4px' : '0',
-                    marginLeft: isOpen ? '0' : '0',
-                    marginRight: isOpen ? '0' : '0',
+                    marginLeft: isOpen ? '0' : '4px',
+                    marginRight: isOpen ? '0' : '4px',
+                    boxShadow: gestiuneOpen ? '0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1)' : 'none',
                   }}
                 >
                   <SidebarMenu className={isOpen ? "ml-4 space-y-1" : "space-y-1"}>
