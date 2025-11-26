@@ -36,16 +36,30 @@ const Liste = () => {
     nume: "Vasile Dumitrescu",
     ci: "CD345678"
   }];
-  const materiiPrime = [{
-    id: 1,
-    denumire: "Bitum rutier"
-  }, {
-    id: 2,
-    denumire: "Agregate minerale"
-  }, {
-    id: 3,
-    denumire: "Aditivi speciali"
-  }];
+  const materiiPrime = [
+    { id: 1, denumire: "0/4 NAT" },
+    { id: 2, denumire: "0/4 CONC" },
+    { id: 3, denumire: "0/4 CRIBLURI" },
+    { id: 4, denumire: "4/8 CONC" },
+    { id: 5, denumire: "4/8 CRIBLURI" },
+    { id: 6, denumire: "4/8 NAT" },
+    { id: 7, denumire: "8/16 CONC" },
+    { id: 8, denumire: "8/16 CRIBLURI" },
+    { id: 9, denumire: "16/22.4 CONC" },
+    { id: 10, denumire: "16/22.4 CRIBLURI" },
+    { id: 11, denumire: "16/31.5 CRIBLURI" },
+    { id: 12, denumire: "CTL" },
+    { id: 13, denumire: "BITUM 50/70" },
+    { id: 14, denumire: "FILLER" },
+    { id: 15, denumire: "CURENT ELECTRIC" },
+    { id: 16, denumire: "MOTORINA" },
+    { id: 17, denumire: "16/31.5 CONC" },
+    { id: 18, denumire: "APA" },
+    { id: 19, denumire: "ACID CLORHIDRIC" },
+    { id: 20, denumire: "EMULGATOR" },
+    { id: 21, denumire: "SARE" },
+    { id: 22, denumire: "CELULOZA TOPCEL/TECHNOCEL" }
+  ];
   const produseFinite = [{
     id: 1,
     cod: "ASF-A-001",
