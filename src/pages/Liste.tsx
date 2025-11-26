@@ -375,7 +375,7 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <span>Țară</span>
+                        <span>Tara</span>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
@@ -384,7 +384,7 @@ const Liste = () => {
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
                             <div className="space-y-2">
-                              <Input placeholder="Caută țară..." value={autoturismeFilters.tara} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, tara: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
+                              <Input placeholder="Caută tara..." value={autoturismeFilters.tara} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, tara: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
                               <div className="flex gap-1">
                                 <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAutoturismeSort({ field: 'tara', direction: 'asc' })}>
                                   <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
@@ -529,7 +529,7 @@ const Liste = () => {
                    </Select>
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="tara">Țară *</Label>
+                    <Label htmlFor="tara">Tara *</Label>
                     <Input
                       id="tara"
                       placeholder="Ex: 1000"
