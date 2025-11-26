@@ -538,20 +538,70 @@ const Liste = () => {
                     />
                   </div>
                 </div>
-               <DialogFooter>
-                 <Button variant="outline" onClick={() => setAutoturismeDialog({ ...autoturismeDialog, open: false })}>
-                   Anulează
-                 </Button>
-                 <Button onClick={() => {
-                   toast({
-                     title: "Succes",
-                     description: `Autoturismul a fost ${autoturismeDialog.mode === 'add' ? 'adăugat' : 'actualizat'} cu succes`
-                   });
-                   setAutoturismeDialog({ ...autoturismeDialog, open: false });
-                 }}>
-                   {autoturismeDialog.mode === 'add' ? 'Adaugă' : 'Salvează'}
-                 </Button>
-               </DialogFooter>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setAutoturismeDialog({ ...autoturismeDialog, open: false })}>
+                    Anulează
+                  </Button>
+                  <Button onClick={async () => {
+                    if (!autoturismeFormData.tipMasina || !autoturismeFormData.nrAuto || !autoturismeFormData.sarcinaMax || !autoturismeFormData.tipTransport || !autoturismeFormData.tara) {
+                      toast({
+                        title: "Eroare",
+                        description: "Toate câmpurile sunt obligatorii",
+                        variant: "destructive"
+                      });
+                      return;
+                    }
+
+                    try {
+                      const requestBody = {
+                        nr_inmatriculare: autoturismeFormData.nrAuto,
+                        tip_masina: autoturismeFormData.tipMasina,
+                        tip_transport: autoturismeFormData.tipTransport,
+                        masa_max_admisa: parseInt(autoturismeFormData.sarcinaMax),
+                        tara: parseInt(autoturismeFormData.tara)
+                      };
+
+                      const response = await fetch('http://192.168.1.22:8002/liste/adauga/masina', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestBody)
+                      });
+
+                      if (!response.ok) {
+                        throw new Error('Eroare la adăugarea autoturismului');
+                      }
+
+                      toast({
+                        title: "Succes",
+                        description: "Autoturismul a fost adăugat cu succes"
+                      });
+
+                      // Refresh the list
+                      const refreshResponse = await fetch('http://192.168.1.22:8002/liste/returneaza/masini');
+                      const data = await refreshResponse.json();
+                      const mappedData = data.map((item: any) => ({
+                        id: item.id,
+                        nrAuto: item.nr_inmatriculare,
+                        tipMasina: item.tip_masina,
+                        tipTransport: item.tip_transport,
+                        sarcinaMax: item.masa_max_admisa.toString(),
+                        tara: item.tara.toString()
+                      }));
+                      setAutoturisme(mappedData);
+                      setAutoturismeDialog({ ...autoturismeDialog, open: false });
+                    } catch (error) {
+                      toast({
+                        title: "Eroare",
+                        description: "Nu s-a putut adăuga autoturismul",
+                        variant: "destructive"
+                      });
+                    }
+                  }}>
+                    {autoturismeDialog.mode === 'add' ? 'Adaugă' : 'Salvează'}
+                  </Button>
+                </DialogFooter>
              </DialogContent>
            </Dialog>
 
