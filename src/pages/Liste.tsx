@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 const Liste = () => {
@@ -30,7 +30,7 @@ const Liste = () => {
   const [furnizoriPage, setFurnizoriPage] = useState(1);
 
   // Filters
-  const [autoturismeFilters, setAutoturismeFilters] = useState({ id: "", tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "" });
+  const [autoturismeFilters, setAutoturismeFilters] = useState({ id: "", tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "", tara: "" });
   const [soferiFilters, setSoferiFilters] = useState({ id: "", nume: "", ci: "" });
   const [materiiPrimeFilters, setMateriiPrimeFilters] = useState({ id: "", denumire: "" });
   const [produseFiniteFilters, setProduseFiniteFilters] = useState({ id: "", denumire: "" });
@@ -62,7 +62,7 @@ const Liste = () => {
   const [furnizoriDeleteDialog, setFurnizoriDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
 
   // Form data states
-  const [autoturismeFormData, setAutoturismeFormData] = useState({ tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "" });
+  const [autoturismeFormData, setAutoturismeFormData] = useState({ tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "", tara: "" });
   const [soferiFormData, setSoferiFormData] = useState({ numeSofer: "", ci: "" });
   const [materiiPrimeFormData, setMateriiPrimeFormData] = useState({ denumire: "" });
   const [produseFiniteFormData, setProduseFiniteFormData] = useState({ denumire: "" });
@@ -78,12 +78,38 @@ const Liste = () => {
     "CELULOZA TOPCEL", "CELULOZA TECHNOCEL", "ADITIV ADEZIUNE", "POLIMER SBS",
     "FIBRĂ CELULOZICĂ", "NISIP SILICOS"
   ];
-  const autoturisme: any[] = [];
+  const [autoturisme, setAutoturisme] = useState<any[]>([]);
   const soferi: any[] = [];
   const materiiPrime: any[] = [];
   const produseFinite: any[] = [];
   const clienti: any[] = [];
   const furnizori: any[] = [];
+
+  // Fetch autoturisme from API
+  useEffect(() => {
+    const fetchAutoturisme = async () => {
+      try {
+        const response = await fetch('http://192.168.1.22:8002/liste/returneaza/masini');
+        const data = await response.json();
+        const mappedData = data.map((item: any) => ({
+          id: item.id,
+          nrAuto: item.nr_inmatriculare,
+          tipMasina: item.tip_masina,
+          tipTransport: item.tip_transport,
+          sarcinaMax: item.masa_max_admisa.toString(),
+          tara: item.tara.toString()
+        }));
+        setAutoturisme(mappedData);
+      } catch (error) {
+        toast({
+          title: "Eroare",
+          description: "Nu s-au putut încărca datele despre autoturisme",
+          variant: "destructive"
+        });
+      }
+    };
+    fetchAutoturisme();
+  }, [toast]);
 
   // Pagination helpers
   const getPaginatedData = (data: any[], page: number, itemsPerPage: number) => {
@@ -113,7 +139,8 @@ const Liste = () => {
     item.tipMasina.toLowerCase().includes(autoturismeFilters.tipMasina.toLowerCase()) &&
     item.nrAuto.toLowerCase().includes(autoturismeFilters.nrAuto.toLowerCase()) &&
     item.sarcinaMax.toLowerCase().includes(autoturismeFilters.sarcinaMax.toLowerCase()) &&
-    item.tipTransport.toLowerCase().includes(autoturismeFilters.tipTransport.toLowerCase())
+    item.tipTransport.toLowerCase().includes(autoturismeFilters.tipTransport.toLowerCase()) &&
+    item.tara.toLowerCase().includes(autoturismeFilters.tara.toLowerCase())
   );
 
   const filterSoferi = soferi.filter(item =>
@@ -194,7 +221,7 @@ const Liste = () => {
                   </CardDescription>
                 </div>
                 <Button className="gap-2" onClick={() => {
-                  setAutoturismeFormData({ tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "" });
+                  setAutoturismeFormData({ tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "", tara: "" });
                   setAutoturismeDialog({ open: true, mode: 'add' });
                 }}>
                   <Plus className="w-4 h-4" />
@@ -346,6 +373,31 @@ const Liste = () => {
                         </Popover>
                       </div>
                     </TableHead>
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
+                        <span>Țară</span>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                              {autoturismeSort.field === 'tara' ? (autoturismeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută țară..." value={autoturismeFilters.tara} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, tara: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAutoturismeSort({ field: 'tara', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAutoturismeSort({ field: 'tara', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </TableHead>
                     <TableHead className="text-right h-10 text-xs">
                       <span>Acțiuni</span>
                     </TableHead>
@@ -358,10 +410,11 @@ const Liste = () => {
                       <TableCell className="py-1 text-xs">{auto.nrAuto}</TableCell>
                       <TableCell className="py-1 text-xs">{auto.sarcinaMax}</TableCell>
                       <TableCell className="py-1 text-xs">{auto.tipTransport}</TableCell>
+                      <TableCell className="py-1 text-xs">{auto.tara}</TableCell>
                       <TableCell className="text-right py-1">
                         <div className="flex items-center justify-end gap-1">
                           <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
-                            setAutoturismeFormData({ tipMasina: auto.tipMasina, nrAuto: auto.nrAuto, sarcinaMax: auto.sarcinaMax, tipTransport: auto.tipTransport });
+                            setAutoturismeFormData({ tipMasina: auto.tipMasina, nrAuto: auto.nrAuto, sarcinaMax: auto.sarcinaMax, tipTransport: auto.tipTransport, tara: auto.tara });
                             setAutoturismeDialog({ open: true, mode: 'edit', data: auto });
                           }}>
                             <Pencil className="w-3 h-3" />
@@ -474,8 +527,17 @@ const Liste = () => {
                        <SelectItem value="Extern">Extern</SelectItem>
                      </SelectContent>
                    </Select>
-                 </div>
-               </div>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="tara">Țară *</Label>
+                    <Input
+                      id="tara"
+                      placeholder="Ex: 1000"
+                      value={autoturismeFormData.tara}
+                      onChange={(e) => setAutoturismeFormData({ ...autoturismeFormData, tara: e.target.value })}
+                    />
+                  </div>
+                </div>
                <DialogFooter>
                  <Button variant="outline" onClick={() => setAutoturismeDialog({ ...autoturismeDialog, open: false })}>
                    Anulează
