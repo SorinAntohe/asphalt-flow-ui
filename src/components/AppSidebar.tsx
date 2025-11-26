@@ -108,6 +108,11 @@ export function AppSidebar() {
                       style={{
                         background: gestiuneOpen ? 'hsl(var(--sidebar-accent))' : 'transparent',
                       }}
+                      onClick={(e) => {
+                        if (!isOpen) {
+                          e.preventDefault();
+                        }
+                      }}
                     >
                       <FolderCog className="w-5 h-5" />
                       {isOpen && (
@@ -124,50 +129,47 @@ export function AppSidebar() {
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
-                <CollapsibleContent 
-                  className="overflow-hidden rounded-lg"
-                  style={{
-                    transition: 'all 0.3s ease',
-                    opacity: gestiuneOpen ? 1 : 0,
-                    visibility: gestiuneOpen ? 'visible' : 'hidden',
-                    transform: gestiuneOpen ? 'translateY(0)' : 'translateY(-10px)',
-                    background: gestiuneOpen ? 'hsl(var(--sidebar-accent) / 0.3)' : 'transparent',
-                    padding: gestiuneOpen ? '8px' : '0',
-                    marginTop: gestiuneOpen ? '4px' : '0',
-                    marginLeft: isOpen ? '0' : '4px',
-                    marginRight: isOpen ? '0' : '4px',
-                    boxShadow: gestiuneOpen ? '0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1)' : 'none',
-                  }}
-                >
-                  <SidebarMenu className={isOpen ? "ml-3 mr-3 space-y-1.5" : "mx-1 space-y-1.5"}>
-                    {gestiuneItems.map((item, index) => (
-                      <SidebarMenuItem 
-                        key={item.title}
-                        style={{
-                          transition: 'opacity 0.3s ease, transform 0.3s ease',
-                          transitionDelay: `${index * 50}ms`
-                        }}
-                      >
-                        <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                          <NavLink
-                            to={item.url}
-                            className={`flex items-center gap-3 rounded-md transition-all duration-200 text-sidebar-foreground ${
-                              isOpen ? 'px-3 py-2' : 'px-2 py-2 justify-center'
-                            } ${
-                              isActive(item.url) 
-                                ? 'bg-sidebar-accent text-sidebar-accent-foreground font-semibold shadow-sm border border-sidebar-border/20' 
-                                : 'hover:bg-sidebar-accent/30'
-                            }`}
-                            title={!isOpen ? item.title : undefined}
-                          >
-                            <item.icon className="w-4 h-4 flex-shrink-0" />
-                            {isOpen && <span className="text-sm">{item.title}</span>}
-                          </NavLink>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenu>
-                </CollapsibleContent>
+                {isOpen && (
+                  <CollapsibleContent 
+                    className="overflow-hidden rounded-md mx-2"
+                    style={{
+                      transition: 'all 0.3s ease',
+                      opacity: gestiuneOpen ? 1 : 0,
+                      visibility: gestiuneOpen ? 'visible' : 'hidden',
+                      transform: gestiuneOpen ? 'translateY(0)' : 'translateY(-10px)',
+                      background: gestiuneOpen ? 'hsl(var(--sidebar-accent) / 0.5)' : 'transparent',
+                      padding: gestiuneOpen ? '6px' : '0',
+                      marginTop: gestiuneOpen ? '4px' : '0',
+                      boxShadow: gestiuneOpen ? 'inset 0 2px 4px rgba(0, 0, 0, 0.1)' : 'none',
+                    }}
+                  >
+                    <SidebarMenu className="space-y-0.5">
+                      {gestiuneItems.map((item, index) => (
+                        <SidebarMenuItem 
+                          key={item.title}
+                          style={{
+                            transition: 'opacity 0.3s ease, transform 0.3s ease',
+                            transitionDelay: `${index * 50}ms`
+                          }}
+                        >
+                          <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                            <NavLink
+                              to={item.url}
+                              className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200 text-sidebar-foreground ${
+                                isActive(item.url) 
+                                  ? 'bg-sidebar-accent text-sidebar-accent-foreground font-semibold' 
+                                  : 'hover:bg-sidebar-accent/40'
+                              }`}
+                            >
+                              <item.icon className="w-4 h-4 flex-shrink-0" />
+                              <span className="text-sm">{item.title}</span>
+                            </NavLink>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
+                    </SidebarMenu>
+                  </CollapsibleContent>
+                )}
               </Collapsible>
             </SidebarMenu>
           </SidebarGroupContent>
