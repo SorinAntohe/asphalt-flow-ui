@@ -10,6 +10,7 @@ import Liste from "./pages/Liste";
 import Receptii from "./pages/Receptii";
 import Livrari from "./pages/Livrari";
 import Consumuri from "./pages/Consumuri";
+import Comenzi from "./pages/Comenzi";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -59,6 +60,14 @@ const App = () => (
             element={
               <Layout>
                 <Consumuri />
+              </Layout>
+            }
+          />
+          <Route
+            path="/comenzi"
+            element={
+              <Layout>
+                <Comenzi />
               </Layout>
             }
           />
