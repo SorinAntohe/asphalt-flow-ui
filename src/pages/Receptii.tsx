@@ -57,6 +57,7 @@ export default function Receptii() {
   const [loading, setLoading] = useState(false);
   const [availableCodes, setAvailableCodes] = useState<string[]>([]);
   const [availableDrivers, setAvailableDrivers] = useState<string[]>([]);
+  const [availableRegistrationNumbers, setAvailableRegistrationNumbers] = useState<string[]>([]);
   
   // Pagination
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -181,6 +182,28 @@ export default function Receptii() {
       }
     };
     fetchDrivers();
+  }, []);
+
+  // Fetch available registration numbers for dropdown
+  useEffect(() => {
+    const fetchRegistrationNumbers = async () => {
+      try {
+        const response = await fetch('http://192.168.1.22:8002/receptii/materiale/returneaza_nr_inmatriculare');
+        if (!response.ok) {
+          throw new Error('Failed to fetch registration numbers');
+        }
+        const data = await response.json();
+        setAvailableRegistrationNumbers(data);
+      } catch (error) {
+        console.error('Error fetching registration numbers:', error);
+        toast({
+          title: "Eroare",
+          description: "Nu s-au putut încărca numerele de înmatriculare disponibile",
+          variant: "destructive"
+        });
+      }
+    };
+    fetchRegistrationNumbers();
   }, []);
 
   // Calculate diferenta when cantitate values change
@@ -666,12 +689,24 @@ export default function Receptii() {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="nr_inmatriculare">Nr. Înmatriculare *</Label>
-                <Input
-                  id="nr_inmatriculare"
+                <Select
                   value={form.nr_inmatriculare}
-                  onChange={(e) => setForm({ ...form, nr_inmatriculare: e.target.value })}
-                  className={formErrors.nr_inmatriculare ? "border-destructive" : ""}
-                />
+                  onValueChange={(value) => setForm({ ...form, nr_inmatriculare: value })}
+                >
+                  <SelectTrigger 
+                    id="nr_inmatriculare"
+                    className={formErrors.nr_inmatriculare ? "border-destructive" : ""}
+                  >
+                    <SelectValue placeholder="Selectează nr. înmatriculare" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover z-50">
+                    {availableRegistrationNumbers.map((regNum) => (
+                      <SelectItem key={regNum} value={regNum}>
+                        {regNum}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 {formErrors.nr_inmatriculare && <p className="text-sm text-destructive">{formErrors.nr_inmatriculare}</p>}
               </div>
             </div>
