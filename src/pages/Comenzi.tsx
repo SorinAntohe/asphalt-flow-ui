@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -6,36 +6,51 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+
+interface ComandaMateriePrima {
+  id: number;
+  cod: string;
+  data: string;
+  furnizor: string;
+  material: string;
+  unitate_masura: string;
+  cantitate: number;
+  punct_descarcare: string | null;
+  pret_fara_tva: number;
+  pret_transport: number | null;
+  observatii: string;
+}
 
 export default function Comenzi() {
-  const [comenziMateriePrima] = useState([
-    { 
-      id: 1, 
-      cod: "CMP-001", 
-      data: "2024-01-15", 
-      furnizor: "Furnizor A", 
-      material: "0/4 NAT", 
-      unitate_masura: "tone",
-      cantitate: 500, 
-      punct_descarcare: "Punct A",
-      pret_fara_tva: 150.5,
-      pret_transport: 25.0,
-      observatii: "Livrare urgentă"
-    },
-    { 
-      id: 2, 
-      cod: "CMP-002", 
-      data: "2024-01-16", 
-      furnizor: "Furnizor B", 
-      material: "BITUM 50/70", 
-      unitate_masura: "tone",
-      cantitate: 200, 
-      punct_descarcare: "Punct B",
-      pret_fara_tva: 320.0,
-      pret_transport: 45.0,
-      observatii: ""
-    },
-  ]);
+  const { toast } = useToast();
+  const [comenziMateriePrima, setComenziMateriePrima] = useState<ComandaMateriePrima[]>([]);
+  const [loadingMP, setLoadingMP] = useState(true);
+
+  // Fetch comenzi materie prima from API
+  useEffect(() => {
+    const fetchComenziMP = async () => {
+      try {
+        setLoadingMP(true);
+        const response = await fetch('http://192.168.1.22:8002/comenzi/returneaza/material');
+        if (!response.ok) {
+          throw new Error('Failed to fetch comenzi materie prima');
+        }
+        const data = await response.json();
+        setComenziMateriePrima(data);
+      } catch (error) {
+        console.error('Error fetching comenzi materie prima:', error);
+        toast({
+          title: "Eroare",
+          description: "Nu s-au putut încărca comenzile de materie primă",
+          variant: "destructive"
+        });
+      } finally {
+        setLoadingMP(false);
+      }
+    };
+    fetchComenziMP();
+  }, [toast]);
 
   // Filters for Materie Prima
   const [filtersMP, setFiltersMP] = useState({
@@ -98,16 +113,23 @@ export default function Comenzi() {
         item.material.toLowerCase().includes(filtersMP.material.toLowerCase()) &&
         item.unitate_masura.toLowerCase().includes(filtersMP.unitate_masura.toLowerCase()) &&
         item.cantitate.toString().includes(filtersMP.cantitate) &&
-        item.punct_descarcare.toLowerCase().includes(filtersMP.punct_descarcare.toLowerCase()) &&
+        (item.punct_descarcare || '').toLowerCase().includes(filtersMP.punct_descarcare.toLowerCase()) &&
         item.pret_fara_tva.toString().includes(filtersMP.pret_fara_tva) &&
-        item.pret_transport.toString().includes(filtersMP.pret_transport) &&
+        (item.pret_transport?.toString() || '').includes(filtersMP.pret_transport) &&
         item.observatii.toLowerCase().includes(filtersMP.observatii.toLowerCase())
       );
     })
     .sort((a, b) => {
       if (!sortMP.field || !sortMP.direction) return 0;
-      const aVal = a[sortMP.field as keyof typeof a];
-      const bVal = b[sortMP.field as keyof typeof b];
+      
+      let aVal: any = a[sortMP.field as keyof ComandaMateriePrima];
+      let bVal: any = b[sortMP.field as keyof ComandaMateriePrima];
+      
+      // Handle null values
+      if (aVal === null && bVal === null) return 0;
+      if (aVal === null) return sortMP.direction === 'asc' ? 1 : -1;
+      if (bVal === null) return sortMP.direction === 'asc' ? -1 : 1;
+      
       if (aVal < bVal) return sortMP.direction === 'asc' ? -1 : 1;
       if (aVal > bVal) return sortMP.direction === 'asc' ? 1 : -1;
       return 0;
@@ -422,32 +444,48 @@ export default function Comenzi() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredAndSortedMP.map((comanda) => (
-                    <TableRow key={comanda.id} className="h-10">
-                      <TableCell className="font-medium py-1 text-xs">{comanda.cod}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.data}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.furnizor}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.material}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.unitate_masura}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.cantitate}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.punct_descarcare}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.pret_fara_tva}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.pret_transport}</TableCell>
-                      <TableCell className="py-1 text-xs">{comanda.observatii}</TableCell>
-                      <TableCell className="text-right py-1">
-                        <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
-                            <Pencil className="w-3 h-3" />
-                            Editează
-                          </Button>
-                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
-                            <Trash2 className="w-3 h-3" />
-                            Șterge
-                          </Button>
+                  {loadingMP ? (
+                    <TableRow>
+                      <TableCell colSpan={11} className="h-24 text-center">
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : filteredAndSortedMP.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={11} className="h-24 text-center text-muted-foreground">
+                        Nu există comenzi disponibile
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredAndSortedMP.map((comanda) => (
+                      <TableRow key={comanda.id} className="h-10">
+                        <TableCell className="font-medium py-1 text-xs">{comanda.cod}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.data}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.furnizor}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.material}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.unitate_masura}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.cantitate}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.punct_descarcare || '-'}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.pret_fara_tva}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.pret_transport ?? '-'}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.observatii}</TableCell>
+                        <TableCell className="text-right py-1">
+                          <div className="flex items-center justify-end gap-1">
+                            <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
+                              <Pencil className="w-3 h-3" />
+                              Editează
+                            </Button>
+                            <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
+                              <Trash2 className="w-3 h-3" />
+                              Șterge
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </CardContent>
