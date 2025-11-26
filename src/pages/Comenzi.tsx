@@ -7,6 +7,11 @@ import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-re
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { z } from "zod";
 
 interface ComandaMateriePrima {
   id: number;
@@ -36,35 +41,196 @@ interface ComandaProdusFinal {
   observatii: string;
 }
 
+const comandaMPSchema = z.object({
+  furnizor: z.string().trim().min(1, "Furnizorul este obligatoriu").max(255),
+  material: z.string().trim().min(1, "Materialul este obligatoriu").max(255),
+  unitate_de_masura: z.string().trim().min(1, "Unitatea de măsură este obligatorie").max(50),
+  cantitate: z.number().min(0, "Cantitatea trebuie să fie pozitivă"),
+  punct_descarcare: z.string().trim().max(255).optional(),
+  pret_fara_tva: z.number().min(0, "Prețul trebuie să fie pozitiv"),
+  pret_transport: z.number().min(0, "Prețul transport trebuie să fie pozitiv").optional(),
+  observatii: z.string().trim().max(1000).optional()
+});
+
 export default function Comenzi() {
   const { toast } = useToast();
   const [comenziMateriePrima, setComenziMateriePrima] = useState<ComandaMateriePrima[]>([]);
   const [loadingMP, setLoadingMP] = useState(true);
+  
+  // Dialog states
+  const [openAddEditMP, setOpenAddEditMP] = useState(false);
+  const [editingMP, setEditingMP] = useState<ComandaMateriePrima | null>(null);
+  const [deletingMP, setDeletingMP] = useState<ComandaMateriePrima | null>(null);
+  
+  // Form states
+  const [formMP, setFormMP] = useState({
+    furnizor: "",
+    material: "",
+    unitate_de_masura: "",
+    cantitate: 0,
+    punct_descarcare: "",
+    pret_fara_tva: 0,
+    pret_transport: 0,
+    observatii: ""
+  });
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   // Fetch comenzi materie prima from API
-  useEffect(() => {
-    const fetchComenziMP = async () => {
-      try {
-        setLoadingMP(true);
-        const response = await fetch('http://192.168.1.22:8002/comenzi/returneaza/material');
-        if (!response.ok) {
-          throw new Error('Failed to fetch comenzi materie prima');
-        }
-        const data = await response.json();
-        setComenziMateriePrima(data);
-      } catch (error) {
-        console.error('Error fetching comenzi materie prima:', error);
-        toast({
-          title: "Eroare",
-          description: "Nu s-au putut încărca comenzile de materie primă",
-          variant: "destructive"
-        });
-      } finally {
-        setLoadingMP(false);
+  const fetchComenziMP = async () => {
+    try {
+      setLoadingMP(true);
+      const response = await fetch('http://192.168.1.22:8002/comenzi/returneaza/material');
+      if (!response.ok) {
+        throw new Error('Failed to fetch comenzi materie prima');
       }
-    };
+      const data = await response.json();
+      setComenziMateriePrima(data);
+    } catch (error) {
+      console.error('Error fetching comenzi materie prima:', error);
+      toast({
+        title: "Eroare",
+        description: "Nu s-au putut încărca comenzile de materie primă",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingMP(false);
+    }
+  };
+  
+  useEffect(() => {
     fetchComenziMP();
   }, [toast]);
+  
+  // Add/Edit handlers
+  const handleOpenAddMP = () => {
+    setEditingMP(null);
+    setFormMP({
+      furnizor: "",
+      material: "",
+      unitate_de_masura: "",
+      cantitate: 0,
+      punct_descarcare: "",
+      pret_fara_tva: 0,
+      pret_transport: 0,
+      observatii: ""
+    });
+    setFormErrors({});
+    setOpenAddEditMP(true);
+  };
+  
+  const handleOpenEditMP = (comanda: ComandaMateriePrima) => {
+    setEditingMP(comanda);
+    setFormMP({
+      furnizor: comanda.furnizor,
+      material: comanda.material,
+      unitate_de_masura: comanda.unitate_masura,
+      cantitate: comanda.cantitate,
+      punct_descarcare: comanda.punct_descarcare || "",
+      pret_fara_tva: comanda.pret_fara_tva,
+      pret_transport: comanda.pret_transport || 0,
+      observatii: comanda.observatii
+    });
+    setFormErrors({});
+    setOpenAddEditMP(true);
+  };
+  
+  const handleSaveMP = async () => {
+    try {
+      // Validate
+      const validatedData = comandaMPSchema.parse({
+        ...formMP,
+        punct_descarcare: formMP.punct_descarcare || undefined,
+        pret_transport: formMP.pret_transport || undefined,
+        observatii: formMP.observatii || undefined
+      });
+      
+      setFormErrors({});
+      
+      if (editingMP) {
+        // Edit
+        const response = await fetch('http://192.168.1.22:8002/editeaza', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tabel: "comenzi_material",
+            id: editingMP.id,
+            update: validatedData
+          })
+        });
+        
+        if (!response.ok) throw new Error('Failed to update comanda');
+        
+        toast({
+          title: "Succes",
+          description: "Comanda a fost actualizată cu succes"
+        });
+      } else {
+        // Add
+        const response = await fetch('http://192.168.1.22:8002/comenzi/adauga/material', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(validatedData)
+        });
+        
+        if (!response.ok) throw new Error('Failed to add comanda');
+        
+        toast({
+          title: "Succes",
+          description: "Comanda a fost adăugată cu succes"
+        });
+      }
+      
+      setOpenAddEditMP(false);
+      fetchComenziMP();
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errors: Record<string, string> = {};
+        error.errors.forEach((err) => {
+          if (err.path) {
+            errors[err.path[0]] = err.message;
+          }
+        });
+        setFormErrors(errors);
+      } else {
+        toast({
+          title: "Eroare",
+          description: `Nu s-a putut salva comanda: ${error}`,
+          variant: "destructive"
+        });
+      }
+    }
+  };
+  
+  const handleDeleteMP = async () => {
+    if (!deletingMP) return;
+    
+    try {
+      const response = await fetch('http://192.168.1.22:8002/sterge', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tabel: "comenzi_material",
+          id: deletingMP.id
+        })
+      });
+      
+      if (!response.ok) throw new Error('Failed to delete comanda');
+      
+      toast({
+        title: "Succes",
+        description: "Comanda a fost ștearsă cu succes"
+      });
+      
+      setDeletingMP(null);
+      fetchComenziMP();
+    } catch (error) {
+      toast({
+        title: "Eroare",
+        description: "Nu s-a putut șterge comanda",
+        variant: "destructive"
+      });
+    }
+  };
 
   // Filters for Materie Prima
   const [filtersMP, setFiltersMP] = useState({
@@ -199,7 +365,7 @@ export default function Comenzi() {
           <Card>
             <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
               <CardTitle className="text-lg sm:text-xl">Comenzi Materie Primă</CardTitle>
-              <Button size="sm" className="w-full sm:w-auto">
+              <Button size="sm" className="w-full sm:w-auto" onClick={handleOpenAddMP}>
                 <Plus className="mr-2 h-4 w-4" />
                 Adaugă Comandă
               </Button>
@@ -493,11 +659,11 @@ export default function Comenzi() {
                         <TableCell className="py-1 text-xs">{comanda.observatii}</TableCell>
                         <TableCell className="text-right py-1">
                           <div className="flex items-center justify-end gap-1">
-                            <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
+                            <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => handleOpenEditMP(comanda)}>
                               <Pencil className="w-3 h-3" />
                               Editează
                             </Button>
-                            <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
+                            <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs" onClick={() => setDeletingMP(comanda)}>
                               <Trash2 className="w-3 h-3" />
                               Șterge
                             </Button>
@@ -829,6 +995,131 @@ export default function Comenzi() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Add/Edit Dialog for Materie Prima */}
+      <Dialog open={openAddEditMP} onOpenChange={setOpenAddEditMP}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editingMP ? "Editează Comanda" : "Adaugă Comandă Nouă"}</DialogTitle>
+            <DialogDescription>
+              {editingMP ? "Modifică detaliile comenzii de materie primă" : "Completează detaliile pentru noua comandă de materie primă"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="furnizor">Furnizor *</Label>
+              <Input
+                id="furnizor"
+                value={formMP.furnizor}
+                onChange={(e) => setFormMP({ ...formMP, furnizor: e.target.value })}
+                className={formErrors.furnizor ? "border-destructive" : ""}
+              />
+              {formErrors.furnizor && <p className="text-sm text-destructive">{formErrors.furnizor}</p>}
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="material">Material *</Label>
+              <Input
+                id="material"
+                value={formMP.material}
+                onChange={(e) => setFormMP({ ...formMP, material: e.target.value })}
+                className={formErrors.material ? "border-destructive" : ""}
+              />
+              {formErrors.material && <p className="text-sm text-destructive">{formErrors.material}</p>}
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="unitate_de_masura">Unitate Măsură *</Label>
+                <Input
+                  id="unitate_de_masura"
+                  value={formMP.unitate_de_masura}
+                  onChange={(e) => setFormMP({ ...formMP, unitate_de_masura: e.target.value })}
+                  className={formErrors.unitate_de_masura ? "border-destructive" : ""}
+                />
+                {formErrors.unitate_de_masura && <p className="text-sm text-destructive">{formErrors.unitate_de_masura}</p>}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="cantitate">Cantitate *</Label>
+                <Input
+                  id="cantitate"
+                  type="number"
+                  value={formMP.cantitate}
+                  onChange={(e) => setFormMP({ ...formMP, cantitate: parseFloat(e.target.value) || 0 })}
+                  className={formErrors.cantitate ? "border-destructive" : ""}
+                />
+                {formErrors.cantitate && <p className="text-sm text-destructive">{formErrors.cantitate}</p>}
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="punct_descarcare">Punct Descărcare</Label>
+              <Input
+                id="punct_descarcare"
+                value={formMP.punct_descarcare}
+                onChange={(e) => setFormMP({ ...formMP, punct_descarcare: e.target.value })}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="pret_fara_tva">Preț fără TVA *</Label>
+                <Input
+                  id="pret_fara_tva"
+                  type="number"
+                  step="0.01"
+                  value={formMP.pret_fara_tva}
+                  onChange={(e) => setFormMP({ ...formMP, pret_fara_tva: parseFloat(e.target.value) || 0 })}
+                  className={formErrors.pret_fara_tva ? "border-destructive" : ""}
+                />
+                {formErrors.pret_fara_tva && <p className="text-sm text-destructive">{formErrors.pret_fara_tva}</p>}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="pret_transport">Preț Transport</Label>
+                <Input
+                  id="pret_transport"
+                  type="number"
+                  step="0.01"
+                  value={formMP.pret_transport}
+                  onChange={(e) => setFormMP({ ...formMP, pret_transport: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="observatii">Observații</Label>
+              <Textarea
+                id="observatii"
+                value={formMP.observatii}
+                onChange={(e) => setFormMP({ ...formMP, observatii: e.target.value })}
+                rows={3}
+                maxLength={1000}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenAddEditMP(false)}>
+              Anulează
+            </Button>
+            <Button onClick={handleSaveMP}>
+              {editingMP ? "Salvează Modificările" : "Adaugă Comanda"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog for Materie Prima */}
+      <AlertDialog open={!!deletingMP} onOpenChange={() => setDeletingMP(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmare Ștergere</AlertDialogTitle>
+            <AlertDialogDescription>
+              Ești sigur că vrei să ștergi comanda {deletingMP?.cod}? Această acțiune nu poate fi anulată.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Anulează</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteMP} className="bg-red-700 hover:bg-red-600">
+              Șterge
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
