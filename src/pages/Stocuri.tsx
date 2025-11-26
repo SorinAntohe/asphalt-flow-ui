@@ -145,7 +145,7 @@ export default function Stocuri() {
               {filteredAndSortedStocuri.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>{item.tipMaterial}</TableCell>
-                  <TableCell>{item.cantitateStoc} tone</TableCell>
+                  <TableCell>{item.cantitateStoc}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
