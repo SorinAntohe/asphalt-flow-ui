@@ -8,7 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 const Liste = () => {
+  const navigate = useNavigate();
   const [autoturismePerPage, setAutoturismePerPage] = useState(10);
   const [soferiPerPage, setSoferiPerPage] = useState(10);
   const [materiiPrimePerPage, setMateriiPrimePerPage] = useState(10);
@@ -233,7 +235,7 @@ const Liste = () => {
                     Parcul auto disponibil pentru transport
                   </CardDescription>
                 </div>
-                <Button className="gap-2">
+                <Button className="gap-2" onClick={() => navigate("/liste/autoturisme/add")}>
                   <Plus className="w-4 h-4" />
                   Adaugă Autoturism
                 </Button>
@@ -453,7 +455,7 @@ const Liste = () => {
                     Personal autorizat pentru conducere
                   </CardDescription>
                 </div>
-                <Button className="gap-2">
+                <Button className="gap-2" onClick={() => navigate("/liste/soferi/add")}>
                   <Plus className="w-4 h-4" />
                   Adaugă Șofer
                 </Button>
@@ -621,7 +623,7 @@ const Liste = () => {
                     Materii prime utilizate în producție
                   </CardDescription>
                 </div>
-                <Button className="gap-2">
+                <Button className="gap-2" onClick={() => navigate("/liste/materii-prime/add")}>
                   <Plus className="w-4 h-4" />
                   Adaugă Materie Primă
                 </Button>
@@ -763,7 +765,7 @@ const Liste = () => {
                     Produse finite disponibile pentru livrare
                   </CardDescription>
                 </div>
-                <Button className="gap-2">
+                <Button className="gap-2" onClick={() => navigate("/liste/produse-finite/add")}>
                   <Plus className="w-4 h-4" />
                   Adaugă Produs
                 </Button>
@@ -905,7 +907,7 @@ const Liste = () => {
                     Clienți activi și parteneri comerciali
                   </CardDescription>
                 </div>
-                <Button className="gap-2">
+                <Button className="gap-2" onClick={() => navigate("/liste/clienti/add")}>
                   <Plus className="w-4 h-4" />
                   Adaugă Client
                 </Button>
@@ -1125,7 +1127,7 @@ const Liste = () => {
                     Furnizori de materii prime și materiale
                   </CardDescription>
                 </div>
-                <Button className="gap-2">
+                <Button className="gap-2" onClick={() => navigate("/liste/furnizori/add")}>
                   <Plus className="w-4 h-4" />
                   Adaugă Furnizor
                 </Button>
