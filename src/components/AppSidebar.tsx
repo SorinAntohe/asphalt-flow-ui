@@ -134,9 +134,9 @@ export function AppSidebar() {
                     background: gestiuneOpen ? 'hsl(var(--sidebar-accent) / 0.5)' : 'transparent',
                     padding: gestiuneOpen ? (isOpen ? '6px' : '8px 4px') : '0',
                     marginTop: gestiuneOpen ? '4px' : '0',
-                    marginLeft: '4px',
-                    marginRight: '4px',
-                    width: isOpen ? 'auto' : 'calc(100% - 8px)',
+                    marginLeft: isOpen ? '4px' : '0',
+                    marginRight: isOpen ? '4px' : '0',
+                    width: isOpen ? 'auto' : '100%',
                     maxWidth: isOpen ? 'none' : '48px',
                     boxShadow: gestiuneOpen ? 'inset 0 2px 4px rgba(0, 0, 0, 0.1)' : 'none',
                   }}
