@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Search, Bell, User, Moon, Sun } from "lucide-react";
-import logo from "@/assets/logo.jpg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -35,11 +34,7 @@ export function TopBar() {
       <div className="flex h-16 items-center gap-4 px-4">
         <SidebarTrigger className="-ml-1" />
         
-        <div className="flex items-center gap-2">
-          <img src={logo} alt="Duotip Solutions" className="h-10 object-contain" />
-        </div>
-
-        <div className="flex-1 flex items-center gap-4 ml-4">
+        <div className="flex-1 flex items-center gap-4">
           <Select defaultValue="gestiune1">
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Selectează gestiunea" />
