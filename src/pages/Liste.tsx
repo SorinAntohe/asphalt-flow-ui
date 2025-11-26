@@ -2,54 +2,126 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 const Liste = () => {
-  const autoturisme = [
-    { id: 1, marca: "Mercedes", model: "Actros", numar: "B-123-ABC", an: "2020" },
-    { id: 2, marca: "Volvo", model: "FH16", numar: "B-456-DEF", an: "2019" },
-    { id: 3, marca: "MAN", model: "TGX", numar: "B-789-GHI", an: "2021" },
-  ];
-
-  const soferi = [
-    { id: 1, nume: "Ion Popescu", cnp: "1850102123456", telefon: "0721234567", permis: "CE" },
-    { id: 2, nume: "Gheorghe Ionescu", cnp: "1750203234567", telefon: "0732345678", permis: "CE" },
-    { id: 3, nume: "Vasile Dumitrescu", cnp: "1800304345678", telefon: "0743456789", permis: "CE" },
-  ];
-
-  const materiiPrime = [
-    { id: 1, cod: "BIT-001", denumire: "Bitum rutier", um: "tone", stoc: "120t", pret: "350 RON/t" },
-    { id: 2, cod: "AGR-001", denumire: "Agregate minerale", um: "tone", stoc: "560t", pret: "80 RON/t" },
-    { id: 3, cod: "ADD-001", denumire: "Aditivi speciali", um: "kg", stoc: "450kg", pret: "25 RON/kg" },
-  ];
-
-  const produseFinite = [
-    { id: 1, cod: "ASF-A-001", denumire: "Asfalt tip A", stoc: "450t", pret: "250 RON/t" },
-    { id: 2, cod: "ASF-B-002", denumire: "Asfalt tip B", stoc: "320t", pret: "220 RON/t" },
-    { id: 3, cod: "ASF-C-003", denumire: "Asfalt tip C", stoc: "180t", pret: "200 RON/t" },
-  ];
-
-  const clienti = [
-    { id: 1, denumire: "Construct Pro SRL", cui: "RO12345678", telefon: "0212345678", oras: "București" },
-    { id: 2, denumire: "Drumuri Moderne SA", cui: "RO23456789", telefon: "0223456789", oras: "Cluj-Napoca" },
-    { id: 3, denumire: "Asfaltari Express", cui: "RO34567890", telefon: "0234567890", oras: "Timișoara" },
-  ];
-
-  const furnizori = [
-    { id: 1, denumire: "Agregat SRL", cui: "RO45678901", telefon: "0245678901", produse: "Agregate minerale" },
-    { id: 2, denumire: "Bitum Expert", cui: "RO56789012", telefon: "0256789012", produse: "Bitum rutier" },
-    { id: 3, denumire: "Material Construct", cui: "RO67890123", telefon: "0267890123", produse: "Diverse materiale" },
-  ];
-
-  return (
-    <div className="space-y-6">
+  const autoturisme = [{
+    id: 1,
+    marca: "Mercedes",
+    model: "Actros",
+    numar: "B-123-ABC",
+    an: "2020"
+  }, {
+    id: 2,
+    marca: "Volvo",
+    model: "FH16",
+    numar: "B-456-DEF",
+    an: "2019"
+  }, {
+    id: 3,
+    marca: "MAN",
+    model: "TGX",
+    numar: "B-789-GHI",
+    an: "2021"
+  }];
+  const soferi = [{
+    id: 1,
+    nume: "Ion Popescu",
+    cnp: "1850102123456",
+    telefon: "0721234567",
+    permis: "CE"
+  }, {
+    id: 2,
+    nume: "Gheorghe Ionescu",
+    cnp: "1750203234567",
+    telefon: "0732345678",
+    permis: "CE"
+  }, {
+    id: 3,
+    nume: "Vasile Dumitrescu",
+    cnp: "1800304345678",
+    telefon: "0743456789",
+    permis: "CE"
+  }];
+  const materiiPrime = [{
+    id: 1,
+    cod: "BIT-001",
+    denumire: "Bitum rutier",
+    um: "tone",
+    stoc: "120t",
+    pret: "350 RON/t"
+  }, {
+    id: 2,
+    cod: "AGR-001",
+    denumire: "Agregate minerale",
+    um: "tone",
+    stoc: "560t",
+    pret: "80 RON/t"
+  }, {
+    id: 3,
+    cod: "ADD-001",
+    denumire: "Aditivi speciali",
+    um: "kg",
+    stoc: "450kg",
+    pret: "25 RON/kg"
+  }];
+  const produseFinite = [{
+    id: 1,
+    cod: "ASF-A-001",
+    denumire: "Asfalt tip A",
+    stoc: "450t",
+    pret: "250 RON/t"
+  }, {
+    id: 2,
+    cod: "ASF-B-002",
+    denumire: "Asfalt tip B",
+    stoc: "320t",
+    pret: "220 RON/t"
+  }, {
+    id: 3,
+    cod: "ASF-C-003",
+    denumire: "Asfalt tip C",
+    stoc: "180t",
+    pret: "200 RON/t"
+  }];
+  const clienti = [{
+    id: 1,
+    denumire: "Construct Pro SRL",
+    cui: "RO12345678",
+    telefon: "0212345678",
+    oras: "București"
+  }, {
+    id: 2,
+    denumire: "Drumuri Moderne SA",
+    cui: "RO23456789",
+    telefon: "0223456789",
+    oras: "Cluj-Napoca"
+  }, {
+    id: 3,
+    denumire: "Asfaltari Express",
+    cui: "RO34567890",
+    telefon: "0234567890",
+    oras: "Timișoara"
+  }];
+  const furnizori = [{
+    id: 1,
+    denumire: "Agregat SRL",
+    cui: "RO45678901",
+    telefon: "0245678901",
+    produse: "Agregate minerale"
+  }, {
+    id: 2,
+    denumire: "Bitum Expert",
+    cui: "RO56789012",
+    telefon: "0256789012",
+    produse: "Bitum rutier"
+  }, {
+    id: 3,
+    denumire: "Material Construct",
+    cui: "RO67890123",
+    telefon: "0267890123",
+    produse: "Diverse materiale"
+  }];
+  return <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Liste</h1>
@@ -95,8 +167,7 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {autoturisme.map((auto) => (
-                    <TableRow key={auto.id}>
+                  {autoturisme.map(auto => <TableRow key={auto.id}>
                       <TableCell className="font-medium">{auto.marca}</TableCell>
                       <TableCell>{auto.model}</TableCell>
                       <TableCell>{auto.numar}</TableCell>
@@ -107,14 +178,13 @@ const Liste = () => {
                             <Pencil className="w-4 h-4" />
                             Editează
                           </Button>
-                          <Button variant="destructive" size="sm" className="gap-2">
+                          <Button variant="destructive" size="sm" className="gap-2 bg-red-700 hover:bg-red-600">
                             <Trash2 className="w-4 h-4" />
                             Șterge
                           </Button>
                         </div>
                       </TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                 </TableBody>
               </Table>
             </CardContent>
@@ -147,8 +217,7 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {soferi.map((sofer) => (
-                    <TableRow key={sofer.id}>
+                  {soferi.map(sofer => <TableRow key={sofer.id}>
                       <TableCell className="font-medium">{sofer.nume}</TableCell>
                       <TableCell>{sofer.cnp}</TableCell>
                       <TableCell>{sofer.telefon}</TableCell>
@@ -165,8 +234,7 @@ const Liste = () => {
                           </Button>
                         </div>
                       </TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                 </TableBody>
               </Table>
             </CardContent>
@@ -200,8 +268,7 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {materiiPrime.map((materie) => (
-                    <TableRow key={materie.id}>
+                  {materiiPrime.map(materie => <TableRow key={materie.id}>
                       <TableCell className="font-medium">{materie.cod}</TableCell>
                       <TableCell>{materie.denumire}</TableCell>
                       <TableCell>{materie.um}</TableCell>
@@ -219,8 +286,7 @@ const Liste = () => {
                           </Button>
                         </div>
                       </TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                 </TableBody>
               </Table>
             </CardContent>
@@ -253,8 +319,7 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {produseFinite.map((produs) => (
-                    <TableRow key={produs.id}>
+                  {produseFinite.map(produs => <TableRow key={produs.id}>
                       <TableCell className="font-medium">{produs.cod}</TableCell>
                       <TableCell>{produs.denumire}</TableCell>
                       <TableCell>{produs.stoc}</TableCell>
@@ -271,8 +336,7 @@ const Liste = () => {
                           </Button>
                         </div>
                       </TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                 </TableBody>
               </Table>
             </CardContent>
@@ -305,8 +369,7 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {clienti.map((client) => (
-                    <TableRow key={client.id}>
+                  {clienti.map(client => <TableRow key={client.id}>
                       <TableCell className="font-medium">{client.denumire}</TableCell>
                       <TableCell>{client.cui}</TableCell>
                       <TableCell>{client.telefon}</TableCell>
@@ -323,8 +386,7 @@ const Liste = () => {
                           </Button>
                         </div>
                       </TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                 </TableBody>
               </Table>
             </CardContent>
@@ -357,8 +419,7 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {furnizori.map((furnizor) => (
-                    <TableRow key={furnizor.id}>
+                  {furnizori.map(furnizor => <TableRow key={furnizor.id}>
                       <TableCell className="font-medium">{furnizor.denumire}</TableCell>
                       <TableCell>{furnizor.cui}</TableCell>
                       <TableCell>{furnizor.telefon}</TableCell>
@@ -375,16 +436,13 @@ const Liste = () => {
                           </Button>
                         </div>
                       </TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                 </TableBody>
               </Table>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
-  );
+    </div>;
 };
-
 export default Liste;
