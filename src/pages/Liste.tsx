@@ -463,15 +463,26 @@ const Liste = () => {
 
            <Dialog open={autoturismeDialog.open} onOpenChange={(open) => setAutoturismeDialog({ ...autoturismeDialog, open })}>
              <DialogContent className="sm:max-w-[500px]">
-               <DialogHeader>
-                 <DialogTitle>{autoturismeDialog.mode === 'add' ? 'Adaugă Autoturism' : 'Editează Autoturism'}</DialogTitle>
-                 <DialogDescription>
-                   {autoturismeDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un autoturism nou.' : 'Modificați detaliile autoturismului.'}
-                 </DialogDescription>
-               </DialogHeader>
-               <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="tipMasina">Tip Mașină *</Label>
+                <DialogHeader>
+                  <DialogTitle>{autoturismeDialog.mode === 'add' ? 'Adaugă Autoturism' : 'Editează Autoturism'}</DialogTitle>
+                  <DialogDescription>
+                    {autoturismeDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un autoturism nou.' : 'Modificați detaliile autoturismului.'}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  {autoturismeDialog.mode === 'edit' && autoturismeDialog.data && (
+                    <div className="grid gap-2">
+                      <Label htmlFor="id">ID</Label>
+                      <Input
+                        id="id"
+                        value={autoturismeDialog.data.id}
+                        disabled
+                        className="bg-muted"
+                      />
+                    </div>
+                  )}
+                   <div className="grid gap-2">
+                     <Label htmlFor="tipMasina">Tip Mașină *</Label>
                     <Select 
                       value={autoturismeFormData.tipMasina} 
                       onValueChange={(value) => {
@@ -553,30 +564,59 @@ const Liste = () => {
                     }
 
                     try {
-                      const requestBody = {
-                        nr_inmatriculare: autoturismeFormData.nrAuto,
-                        tip_masina: autoturismeFormData.tipMasina,
-                        tip_transport: autoturismeFormData.tipTransport,
-                        masa_max_admisa: parseInt(autoturismeFormData.sarcinaMax),
-                        tara: parseInt(autoturismeFormData.tara)
-                      };
+                      if (autoturismeDialog.mode === 'edit' && autoturismeDialog.data) {
+                        const response = await fetch('http://192.168.1.22:8002/editeaza', {
+                          method: 'PATCH',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            tabel: "lista_masini",
+                            id: autoturismeDialog.data.id,
+                            update: {
+                              nr_inmatriculare: autoturismeFormData.nrAuto,
+                              tip_masina: autoturismeFormData.tipMasina,
+                              tip_transport: autoturismeFormData.tipTransport,
+                              masa_max_admisa: parseInt(autoturismeFormData.sarcinaMax),
+                              tara: parseInt(autoturismeFormData.tara)
+                            }
+                          })
+                        });
 
-                      const response = await fetch('http://192.168.1.22:8002/liste/adauga/masina', {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(requestBody)
-                      });
+                        if (!response.ok) {
+                          throw new Error('Eroare la editarea autoturismului');
+                        }
 
-                      if (!response.ok) {
-                        throw new Error('Eroare la adăugarea autoturismului');
+                        toast({
+                          title: "Succes",
+                          description: "Autoturismul a fost editat cu succes"
+                        });
+                      } else {
+                        const requestBody = {
+                          nr_inmatriculare: autoturismeFormData.nrAuto,
+                          tip_masina: autoturismeFormData.tipMasina,
+                          tip_transport: autoturismeFormData.tipTransport,
+                          masa_max_admisa: parseInt(autoturismeFormData.sarcinaMax),
+                          tara: parseInt(autoturismeFormData.tara)
+                        };
+
+                        const response = await fetch('http://192.168.1.22:8002/liste/adauga/masina', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify(requestBody)
+                        });
+
+                        if (!response.ok) {
+                          throw new Error('Eroare la adăugarea autoturismului');
+                        }
+
+                        toast({
+                          title: "Succes",
+                          description: "Autoturismul a fost adăugat cu succes"
+                        });
                       }
-
-                      toast({
-                        title: "Succes",
-                        description: "Autoturismul a fost adăugat cu succes"
-                      });
 
                       // Refresh the list
                       const refreshResponse = await fetch('http://192.168.1.22:8002/liste/returneaza/masini');
@@ -840,15 +880,26 @@ const Liste = () => {
 
            <Dialog open={soferiDialog.open} onOpenChange={(open) => setSoferiDialog({ ...soferiDialog, open })}>
              <DialogContent className="sm:max-w-[500px]">
-               <DialogHeader>
-                 <DialogTitle>{soferiDialog.mode === 'add' ? 'Adaugă Șofer' : 'Editează Șofer'}</DialogTitle>
-                 <DialogDescription>
-                   {soferiDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un șofer nou.' : 'Modificați detaliile șoferului.'}
-                 </DialogDescription>
-               </DialogHeader>
-               <div className="grid gap-4 py-4">
-                 <div className="grid gap-2">
-                   <Label htmlFor="numeSofer">Nume Șofer *</Label>
+                <DialogHeader>
+                  <DialogTitle>{soferiDialog.mode === 'add' ? 'Adaugă Șofer' : 'Editează Șofer'}</DialogTitle>
+                  <DialogDescription>
+                    {soferiDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un șofer nou.' : 'Modificați detaliile șoferului.'}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  {soferiDialog.mode === 'edit' && soferiDialog.data && (
+                    <div className="grid gap-2">
+                      <Label htmlFor="id">ID</Label>
+                      <Input
+                        id="id"
+                        value={soferiDialog.data.id}
+                        disabled
+                        className="bg-muted"
+                      />
+                    </div>
+                  )}
+                  <div className="grid gap-2">
+                    <Label htmlFor="numeSofer">Nume Șofer *</Label>
                    <Input
                      id="numeSofer"
                      placeholder="Ex: Ion Popescu"
@@ -870,13 +921,56 @@ const Liste = () => {
                  <Button variant="outline" onClick={() => setSoferiDialog({ ...soferiDialog, open: false })}>
                    Anulează
                  </Button>
-                 <Button onClick={() => {
-                   toast({
-                     title: "Succes",
-                     description: `Șoferul a fost ${soferiDialog.mode === 'add' ? 'adăugat' : 'actualizat'} cu succes`
-                   });
-                   setSoferiDialog({ ...soferiDialog, open: false });
-                 }}>
+                  <Button onClick={async () => {
+                    if (!soferiFormData.numeSofer || !soferiFormData.ci) {
+                      toast({
+                        title: "Eroare",
+                        description: "Toate câmpurile sunt obligatorii",
+                        variant: "destructive"
+                      });
+                      return;
+                    }
+
+                    try {
+                      if (soferiDialog.mode === 'edit' && soferiDialog.data) {
+                        const response = await fetch('http://192.168.1.22:8002/editeaza', {
+                          method: 'PATCH',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            tabel: "lista_soferi",
+                            id: soferiDialog.data.id,
+                            update: {
+                              nume: soferiFormData.numeSofer,
+                              ci: soferiFormData.ci
+                            }
+                          })
+                        });
+
+                        if (!response.ok) {
+                          throw new Error('Eroare la editarea șoferului');
+                        }
+
+                        toast({
+                          title: "Succes",
+                          description: "Șoferul a fost editat cu succes"
+                        });
+                      } else {
+                        toast({
+                          title: "Succes",
+                          description: "Șoferul a fost adăugat cu succes"
+                        });
+                      }
+                      setSoferiDialog({ ...soferiDialog, open: false });
+                    } catch (error) {
+                      toast({
+                        title: "Eroare",
+                        description: `Nu s-a putut ${soferiDialog.mode === 'edit' ? 'edita' : 'adăuga'} șoferul`,
+                        variant: "destructive"
+                      });
+                    }
+                  }}>
                    {soferiDialog.mode === 'add' ? 'Adaugă' : 'Salvează'}
                  </Button>
                </DialogFooter>
@@ -1079,15 +1173,26 @@ const Liste = () => {
 
             <Dialog open={materiiPrimeDialog.open} onOpenChange={(open) => setMateriiPrimeDialog({ ...materiiPrimeDialog, open })}>
               <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                  <DialogTitle>{materiiPrimeDialog.mode === 'add' ? 'Adaugă Materie Primă' : 'Editează Materie Primă'}</DialogTitle>
-                  <DialogDescription>
-                    {materiiPrimeDialog.mode === 'add' ? 'Completați formularul pentru a adăuga o materie primă nouă.' : 'Modificați denumirea materiei prime.'}
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="denumire">Denumire *</Label>
+                 <DialogHeader>
+                   <DialogTitle>{materiiPrimeDialog.mode === 'add' ? 'Adaugă Materie Primă' : 'Editează Materie Primă'}</DialogTitle>
+                   <DialogDescription>
+                     {materiiPrimeDialog.mode === 'add' ? 'Completați formularul pentru a adăuga o materie primă nouă.' : 'Modificați denumirea materiei prime.'}
+                   </DialogDescription>
+                 </DialogHeader>
+                 <div className="grid gap-4 py-4">
+                   {materiiPrimeDialog.mode === 'edit' && materiiPrimeDialog.data && (
+                     <div className="grid gap-2">
+                       <Label htmlFor="id">ID</Label>
+                       <Input
+                         id="id"
+                         value={materiiPrimeDialog.data.id}
+                         disabled
+                         className="bg-muted"
+                       />
+                     </div>
+                   )}
+                   <div className="grid gap-2">
+                     <Label htmlFor="denumire">Denumire *</Label>
                     <Input
                       id="denumire"
                       placeholder="Ex: 0/4 NAT, BITUM 50/70, CTL"
@@ -1100,13 +1205,55 @@ const Liste = () => {
                   <Button variant="outline" onClick={() => setMateriiPrimeDialog({ ...materiiPrimeDialog, open: false })}>
                     Anulează
                   </Button>
-                  <Button onClick={() => {
-                    toast({
-                      title: "Succes",
-                      description: `Materia primă a fost ${materiiPrimeDialog.mode === 'add' ? 'adăugată' : 'actualizată'} cu succes`
-                    });
-                    setMateriiPrimeDialog({ ...materiiPrimeDialog, open: false });
-                  }}>
+                   <Button onClick={async () => {
+                     if (!materiiPrimeFormData.denumire) {
+                       toast({
+                         title: "Eroare",
+                         description: "Denumirea este obligatorie",
+                         variant: "destructive"
+                       });
+                       return;
+                     }
+
+                     try {
+                       if (materiiPrimeDialog.mode === 'edit' && materiiPrimeDialog.data) {
+                         const response = await fetch('http://192.168.1.22:8002/editeaza', {
+                           method: 'PATCH',
+                           headers: {
+                             'Content-Type': 'application/json',
+                           },
+                           body: JSON.stringify({
+                             tabel: "lista_materiale",
+                             id: materiiPrimeDialog.data.id,
+                             update: {
+                               denumire: materiiPrimeFormData.denumire
+                             }
+                           })
+                         });
+
+                         if (!response.ok) {
+                           throw new Error('Eroare la editarea materiei prime');
+                         }
+
+                         toast({
+                           title: "Succes",
+                           description: "Materia primă a fost editată cu succes"
+                         });
+                       } else {
+                         toast({
+                           title: "Succes",
+                           description: "Materia primă a fost adăugată cu succes"
+                         });
+                       }
+                       setMateriiPrimeDialog({ ...materiiPrimeDialog, open: false });
+                     } catch (error) {
+                       toast({
+                         title: "Eroare",
+                         description: `Nu s-a putut ${materiiPrimeDialog.mode === 'edit' ? 'edita' : 'adăuga'} materia primă`,
+                         variant: "destructive"
+                       });
+                     }
+                   }}>
                     {materiiPrimeDialog.mode === 'add' ? 'Adaugă' : 'Salvează'}
                   </Button>
                 </DialogFooter>
@@ -1309,15 +1456,26 @@ const Liste = () => {
 
            <Dialog open={produseFiniteDialog.open} onOpenChange={(open) => setProduseFiniteDialog({ ...produseFiniteDialog, open })}>
              <DialogContent className="sm:max-w-[500px]">
-               <DialogHeader>
-                 <DialogTitle>{produseFiniteDialog.mode === 'add' ? 'Adaugă Produs Finit' : 'Editează Produs Finit'}</DialogTitle>
-                 <DialogDescription>
-                   {produseFiniteDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un produs finit nou.' : 'Modificați detaliile produsului finit.'}
-                 </DialogDescription>
-               </DialogHeader>
-               <div className="grid gap-4 py-4">
-                 <div className="grid gap-2">
-                   <Label htmlFor="denumire">Denumire *</Label>
+                <DialogHeader>
+                  <DialogTitle>{produseFiniteDialog.mode === 'add' ? 'Adaugă Produs Finit' : 'Editează Produs Finit'}</DialogTitle>
+                  <DialogDescription>
+                    {produseFiniteDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un produs finit nou.' : 'Modificați detaliile produsului finit.'}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  {produseFiniteDialog.mode === 'edit' && produseFiniteDialog.data && (
+                    <div className="grid gap-2">
+                      <Label htmlFor="id">ID</Label>
+                      <Input
+                        id="id"
+                        value={produseFiniteDialog.data.id}
+                        disabled
+                        className="bg-muted"
+                      />
+                    </div>
+                  )}
+                  <div className="grid gap-2">
+                    <Label htmlFor="denumire">Denumire *</Label>
                    <Input
                      id="denumire"
                      placeholder="Ex: Asfalt tip A"
@@ -1330,13 +1488,55 @@ const Liste = () => {
                  <Button variant="outline" onClick={() => setProduseFiniteDialog({ ...produseFiniteDialog, open: false })}>
                    Anulează
                  </Button>
-                 <Button onClick={() => {
-                   toast({
-                     title: "Succes",
-                     description: `Produsul finit a fost ${produseFiniteDialog.mode === 'add' ? 'adăugat' : 'actualizat'} cu succes`
-                   });
-                   setProduseFiniteDialog({ ...produseFiniteDialog, open: false });
-                 }}>
+                  <Button onClick={async () => {
+                    if (!produseFiniteFormData.denumire) {
+                      toast({
+                        title: "Eroare",
+                        description: "Denumirea este obligatorie",
+                        variant: "destructive"
+                      });
+                      return;
+                    }
+
+                    try {
+                      if (produseFiniteDialog.mode === 'edit' && produseFiniteDialog.data) {
+                        const response = await fetch('http://192.168.1.22:8002/editeaza', {
+                          method: 'PATCH',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            tabel: "lista_produse",
+                            id: produseFiniteDialog.data.id,
+                            update: {
+                              denumire: produseFiniteFormData.denumire
+                            }
+                          })
+                        });
+
+                        if (!response.ok) {
+                          throw new Error('Eroare la editarea produsului finit');
+                        }
+
+                        toast({
+                          title: "Succes",
+                          description: "Produsul finit a fost editat cu succes"
+                        });
+                      } else {
+                        toast({
+                          title: "Succes",
+                          description: "Produsul finit a fost adăugat cu succes"
+                        });
+                      }
+                      setProduseFiniteDialog({ ...produseFiniteDialog, open: false });
+                    } catch (error) {
+                      toast({
+                        title: "Eroare",
+                        description: `Nu s-a putut ${produseFiniteDialog.mode === 'edit' ? 'edita' : 'adăuga'} produsul finit`,
+                        variant: "destructive"
+                      });
+                    }
+                  }}>
                    {produseFiniteDialog.mode === 'add' ? 'Adaugă' : 'Salvează'}
                  </Button>
                </DialogFooter>
@@ -1617,15 +1817,26 @@ const Liste = () => {
 
            <Dialog open={clientiDialog.open} onOpenChange={(open) => setClientiDialog({ ...clientiDialog, open })}>
              <DialogContent className="sm:max-w-[500px]">
-               <DialogHeader>
-                 <DialogTitle>{clientiDialog.mode === 'add' ? 'Adaugă Client' : 'Editează Client'}</DialogTitle>
-                 <DialogDescription>
-                   {clientiDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un client nou.' : 'Modificați detaliile clientului.'}
-                 </DialogDescription>
-               </DialogHeader>
-               <div className="grid gap-4 py-4">
-                 <div className="grid gap-2">
-                   <Label htmlFor="denumire">Denumire *</Label>
+                <DialogHeader>
+                  <DialogTitle>{clientiDialog.mode === 'add' ? 'Adaugă Client' : 'Editează Client'}</DialogTitle>
+                  <DialogDescription>
+                    {clientiDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un client nou.' : 'Modificați detaliile clientului.'}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  {clientiDialog.mode === 'edit' && clientiDialog.data && (
+                    <div className="grid gap-2">
+                      <Label htmlFor="id">ID</Label>
+                      <Input
+                        id="id"
+                        value={clientiDialog.data.id}
+                        disabled
+                        className="bg-muted"
+                      />
+                    </div>
+                  )}
+                  <div className="grid gap-2">
+                    <Label htmlFor="denumire">Denumire *</Label>
                    <Input
                      id="denumire"
                      placeholder="Ex: Construct Pro SRL"
@@ -1665,13 +1876,58 @@ const Liste = () => {
                  <Button variant="outline" onClick={() => setClientiDialog({ ...clientiDialog, open: false })}>
                    Anulează
                  </Button>
-                 <Button onClick={() => {
-                   toast({
-                     title: "Succes",
-                     description: `Clientul a fost ${clientiDialog.mode === 'add' ? 'adăugat' : 'actualizat'} cu succes`
-                   });
-                   setClientiDialog({ ...clientiDialog, open: false });
-                 }}>
+                  <Button onClick={async () => {
+                    if (!clientiFormData.denumire || !clientiFormData.sediu || !clientiFormData.cui || !clientiFormData.nrReg) {
+                      toast({
+                        title: "Eroare",
+                        description: "Toate câmpurile sunt obligatorii",
+                        variant: "destructive"
+                      });
+                      return;
+                    }
+
+                    try {
+                      if (clientiDialog.mode === 'edit' && clientiDialog.data) {
+                        const response = await fetch('http://192.168.1.22:8002/editeaza', {
+                          method: 'PATCH',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            tabel: "lista_clienti",
+                            id: clientiDialog.data.id,
+                            update: {
+                              denumire: clientiFormData.denumire,
+                              sediu: clientiFormData.sediu,
+                              cui: clientiFormData.cui,
+                              nr_reg: clientiFormData.nrReg
+                            }
+                          })
+                        });
+
+                        if (!response.ok) {
+                          throw new Error('Eroare la editarea clientului');
+                        }
+
+                        toast({
+                          title: "Succes",
+                          description: "Clientul a fost editat cu succes"
+                        });
+                      } else {
+                        toast({
+                          title: "Succes",
+                          description: "Clientul a fost adăugat cu succes"
+                        });
+                      }
+                      setClientiDialog({ ...clientiDialog, open: false });
+                    } catch (error) {
+                      toast({
+                        title: "Eroare",
+                        description: `Nu s-a putut ${clientiDialog.mode === 'edit' ? 'edita' : 'adăuga'} clientul`,
+                        variant: "destructive"
+                      });
+                    }
+                  }}>
                    {clientiDialog.mode === 'add' ? 'Adaugă' : 'Salvează'}
                  </Button>
                </DialogFooter>
@@ -1952,15 +2208,26 @@ const Liste = () => {
 
            <Dialog open={furnizoriDialog.open} onOpenChange={(open) => setFurnizoriDialog({ ...furnizoriDialog, open })}>
              <DialogContent className="sm:max-w-[500px]">
-               <DialogHeader>
-                 <DialogTitle>{furnizoriDialog.mode === 'add' ? 'Adaugă Furnizor' : 'Editează Furnizor'}</DialogTitle>
-                 <DialogDescription>
-                   {furnizoriDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un furnizor nou.' : 'Modificați detaliile furnizorului.'}
-                 </DialogDescription>
-               </DialogHeader>
-               <div className="grid gap-4 py-4">
-                 <div className="grid gap-2">
-                   <Label htmlFor="denumire">Denumire *</Label>
+                <DialogHeader>
+                  <DialogTitle>{furnizoriDialog.mode === 'add' ? 'Adaugă Furnizor' : 'Editează Furnizor'}</DialogTitle>
+                  <DialogDescription>
+                    {furnizoriDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un furnizor nou.' : 'Modificați detaliile furnizorului.'}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  {furnizoriDialog.mode === 'edit' && furnizoriDialog.data && (
+                    <div className="grid gap-2">
+                      <Label htmlFor="id">ID</Label>
+                      <Input
+                        id="id"
+                        value={furnizoriDialog.data.id}
+                        disabled
+                        className="bg-muted"
+                      />
+                    </div>
+                  )}
+                  <div className="grid gap-2">
+                    <Label htmlFor="denumire">Denumire *</Label>
                    <Input
                      id="denumire"
                      placeholder="Ex: Agregat SRL"
@@ -2000,13 +2267,58 @@ const Liste = () => {
                  <Button variant="outline" onClick={() => setFurnizoriDialog({ ...furnizoriDialog, open: false })}>
                    Anulează
                  </Button>
-                 <Button onClick={() => {
-                   toast({
-                     title: "Succes",
-                     description: `Furnizorul a fost ${furnizoriDialog.mode === 'add' ? 'adăugat' : 'actualizat'} cu succes`
-                   });
-                   setFurnizoriDialog({ ...furnizoriDialog, open: false });
-                 }}>
+                  <Button onClick={async () => {
+                    if (!furnizoriFormData.denumire || !furnizoriFormData.sediu || !furnizoriFormData.cui || !furnizoriFormData.nrReg) {
+                      toast({
+                        title: "Eroare",
+                        description: "Toate câmpurile sunt obligatorii",
+                        variant: "destructive"
+                      });
+                      return;
+                    }
+
+                    try {
+                      if (furnizoriDialog.mode === 'edit' && furnizoriDialog.data) {
+                        const response = await fetch('http://192.168.1.22:8002/editeaza', {
+                          method: 'PATCH',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            tabel: "lista_furnizori",
+                            id: furnizoriDialog.data.id,
+                            update: {
+                              denumire: furnizoriFormData.denumire,
+                              sediu: furnizoriFormData.sediu,
+                              cui: furnizoriFormData.cui,
+                              nr_reg: furnizoriFormData.nrReg
+                            }
+                          })
+                        });
+
+                        if (!response.ok) {
+                          throw new Error('Eroare la editarea furnizorului');
+                        }
+
+                        toast({
+                          title: "Succes",
+                          description: "Furnizorul a fost editat cu succes"
+                        });
+                      } else {
+                        toast({
+                          title: "Succes",
+                          description: "Furnizorul a fost adăugat cu succes"
+                        });
+                      }
+                      setFurnizoriDialog({ ...furnizoriDialog, open: false });
+                    } catch (error) {
+                      toast({
+                        title: "Eroare",
+                        description: `Nu s-a putut ${furnizoriDialog.mode === 'edit' ? 'edita' : 'adăuga'} furnizorul`,
+                        variant: "destructive"
+                      });
+                    }
+                  }}>
                    {furnizoriDialog.mode === 'add' ? 'Adaugă' : 'Salvează'}
                  </Button>
                </DialogFooter>
