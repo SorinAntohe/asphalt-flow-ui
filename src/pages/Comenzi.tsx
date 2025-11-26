@@ -396,7 +396,7 @@ export default function Comenzi() {
 
   // Filters for Materie Prima
   const [filtersMP, setFiltersMP] = useState({
-    cod: "", data: "", furnizor: "", material: "", unitate_masura: "",
+    id: "", cod: "", data: "", furnizor: "", material: "", unitate_masura: "",
     cantitate: "", punct_descarcare: "", pret_fara_tva: "", pret_transport: "", observatii: ""
   });
 
@@ -434,7 +434,7 @@ export default function Comenzi() {
 
   // Filters for Produs Finit
   const [filtersPF, setFiltersPF] = useState({
-    cod: "", data: "", client: "", produs: "", unitate_masura: "",
+    id: "", cod: "", data: "", client: "", produs: "", unitate_masura: "",
     cantitate: "", punct_descarcare: "", pret_fara_tva: "", pret_transport: "", observatii: ""
   });
 
@@ -447,6 +447,7 @@ export default function Comenzi() {
   const filteredAndSortedMP = comenziMateriePrima
     .filter((item) => {
       return (
+        item.id.toString().includes(filtersMP.id) &&
         item.cod.toLowerCase().includes(filtersMP.cod.toLowerCase()) &&
         item.data.toLowerCase().includes(filtersMP.data.toLowerCase()) &&
         item.furnizor.toLowerCase().includes(filtersMP.furnizor.toLowerCase()) &&
@@ -479,6 +480,7 @@ export default function Comenzi() {
   const filteredAndSortedPF = comenziProduseFinite
     .filter((item) => {
       return (
+        item.id.toString().includes(filtersPF.id) &&
         item.cod.toLowerCase().includes(filtersPF.cod.toLowerCase()) &&
         item.data.toLowerCase().includes(filtersPF.data.toLowerCase()) &&
         item.client.toLowerCase().includes(filtersPF.client.toLowerCase()) &&
@@ -535,6 +537,31 @@ export default function Comenzi() {
               <Table className="min-w-[1200px]">
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>ID</span>
+                              {sortMP.field === 'id' ? (sortMP.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută ID..." value={filtersMP.id} onChange={(e) => setFiltersMP({...filtersMP, id: e.target.value})} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortMP({ field: 'id', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortMP({ field: 'id', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
                         <Popover>
@@ -793,7 +820,7 @@ export default function Comenzi() {
                 <TableBody>
                   {loadingMP ? (
                     <TableRow>
-                      <TableCell colSpan={11} className="h-24 text-center">
+                      <TableCell colSpan={12} className="h-24 text-center">
                         <div className="flex items-center justify-center">
                           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                         </div>
@@ -801,13 +828,14 @@ export default function Comenzi() {
                     </TableRow>
                   ) : filteredAndSortedMP.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={11} className="h-24 text-center text-muted-foreground">
+                      <TableCell colSpan={12} className="h-24 text-center text-muted-foreground">
                         Nu există comenzi disponibile
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredAndSortedMP.map((comanda) => (
                       <TableRow key={comanda.id} className="h-10">
+                        <TableCell className="py-1 text-xs">{comanda.id}</TableCell>
                         <TableCell className="font-medium py-1 text-xs">{comanda.cod}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.data}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.furnizor}</TableCell>
@@ -852,6 +880,31 @@ export default function Comenzi() {
               <Table className="min-w-[1200px]">
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>ID</span>
+                              {sortPF.field === 'id' ? (sortPF.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută ID..." value={filtersPF.id} onChange={(e) => setFiltersPF({...filtersPF, id: e.target.value})} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortPF({ field: 'id', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortPF({ field: 'id', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
                         <Popover>
@@ -1110,7 +1163,7 @@ export default function Comenzi() {
                 <TableBody>
                   {loadingPF ? (
                     <TableRow>
-                      <TableCell colSpan={11} className="h-24 text-center">
+                      <TableCell colSpan={12} className="h-24 text-center">
                         <div className="flex items-center justify-center">
                           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                         </div>
@@ -1118,13 +1171,14 @@ export default function Comenzi() {
                     </TableRow>
                   ) : filteredAndSortedPF.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={11} className="h-24 text-center text-muted-foreground">
+                      <TableCell colSpan={12} className="h-24 text-center text-muted-foreground">
                         Nu există comenzi disponibile
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredAndSortedPF.map((comanda) => (
                       <TableRow key={comanda.id} className="h-10">
+                        <TableCell className="py-1 text-xs">{comanda.id}</TableCell>
                         <TableCell className="font-medium py-1 text-xs">{comanda.cod}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.data}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.client}</TableCell>
