@@ -423,9 +423,9 @@ const Liste = () => {
                       value={autoturismeFormData.tipMasina} 
                       onValueChange={(value) => {
                         const sarcinaMap: Record<string, string> = {
-                          "Articulata": "40t",
-                          "8X4": "30t",
-                          "4X2": "12t"
+                          "Articulata": "40",
+                          "8X4": "30",
+                          "4X2": "12"
                         };
                         setAutoturismeFormData({ 
                           ...autoturismeFormData, 
