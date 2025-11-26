@@ -148,114 +148,64 @@ export default function Comenzi() {
   });
   const [formErrorsPF, setFormErrorsPF] = useState<Record<string, string>>({});
 
-  // Fetch furnizori from API
+  // Mock furnizori data
   const fetchFurnizori = async () => {
-    try {
-      setLoadingFurnizori(true);
-      const response = await fetch('http://192.168.1.22:8002/comenzi/returneaza_furnizori/material');
-      if (!response.ok) {
-        throw new Error('Failed to fetch furnizori');
-      }
-      const data = await response.json();
-      setFurnizori(data);
-    } catch (error) {
-      console.error('Error fetching furnizori:', error);
-      toast({
-        title: "Eroare",
-        description: "Nu s-au putut încărca furnizorii",
-        variant: "destructive"
-      });
-    } finally {
-      setLoadingFurnizori(false);
-    }
+    const mockData = [
+      { id: 1, nume: "AGREGATE ROMANIA", adresa: "Brașov, Str. Carierelor 5", cui: "RO98765432", nr_reg: "J08/9876/2017" },
+      { id: 2, nume: "BITUM INVEST", adresa: "Ploiești, Bd. Petrolului 100", cui: "RO87654321", nr_reg: "J29/8765/2016" },
+      { id: 3, nume: "MATERIALE CONSTRUCT", adresa: "Constanța, Str. Portului 15", cui: "RO76543210", nr_reg: "J13/7654/2019" },
+    ];
+    setFurnizori(mockData);
+    setLoadingFurnizori(false);
   };
 
-  // Fetch clienti from API
+  // Mock clienti data
   const fetchClienti = async () => {
-    try {
-      setLoadingClienti(true);
-      const response = await fetch('http://192.168.1.22:8002/comenzi/returneaza_clienti/produs');
-      if (!response.ok) {
-        throw new Error('Failed to fetch clienti');
-      }
-      const data = await response.json();
-      setClienti(data);
-    } catch (error) {
-      console.error('Error fetching clienti:', error);
-      toast({
-        title: "Eroare",
-        description: "Nu s-au putut încărca clienții",
-        variant: "destructive"
-      });
-    } finally {
-      setLoadingClienti(false);
-    }
+    const mockData = [
+      { id: 1, nume: "CONSTRUCT SRL", adresa: "București, Str. Industrială 23", cui: "RO12345678", nr_reg: "J40/1234/2020" },
+      { id: 2, nume: "DRUMURI SA", adresa: "Cluj-Napoca, Bd. Muncii 45", cui: "RO23456789", nr_reg: "J12/2345/2019" },
+      { id: 3, nume: "INFRASTRUCTURA TOTAL", adresa: "Timișoara, Str. Fabricii 10", cui: "RO34567890", nr_reg: "J35/3456/2021" },
+    ];
+    setClienti(mockData);
+    setLoadingClienti(false);
   };
 
-  // Fetch materiale from API
+  // Mock materiale data
   const fetchMateriale = async () => {
-    try {
-      setLoadingMateriale(true);
-      const response = await fetch('http://192.168.1.22:8002/comenzi/returneaza_materiale/material');
-      if (!response.ok) {
-        throw new Error('Failed to fetch materiale');
-      }
-      const data = await response.json();
-      setMateriale(data);
-    } catch (error) {
-      console.error('Error fetching materiale:', error);
-      toast({
-        title: "Eroare",
-        description: "Nu s-au putut încărca materialele",
-        variant: "destructive"
-      });
-    } finally {
-      setLoadingMateriale(false);
-    }
+    const mockData = [
+      { materiale_prime: "0/4 NAT" },
+      { materiale_prime: "0/4 CONC" },
+      { materiale_prime: "8/16 CONC" },
+      { materiale_prime: "BITUM 50/70" },
+      { materiale_prime: "FILLER" },
+      { materiale_prime: "MOTORINA" },
+    ];
+    setMateriale(mockData);
+    setLoadingMateriale(false);
   };
 
-  // Fetch produse from API
+  // Mock produse data
   const fetchProduse = async () => {
-    try {
-      setLoadingProduse(true);
-      const response = await fetch('http://192.168.1.22:8002/comenzi/returneaza_produse/produs');
-      if (!response.ok) {
-        throw new Error('Failed to fetch produse');
-      }
-      const data = await response.json();
-      setProduse(data);
-    } catch (error) {
-      console.error('Error fetching produse:', error);
-      toast({
-        title: "Eroare",
-        description: "Nu s-au putut încărca produsele",
-        variant: "destructive"
-      });
-    } finally {
-      setLoadingProduse(false);
-    }
+    const mockData = [
+      { produs: "Asfalt BA16" },
+      { produs: "Asfalt BA8" },
+      { produs: "Beton Stabilizat BSC" },
+      { produs: "Emulsie Cationica" },
+    ];
+    setProduse(mockData);
+    setLoadingProduse(false);
   };
 
-  // Fetch comenzi materie prima from API
+  // Mock comenzi materie prima data
   const fetchComenziMP = async () => {
-    try {
-      setLoadingMP(true);
-      const response = await fetch('http://192.168.1.22:8002/comenzi/returneaza/material');
-      if (!response.ok) {
-        throw new Error('Failed to fetch comenzi materie prima');
-      }
-      const data = await response.json();
-      setComenziMateriePrima(data);
-    } catch (error) {
-      console.error('Error fetching comenzi materie prima:', error);
-      toast({
-        title: "Eroare",
-        description: "Nu s-au putut încărca comenzile de materie primă",
-        variant: "destructive"
-      });
-    } finally {
-      setLoadingMP(false);
-    }
+    const mockData = [
+      { id: 1, cod: "CM000001", data: "26/11/2024", furnizor: "AGREGATE ROMANIA", material: "0/4 NAT", unitate_masura: "tone", cantitate: 250.5, punct_descarcare: "Depozit Central", pret_fara_tva: 12500.00, pret_transport: 1250.00, observatii: "Livrare urgentă" },
+      { id: 2, cod: "CM000002", data: "25/11/2024", furnizor: "BITUM INVEST", material: "BITUM 50/70", unitate_masura: "tone", cantitate: 80.0, punct_descarcare: null, pret_fara_tva: 32000.00, pret_transport: null, observatii: "" },
+      { id: 3, cod: "CM000003", data: "24/11/2024", furnizor: "MATERIALE CONSTRUCT", material: "8/16 CONC", unitate_masura: "tone", cantitate: 150.75, punct_descarcare: "Șantier A", pret_fara_tva: 9045.00, pret_transport: 900.00, observatii: "Livrare în 2 tranșe" },
+      { id: 4, cod: "CM000004", data: "23/11/2024", furnizor: "AGREGATE ROMANIA", material: "FILLER", unitate_masura: "tone", cantitate: 50.0, punct_descarcare: "Depozit Central", pret_fara_tva: 5000.00, pret_transport: 500.00, observatii: "" },
+    ];
+    setComenziMateriePrima(mockData);
+    setLoadingMP(false);
   };
   
   useEffect(() => {
@@ -574,32 +524,25 @@ export default function Comenzi() {
     setCurrentPageMP(1);
   }, [filtersMP]);
 
-  // Filters for Produs Finit
+  // Mock comenzi produse finite data
   const fetchComenziPF = async () => {
-    try {
-      setLoadingPF(true);
-      const response = await fetch('http://192.168.1.22:8002/comenzi/returneaza/produs');
-      if (!response.ok) {
-        throw new Error('Failed to fetch comenzi produse finite');
-      }
-      const data = await response.json();
-      setComenziProduseFinite(data);
-    } catch (error) {
-      console.error('Error fetching comenzi produse finite:', error);
-      toast({
-        title: "Eroare",
-        description: "Nu s-au putut încărca comenzile de produse finite",
-        variant: "destructive"
-      });
-    } finally {
-      setLoadingPF(false);
-    }
+    const mockData = [
+      { id: 1, cod: "CPF000001", data: "26/11/2024", client: "CONSTRUCT SRL", produs: "Asfalt BA16", unitate_masura: "tone", cantitate: 180.0, punct_descarcare: "Șantier B", pret_fara_tva: 27000.00, pret_transport: 2700.00, observatii: "Include transport la destintație" },
+      { id: 2, cod: "CPF000002", data: "25/11/2024", client: "DRUMURI SA", produs: "Beton Stabilizat BSC", unitate_masura: "mc", cantitate: 120.5, punct_descarcare: "Drum Național DN1", pret_fara_tva: 18075.00, pret_transport: 1800.00, observatii: "" },
+      { id: 3, cod: "CPF000003", data: "24/11/2024", client: "INFRASTRUCTURA TOTAL", produs: "Asfalt BA8", unitate_masura: "tone", cantitate: 95.25, punct_descarcare: "Lot 3", pret_fara_tva: 14287.50, pret_transport: 1400.00, observatii: "Livrare etapizată" },
+    ];
+    setComenziProduseFinite(mockData);
+    setLoadingPF(false);
   };
   
   useEffect(() => {
+    fetchFurnizori();
+    fetchClienti();
+    fetchMateriale();
+    fetchProduse();
     fetchComenziMP();
     fetchComenziPF();
-  }, [toast]);
+  }, []);
 
   // Filters for Produs Finit
   const [filtersPF, setFiltersPF] = useState({
