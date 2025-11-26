@@ -114,19 +114,19 @@ export function AppSidebar() {
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
-                <CollapsibleContent className="overflow-hidden transition-all duration-300 data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                <CollapsibleContent className="overflow-hidden transition-all duration-500 ease-in-out data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
                   <SidebarMenu className="ml-4 space-y-1 mt-1">
                     {gestiuneItems.map((item, index) => (
                       <SidebarMenuItem 
                         key={item.title}
-                        className={`transition-all duration-200 ${
+                        className={`transition-all ease-in-out ${
                           gestiuneOpen 
                             ? 'animate-in fade-in slide-in-from-left-2' 
                             : 'animate-out fade-out slide-out-to-left-2'
                         }`}
                         style={{ 
-                          animationDelay: gestiuneOpen ? `${index * 50}ms` : `${(gestiuneItems.length - index - 1) * 30}ms`,
-                          animationDuration: '200ms'
+                          animationDelay: gestiuneOpen ? `${index * 80}ms` : `${(gestiuneItems.length - index - 1) * 50}ms`,
+                          animationDuration: '400ms'
                         }}
                       >
                         <SidebarMenuButton asChild isActive={isActive(item.url)}>
