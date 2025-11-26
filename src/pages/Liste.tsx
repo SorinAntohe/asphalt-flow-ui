@@ -26,21 +26,15 @@ const Liste = () => {
   const soferi = [{
     id: 1,
     nume: "Ion Popescu",
-    cnp: "1850102123456",
-    telefon: "0721234567",
-    permis: "CE"
+    ci: "AB123456"
   }, {
     id: 2,
     nume: "Gheorghe Ionescu",
-    cnp: "1750203234567",
-    telefon: "0732345678",
-    permis: "CE"
+    ci: "BC234567"
   }, {
     id: 3,
     nume: "Vasile Dumitrescu",
-    cnp: "1800304345678",
-    telefon: "0743456789",
-    permis: "CE"
+    ci: "CD345678"
   }];
   const materiiPrime = [{
     id: 1,
@@ -211,19 +205,17 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nume Complet</TableHead>
-                    <TableHead>CNP</TableHead>
-                    <TableHead>Telefon</TableHead>
-                    <TableHead>Categorie Permis</TableHead>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Nume Șofer</TableHead>
+                    <TableHead>C.I.</TableHead>
                     <TableHead className="text-right">Acțiuni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {soferi.map(sofer => <TableRow key={sofer.id}>
-                      <TableCell className="font-medium">{sofer.nume}</TableCell>
-                      <TableCell>{sofer.cnp}</TableCell>
-                      <TableCell>{sofer.telefon}</TableCell>
-                      <TableCell>{sofer.permis}</TableCell>
+                      <TableCell className="font-medium">{sofer.id}</TableCell>
+                      <TableCell>{sofer.nume}</TableCell>
+                      <TableCell>{sofer.ci}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Button variant="ghost" size="sm" className="gap-2">
