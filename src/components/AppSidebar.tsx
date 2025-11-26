@@ -51,19 +51,19 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
-      <SidebarHeader className="border-b border-sidebar-border py-4">
-        <div className="flex items-center justify-center px-2">
+      <SidebarHeader className="border-b border-sidebar-border py-2">
+        <div className="flex items-center px-2">
           {open ? (
             <img 
               src={logoFull} 
               alt="Duotip Solutions" 
-              className="h-12 object-contain"
+              className="h-10 object-contain"
             />
           ) : (
             <img 
               src={isDark ? logoIconLight : logoIconDark} 
               alt="D" 
-              className="h-10 w-10 object-contain"
+              className="h-8 w-8 object-contain"
             />
           )}
         </div>
