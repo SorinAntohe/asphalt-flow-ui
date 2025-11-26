@@ -212,6 +212,39 @@ export default function Receptii() {
     setForm(prev => ({ ...prev, diferenta }));
   }, [form.cantitate_livrata, form.cantitate_receptionata]);
 
+  // Fetch tip_masina based on selected nr_inmatriculare
+  useEffect(() => {
+    const fetchTipMasina = async () => {
+      if (!form.nr_inmatriculare) {
+        return;
+      }
+      
+      try {
+        const response = await fetch(`http://192.168.1.22:8002/receptii/materiale/returneaza_tip_masina_dupa_nr/${encodeURIComponent(form.nr_inmatriculare)}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch tip masina');
+        }
+        const data = await response.json();
+        
+        // API should return the tip_masina value
+        if (data && typeof data === 'string') {
+          setForm(prev => ({ ...prev, tip_masina: data }));
+        } else if (Array.isArray(data) && data.length > 0) {
+          setForm(prev => ({ ...prev, tip_masina: data[0] }));
+        }
+      } catch (error) {
+        console.error('Error fetching tip masina:', error);
+        toast({
+          title: "Eroare",
+          description: "Nu s-a putut încărca tipul mașinii",
+          variant: "destructive"
+        });
+      }
+    };
+    
+    fetchTipMasina();
+  }, [form.nr_inmatriculare]);
+
   // Add/Edit handlers
   const handleOpenAdd = () => {
     setEditing(null);
@@ -715,8 +748,8 @@ export default function Receptii() {
               <Input
                 id="tip_masina"
                 value={form.tip_masina}
-                onChange={(e) => setForm({ ...form, tip_masina: e.target.value })}
-                className={formErrors.tip_masina ? "border-destructive" : ""}
+                disabled
+                className="bg-muted"
               />
               {formErrors.tip_masina && <p className="text-sm text-destructive">{formErrors.tip_masina}</p>}
             </div>
