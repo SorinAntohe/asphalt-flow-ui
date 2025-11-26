@@ -114,23 +114,14 @@ export function AppSidebar() {
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
-                <CollapsibleContent 
-                  className="overflow-hidden"
-                  style={{
-                    transition: 'all 0.3s ease',
-                    opacity: gestiuneOpen ? 1 : 0,
-                    transform: gestiuneOpen ? 'translateY(0)' : 'translateY(-10px)'
-                  }}
-                >
+                <CollapsibleContent className="overflow-hidden">
                   <SidebarMenu className="ml-4 space-y-1 mt-1">
                     {gestiuneItems.map((item, index) => (
                       <SidebarMenuItem 
                         key={item.title}
                         style={{
-                          transition: 'all 0.3s ease',
-                          opacity: gestiuneOpen ? 1 : 0,
-                          transform: gestiuneOpen ? 'translateY(0)' : 'translateY(10px)',
-                          transitionDelay: gestiuneOpen ? `${index * 50}ms` : '0ms'
+                          transition: 'opacity 0.3s ease, transform 0.3s ease',
+                          transitionDelay: `${index * 50}ms`
                         }}
                       >
                         <SidebarMenuButton asChild isActive={isActive(item.url)}>
