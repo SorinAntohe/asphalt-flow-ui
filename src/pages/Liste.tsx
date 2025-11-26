@@ -81,7 +81,7 @@ const Liste = () => {
   const [autoturisme, setAutoturisme] = useState<any[]>([]);
   const [soferi, setSoferi] = useState<any[]>([]);
   const [materiiPrime, setMateriiPrime] = useState<any[]>([]);
-  const produseFinite: any[] = [];
+  const [produseFinite, setProduseFinite] = useState<any[]>([]);
   const clienti: any[] = [];
   const furnizori: any[] = [];
 
@@ -154,6 +154,28 @@ const Liste = () => {
       }
     };
     fetchMateriiPrime();
+  }, [toast]);
+
+  // Fetch produse finite from API
+  useEffect(() => {
+    const fetchProduseFinite = async () => {
+      try {
+        const response = await fetch('http://192.168.1.22:8002/liste/returneaza/produse');
+        const data = await response.json();
+        const mappedData = data.map((item: any) => ({
+          id: item.id,
+          denumire: item.produs
+        }));
+        setProduseFinite(mappedData);
+      } catch (error) {
+        toast({
+          title: "Eroare",
+          description: "Nu s-au putut încărca datele despre produsele finite",
+          variant: "destructive"
+        });
+      }
+    };
+    fetchProduseFinite();
   }, [toast]);
 
   // Pagination helpers
