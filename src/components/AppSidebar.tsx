@@ -50,7 +50,7 @@ export function AppSidebar() {
   const isActive = (path: string) => currentPath === path;
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-primary dark:bg-sidebar">
+    <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       <SidebarHeader className="border-b border-sidebar-border py-3">
         <div className="flex items-center gap-3 px-3">
           {open ? (
@@ -61,8 +61,8 @@ export function AppSidebar() {
                 className="h-10 w-10 object-contain flex-shrink-0"
               />
               <div className="flex flex-col">
-                <span className="text-primary-foreground dark:text-sidebar-foreground font-bold text-lg leading-tight">DUOTIP</span>
-                <span className="text-primary-foreground/70 dark:text-sidebar-foreground/70 text-sm leading-tight">ERP System</span>
+                <span className="text-sidebar-foreground font-bold text-lg leading-tight">DUOTIP</span>
+                <span className="text-sidebar-foreground/70 text-sm leading-tight">ERP System</span>
               </div>
             </>
           ) : (
@@ -76,7 +76,7 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sm font-semibold px-4 py-3 text-primary-foreground dark:text-sidebar-foreground">
+          <SidebarGroupLabel className="text-sm font-semibold px-4 py-3 text-sidebar-foreground">
             Meniu Principal
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -86,8 +86,8 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild isActive={isActive(item.url)}>
                     <NavLink
                       to={item.url}
-                      className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors hover:bg-primary-foreground/10 text-primary-foreground dark:text-sidebar-foreground dark:hover:bg-sidebar-accent"
-                      activeClassName="bg-primary-foreground/20 dark:bg-sidebar-accent text-primary-foreground dark:text-sidebar-accent-foreground font-medium"
+                      className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors hover:bg-sidebar-accent text-sidebar-foreground"
+                      activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
                     >
                       <item.icon className="w-5 h-5" />
                       {open && <span>{item.title}</span>}
