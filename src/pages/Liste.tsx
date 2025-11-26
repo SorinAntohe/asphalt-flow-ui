@@ -623,7 +623,7 @@ const Liste = () => {
                           'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                          tabel: "masini",
+                          tabel: "lista_masini",
                           id: autoturismeDeleteDialog.id
                         })
                       });
@@ -901,7 +901,7 @@ const Liste = () => {
                           'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                          tabel: "soferi",
+                          tabel: "lista_soferi",
                           id: soferiDeleteDialog.id
                         })
                       });
@@ -1131,7 +1131,7 @@ const Liste = () => {
                           'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                          tabel: "materii_prime",
+                          tabel: "lista_materiale",
                           id: materiiPrimeDeleteDialog.id
                         })
                       });
@@ -1361,7 +1361,7 @@ const Liste = () => {
                           'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                          tabel: "produse_finite",
+                          tabel: "lista_produse",
                           id: produseFiniteDeleteDialog.id
                         })
                       });
@@ -1696,7 +1696,7 @@ const Liste = () => {
                           'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                          tabel: "clienti",
+                          tabel: "lista_clienti",
                           id: clientiDeleteDialog.id
                         })
                       });
@@ -2031,7 +2031,7 @@ const Liste = () => {
                           'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                          tabel: "furnizori",
+                          tabel: "lista_furnizori",
                           id: furnizoriDeleteDialog.id
                         })
                       });
