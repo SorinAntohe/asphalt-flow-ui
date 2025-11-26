@@ -52,17 +52,35 @@ const comandaMPSchema = z.object({
   observatii: z.string().trim().max(1000).optional()
 });
 
+const comandaPFSchema = z.object({
+  client: z.string().trim().min(1, "Clientul este obligatoriu").max(255),
+  produs: z.string().trim().min(1, "Produsul este obligatoriu").max(255),
+  unitate_de_masura: z.string().trim().min(1, "Unitatea de măsură este obligatorie").max(50),
+  cantitate: z.number().min(0, "Cantitatea trebuie să fie pozitivă"),
+  punct_descarcare: z.string().trim().max(255).optional(),
+  pret_fara_tva: z.number().min(0, "Prețul trebuie să fie pozitiv"),
+  pret_transport: z.number().min(0, "Prețul transport trebuie să fie pozitiv").optional(),
+  observatii: z.string().trim().max(1000).optional()
+});
+
 export default function Comenzi() {
   const { toast } = useToast();
   const [comenziMateriePrima, setComenziMateriePrima] = useState<ComandaMateriePrima[]>([]);
   const [loadingMP, setLoadingMP] = useState(true);
+  const [comenziProduseFinite, setComenziProduseFinite] = useState<ComandaProdusFinal[]>([]);
+  const [loadingPF, setLoadingPF] = useState(true);
   
-  // Dialog states
+  // Dialog states for MP
   const [openAddEditMP, setOpenAddEditMP] = useState(false);
   const [editingMP, setEditingMP] = useState<ComandaMateriePrima | null>(null);
   const [deletingMP, setDeletingMP] = useState<ComandaMateriePrima | null>(null);
   
-  // Form states
+  // Dialog states for PF
+  const [openAddEditPF, setOpenAddEditPF] = useState(false);
+  const [editingPF, setEditingPF] = useState<ComandaProdusFinal | null>(null);
+  const [deletingPF, setDeletingPF] = useState<ComandaProdusFinal | null>(null);
+  
+  // Form states for MP
   const [formMP, setFormMP] = useState({
     furnizor: "",
     material: "",
@@ -73,7 +91,20 @@ export default function Comenzi() {
     pret_transport: 0,
     observatii: ""
   });
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [formErrorsMP, setFormErrorsMP] = useState<Record<string, string>>({});
+  
+  // Form states for PF
+  const [formPF, setFormPF] = useState({
+    client: "",
+    produs: "",
+    unitate_de_masura: "",
+    cantitate: 0,
+    punct_descarcare: "",
+    pret_fara_tva: 0,
+    pret_transport: 0,
+    observatii: ""
+  });
+  const [formErrorsPF, setFormErrorsPF] = useState<Record<string, string>>({});
 
   // Fetch comenzi materie prima from API
   const fetchComenziMP = async () => {
@@ -101,7 +132,7 @@ export default function Comenzi() {
     fetchComenziMP();
   }, [toast]);
   
-  // Add/Edit handlers
+  // Add/Edit handlers for MP
   const handleOpenAddMP = () => {
     setEditingMP(null);
     setFormMP({
@@ -114,7 +145,7 @@ export default function Comenzi() {
       pret_transport: 0,
       observatii: ""
     });
-    setFormErrors({});
+    setFormErrorsMP({});
     setOpenAddEditMP(true);
   };
   
@@ -130,7 +161,7 @@ export default function Comenzi() {
       pret_transport: comanda.pret_transport || 0,
       observatii: comanda.observatii
     });
-    setFormErrors({});
+    setFormErrorsMP({});
     setOpenAddEditMP(true);
   };
   
@@ -144,7 +175,7 @@ export default function Comenzi() {
         observatii: formMP.observatii || undefined
       });
       
-      setFormErrors({});
+      setFormErrorsMP({});
       
       if (editingMP) {
         // Edit
@@ -190,7 +221,7 @@ export default function Comenzi() {
             errors[err.path[0]] = err.message;
           }
         });
-        setFormErrors(errors);
+        setFormErrorsMP(errors);
       } else {
         toast({
           title: "Eroare",
@@ -232,6 +263,137 @@ export default function Comenzi() {
     }
   };
 
+  // Add/Edit handlers for PF
+  const handleOpenAddPF = () => {
+    setEditingPF(null);
+    setFormPF({
+      client: "",
+      produs: "",
+      unitate_de_masura: "",
+      cantitate: 0,
+      punct_descarcare: "",
+      pret_fara_tva: 0,
+      pret_transport: 0,
+      observatii: ""
+    });
+    setFormErrorsPF({});
+    setOpenAddEditPF(true);
+  };
+  
+  const handleOpenEditPF = (comanda: ComandaProdusFinal) => {
+    setEditingPF(comanda);
+    setFormPF({
+      client: comanda.client,
+      produs: comanda.produs,
+      unitate_de_masura: comanda.unitate_masura,
+      cantitate: comanda.cantitate,
+      punct_descarcare: comanda.punct_descarcare || "",
+      pret_fara_tva: comanda.pret_fara_tva,
+      pret_transport: comanda.pret_transport || 0,
+      observatii: comanda.observatii
+    });
+    setFormErrorsPF({});
+    setOpenAddEditPF(true);
+  };
+  
+  const handleSavePF = async () => {
+    try {
+      // Validate
+      const validatedData = comandaPFSchema.parse({
+        ...formPF,
+        punct_descarcare: formPF.punct_descarcare || undefined,
+        pret_transport: formPF.pret_transport || undefined,
+        observatii: formPF.observatii || undefined
+      });
+      
+      setFormErrorsPF({});
+      
+      if (editingPF) {
+        // Edit
+        const response = await fetch('http://192.168.1.22:8002/editeaza', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tabel: "comenzi_produs",
+            id: editingPF.id,
+            update: validatedData
+          })
+        });
+        
+        if (!response.ok) throw new Error('Failed to update comanda');
+        
+        toast({
+          title: "Succes",
+          description: "Comanda a fost actualizată cu succes"
+        });
+      } else {
+        // Add
+        const response = await fetch('http://192.168.1.22:8002/comenzi/adauga/produs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(validatedData)
+        });
+        
+        if (!response.ok) throw new Error('Failed to add comanda');
+        
+        toast({
+          title: "Succes",
+          description: "Comanda a fost adăugată cu succes"
+        });
+      }
+      
+      setOpenAddEditPF(false);
+      fetchComenziPF();
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errors: Record<string, string> = {};
+        error.errors.forEach((err) => {
+          if (err.path) {
+            errors[err.path[0]] = err.message;
+          }
+        });
+        setFormErrorsPF(errors);
+      } else {
+        toast({
+          title: "Eroare",
+          description: `Nu s-a putut salva comanda: ${error}`,
+          variant: "destructive"
+        });
+      }
+    }
+  };
+  
+  const handleDeletePF = async () => {
+    if (!deletingPF) return;
+    
+    try {
+      const response = await fetch('http://192.168.1.22:8002/sterge', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tabel: "comenzi_produs",
+          id: deletingPF.id
+        })
+      });
+      
+      if (!response.ok) throw new Error('Failed to delete comanda');
+      
+      toast({
+        title: "Succes",
+        description: "Comanda a fost ștearsă cu succes"
+      });
+      
+      setDeletingPF(null);
+      fetchComenziPF();
+    } catch (error) {
+      toast({
+        title: "Eroare",
+        description: "Nu s-a putut șterge comanda",
+        variant: "destructive"
+      });
+    }
+  };
+
   // Filters for Materie Prima
   const [filtersMP, setFiltersMP] = useState({
     cod: "", data: "", furnizor: "", material: "", unitate_masura: "",
@@ -243,31 +405,30 @@ export default function Comenzi() {
     field: '', direction: null 
   });
 
-  const [comenziProduseFinite, setComenziProduseFinite] = useState<ComandaProdusFinal[]>([]);
-  const [loadingPF, setLoadingPF] = useState(true);
-
-  // Fetch comenzi produse finite from API
-  useEffect(() => {
-    const fetchComenziPF = async () => {
-      try {
-        setLoadingPF(true);
-        const response = await fetch('http://192.168.1.22:8002/comenzi/returneaza/produs');
-        if (!response.ok) {
-          throw new Error('Failed to fetch comenzi produse finite');
-        }
-        const data = await response.json();
-        setComenziProduseFinite(data);
-      } catch (error) {
-        console.error('Error fetching comenzi produse finite:', error);
-        toast({
-          title: "Eroare",
-          description: "Nu s-au putut încărca comenzile de produse finite",
-          variant: "destructive"
-        });
-      } finally {
-        setLoadingPF(false);
+  // Filters for Produs Finit
+  const fetchComenziPF = async () => {
+    try {
+      setLoadingPF(true);
+      const response = await fetch('http://192.168.1.22:8002/comenzi/returneaza/produs');
+      if (!response.ok) {
+        throw new Error('Failed to fetch comenzi produse finite');
       }
-    };
+      const data = await response.json();
+      setComenziProduseFinite(data);
+    } catch (error) {
+      console.error('Error fetching comenzi produse finite:', error);
+      toast({
+        title: "Eroare",
+        description: "Nu s-au putut încărca comenzile de produse finite",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingPF(false);
+    }
+  };
+  
+  useEffect(() => {
+    fetchComenziMP();
     fetchComenziPF();
   }, [toast]);
 
@@ -682,7 +843,7 @@ export default function Comenzi() {
           <Card>
             <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
               <CardTitle className="text-lg sm:text-xl">Comenzi Produse Finite</CardTitle>
-              <Button size="sm" className="w-full sm:w-auto">
+              <Button size="sm" className="w-full sm:w-auto" onClick={handleOpenAddPF}>
                 <Plus className="mr-2 h-4 w-4" />
                 Adaugă Comandă
               </Button>
@@ -976,11 +1137,11 @@ export default function Comenzi() {
                         <TableCell className="py-1 text-xs">{comanda.observatii}</TableCell>
                         <TableCell className="text-right py-1">
                           <div className="flex items-center justify-end gap-1">
-                            <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs">
+                            <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => handleOpenEditPF(comanda)}>
                               <Pencil className="w-3 h-3" />
                               Editează
                             </Button>
-                            <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs">
+                            <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs" onClick={() => setDeletingPF(comanda)}>
                               <Trash2 className="w-3 h-3" />
                               Șterge
                             </Button>
@@ -1012,9 +1173,9 @@ export default function Comenzi() {
                 id="furnizor"
                 value={formMP.furnizor}
                 onChange={(e) => setFormMP({ ...formMP, furnizor: e.target.value })}
-                className={formErrors.furnizor ? "border-destructive" : ""}
+                className={formErrorsMP.furnizor ? "border-destructive" : ""}
               />
-              {formErrors.furnizor && <p className="text-sm text-destructive">{formErrors.furnizor}</p>}
+              {formErrorsMP.furnizor && <p className="text-sm text-destructive">{formErrorsMP.furnizor}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="material">Material *</Label>
@@ -1022,9 +1183,9 @@ export default function Comenzi() {
                 id="material"
                 value={formMP.material}
                 onChange={(e) => setFormMP({ ...formMP, material: e.target.value })}
-                className={formErrors.material ? "border-destructive" : ""}
+                className={formErrorsMP.material ? "border-destructive" : ""}
               />
-              {formErrors.material && <p className="text-sm text-destructive">{formErrors.material}</p>}
+              {formErrorsMP.material && <p className="text-sm text-destructive">{formErrorsMP.material}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
@@ -1033,9 +1194,9 @@ export default function Comenzi() {
                   id="unitate_de_masura"
                   value={formMP.unitate_de_masura}
                   onChange={(e) => setFormMP({ ...formMP, unitate_de_masura: e.target.value })}
-                  className={formErrors.unitate_de_masura ? "border-destructive" : ""}
+                  className={formErrorsMP.unitate_de_masura ? "border-destructive" : ""}
                 />
-                {formErrors.unitate_de_masura && <p className="text-sm text-destructive">{formErrors.unitate_de_masura}</p>}
+                {formErrorsMP.unitate_de_masura && <p className="text-sm text-destructive">{formErrorsMP.unitate_de_masura}</p>}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="cantitate">Cantitate *</Label>
@@ -1044,9 +1205,9 @@ export default function Comenzi() {
                   type="number"
                   value={formMP.cantitate}
                   onChange={(e) => setFormMP({ ...formMP, cantitate: parseFloat(e.target.value) || 0 })}
-                  className={formErrors.cantitate ? "border-destructive" : ""}
+                  className={formErrorsMP.cantitate ? "border-destructive" : ""}
                 />
-                {formErrors.cantitate && <p className="text-sm text-destructive">{formErrors.cantitate}</p>}
+                {formErrorsMP.cantitate && <p className="text-sm text-destructive">{formErrorsMP.cantitate}</p>}
               </div>
             </div>
             <div className="grid gap-2">
@@ -1066,9 +1227,9 @@ export default function Comenzi() {
                   step="0.01"
                   value={formMP.pret_fara_tva}
                   onChange={(e) => setFormMP({ ...formMP, pret_fara_tva: parseFloat(e.target.value) || 0 })}
-                  className={formErrors.pret_fara_tva ? "border-destructive" : ""}
+                  className={formErrorsMP.pret_fara_tva ? "border-destructive" : ""}
                 />
-                {formErrors.pret_fara_tva && <p className="text-sm text-destructive">{formErrors.pret_fara_tva}</p>}
+                {formErrorsMP.pret_fara_tva && <p className="text-sm text-destructive">{formErrorsMP.pret_fara_tva}</p>}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="pret_transport">Preț Transport</Label>
@@ -1115,6 +1276,131 @@ export default function Comenzi() {
           <AlertDialogFooter>
             <AlertDialogCancel>Anulează</AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteMP} className="bg-red-700 hover:bg-red-600">
+              Șterge
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Add/Edit Dialog for Produs Finit */}
+      <Dialog open={openAddEditPF} onOpenChange={setOpenAddEditPF}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editingPF ? "Editează Comanda" : "Adaugă Comandă Nouă"}</DialogTitle>
+            <DialogDescription>
+              {editingPF ? "Modifică detaliile comenzii de produs finit" : "Completează detaliile pentru noua comandă de produs finit"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="client">Client *</Label>
+              <Input
+                id="client"
+                value={formPF.client}
+                onChange={(e) => setFormPF({ ...formPF, client: e.target.value })}
+                className={formErrorsPF.client ? "border-destructive" : ""}
+              />
+              {formErrorsPF.client && <p className="text-sm text-destructive">{formErrorsPF.client}</p>}
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="produs">Produs *</Label>
+              <Input
+                id="produs"
+                value={formPF.produs}
+                onChange={(e) => setFormPF({ ...formPF, produs: e.target.value })}
+                className={formErrorsPF.produs ? "border-destructive" : ""}
+              />
+              {formErrorsPF.produs && <p className="text-sm text-destructive">{formErrorsPF.produs}</p>}
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="unitate_de_masura_pf">Unitate Măsură *</Label>
+                <Input
+                  id="unitate_de_masura_pf"
+                  value={formPF.unitate_de_masura}
+                  onChange={(e) => setFormPF({ ...formPF, unitate_de_masura: e.target.value })}
+                  className={formErrorsPF.unitate_de_masura ? "border-destructive" : ""}
+                />
+                {formErrorsPF.unitate_de_masura && <p className="text-sm text-destructive">{formErrorsPF.unitate_de_masura}</p>}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="cantitate_pf">Cantitate *</Label>
+                <Input
+                  id="cantitate_pf"
+                  type="number"
+                  value={formPF.cantitate}
+                  onChange={(e) => setFormPF({ ...formPF, cantitate: parseFloat(e.target.value) || 0 })}
+                  className={formErrorsPF.cantitate ? "border-destructive" : ""}
+                />
+                {formErrorsPF.cantitate && <p className="text-sm text-destructive">{formErrorsPF.cantitate}</p>}
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="punct_descarcare_pf">Punct Descărcare</Label>
+              <Input
+                id="punct_descarcare_pf"
+                value={formPF.punct_descarcare}
+                onChange={(e) => setFormPF({ ...formPF, punct_descarcare: e.target.value })}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="pret_fara_tva_pf">Preț fără TVA *</Label>
+                <Input
+                  id="pret_fara_tva_pf"
+                  type="number"
+                  step="0.01"
+                  value={formPF.pret_fara_tva}
+                  onChange={(e) => setFormPF({ ...formPF, pret_fara_tva: parseFloat(e.target.value) || 0 })}
+                  className={formErrorsPF.pret_fara_tva ? "border-destructive" : ""}
+                />
+                {formErrorsPF.pret_fara_tva && <p className="text-sm text-destructive">{formErrorsPF.pret_fara_tva}</p>}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="pret_transport_pf">Preț Transport</Label>
+                <Input
+                  id="pret_transport_pf"
+                  type="number"
+                  step="0.01"
+                  value={formPF.pret_transport}
+                  onChange={(e) => setFormPF({ ...formPF, pret_transport: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="observatii_pf">Observații</Label>
+              <Textarea
+                id="observatii_pf"
+                value={formPF.observatii}
+                onChange={(e) => setFormPF({ ...formPF, observatii: e.target.value })}
+                rows={3}
+                maxLength={1000}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenAddEditPF(false)}>
+              Anulează
+            </Button>
+            <Button onClick={handleSavePF}>
+              {editingPF ? "Salvează Modificările" : "Adaugă Comanda"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog for Produs Finit */}
+      <AlertDialog open={!!deletingPF} onOpenChange={() => setDeletingPF(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmare Ștergere</AlertDialogTitle>
+            <AlertDialogDescription>
+              Ești sigur că vrei să ștergi comanda {deletingPF?.cod}? Această acțiune nu poate fi anulată.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Anulează</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeletePF} className="bg-red-700 hover:bg-red-600">
               Șterge
             </AlertDialogAction>
           </AlertDialogFooter>
