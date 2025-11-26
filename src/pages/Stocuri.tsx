@@ -49,19 +49,19 @@ export default function Stocuri() {
     });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Stocuri</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Stocuri</h1>
+        <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
           Vizualizează stocurile de materii prime
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Stocuri Materiale</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">Stocuri Materiale</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>

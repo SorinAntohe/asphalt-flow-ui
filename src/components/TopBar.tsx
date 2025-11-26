@@ -14,13 +14,13 @@ export function TopBar() {
     document.documentElement.classList.toggle("dark");
   };
   return <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-16 items-center gap-4 px-4">
+      <div className="flex h-14 sm:h-16 items-center gap-2 sm:gap-4 px-2 sm:px-4">
         <SidebarTrigger className="-ml-1" />
         
-        <div className="flex-1 flex items-center gap-4">
+        <div className="flex-1 flex items-center gap-2 sm:gap-4">
           <Select defaultValue="gestiune1">
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Selectează gestiunea" />
+            <SelectTrigger className="w-[120px] sm:w-[200px] text-xs sm:text-sm">
+              <SelectValue placeholder="Gestiune" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="gestiune1">Gestiune 1</SelectItem>
@@ -29,22 +29,22 @@ export function TopBar() {
             </SelectContent>
           </Select>
 
-          <div className="relative flex-1 max-w-md">
+          <div className="relative flex-1 max-w-md hidden md:block">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input type="search" placeholder="Căutare globală..." className="pl-10" />
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full">
-            {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+        <div className="flex items-center gap-1 sm:gap-2">
+          <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full h-8 w-8 sm:h-10 sm:w-10">
+            {theme === "light" ? <Moon className="w-4 h-4 sm:w-5 sm:h-5" /> : <Sun className="w-4 h-4 sm:w-5 sm:h-5" />}
           </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full relative">
-                <Bell className="w-5 h-5" />
-                <Badge variant="destructive" className="absolute -top-1 -right-1 w-5 h-5 p-0 flex items-center justify-center text-xs bg-red-600">
+              <Button variant="ghost" size="icon" className="rounded-full relative h-8 w-8 sm:h-10 sm:w-10">
+                <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
+                <Badge variant="destructive" className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 p-0 flex items-center justify-center text-[10px] sm:text-xs bg-red-600">
                   3
                 </Badge>
               </Button>
@@ -75,8 +75,8 @@ export function TopBar() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <User className="w-5 h-5" />
+              <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 sm:h-10 sm:w-10">
+                <User className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
