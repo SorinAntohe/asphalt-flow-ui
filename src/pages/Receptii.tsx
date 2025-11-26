@@ -37,6 +37,8 @@ interface ReceptieMaterial {
 const receptieSchema = z.object({
   data: z.string().trim().min(1, "Data este obligatorie"),
   cod: z.string().trim().min(1, "Codul este obligatoriu").max(10),
+  furnizor: z.string().trim().min(1, "Furnizorul este obligatoriu").max(100),
+  material: z.string().trim().min(1, "Materialul este obligatoriu").max(100),
   nr_aviz_provizoriu: z.string().trim().max(10).optional(),
   nr_aviz_intrare: z.string().trim().max(10).optional(),
   nume_sofer: z.string().trim().min(1, "Numele șoferului este obligatoriu").max(100),
@@ -73,6 +75,8 @@ export default function Receptii() {
   const [form, setForm] = useState({
     data: "",
     cod: "",
+    furnizor: "",
+    material: "",
     nr_aviz_provizoriu: "",
     nr_aviz_intrare: "",
     nume_sofer: "",
@@ -280,12 +284,47 @@ export default function Receptii() {
     fetchCantitateReceptionata();
   }, [form.cod]);
 
+  // Fetch furnizor based on selected cod
+  useEffect(() => {
+    const fetchFurnizor = async () => {
+      if (!form.cod) {
+        return;
+      }
+      
+      try {
+        const response = await fetch(`http://192.168.1.22:8002/receptii/materiale/returneaza_furnizor_dupa_cod/${encodeURIComponent(form.cod)}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch furnizor');
+        }
+        const data = await response.json();
+        
+        // API should return the furnizor value
+        if (data && typeof data === 'string') {
+          setForm(prev => ({ ...prev, furnizor: data }));
+        } else if (Array.isArray(data) && data.length > 0) {
+          setForm(prev => ({ ...prev, furnizor: data[0] }));
+        }
+      } catch (error) {
+        console.error('Error fetching furnizor:', error);
+        toast({
+          title: "Eroare",
+          description: "Nu s-a putut încărca furnizorul",
+          variant: "destructive"
+        });
+      }
+    };
+    
+    fetchFurnizor();
+  }, [form.cod]);
+
   // Add/Edit handlers
   const handleOpenAdd = () => {
     setEditing(null);
     setForm({
       data: "",
       cod: "",
+      furnizor: "",
+      material: "",
       nr_aviz_provizoriu: "",
       nr_aviz_intrare: "",
       nume_sofer: "",
@@ -308,6 +347,8 @@ export default function Receptii() {
     setForm({
       data: receptie.data,
       cod: receptie.cod,
+      furnizor: receptie.furnizor,
+      material: receptie.material,
       nr_aviz_provizoriu: receptie.nr_aviz_provizoriu || "",
       nr_aviz_intrare: receptie.nr_aviz_intrare || "",
       nume_sofer: receptie.nume_sofer,
@@ -712,6 +753,28 @@ export default function Receptii() {
                   </SelectContent>
                 </Select>
                 {formErrors.cod && <p className="text-sm text-destructive">{formErrors.cod}</p>}
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="furnizor">Furnizor *</Label>
+                <Input
+                  id="furnizor"
+                  value={form.furnizor}
+                  disabled
+                  className="bg-muted"
+                />
+                {formErrors.furnizor && <p className="text-sm text-destructive">{formErrors.furnizor}</p>}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="material">Material *</Label>
+                <Input
+                  id="material"
+                  value={form.material}
+                  onChange={(e) => setForm({ ...form, material: e.target.value })}
+                  className={formErrors.material ? "border-destructive" : ""}
+                />
+                {formErrors.material && <p className="text-sm text-destructive">{formErrors.material}</p>}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
