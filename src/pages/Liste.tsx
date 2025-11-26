@@ -83,7 +83,7 @@ const Liste = () => {
   const [materiiPrime, setMateriiPrime] = useState<any[]>([]);
   const [produseFinite, setProduseFinite] = useState<any[]>([]);
   const [clienti, setClienti] = useState<any[]>([]);
-  const furnizori: any[] = [];
+  const [furnizori, setFurnizori] = useState<any[]>([]);
 
   // Fetch autoturisme from API
   useEffect(() => {
@@ -202,6 +202,32 @@ const Liste = () => {
     };
     fetchClienti();
   }, [toast]);
+
+  // Fetch furnizori from API
+  useEffect(() => {
+    const fetchFurnizori = async () => {
+      try {
+        const response = await fetch('http://192.168.1.22:8002/liste/returneaza/furnizori');
+        const data = await response.json();
+        const mappedData = data.map((item: any) => ({
+          id: item.id,
+          denumire: item.nume,
+          sediu: item.adresa,
+          cui: item.cui,
+          nrReg: item.nr_reg
+        }));
+        setFurnizori(mappedData);
+      } catch (error) {
+        toast({
+          title: "Eroare",
+          description: "Nu s-au putut încărca datele despre furnizori",
+          variant: "destructive"
+        });
+      }
+    };
+    fetchFurnizori();
+  }, [toast]);
+
 
 
   // Pagination helpers
