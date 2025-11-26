@@ -31,11 +31,11 @@ const gestiuneItems = [
 ];
 
 export function AppSidebar() {
-  const { state } = useSidebar();
+  const { state, isMobile } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
   const [isDark, setIsDark] = useState(false);
-  const isOpen = state === "expanded";
+  const isOpen = isMobile ? true : state === "expanded";
 
   useEffect(() => {
     const checkTheme = () => {
@@ -57,7 +57,7 @@ export function AppSidebar() {
   const [gestiuneOpen, setGestiuneOpen] = useState(isGestiuneActive);
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-sidebar-border">
+    <Sidebar collapsible={isMobile ? "offcanvas" : "icon"} className="border-r border-sidebar-border">
       <SidebarHeader className="border-b border-sidebar-border h-14 sm:h-16">
         <div className="flex items-center justify-center h-full px-3">
           {isOpen ? (
