@@ -134,25 +134,28 @@ export function AppSidebar() {
                     background: gestiuneOpen ? 'hsl(var(--sidebar-accent) / 0.5)' : 'transparent',
                     padding: gestiuneOpen ? '6px' : '0',
                     marginTop: gestiuneOpen ? '4px' : '0',
-                    marginLeft: isOpen ? '8px' : '4px',
-                    marginRight: isOpen ? '8px' : '4px',
+                    marginLeft: '4px',
+                    marginRight: '4px',
+                    width: isOpen ? 'auto' : 'calc(100% - 8px)',
+                    maxWidth: isOpen ? 'none' : '48px',
                     boxShadow: gestiuneOpen ? 'inset 0 2px 4px rgba(0, 0, 0, 0.1)' : 'none',
                   }}
                 >
-                  <SidebarMenu className="space-y-0.5">
+                  <SidebarMenu className="space-y-0.5" style={{ width: '100%' }}>
                     {gestiuneItems.map((item, index) => (
                       <SidebarMenuItem 
                         key={item.title}
                         style={{
                           transition: 'opacity 0.3s ease, transform 0.3s ease',
-                          transitionDelay: `${index * 50}ms`
+                          transitionDelay: `${index * 50}ms`,
+                          width: '100%'
                         }}
                       >
-                        <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                        <SidebarMenuButton asChild isActive={isActive(item.url)} style={{ width: '100%' }}>
                           <NavLink
                             to={item.url}
                             className={`flex items-center rounded-md transition-all duration-200 text-sidebar-foreground ${
-                              isOpen ? 'gap-3 px-3 py-2' : 'justify-center px-2 py-2'
+                              isOpen ? 'gap-3 px-3 py-2' : 'justify-center px-0 py-2 w-full'
                             } ${
                               isActive(item.url) 
                                 ? 'bg-sidebar-accent text-sidebar-accent-foreground font-semibold' 
