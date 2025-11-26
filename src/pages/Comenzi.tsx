@@ -11,7 +11,16 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { z } from "zod";
+
+interface Furnizor {
+  id: number;
+  nume: string;
+  adresa: string;
+  cui: string;
+  nr_reg: string;
+}
 
 interface ComandaMateriePrima {
   id: number;
@@ -69,6 +78,8 @@ export default function Comenzi() {
   const [loadingMP, setLoadingMP] = useState(true);
   const [comenziProduseFinite, setComenziProduseFinite] = useState<ComandaProdusFinal[]>([]);
   const [loadingPF, setLoadingPF] = useState(true);
+  const [furnizori, setFurnizori] = useState<Furnizor[]>([]);
+  const [loadingFurnizori, setLoadingFurnizori] = useState(true);
   
   // Dialog states for MP
   const [openAddEditMP, setOpenAddEditMP] = useState(false);
@@ -106,6 +117,28 @@ export default function Comenzi() {
   });
   const [formErrorsPF, setFormErrorsPF] = useState<Record<string, string>>({});
 
+  // Fetch furnizori from API
+  const fetchFurnizori = async () => {
+    try {
+      setLoadingFurnizori(true);
+      const response = await fetch('http://192.168.1.22:8002/comenzi/returneaza_furnizori/material');
+      if (!response.ok) {
+        throw new Error('Failed to fetch furnizori');
+      }
+      const data = await response.json();
+      setFurnizori(data);
+    } catch (error) {
+      console.error('Error fetching furnizori:', error);
+      toast({
+        title: "Eroare",
+        description: "Nu s-au putut încărca furnizorii",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingFurnizori(false);
+    }
+  };
+
   // Fetch comenzi materie prima from API
   const fetchComenziMP = async () => {
     try {
@@ -129,6 +162,7 @@ export default function Comenzi() {
   };
   
   useEffect(() => {
+    fetchFurnizori();
     fetchComenziMP();
   }, [toast]);
   
@@ -1223,12 +1257,27 @@ export default function Comenzi() {
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="furnizor">Furnizor *</Label>
-              <Input
-                id="furnizor"
+              <Select
                 value={formMP.furnizor}
-                onChange={(e) => setFormMP({ ...formMP, furnizor: e.target.value })}
-                className={formErrorsMP.furnizor ? "border-destructive" : ""}
-              />
+                onValueChange={(value) => setFormMP({ ...formMP, furnizor: value })}
+              >
+                <SelectTrigger className={formErrorsMP.furnizor ? "border-destructive" : ""}>
+                  <SelectValue placeholder="Selectează furnizor" />
+                </SelectTrigger>
+                <SelectContent>
+                  {loadingFurnizori ? (
+                    <SelectItem value="loading" disabled>Se încarcă...</SelectItem>
+                  ) : furnizori.length === 0 ? (
+                    <SelectItem value="empty" disabled>Fără furnizori</SelectItem>
+                  ) : (
+                    furnizori.map((furnizor) => (
+                      <SelectItem key={furnizor.id} value={furnizor.nume}>
+                        {furnizor.nume}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
               {formErrorsMP.furnizor && <p className="text-sm text-destructive">{formErrorsMP.furnizor}</p>}
             </div>
             <div className="grid gap-2">
