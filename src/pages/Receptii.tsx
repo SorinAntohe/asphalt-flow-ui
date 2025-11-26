@@ -291,21 +291,21 @@ export default function Receptii() {
     .filter((item) => {
       return (
         item.id.toString().includes(filters.id) &&
-        item.data.toLowerCase().includes(filters.data.toLowerCase()) &&
-        item.cod.toLowerCase().includes(filters.cod.toLowerCase()) &&
-        item.furnizor.toLowerCase().includes(filters.furnizor.toLowerCase()) &&
-        item.material.toLowerCase().includes(filters.material.toLowerCase()) &&
+        (item.data || "").toLowerCase().includes(filters.data.toLowerCase()) &&
+        (item.cod || "").toLowerCase().includes(filters.cod.toLowerCase()) &&
+        (item.furnizor || "").toLowerCase().includes(filters.furnizor.toLowerCase()) &&
+        (item.material || "").toLowerCase().includes(filters.material.toLowerCase()) &&
         (item.nr_aviz_provizoriu || "").toLowerCase().includes(filters.nr_aviz_provizoriu.toLowerCase()) &&
         (item.nr_aviz_intrare || "").toLowerCase().includes(filters.nr_aviz_intrare.toLowerCase()) &&
-        item.nume_sofer.toLowerCase().includes(filters.nume_sofer.toLowerCase()) &&
-        item.nr_inmatriculare.toLowerCase().includes(filters.nr_inmatriculare.toLowerCase()) &&
-        item.tip_masina.toLowerCase().includes(filters.tip_masina.toLowerCase()) &&
-        item.cantitate_livrata.toString().includes(filters.cantitate_livrata) &&
-        item.cantitate_receptionata.toString().includes(filters.cantitate_receptionata) &&
-        item.diferenta.toString().includes(filters.diferenta) &&
-        item.pret_material_total.toString().includes(filters.pret_material_total) &&
-        item.pret_transport_total.toString().includes(filters.pret_transport_total) &&
-        item.pret_total.toString().includes(filters.pret_total) &&
+        (item.nume_sofer || "").toLowerCase().includes(filters.nume_sofer.toLowerCase()) &&
+        (item.nr_inmatriculare || "").toLowerCase().includes(filters.nr_inmatriculare.toLowerCase()) &&
+        (item.tip_masina || "").toLowerCase().includes(filters.tip_masina.toLowerCase()) &&
+        (item.cantitate_livrata?.toString() || "").includes(filters.cantitate_livrata) &&
+        (item.cantitate_receptionata?.toString() || "").includes(filters.cantitate_receptionata) &&
+        (item.diferenta?.toString() || "").includes(filters.diferenta) &&
+        (item.pret_material_total?.toString() || "").includes(filters.pret_material_total) &&
+        (item.pret_transport_total?.toString() || "").includes(filters.pret_transport_total) &&
+        (item.pret_total?.toString() || "").includes(filters.pret_total) &&
         (item.observatii || "").toLowerCase().includes(filters.observatii.toLowerCase())
       );
     })
