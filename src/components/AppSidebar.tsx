@@ -69,7 +69,7 @@ export function AppSidebar() {
             <img 
               src={logoIconLight} 
               alt="D" 
-              className="h-8 w-8 object-contain"
+              className="h-5 w-5 object-contain"
             />
           )}
         </div>
