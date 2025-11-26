@@ -76,7 +76,7 @@ export function AppSidebar() {
             <img 
               src={logoDWhite} 
               alt="D" 
-              className="h-6 w-6 object-contain"
+              className="h-12 w-12 object-contain"
             />
           )}
         </div>
@@ -138,16 +138,16 @@ export function AppSidebar() {
                     visibility: gestiuneOpen ? 'visible' : 'hidden',
                     transform: gestiuneOpen ? 'translateY(0)' : 'translateY(-10px)',
                     background: gestiuneOpen ? 'hsl(var(--sidebar-accent) / 0.5)' : 'transparent',
-                    padding: gestiuneOpen ? (isOpen ? '6px' : '8px 4px') : '0',
+                    padding: gestiuneOpen ? (isOpen ? '6px' : '4px 0') : '0',
                     marginTop: gestiuneOpen ? '4px' : '0',
-                    marginLeft: isOpen ? '4px' : '0',
-                    marginRight: isOpen ? '4px' : '0',
-                    width: isOpen ? 'auto' : '100%',
-                    maxWidth: isOpen ? 'none' : '48px',
+                    marginLeft: '0',
+                    marginRight: '0',
+                    width: '100%',
+                    maxWidth: 'none',
                     boxShadow: gestiuneOpen ? 'inset 0 2px 4px rgba(0, 0, 0, 0.1)' : 'none',
                   }}
                 >
-                  <SidebarMenu className={isOpen ? "space-y-0.5" : "space-y-1.5"} style={{ width: '100%' }}>
+                  <SidebarMenu className={isOpen ? "space-y-0.5" : "space-y-1"} style={{ width: '100%' }}>
                     {gestiuneItems.map((item, index) => (
                       <SidebarMenuItem 
                         key={item.title}
@@ -161,7 +161,7 @@ export function AppSidebar() {
                           <NavLink
                             to={item.url}
                             className={`flex items-center rounded-md transition-all duration-200 text-sidebar-foreground ${
-                              isOpen ? 'gap-3 px-3 py-2' : 'justify-center px-0 py-2.5 w-full'
+                              isOpen ? 'gap-3 px-3 py-2' : 'justify-center py-2.5 w-full'
                             } ${
                               isActive(item.url) 
                                 ? 'bg-sidebar-accent text-sidebar-accent-foreground font-semibold' 
@@ -169,7 +169,7 @@ export function AppSidebar() {
                             }`}
                             title={!isOpen ? item.title : undefined}
                           >
-                            <item.icon className={isOpen ? "w-4 h-4 flex-shrink-0" : "w-5 h-5 flex-shrink-0"} />
+                            <item.icon className="w-5 h-5 flex-shrink-0" />
                             {isOpen && <span className="text-sm">{item.title}</span>}
                           </NavLink>
                         </SidebarMenuButton>
