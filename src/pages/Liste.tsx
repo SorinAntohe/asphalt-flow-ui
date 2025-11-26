@@ -78,94 +78,12 @@ const Liste = () => {
     "CELULOZA TOPCEL", "CELULOZA TECHNOCEL", "ADITIV ADEZIUNE", "POLIMER SBS",
     "FIBRĂ CELULOZICĂ", "NISIP SILICOS"
   ];
-  const autoturisme = [{
-    id: 1,
-    tipMasina: "Camion cisternă",
-    nrAuto: "B-123-ABC",
-    sarcinaMax: "25t",
-    tipTransport: "Propriu"
-  }, {
-    id: 2,
-    tipMasina: "Camion basculantă",
-    nrAuto: "B-456-DEF",
-    sarcinaMax: "20t",
-    tipTransport: "Închiriat"
-  }, {
-    id: 3,
-    tipMasina: "Camion remorcă",
-    nrAuto: "B-789-GHI",
-    sarcinaMax: "30t",
-    tipTransport: "Extern"
-  }];
-  const soferi = [{
-    id: 1,
-    nume: "Ion Popescu",
-    ci: "AB123456"
-  }, {
-    id: 2,
-    nume: "Gheorghe Ionescu",
-    ci: "BC234567"
-  }, {
-    id: 3,
-    nume: "Vasile Dumitrescu",
-    ci: "CD345678"
-  }];
-  const materiiPrime = [
-    { id: 1, denumire: "0/4 NAT" },
-    { id: 2, denumire: "0/4 CONC" },
-    { id: 3, denumire: "0/4 CRIBLURI" },
-    { id: 4, denumire: "4/8 CONC" },
-    { id: 5, denumire: "4/8 CRIBLURI" },
-    { id: 6, denumire: "4/8 NAT" },
-    { id: 7, denumire: "8/16 CONC" },
-    { id: 8, denumire: "8/16 CRIBLURI" },
-    { id: 9, denumire: "16/22.4 CONC" },
-    { id: 10, denumire: "16/22.4 CRIBLURI" },
-    { id: 11, denumire: "16/31.5 CRIBLURI" },
-    { id: 12, denumire: "16/31.5 CONC" },
-    { id: 13, denumire: "CTL" },
-    { id: 14, denumire: "BITUM 50/70" },
-    { id: 15, denumire: "BITUM 70/100" },
-    { id: 16, denumire: "FILLER CALCAR" },
-    { id: 17, denumire: "FILLER CIMENT" },
-    { id: 18, denumire: "CURENT ELECTRIC" },
-    { id: 19, denumire: "MOTORINA" },
-    { id: 20, denumire: "APA" },
-    { id: 21, denumire: "ACID CLORHIDRIC" },
-    { id: 22, denumire: "EMULGATOR CATIONIC" },
-    { id: 23, denumire: "EMULGATOR ANIONIC" },
-    { id: 24, denumire: "SARE DE DRUM" },
-    { id: 25, denumire: "CELULOZA TOPCEL" },
-    { id: 26, denumire: "CELULOZA TECHNOCEL" },
-    { id: 27, denumire: "ADITIV ADEZIUNE" },
-    { id: 28, denumire: "POLIMER SBS" },
-    { id: 29, denumire: "FIBRĂ CELULOZICĂ" },
-    { id: 30, denumire: "NISIP SILICOS" }
-  ];
-  const produseFinite = [
-    { id: 1, denumire: "Asfalt tip A" },
-    { id: 2, denumire: "Asfalt tip B" },
-    { id: 3, denumire: "Asfalt tip C" },
-    { id: 4, denumire: "Asfalt tip D" },
-    { id: 5, denumire: "Asfalt modificat SBS" },
-    { id: 6, denumire: "Mixturi asfaltice rutiere" },
-    { id: 7, denumire: "Emulsie bituminoasă cationică" },
-    { id: 8, denumire: "Emulsie bituminoasă anionică" }
-  ];
-  const clienti = [
-    { id: 1, denumire: "Construct Pro SRL", sediu: "București", cui: "RO12345678", nrReg: "J40/1234/2020" },
-    { id: 2, denumire: "Drumuri Moderne SA", sediu: "Cluj-Napoca", cui: "RO23456789", nrReg: "J12/2345/2019" },
-    { id: 3, denumire: "Asfaltari Express", sediu: "Timișoara", cui: "RO34567890", nrReg: "J35/3456/2021" },
-    { id: 4, denumire: "Infrastructura Sud SRL", sediu: "Craiova", cui: "RO45678901", nrReg: "J16/4567/2018" },
-    { id: 5, denumire: "RoadTech Solutions", sediu: "Brașov", cui: "RO56789012", nrReg: "J08/5678/2022" }
-  ];
-  const furnizori = [
-    { id: 1, denumire: "Agregat SRL", sediu: "Ploiești", cui: "RO11111111", nrReg: "J29/1111/2017" },
-    { id: 2, denumire: "Bitum Expert", sediu: "București", cui: "RO22222222", nrReg: "J40/2222/2016" },
-    { id: 3, denumire: "Material Construct", sediu: "Iași", cui: "RO33333333", nrReg: "J22/3333/2019" },
-    { id: 4, denumire: "Agregate Premium SRL", sediu: "Bacău", cui: "RO44444444", nrReg: "J04/4444/2020" },
-    { id: 5, denumire: "Chimie Rutieră SA", sediu: "Constanța", cui: "RO55555555", nrReg: "J13/5555/2015" }
-  ];
+  const autoturisme: any[] = [];
+  const soferi: any[] = [];
+  const materiiPrime: any[] = [];
+  const produseFinite: any[] = [];
+  const clienti: any[] = [];
+  const furnizori: any[] = [];
 
   // Pagination helpers
   const getPaginatedData = (data: any[], page: number, itemsPerPage: number) => {
