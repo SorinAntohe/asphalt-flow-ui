@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/logo-auth.png";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -20,7 +20,7 @@ const Auth = () => {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-4 text-center">
           <div className="mx-auto">
-            <img src={logo} alt="Duotip Solutions" className="h-16 object-contain mx-auto" />
+            <img src={logo} alt="Duotip Solutions" className="h-20 object-contain mx-auto" />
           </div>
           <CardTitle className="text-2xl font-bold">Management Producție</CardTitle>
           <CardDescription>Autentificare în sistem</CardDescription>
