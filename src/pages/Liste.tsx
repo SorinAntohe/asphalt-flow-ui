@@ -3,7 +3,17 @@ import { Button } from "@/components/ui/button";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { useState } from "react";
 const Liste = () => {
+  const ITEMS_PER_PAGE = 10;
+  
+  const [autoturismePage, setAutoturismePage] = useState(1);
+  const [soferiPage, setSoferiPage] = useState(1);
+  const [materiiPrimePage, setMateriiPrimePage] = useState(1);
+  const [produseFinitePage, setProduseFinitePage] = useState(1);
+  const [clientiPage, setClientiPage] = useState(1);
+  const [furnizoriPage, setFurnizoriPage] = useState(1);
   const autoturisme = [{
     id: 1,
     tipMasina: "Camion cisternă",
@@ -117,6 +127,22 @@ const Liste = () => {
     telefon: "0267890123",
     produse: "Diverse materiale"
   }];
+
+  // Pagination helpers
+  const getPaginatedData = (data: any[], page: number) => {
+    const startIndex = (page - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    return data.slice(startIndex, endIndex);
+  };
+
+  const getTotalPages = (dataLength: number) => Math.ceil(dataLength / ITEMS_PER_PAGE);
+
+  const paginatedAutoturisme = getPaginatedData(autoturisme, autoturismePage);
+  const paginatedSoferi = getPaginatedData(soferi, soferiPage);
+  const paginatedMateriiPrime = getPaginatedData(materiiPrime, materiiPrimePage);
+  const paginatedProduseFinite = getPaginatedData(produseFinite, produseFinitePage);
+  const paginatedClienti = getPaginatedData(clienti, clientiPage);
+  const paginatedFurnizori = getPaginatedData(furnizori, furnizoriPage);
   return <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -164,7 +190,7 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {autoturisme.map(auto => <TableRow key={auto.id}>
+                  {paginatedAutoturisme.map(auto => <TableRow key={auto.id}>
                       <TableCell className="font-medium">{auto.id}</TableCell>
                       <TableCell>{auto.tipMasina}</TableCell>
                       <TableCell>{auto.nrAuto}</TableCell>
@@ -185,6 +211,35 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
+              {getTotalPages(autoturisme.length) > 1 && (
+                <Pagination className="mt-4">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setAutoturismePage(p => Math.max(1, p - 1))}
+                        className={autoturismePage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                    {Array.from({ length: getTotalPages(autoturisme.length) }, (_, i) => i + 1).map(page => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => setAutoturismePage(page)}
+                          isActive={autoturismePage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setAutoturismePage(p => Math.min(getTotalPages(autoturisme.length), p + 1))}
+                        className={autoturismePage === getTotalPages(autoturisme.length) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -214,7 +269,7 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {soferi.map(sofer => <TableRow key={sofer.id}>
+                  {paginatedSoferi.map(sofer => <TableRow key={sofer.id}>
                       <TableCell className="font-medium">{sofer.id}</TableCell>
                       <TableCell>{sofer.nume}</TableCell>
                       <TableCell>{sofer.ci}</TableCell>
@@ -233,6 +288,35 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
+              {getTotalPages(soferi.length) > 1 && (
+                <Pagination className="mt-4">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setSoferiPage(p => Math.max(1, p - 1))}
+                        className={soferiPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                    {Array.from({ length: getTotalPages(soferi.length) }, (_, i) => i + 1).map(page => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => setSoferiPage(page)}
+                          isActive={soferiPage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setSoferiPage(p => Math.min(getTotalPages(soferi.length), p + 1))}
+                        className={soferiPage === getTotalPages(soferi.length) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -261,7 +345,7 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {materiiPrime.map(materie => <TableRow key={materie.id}>
+                  {paginatedMateriiPrime.map(materie => <TableRow key={materie.id}>
                       <TableCell className="font-medium">{materie.id}</TableCell>
                       <TableCell>{materie.denumire}</TableCell>
                       <TableCell className="text-right">
@@ -279,6 +363,35 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
+              {getTotalPages(materiiPrime.length) > 1 && (
+                <Pagination className="mt-4">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setMateriiPrimePage(p => Math.max(1, p - 1))}
+                        className={materiiPrimePage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                    {Array.from({ length: getTotalPages(materiiPrime.length) }, (_, i) => i + 1).map(page => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => setMateriiPrimePage(page)}
+                          isActive={materiiPrimePage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setMateriiPrimePage(p => Math.min(getTotalPages(materiiPrime.length), p + 1))}
+                        className={materiiPrimePage === getTotalPages(materiiPrime.length) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -309,7 +422,7 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {produseFinite.map(produs => <TableRow key={produs.id}>
+                  {paginatedProduseFinite.map(produs => <TableRow key={produs.id}>
                       <TableCell className="font-medium">{produs.cod}</TableCell>
                       <TableCell>{produs.denumire}</TableCell>
                       <TableCell>{produs.stoc}</TableCell>
@@ -329,6 +442,35 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
+              {getTotalPages(produseFinite.length) > 1 && (
+                <Pagination className="mt-4">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setProduseFinitePage(p => Math.max(1, p - 1))}
+                        className={produseFinitePage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                    {Array.from({ length: getTotalPages(produseFinite.length) }, (_, i) => i + 1).map(page => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => setProduseFinitePage(page)}
+                          isActive={produseFinitePage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setProduseFinitePage(p => Math.min(getTotalPages(produseFinite.length), p + 1))}
+                        className={produseFinitePage === getTotalPages(produseFinite.length) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -359,7 +501,7 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {clienti.map(client => <TableRow key={client.id}>
+                  {paginatedClienti.map(client => <TableRow key={client.id}>
                       <TableCell className="font-medium">{client.denumire}</TableCell>
                       <TableCell>{client.cui}</TableCell>
                       <TableCell>{client.telefon}</TableCell>
@@ -379,6 +521,35 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
+              {getTotalPages(clienti.length) > 1 && (
+                <Pagination className="mt-4">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setClientiPage(p => Math.max(1, p - 1))}
+                        className={clientiPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                    {Array.from({ length: getTotalPages(clienti.length) }, (_, i) => i + 1).map(page => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => setClientiPage(page)}
+                          isActive={clientiPage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setClientiPage(p => Math.min(getTotalPages(clienti.length), p + 1))}
+                        className={clientiPage === getTotalPages(clienti.length) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -409,7 +580,7 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {furnizori.map(furnizor => <TableRow key={furnizor.id}>
+                  {paginatedFurnizori.map(furnizor => <TableRow key={furnizor.id}>
                       <TableCell className="font-medium">{furnizor.denumire}</TableCell>
                       <TableCell>{furnizor.cui}</TableCell>
                       <TableCell>{furnizor.telefon}</TableCell>
@@ -429,6 +600,35 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
+              {getTotalPages(furnizori.length) > 1 && (
+                <Pagination className="mt-4">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setFurnizoriPage(p => Math.max(1, p - 1))}
+                        className={furnizoriPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                    {Array.from({ length: getTotalPages(furnizori.length) }, (_, i) => i + 1).map(page => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => setFurnizoriPage(page)}
+                          isActive={furnizoriPage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setFurnizoriPage(p => Math.min(getTotalPages(furnizori.length), p + 1))}
+                        className={furnizoriPage === getTotalPages(furnizori.length) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
