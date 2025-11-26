@@ -1,10 +1,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
 const Liste = () => {
   const [autoturismePerPage, setAutoturismePerPage] = useState(10);
@@ -20,6 +21,14 @@ const Liste = () => {
   const [produseFinitePage, setProduseFinitePage] = useState(1);
   const [clientiPage, setClientiPage] = useState(1);
   const [furnizoriPage, setFurnizoriPage] = useState(1);
+
+  // Filters
+  const [autoturismeFilters, setAutoturismeFilters] = useState({ id: "", tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "" });
+  const [soferiFilters, setSoferiFilters] = useState({ id: "", nume: "", ci: "" });
+  const [materiiPrimeFilters, setMateriiPrimeFilters] = useState({ id: "", denumire: "" });
+  const [produseFiniteFilters, setProduseFiniteFilters] = useState({ id: "", denumire: "" });
+  const [clientiFilters, setClientiFilters] = useState({ id: "", denumire: "", sediu: "", cui: "", nrReg: "" });
+  const [furnizoriFilters, setFurnizoriFilters] = useState({ id: "", denumire: "", sediu: "", cui: "", nrReg: "" });
   const autoturisme = [{
     id: 1,
     tipMasina: "Camion cisternă",
@@ -118,12 +127,53 @@ const Liste = () => {
 
   const getTotalPages = (dataLength: number, itemsPerPage: number) => Math.ceil(dataLength / itemsPerPage);
 
-  const paginatedAutoturisme = getPaginatedData(autoturisme, autoturismePage, autoturismePerPage);
-  const paginatedSoferi = getPaginatedData(soferi, soferiPage, soferiPerPage);
-  const paginatedMateriiPrime = getPaginatedData(materiiPrime, materiiPrimePage, materiiPrimePerPage);
-  const paginatedProduseFinite = getPaginatedData(produseFinite, produseFinitePage, produseFinitePerPage);
-  const paginatedClienti = getPaginatedData(clienti, clientiPage, clientiPerPage);
-  const paginatedFurnizori = getPaginatedData(furnizori, furnizoriPage, furnizoriPerPage);
+  // Filter helpers
+  const filterAutoturisme = autoturisme.filter(item => 
+    item.id.toString().includes(autoturismeFilters.id) &&
+    item.tipMasina.toLowerCase().includes(autoturismeFilters.tipMasina.toLowerCase()) &&
+    item.nrAuto.toLowerCase().includes(autoturismeFilters.nrAuto.toLowerCase()) &&
+    item.sarcinaMax.toLowerCase().includes(autoturismeFilters.sarcinaMax.toLowerCase()) &&
+    item.tipTransport.toLowerCase().includes(autoturismeFilters.tipTransport.toLowerCase())
+  );
+
+  const filterSoferi = soferi.filter(item =>
+    item.id.toString().includes(soferiFilters.id) &&
+    item.nume.toLowerCase().includes(soferiFilters.nume.toLowerCase()) &&
+    item.ci.toLowerCase().includes(soferiFilters.ci.toLowerCase())
+  );
+
+  const filterMateriiPrime = materiiPrime.filter(item =>
+    item.id.toString().includes(materiiPrimeFilters.id) &&
+    item.denumire.toLowerCase().includes(materiiPrimeFilters.denumire.toLowerCase())
+  );
+
+  const filterProduseFinite = produseFinite.filter(item =>
+    item.id.toString().includes(produseFiniteFilters.id) &&
+    item.denumire.toLowerCase().includes(produseFiniteFilters.denumire.toLowerCase())
+  );
+
+  const filterClienti = clienti.filter(item =>
+    item.id.toString().includes(clientiFilters.id) &&
+    item.denumire.toLowerCase().includes(clientiFilters.denumire.toLowerCase()) &&
+    item.sediu.toLowerCase().includes(clientiFilters.sediu.toLowerCase()) &&
+    item.cui.toLowerCase().includes(clientiFilters.cui.toLowerCase()) &&
+    item.nrReg.toLowerCase().includes(clientiFilters.nrReg.toLowerCase())
+  );
+
+  const filterFurnizori = furnizori.filter(item =>
+    item.id.toString().includes(furnizoriFilters.id) &&
+    item.denumire.toLowerCase().includes(furnizoriFilters.denumire.toLowerCase()) &&
+    item.sediu.toLowerCase().includes(furnizoriFilters.sediu.toLowerCase()) &&
+    item.cui.toLowerCase().includes(furnizoriFilters.cui.toLowerCase()) &&
+    item.nrReg.toLowerCase().includes(furnizoriFilters.nrReg.toLowerCase())
+  );
+
+  const paginatedAutoturisme = getPaginatedData(filterAutoturisme, autoturismePage, autoturismePerPage);
+  const paginatedSoferi = getPaginatedData(filterSoferi, soferiPage, soferiPerPage);
+  const paginatedMateriiPrime = getPaginatedData(filterMateriiPrime, materiiPrimePage, materiiPrimePerPage);
+  const paginatedProduseFinite = getPaginatedData(filterProduseFinite, produseFinitePage, produseFinitePerPage);
+  const paginatedClienti = getPaginatedData(filterClienti, clientiPage, clientiPerPage);
+  const paginatedFurnizori = getPaginatedData(filterFurnizori, furnizoriPage, furnizoriPerPage);
   return <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -186,6 +236,24 @@ const Liste = () => {
                     <TableHead className="h-8 text-xs">Tip Transport</TableHead>
                     <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
                   </TableRow>
+                  <TableRow>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="ID" value={autoturismeFilters.id} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, id: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="Tip Mașină" value={autoturismeFilters.tipMasina} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, tipMasina: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="Nr. Auto" value={autoturismeFilters.nrAuto} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, nrAuto: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="Sarcină" value={autoturismeFilters.sarcinaMax} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, sarcinaMax: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="Tip Transport" value={autoturismeFilters.tipTransport} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, tipTransport: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1"></TableHead>
+                  </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginatedAutoturisme.map(auto => <TableRow key={auto.id} className="h-10">
@@ -209,7 +277,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(autoturisme.length, autoturismePerPage) > 1 && (
+              {getTotalPages(filterAutoturisme.length, autoturismePerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -218,7 +286,7 @@ const Liste = () => {
                         className={autoturismePage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(autoturisme.length, autoturismePerPage) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(filterAutoturisme.length, autoturismePerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setAutoturismePage(page)}
@@ -231,8 +299,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setAutoturismePage(p => Math.min(getTotalPages(autoturisme.length, autoturismePerPage), p + 1))}
-                        className={autoturismePage === getTotalPages(autoturisme.length, autoturismePerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setAutoturismePage(p => Math.min(getTotalPages(filterAutoturisme.length, autoturismePerPage), p + 1))}
+                        className={autoturismePage === getTotalPages(filterAutoturisme.length, autoturismePerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -282,6 +350,18 @@ const Liste = () => {
                     <TableHead className="h-8 text-xs">C.I.</TableHead>
                     <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
                   </TableRow>
+                  <TableRow>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="ID" value={soferiFilters.id} onChange={(e) => { setSoferiFilters({...soferiFilters, id: e.target.value}); setSoferiPage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="Nume" value={soferiFilters.nume} onChange={(e) => { setSoferiFilters({...soferiFilters, nume: e.target.value}); setSoferiPage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="C.I." value={soferiFilters.ci} onChange={(e) => { setSoferiFilters({...soferiFilters, ci: e.target.value}); setSoferiPage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1"></TableHead>
+                  </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginatedSoferi.map(sofer => <TableRow key={sofer.id} className="h-10">
@@ -303,7 +383,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(soferi.length, soferiPerPage) > 1 && (
+              {getTotalPages(filterSoferi.length, soferiPerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -312,7 +392,7 @@ const Liste = () => {
                         className={soferiPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(soferi.length, soferiPerPage) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(filterSoferi.length, soferiPerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setSoferiPage(page)}
@@ -325,8 +405,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setSoferiPage(p => Math.min(getTotalPages(soferi.length, soferiPerPage), p + 1))}
-                        className={soferiPage === getTotalPages(soferi.length, soferiPerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setSoferiPage(p => Math.min(getTotalPages(filterSoferi.length, soferiPerPage), p + 1))}
+                        className={soferiPage === getTotalPages(filterSoferi.length, soferiPerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -375,6 +455,15 @@ const Liste = () => {
                     <TableHead className="h-8 text-xs">Denumire</TableHead>
                     <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
                   </TableRow>
+                  <TableRow>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="ID" value={materiiPrimeFilters.id} onChange={(e) => { setMateriiPrimeFilters({...materiiPrimeFilters, id: e.target.value}); setMateriiPrimePage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="Denumire" value={materiiPrimeFilters.denumire} onChange={(e) => { setMateriiPrimeFilters({...materiiPrimeFilters, denumire: e.target.value}); setMateriiPrimePage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1"></TableHead>
+                  </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginatedMateriiPrime.map(materie => <TableRow key={materie.id} className="h-10">
@@ -395,7 +484,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(materiiPrime.length, materiiPrimePerPage) > 1 && (
+              {getTotalPages(filterMateriiPrime.length, materiiPrimePerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -404,7 +493,7 @@ const Liste = () => {
                         className={materiiPrimePage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(materiiPrime.length, materiiPrimePerPage) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(filterMateriiPrime.length, materiiPrimePerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setMateriiPrimePage(page)}
@@ -417,8 +506,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setMateriiPrimePage(p => Math.min(getTotalPages(materiiPrime.length, materiiPrimePerPage), p + 1))}
-                        className={materiiPrimePage === getTotalPages(materiiPrime.length, materiiPrimePerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setMateriiPrimePage(p => Math.min(getTotalPages(filterMateriiPrime.length, materiiPrimePerPage), p + 1))}
+                        className={materiiPrimePage === getTotalPages(filterMateriiPrime.length, materiiPrimePerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -467,6 +556,15 @@ const Liste = () => {
                     <TableHead className="h-8 text-xs">Denumire</TableHead>
                     <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
                   </TableRow>
+                  <TableRow>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="ID" value={produseFiniteFilters.id} onChange={(e) => { setProduseFiniteFilters({...produseFiniteFilters, id: e.target.value}); setProduseFinitePage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="Denumire" value={produseFiniteFilters.denumire} onChange={(e) => { setProduseFiniteFilters({...produseFiniteFilters, denumire: e.target.value}); setProduseFinitePage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1"></TableHead>
+                  </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginatedProduseFinite.map(produs => <TableRow key={produs.id} className="h-10">
@@ -487,7 +585,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(produseFinite.length, produseFinitePerPage) > 1 && (
+              {getTotalPages(filterProduseFinite.length, produseFinitePerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -496,7 +594,7 @@ const Liste = () => {
                         className={produseFinitePage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(produseFinite.length, produseFinitePerPage) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(filterProduseFinite.length, produseFinitePerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setProduseFinitePage(page)}
@@ -509,8 +607,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setProduseFinitePage(p => Math.min(getTotalPages(produseFinite.length, produseFinitePerPage), p + 1))}
-                        className={produseFinitePage === getTotalPages(produseFinite.length, produseFinitePerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setProduseFinitePage(p => Math.min(getTotalPages(filterProduseFinite.length, produseFinitePerPage), p + 1))}
+                        className={produseFinitePage === getTotalPages(filterProduseFinite.length, produseFinitePerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -562,6 +660,24 @@ const Liste = () => {
                     <TableHead className="h-8 text-xs">Nr. REG</TableHead>
                     <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
                   </TableRow>
+                  <TableRow>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="ID" value={clientiFilters.id} onChange={(e) => { setClientiFilters({...clientiFilters, id: e.target.value}); setClientiPage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="Denumire" value={clientiFilters.denumire} onChange={(e) => { setClientiFilters({...clientiFilters, denumire: e.target.value}); setClientiPage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="Sediu" value={clientiFilters.sediu} onChange={(e) => { setClientiFilters({...clientiFilters, sediu: e.target.value}); setClientiPage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="CUI" value={clientiFilters.cui} onChange={(e) => { setClientiFilters({...clientiFilters, cui: e.target.value}); setClientiPage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="Nr. REG" value={clientiFilters.nrReg} onChange={(e) => { setClientiFilters({...clientiFilters, nrReg: e.target.value}); setClientiPage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1"></TableHead>
+                  </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginatedClienti.map(client => <TableRow key={client.id} className="h-10">
@@ -585,7 +701,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(clienti.length, clientiPerPage) > 1 && (
+              {getTotalPages(filterClienti.length, clientiPerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -594,7 +710,7 @@ const Liste = () => {
                         className={clientiPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(clienti.length, clientiPerPage) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(filterClienti.length, clientiPerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setClientiPage(page)}
@@ -607,8 +723,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setClientiPage(p => Math.min(getTotalPages(clienti.length, clientiPerPage), p + 1))}
-                        className={clientiPage === getTotalPages(clienti.length, clientiPerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setClientiPage(p => Math.min(getTotalPages(filterClienti.length, clientiPerPage), p + 1))}
+                        className={clientiPage === getTotalPages(filterClienti.length, clientiPerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -660,6 +776,24 @@ const Liste = () => {
                     <TableHead className="h-8 text-xs">Nr. REG</TableHead>
                     <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
                   </TableRow>
+                  <TableRow>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="ID" value={furnizoriFilters.id} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, id: e.target.value}); setFurnizoriPage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="Denumire" value={furnizoriFilters.denumire} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, denumire: e.target.value}); setFurnizoriPage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="Sediu" value={furnizoriFilters.sediu} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, sediu: e.target.value}); setFurnizoriPage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="CUI" value={furnizoriFilters.cui} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, cui: e.target.value}); setFurnizoriPage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1">
+                      <Input placeholder="Nr. REG" value={furnizoriFilters.nrReg} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, nrReg: e.target.value}); setFurnizoriPage(1); }} className="h-7 text-xs" />
+                    </TableHead>
+                    <TableHead className="h-8 p-1"></TableHead>
+                  </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginatedFurnizori.map(furnizor => <TableRow key={furnizor.id} className="h-10">
@@ -683,7 +817,7 @@ const Liste = () => {
                     </TableRow>)}
                 </TableBody>
               </Table>
-              {getTotalPages(furnizori.length, furnizoriPerPage) > 1 && (
+              {getTotalPages(filterFurnizori.length, furnizoriPerPage) > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
@@ -692,7 +826,7 @@ const Liste = () => {
                         className={furnizoriPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    {Array.from({ length: getTotalPages(furnizori.length, furnizoriPerPage) }, (_, i) => i + 1).map(page => (
+                    {Array.from({ length: getTotalPages(filterFurnizori.length, furnizoriPerPage) }, (_, i) => i + 1).map(page => (
                       <PaginationItem key={page}>
                         <PaginationLink
                           onClick={() => setFurnizoriPage(page)}
@@ -705,8 +839,8 @@ const Liste = () => {
                     ))}
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => setFurnizoriPage(p => Math.min(getTotalPages(furnizori.length, furnizoriPerPage), p + 1))}
-                        className={furnizoriPage === getTotalPages(furnizori.length, furnizoriPerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() => setFurnizoriPage(p => Math.min(getTotalPages(filterFurnizori.length, furnizoriPerPage), p + 1))}
+                        className={furnizoriPage === getTotalPages(filterFurnizori.length, furnizoriPerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
