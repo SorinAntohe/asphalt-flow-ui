@@ -114,7 +114,7 @@ const Dashboard = () => {
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span>Asfalt tip C</span>
+                  <span className="text-sm">Asfalt tip C</span>
                   <span className="font-medium">25%</span>
                 </div>
                 <div className="h-2 bg-muted rounded-full overflow-hidden">
