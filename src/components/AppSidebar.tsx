@@ -58,10 +58,10 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
-      <SidebarHeader className="border-b border-sidebar-border py-3">
-        <div className="flex items-center gap-3 px-3">
+      <SidebarHeader className="border-b border-sidebar-border h-14 sm:h-16">
+        <div className="flex items-center justify-center h-full px-3">
           {isOpen ? (
-            <>
+            <div className="flex items-center gap-3">
               <img 
                 src={logoDWhite} 
                 alt="D" 
@@ -71,12 +71,12 @@ export function AppSidebar() {
                 <span className="text-sidebar-foreground font-bold text-lg leading-tight">DUOTIP</span>
                 <span className="text-sidebar-foreground/70 text-sm leading-tight">ERP System</span>
               </div>
-            </>
+            </div>
           ) : (
             <img 
               src={logoDWhite} 
               alt="D" 
-              className="h-12 w-12 object-contain"
+              className="h-5 w-5 object-contain"
             />
           )}
         </div>
