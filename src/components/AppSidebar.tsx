@@ -90,10 +90,13 @@ export function AppSidebar() {
                 <SidebarMenuButton asChild isActive={isActive(dashboardItem.url)}>
                   <NavLink
                     to={dashboardItem.url}
-                    className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors hover:bg-sidebar-accent text-sidebar-foreground"
+                    className={`flex items-center rounded-lg transition-colors hover:bg-sidebar-accent text-sidebar-foreground ${
+                      isOpen ? 'gap-3 px-4 py-2.5' : 'justify-center py-2.5 w-full'
+                    }`}
                     activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                    title={!isOpen ? dashboardItem.title : undefined}
                   >
-                    <dashboardItem.icon className="w-5 h-5" />
+                    <dashboardItem.icon className="w-5 h-5 flex-shrink-0" />
                     {isOpen && <span>{dashboardItem.title}</span>}
                   </NavLink>
                 </SidebarMenuButton>
@@ -104,12 +107,15 @@ export function AppSidebar() {
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton 
-                      className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-300 ease-in-out hover:bg-sidebar-accent text-sidebar-foreground"
+                      className={`flex items-center rounded-lg transition-all duration-300 ease-in-out hover:bg-sidebar-accent text-sidebar-foreground ${
+                        isOpen ? 'gap-3 px-4 py-2.5' : 'justify-center py-2.5 w-full'
+                      }`}
                       style={{
                         background: gestiuneOpen ? 'hsl(var(--sidebar-accent))' : 'transparent',
                       }}
+                      title={!isOpen ? 'Gestionare' : undefined}
                     >
-                      <FolderCog className="w-5 h-5" />
+                      <FolderCog className="w-5 h-5 flex-shrink-0" />
                       {isOpen && (
                         <>
                           <span className="flex-1">Gestionare</span>
