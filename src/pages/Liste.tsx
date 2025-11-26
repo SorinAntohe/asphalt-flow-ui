@@ -228,7 +228,7 @@ const Liste = () => {
                             <Pencil className="w-4 h-4" />
                             Editează
                           </Button>
-                          <Button variant="destructive" size="sm" className="gap-2">
+                          <Button variant="destructive" size="sm" className="gap-2 bg-red-700 hover:bg-red-600">
                             <Trash2 className="w-4 h-4" />
                             Șterge
                           </Button>
