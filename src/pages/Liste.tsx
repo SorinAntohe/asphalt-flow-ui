@@ -2089,8 +2089,8 @@ const Liste = () => {
                             tabel: "lista_clienti",
                             id: clientiDialog.data.id,
                             update: {
-                              denumire: clientiFormData.denumire,
-                              sediu: clientiFormData.sediu,
+                              nume: clientiFormData.denumire,
+                              adresa: clientiFormData.sediu,
                               cui: clientiFormData.cui,
                               nr_reg: clientiFormData.nrReg
                             }
@@ -2106,11 +2106,40 @@ const Liste = () => {
                           description: "Clientul a fost editat cu succes"
                         });
                       } else {
+                        const response = await fetch('http://192.168.1.22:8002/liste/adauga/client', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            nume: clientiFormData.denumire,
+                            adresa: clientiFormData.sediu,
+                            cui: clientiFormData.cui,
+                            nr_reg: clientiFormData.nrReg
+                          })
+                        });
+
+                        if (!response.ok) {
+                          throw new Error('Eroare la adăugarea clientului');
+                        }
+
                         toast({
                           title: "Succes",
                           description: "Clientul a fost adăugat cu succes"
                         });
                       }
+
+                      // Refresh the list
+                      const refreshResponse = await fetch('http://192.168.1.22:8002/liste/returneaza/clienti');
+                      const data = await refreshResponse.json();
+                      const mappedData = data.map((item: any) => ({
+                        id: item.id,
+                        denumire: item.nume,
+                        sediu: item.adresa,
+                        cui: item.cui,
+                        nrReg: item.nr_reg
+                      }));
+                      setClienti(mappedData);
                       setClientiDialog({ ...clientiDialog, open: false });
                     } catch (error) {
                       toast({
@@ -2158,6 +2187,18 @@ const Liste = () => {
                         description: "Clientul a fost șters cu succes"
                       });
                       setClientiDeleteDialog({ open: false });
+                      
+                      // Refresh the list
+                      const refreshResponse = await fetch('http://192.168.1.22:8002/liste/returneaza/clienti');
+                      const data = await refreshResponse.json();
+                      const mappedData = data.map((item: any) => ({
+                        id: item.id,
+                        denumire: item.nume,
+                        sediu: item.adresa,
+                        cui: item.cui,
+                        nrReg: item.nr_reg
+                      }));
+                      setClienti(mappedData);
                     } catch (error) {
                       toast({
                         title: "Eroare",
