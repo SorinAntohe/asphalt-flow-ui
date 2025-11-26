@@ -44,7 +44,7 @@ interface ComandaProdusFinal {
 const comandaMPSchema = z.object({
   furnizor: z.string().trim().min(1, "Furnizorul este obligatoriu").max(255),
   material: z.string().trim().min(1, "Materialul este obligatoriu").max(255),
-  unitate_de_masura: z.string().trim().min(1, "Unitatea de măsură este obligatorie").max(50),
+  unitate_masura: z.string().trim().min(1, "Unitatea de măsură este obligatorie").max(50),
   cantitate: z.number().min(0, "Cantitatea trebuie să fie pozitivă"),
   punct_descarcare: z.string().trim().max(255).optional(),
   pret_fara_tva: z.number().min(0, "Prețul trebuie să fie pozitiv"),
@@ -55,7 +55,7 @@ const comandaMPSchema = z.object({
 const comandaPFSchema = z.object({
   client: z.string().trim().min(1, "Clientul este obligatoriu").max(255),
   produs: z.string().trim().min(1, "Produsul este obligatoriu").max(255),
-  unitate_de_masura: z.string().trim().min(1, "Unitatea de măsură este obligatorie").max(50),
+  unitate_masura: z.string().trim().min(1, "Unitatea de măsură este obligatorie").max(50),
   cantitate: z.number().min(0, "Cantitatea trebuie să fie pozitivă"),
   punct_descarcare: z.string().trim().max(255).optional(),
   pret_fara_tva: z.number().min(0, "Prețul trebuie să fie pozitiv"),
@@ -314,7 +314,7 @@ export default function Comenzi() {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            tabel: "comenzi_produs",
+            tabel: "comenzi_produs_finit",
             id: editingPF.id,
             update: validatedData
           })
@@ -371,7 +371,7 @@ export default function Comenzi() {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          tabel: "comenzi_produs",
+          tabel: "comenzi_produs_finit",
           id: deletingPF.id
         })
       });
