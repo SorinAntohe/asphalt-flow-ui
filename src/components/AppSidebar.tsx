@@ -132,14 +132,14 @@ export function AppSidebar() {
                     visibility: gestiuneOpen ? 'visible' : 'hidden',
                     transform: gestiuneOpen ? 'translateY(0)' : 'translateY(-10px)',
                     background: gestiuneOpen ? 'hsl(var(--sidebar-accent) / 0.3)' : 'transparent',
-                    padding: gestiuneOpen ? '6px' : '0',
+                    padding: gestiuneOpen ? '8px' : '0',
                     marginTop: gestiuneOpen ? '4px' : '0',
                     marginLeft: isOpen ? '0' : '4px',
                     marginRight: isOpen ? '0' : '4px',
                     boxShadow: gestiuneOpen ? '0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1)' : 'none',
                   }}
                 >
-                  <SidebarMenu className={isOpen ? "ml-4 space-y-1" : "space-y-1"}>
+                  <SidebarMenu className={isOpen ? "ml-3 mr-3 space-y-1.5" : "mx-1 space-y-1.5"}>
                     {gestiuneItems.map((item, index) => (
                       <SidebarMenuItem 
                         key={item.title}
@@ -155,7 +155,7 @@ export function AppSidebar() {
                               isOpen ? 'px-3 py-2' : 'px-2 py-2 justify-center'
                             } ${
                               isActive(item.url) 
-                                ? 'bg-sidebar-accent text-sidebar-accent-foreground font-semibold shadow-md border border-sidebar-border/20' 
+                                ? 'bg-sidebar-accent text-sidebar-accent-foreground font-semibold shadow-sm border border-sidebar-border/20' 
                                 : 'hover:bg-sidebar-accent/30'
                             }`}
                             title={!isOpen ? item.title : undefined}
