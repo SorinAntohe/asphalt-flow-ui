@@ -34,6 +34,10 @@ interface Material {
   materiale_prime: string;
 }
 
+interface Produs {
+  produs: string;
+}
+
 interface ComandaMateriePrima {
   id: number;
   cod: string;
@@ -96,6 +100,8 @@ export default function Comenzi() {
   const [loadingClienti, setLoadingClienti] = useState(true);
   const [materiale, setMateriale] = useState<Material[]>([]);
   const [loadingMateriale, setLoadingMateriale] = useState(true);
+  const [produse, setProduse] = useState<Produs[]>([]);
+  const [loadingProduse, setLoadingProduse] = useState(true);
   
   // Dialog states for MP
   const [openAddEditMP, setOpenAddEditMP] = useState(false);
@@ -199,6 +205,28 @@ export default function Comenzi() {
     }
   };
 
+  // Fetch produse from API
+  const fetchProduse = async () => {
+    try {
+      setLoadingProduse(true);
+      const response = await fetch('http://192.168.1.22:8002/comenzi/returneaza_produse/produs');
+      if (!response.ok) {
+        throw new Error('Failed to fetch produse');
+      }
+      const data = await response.json();
+      setProduse(data);
+    } catch (error) {
+      console.error('Error fetching produse:', error);
+      toast({
+        title: "Eroare",
+        description: "Nu s-au putut încărca produsele",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingProduse(false);
+    }
+  };
+
   // Fetch comenzi materie prima from API
   const fetchComenziMP = async () => {
     try {
@@ -225,6 +253,7 @@ export default function Comenzi() {
     fetchFurnizori();
     fetchClienti();
     fetchMateriale();
+    fetchProduse();
     fetchComenziMP();
   }, [toast]);
   
@@ -1308,12 +1337,27 @@ export default function Comenzi() {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="produs">Produs *</Label>
-              <Input
-                id="produs"
+              <Select
                 value={formPF.produs}
-                onChange={(e) => setFormPF({ ...formPF, produs: e.target.value })}
-                className={formErrorsPF.produs ? "border-destructive" : ""}
-              />
+                onValueChange={(value) => setFormPF({ ...formPF, produs: value })}
+              >
+                <SelectTrigger className={formErrorsPF.produs ? "border-destructive" : ""}>
+                  <SelectValue placeholder="Selectează produs" />
+                </SelectTrigger>
+                <SelectContent>
+                  {loadingProduse ? (
+                    <SelectItem value="loading" disabled>Se încarcă...</SelectItem>
+                  ) : produse.length === 0 ? (
+                    <SelectItem value="empty" disabled>Fără produse</SelectItem>
+                  ) : (
+                    produse.map((produs, index) => (
+                      <SelectItem key={index} value={produs.produs}>
+                        {produs.produs}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
               {formErrorsPF.produs && <p className="text-sm text-destructive">{formErrorsPF.produs}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
