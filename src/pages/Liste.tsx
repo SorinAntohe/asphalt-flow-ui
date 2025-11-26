@@ -79,7 +79,7 @@ const Liste = () => {
     "FIBRĂ CELULOZICĂ", "NISIP SILICOS"
   ];
   const [autoturisme, setAutoturisme] = useState<any[]>([]);
-  const soferi: any[] = [];
+  const [soferi, setSoferi] = useState<any[]>([]);
   const materiiPrime: any[] = [];
   const produseFinite: any[] = [];
   const clienti: any[] = [];
@@ -109,6 +109,29 @@ const Liste = () => {
       }
     };
     fetchAutoturisme();
+  }, [toast]);
+
+  // Fetch soferi from API
+  useEffect(() => {
+    const fetchSoferi = async () => {
+      try {
+        const response = await fetch('http://192.168.1.22:8002/liste/returneaza/soferi');
+        const data = await response.json();
+        const mappedData = data.map((item: any) => ({
+          id: item.id,
+          nume: item.nume_sofer,
+          ci: item.ci.toString()
+        }));
+        setSoferi(mappedData);
+      } catch (error) {
+        toast({
+          title: "Eroare",
+          description: "Nu s-au putut încărca datele despre șoferi",
+          variant: "destructive"
+        });
+      }
+    };
+    fetchSoferi();
   }, [toast]);
 
   // Pagination helpers
