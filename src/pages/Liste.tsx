@@ -94,44 +94,20 @@ const Liste = () => {
     { id: 7, denumire: "Emulsie bituminoasă cationică" },
     { id: 8, denumire: "Emulsie bituminoasă anionică" }
   ];
-  const clienti = [{
-    id: 1,
-    denumire: "Construct Pro SRL",
-    cui: "RO12345678",
-    telefon: "0212345678",
-    oras: "București"
-  }, {
-    id: 2,
-    denumire: "Drumuri Moderne SA",
-    cui: "RO23456789",
-    telefon: "0223456789",
-    oras: "Cluj-Napoca"
-  }, {
-    id: 3,
-    denumire: "Asfaltari Express",
-    cui: "RO34567890",
-    telefon: "0234567890",
-    oras: "Timișoara"
-  }];
-  const furnizori = [{
-    id: 1,
-    denumire: "Agregat SRL",
-    cui: "RO45678901",
-    telefon: "0245678901",
-    produse: "Agregate minerale"
-  }, {
-    id: 2,
-    denumire: "Bitum Expert",
-    cui: "RO56789012",
-    telefon: "0256789012",
-    produse: "Bitum rutier"
-  }, {
-    id: 3,
-    denumire: "Material Construct",
-    cui: "RO67890123",
-    telefon: "0267890123",
-    produse: "Diverse materiale"
-  }];
+  const clienti = [
+    { id: 1, denumire: "Construct Pro SRL", sediu: "București", cui: "RO12345678", nrReg: "J40/1234/2020" },
+    { id: 2, denumire: "Drumuri Moderne SA", sediu: "Cluj-Napoca", cui: "RO23456789", nrReg: "J12/2345/2019" },
+    { id: 3, denumire: "Asfaltari Express", sediu: "Timișoara", cui: "RO34567890", nrReg: "J35/3456/2021" },
+    { id: 4, denumire: "Infrastructura Sud SRL", sediu: "Craiova", cui: "RO45678901", nrReg: "J16/4567/2018" },
+    { id: 5, denumire: "RoadTech Solutions", sediu: "Brașov", cui: "RO56789012", nrReg: "J08/5678/2022" }
+  ];
+  const furnizori = [
+    { id: 1, denumire: "Agregat SRL", sediu: "Ploiești", cui: "RO11111111", nrReg: "J29/1111/2017" },
+    { id: 2, denumire: "Bitum Expert", sediu: "București", cui: "RO22222222", nrReg: "J40/2222/2016" },
+    { id: 3, denumire: "Material Construct", sediu: "Iași", cui: "RO33333333", nrReg: "J22/3333/2019" },
+    { id: 4, denumire: "Agregate Premium SRL", sediu: "Bacău", cui: "RO44444444", nrReg: "J04/4444/2020" },
+    { id: 5, denumire: "Chimie Rutieră SA", sediu: "Constanța", cui: "RO55555555", nrReg: "J13/5555/2015" }
+  ];
 
   // Pagination helpers
   const getPaginatedData = (data: any[], page: number, itemsPerPage: number) => {
@@ -579,19 +555,21 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>ID</TableHead>
                     <TableHead>Denumire</TableHead>
+                    <TableHead>Sediu</TableHead>
                     <TableHead>CUI</TableHead>
-                    <TableHead>Telefon</TableHead>
-                    <TableHead>Oraș</TableHead>
+                    <TableHead>Nr. REG</TableHead>
                     <TableHead className="text-right">Acțiuni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginatedClienti.map(client => <TableRow key={client.id}>
-                      <TableCell className="font-medium">{client.denumire}</TableCell>
+                      <TableCell className="font-medium">{client.id}</TableCell>
+                      <TableCell>{client.denumire}</TableCell>
+                      <TableCell>{client.sediu}</TableCell>
                       <TableCell>{client.cui}</TableCell>
-                      <TableCell>{client.telefon}</TableCell>
-                      <TableCell>{client.oras}</TableCell>
+                      <TableCell>{client.nrReg}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Button variant="ghost" size="sm" className="gap-2">
@@ -675,19 +653,21 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>ID</TableHead>
                     <TableHead>Denumire</TableHead>
+                    <TableHead>Sediu</TableHead>
                     <TableHead>CUI</TableHead>
-                    <TableHead>Telefon</TableHead>
-                    <TableHead>Produse Furnizate</TableHead>
+                    <TableHead>Nr. REG</TableHead>
                     <TableHead className="text-right">Acțiuni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginatedFurnizori.map(furnizor => <TableRow key={furnizor.id}>
-                      <TableCell className="font-medium">{furnizor.denumire}</TableCell>
+                      <TableCell className="font-medium">{furnizor.id}</TableCell>
+                      <TableCell>{furnizor.denumire}</TableCell>
+                      <TableCell>{furnizor.sediu}</TableCell>
                       <TableCell>{furnizor.cui}</TableCell>
-                      <TableCell>{furnizor.telefon}</TableCell>
-                      <TableCell>{furnizor.produse}</TableCell>
+                      <TableCell>{furnizor.nrReg}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Button variant="ghost" size="sm" className="gap-2">
