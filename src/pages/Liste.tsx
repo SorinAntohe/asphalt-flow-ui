@@ -2547,8 +2547,8 @@ const Liste = () => {
                             tabel: "lista_furnizori",
                             id: furnizoriDialog.data.id,
                             update: {
-                              denumire: furnizoriFormData.denumire,
-                              sediu: furnizoriFormData.sediu,
+                              nume: furnizoriFormData.denumire,
+                              adresa: furnizoriFormData.sediu,
                               cui: furnizoriFormData.cui,
                               nr_reg: furnizoriFormData.nrReg
                             }
@@ -2564,11 +2564,40 @@ const Liste = () => {
                           description: "Furnizorul a fost editat cu succes"
                         });
                       } else {
+                        const response = await fetch('http://192.168.1.22:8002/liste/adauga/furnizor', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            nume: furnizoriFormData.denumire,
+                            adresa: furnizoriFormData.sediu,
+                            cui: furnizoriFormData.cui,
+                            nr_reg: furnizoriFormData.nrReg
+                          })
+                        });
+
+                        if (!response.ok) {
+                          throw new Error('Eroare la adăugarea furnizorului');
+                        }
+
                         toast({
                           title: "Succes",
                           description: "Furnizorul a fost adăugat cu succes"
                         });
                       }
+
+                      // Refresh the list
+                      const refreshResponse = await fetch('http://192.168.1.22:8002/liste/returneaza/furnizori');
+                      const data = await refreshResponse.json();
+                      const mappedData = data.map((item: any) => ({
+                        id: item.id,
+                        denumire: item.nume,
+                        sediu: item.adresa,
+                        cui: item.cui,
+                        nrReg: item.nr_reg
+                      }));
+                      setFurnizori(mappedData);
                       setFurnizoriDialog({ ...furnizoriDialog, open: false });
                     } catch (error) {
                       toast({
@@ -2616,6 +2645,18 @@ const Liste = () => {
                         description: "Furnizorul a fost șters cu succes"
                       });
                       setFurnizoriDeleteDialog({ open: false });
+                      
+                      // Refresh the list
+                      const refreshResponse = await fetch('http://192.168.1.22:8002/liste/returneaza/furnizori');
+                      const data = await refreshResponse.json();
+                      const mappedData = data.map((item: any) => ({
+                        id: item.id,
+                        denumire: item.nume,
+                        sediu: item.adresa,
+                        cui: item.cui,
+                        nrReg: item.nr_reg
+                      }));
+                      setFurnizori(mappedData);
                     } catch (error) {
                       toast({
                         title: "Eroare",
