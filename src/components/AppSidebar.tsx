@@ -1,4 +1,4 @@
-import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package } from "lucide-react";
+import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -16,9 +16,12 @@ import {
   SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown } from "lucide-react";
 
-const menuItems = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+const dashboardItem = { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard };
+
+const gestiuneItems = [
   { title: "Liste", url: "/liste", icon: ListChecks },
   { title: "Comenzi", url: "/comenzi", icon: ClipboardList },
   { title: "Stocuri", url: "/stocuri", icon: Package },
@@ -50,6 +53,8 @@ export function AppSidebar() {
   }, []);
 
   const isActive = (path: string) => currentPath === path;
+  const isGestiuneActive = gestiuneItems.some((item) => isActive(item.url));
+  const [gestiuneOpen, setGestiuneOpen] = useState(isGestiuneActive);
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
@@ -83,20 +88,54 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                    <NavLink
-                      to={item.url}
-                      className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors hover:bg-sidebar-accent text-sidebar-foreground"
-                      activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                    >
-                      <item.icon className="w-5 h-5" />
-                      {isOpen && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
+              {/* Dashboard */}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={isActive(dashboardItem.url)}>
+                  <NavLink
+                    to={dashboardItem.url}
+                    className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors hover:bg-sidebar-accent text-sidebar-foreground"
+                    activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                  >
+                    <dashboardItem.icon className="w-5 h-5" />
+                    {isOpen && <span>{dashboardItem.title}</span>}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              {/* Gestiune Dropdown */}
+              <Collapsible open={gestiuneOpen} onOpenChange={setGestiuneOpen}>
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors hover:bg-sidebar-accent text-sidebar-foreground">
+                      <FolderCog className="w-5 h-5" />
+                      {isOpen && (
+                        <>
+                          <span className="flex-1">Gestiune</span>
+                          <ChevronDown className={`w-4 h-4 transition-transform ${gestiuneOpen ? 'rotate-180' : ''}`} />
+                        </>
+                      )}
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
                 </SidebarMenuItem>
-              ))}
+                <CollapsibleContent>
+                  <SidebarMenu className="ml-4">
+                    {gestiuneItems.map((item) => (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                          <NavLink
+                            to={item.url}
+                            className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors hover:bg-sidebar-accent text-sidebar-foreground"
+                            activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                          >
+                            <item.icon className="w-5 h-5" />
+                            {isOpen && <span>{item.title}</span>}
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </CollapsibleContent>
+              </Collapsible>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
