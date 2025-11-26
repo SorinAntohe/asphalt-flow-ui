@@ -80,7 +80,7 @@ const Liste = () => {
   ];
   const [autoturisme, setAutoturisme] = useState<any[]>([]);
   const [soferi, setSoferi] = useState<any[]>([]);
-  const materiiPrime: any[] = [];
+  const [materiiPrime, setMateriiPrime] = useState<any[]>([]);
   const produseFinite: any[] = [];
   const clienti: any[] = [];
   const furnizori: any[] = [];
@@ -132,6 +132,28 @@ const Liste = () => {
       }
     };
     fetchSoferi();
+  }, [toast]);
+
+  // Fetch materii prime from API
+  useEffect(() => {
+    const fetchMateriiPrime = async () => {
+      try {
+        const response = await fetch('http://192.168.1.22:8002/liste/returneaza/materiale');
+        const data = await response.json();
+        const mappedData = data.map((item: any) => ({
+          id: item.id,
+          denumire: item.materiale_prime
+        }));
+        setMateriiPrime(mappedData);
+      } catch (error) {
+        toast({
+          title: "Eroare",
+          description: "Nu s-au putut încărca datele despre materiile prime",
+          variant: "destructive"
+        });
+      }
+    };
+    fetchMateriiPrime();
   }, [toast]);
 
   // Pagination helpers
