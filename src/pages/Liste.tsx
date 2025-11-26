@@ -229,30 +229,39 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="h-8 text-xs">ID</TableHead>
-                    <TableHead className="h-8 text-xs">Tip Mașină</TableHead>
-                    <TableHead className="h-8 text-xs">Nr. Auto</TableHead>
-                    <TableHead className="h-8 text-xs">Sarcină Max</TableHead>
-                    <TableHead className="h-8 text-xs">Tip Transport</TableHead>
-                    <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
-                  </TableRow>
-                  <TableRow>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="ID" value={autoturismeFilters.id} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, id: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>ID</span>
+                        <Input placeholder="Caută..." value={autoturismeFilters.id} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, id: e.target.value}); setAutoturismePage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="Tip Mașină" value={autoturismeFilters.tipMasina} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, tipMasina: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>Tip Mașină</span>
+                        <Input placeholder="Caută..." value={autoturismeFilters.tipMasina} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, tipMasina: e.target.value}); setAutoturismePage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="Nr. Auto" value={autoturismeFilters.nrAuto} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, nrAuto: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>Nr. Auto</span>
+                        <Input placeholder="Caută..." value={autoturismeFilters.nrAuto} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, nrAuto: e.target.value}); setAutoturismePage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="Sarcină" value={autoturismeFilters.sarcinaMax} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, sarcinaMax: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>Sarcină Max</span>
+                        <Input placeholder="Caută..." value={autoturismeFilters.sarcinaMax} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, sarcinaMax: e.target.value}); setAutoturismePage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="Tip Transport" value={autoturismeFilters.tipTransport} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, tipTransport: e.target.value}); setAutoturismePage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>Tip Transport</span>
+                        <Input placeholder="Caută..." value={autoturismeFilters.tipTransport} onChange={(e) => { setAutoturismeFilters({...autoturismeFilters, tipTransport: e.target.value}); setAutoturismePage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1"></TableHead>
+                    <TableHead className="text-right h-14 text-xs">
+                      <span>Acțiuni</span>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -345,22 +354,27 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="h-8 text-xs">ID</TableHead>
-                    <TableHead className="h-8 text-xs">Nume Șofer</TableHead>
-                    <TableHead className="h-8 text-xs">C.I.</TableHead>
-                    <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
-                  </TableRow>
-                  <TableRow>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="ID" value={soferiFilters.id} onChange={(e) => { setSoferiFilters({...soferiFilters, id: e.target.value}); setSoferiPage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>ID</span>
+                        <Input placeholder="Caută..." value={soferiFilters.id} onChange={(e) => { setSoferiFilters({...soferiFilters, id: e.target.value}); setSoferiPage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="Nume" value={soferiFilters.nume} onChange={(e) => { setSoferiFilters({...soferiFilters, nume: e.target.value}); setSoferiPage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>Nume Șofer</span>
+                        <Input placeholder="Caută..." value={soferiFilters.nume} onChange={(e) => { setSoferiFilters({...soferiFilters, nume: e.target.value}); setSoferiPage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="C.I." value={soferiFilters.ci} onChange={(e) => { setSoferiFilters({...soferiFilters, ci: e.target.value}); setSoferiPage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>C.I.</span>
+                        <Input placeholder="Caută..." value={soferiFilters.ci} onChange={(e) => { setSoferiFilters({...soferiFilters, ci: e.target.value}); setSoferiPage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1"></TableHead>
+                    <TableHead className="text-right h-14 text-xs">
+                      <span>Acțiuni</span>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -451,18 +465,21 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="h-8 text-xs">ID</TableHead>
-                    <TableHead className="h-8 text-xs">Denumire</TableHead>
-                    <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
-                  </TableRow>
-                  <TableRow>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="ID" value={materiiPrimeFilters.id} onChange={(e) => { setMateriiPrimeFilters({...materiiPrimeFilters, id: e.target.value}); setMateriiPrimePage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>ID</span>
+                        <Input placeholder="Caută..." value={materiiPrimeFilters.id} onChange={(e) => { setMateriiPrimeFilters({...materiiPrimeFilters, id: e.target.value}); setMateriiPrimePage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="Denumire" value={materiiPrimeFilters.denumire} onChange={(e) => { setMateriiPrimeFilters({...materiiPrimeFilters, denumire: e.target.value}); setMateriiPrimePage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>Denumire</span>
+                        <Input placeholder="Caută..." value={materiiPrimeFilters.denumire} onChange={(e) => { setMateriiPrimeFilters({...materiiPrimeFilters, denumire: e.target.value}); setMateriiPrimePage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1"></TableHead>
+                    <TableHead className="text-right h-14 text-xs">
+                      <span>Acțiuni</span>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -552,18 +569,21 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="h-8 text-xs">ID</TableHead>
-                    <TableHead className="h-8 text-xs">Denumire</TableHead>
-                    <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
-                  </TableRow>
-                  <TableRow>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="ID" value={produseFiniteFilters.id} onChange={(e) => { setProduseFiniteFilters({...produseFiniteFilters, id: e.target.value}); setProduseFinitePage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>ID</span>
+                        <Input placeholder="Caută..." value={produseFiniteFilters.id} onChange={(e) => { setProduseFiniteFilters({...produseFiniteFilters, id: e.target.value}); setProduseFinitePage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="Denumire" value={produseFiniteFilters.denumire} onChange={(e) => { setProduseFiniteFilters({...produseFiniteFilters, denumire: e.target.value}); setProduseFinitePage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>Denumire</span>
+                        <Input placeholder="Caută..." value={produseFiniteFilters.denumire} onChange={(e) => { setProduseFiniteFilters({...produseFiniteFilters, denumire: e.target.value}); setProduseFinitePage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1"></TableHead>
+                    <TableHead className="text-right h-14 text-xs">
+                      <span>Acțiuni</span>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -653,30 +673,39 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="h-8 text-xs">ID</TableHead>
-                    <TableHead className="h-8 text-xs">Denumire</TableHead>
-                    <TableHead className="h-8 text-xs">Sediu</TableHead>
-                    <TableHead className="h-8 text-xs">CUI</TableHead>
-                    <TableHead className="h-8 text-xs">Nr. REG</TableHead>
-                    <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
-                  </TableRow>
-                  <TableRow>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="ID" value={clientiFilters.id} onChange={(e) => { setClientiFilters({...clientiFilters, id: e.target.value}); setClientiPage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>ID</span>
+                        <Input placeholder="Caută..." value={clientiFilters.id} onChange={(e) => { setClientiFilters({...clientiFilters, id: e.target.value}); setClientiPage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="Denumire" value={clientiFilters.denumire} onChange={(e) => { setClientiFilters({...clientiFilters, denumire: e.target.value}); setClientiPage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>Denumire</span>
+                        <Input placeholder="Caută..." value={clientiFilters.denumire} onChange={(e) => { setClientiFilters({...clientiFilters, denumire: e.target.value}); setClientiPage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="Sediu" value={clientiFilters.sediu} onChange={(e) => { setClientiFilters({...clientiFilters, sediu: e.target.value}); setClientiPage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>Sediu</span>
+                        <Input placeholder="Caută..." value={clientiFilters.sediu} onChange={(e) => { setClientiFilters({...clientiFilters, sediu: e.target.value}); setClientiPage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="CUI" value={clientiFilters.cui} onChange={(e) => { setClientiFilters({...clientiFilters, cui: e.target.value}); setClientiPage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>CUI</span>
+                        <Input placeholder="Caută..." value={clientiFilters.cui} onChange={(e) => { setClientiFilters({...clientiFilters, cui: e.target.value}); setClientiPage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="Nr. REG" value={clientiFilters.nrReg} onChange={(e) => { setClientiFilters({...clientiFilters, nrReg: e.target.value}); setClientiPage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>Nr. REG</span>
+                        <Input placeholder="Caută..." value={clientiFilters.nrReg} onChange={(e) => { setClientiFilters({...clientiFilters, nrReg: e.target.value}); setClientiPage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1"></TableHead>
+                    <TableHead className="text-right h-14 text-xs">
+                      <span>Acțiuni</span>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -769,30 +798,39 @@ const Liste = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="h-8 text-xs">ID</TableHead>
-                    <TableHead className="h-8 text-xs">Denumire</TableHead>
-                    <TableHead className="h-8 text-xs">Sediu</TableHead>
-                    <TableHead className="h-8 text-xs">CUI</TableHead>
-                    <TableHead className="h-8 text-xs">Nr. REG</TableHead>
-                    <TableHead className="text-right h-8 text-xs">Acțiuni</TableHead>
-                  </TableRow>
-                  <TableRow>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="ID" value={furnizoriFilters.id} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, id: e.target.value}); setFurnizoriPage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>ID</span>
+                        <Input placeholder="Caută..." value={furnizoriFilters.id} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, id: e.target.value}); setFurnizoriPage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="Denumire" value={furnizoriFilters.denumire} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, denumire: e.target.value}); setFurnizoriPage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>Denumire</span>
+                        <Input placeholder="Caută..." value={furnizoriFilters.denumire} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, denumire: e.target.value}); setFurnizoriPage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="Sediu" value={furnizoriFilters.sediu} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, sediu: e.target.value}); setFurnizoriPage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>Sediu</span>
+                        <Input placeholder="Caută..." value={furnizoriFilters.sediu} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, sediu: e.target.value}); setFurnizoriPage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="CUI" value={furnizoriFilters.cui} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, cui: e.target.value}); setFurnizoriPage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>CUI</span>
+                        <Input placeholder="Caută..." value={furnizoriFilters.cui} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, cui: e.target.value}); setFurnizoriPage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1">
-                      <Input placeholder="Nr. REG" value={furnizoriFilters.nrReg} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, nrReg: e.target.value}); setFurnizoriPage(1); }} className="h-7 text-xs" />
+                    <TableHead className="h-14 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span>Nr. REG</span>
+                        <Input placeholder="Caută..." value={furnizoriFilters.nrReg} onChange={(e) => { setFurnizoriFilters({...furnizoriFilters, nrReg: e.target.value}); setFurnizoriPage(1); }} className="h-6 text-xs" />
+                      </div>
                     </TableHead>
-                    <TableHead className="h-8 p-1"></TableHead>
+                    <TableHead className="text-right h-14 text-xs">
+                      <span>Acțiuni</span>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
