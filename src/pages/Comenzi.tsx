@@ -27,8 +27,8 @@ export default function Comenzi() {
 
       <Tabs defaultValue="materie-prima" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="materie-prima">Comenzi Materie Primă</TabsTrigger>
-          <TabsTrigger value="produse-finite">Comenzi Produse Finite</TabsTrigger>
+          <TabsTrigger value="materie-prima">Materie Prima</TabsTrigger>
+          <TabsTrigger value="produse-finite">Produs Finit</TabsTrigger>
         </TabsList>
 
         <TabsContent value="materie-prima">
