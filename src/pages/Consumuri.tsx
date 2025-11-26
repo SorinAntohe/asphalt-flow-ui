@@ -18,29 +18,7 @@ const Consumuri = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   
-  const consumuri = [
-    {
-      data: "20.11.2024",
-      produs: "Bitum rutier",
-      cantitate: "12t",
-      sectie: "Producție A",
-      operator: "Mihai Georgescu",
-    },
-    {
-      data: "20.11.2024",
-      produs: "Agregate minerale",
-      cantitate: "85t",
-      sectie: "Producție B",
-      operator: "Ana Popescu",
-    },
-    {
-      data: "19.11.2024",
-      produs: "Aditivi",
-      cantitate: "150kg",
-      sectie: "Producție A",
-      operator: "Ion Marinescu",
-    },
-  ];
+  const consumuri: any[] = [];
 
   // Pagination logic
   const totalPages = Math.ceil(consumuri.length / itemsPerPage);
@@ -153,10 +131,35 @@ const Consumuri = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Istoric Consumuri</CardTitle>
-          <CardDescription>
-            Înregistrări recente de consum
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Istoric Consumuri</CardTitle>
+              <CardDescription>
+                Înregistrări recente de consum
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <Label className="text-sm">Înregistrări per pagină:</Label>
+              <Select
+                value={itemsPerPage.toString()}
+                onValueChange={(value) => {
+                  setItemsPerPage(Number(value));
+                  setCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="w-[70px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <Table>
@@ -191,25 +194,6 @@ const Consumuri = () => {
           {/* Pagination Controls */}
           <div className="flex items-center justify-between px-2 py-4">
             <div className="flex items-center gap-2">
-              <Label className="text-sm">Înregistrări per pagină:</Label>
-              <Select
-                value={itemsPerPage.toString()}
-                onValueChange={(value) => {
-                  setItemsPerPage(Number(value));
-                  setCurrentPage(1);
-                }}
-              >
-                <SelectTrigger className="w-[70px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="5">5</SelectItem>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                </SelectContent>
-              </Select>
               <span className="text-sm text-muted-foreground">
                 Afișare {startIndex + 1}-{Math.min(endIndex, consumuri.length)} din {consumuri.length}
               </span>

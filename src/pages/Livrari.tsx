@@ -19,35 +19,7 @@ const Livrari = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   
-  const livrari = [
-    {
-      id: "LVR-1234",
-      data: "20.11.2024",
-      client: "Construct Pro SRL",
-      produs: "Asfalt tip A",
-      cantitate: "45t",
-      status: "livrat",
-      sofer: "Ion Popescu",
-    },
-    {
-      id: "LVR-1235",
-      data: "20.11.2024",
-      client: "Drumuri Moderne",
-      produs: "Asfalt tip B",
-      cantitate: "38t",
-      status: "in_tranzit",
-      sofer: "Gheorghe Ionescu",
-    },
-    {
-      id: "LVR-1236",
-      data: "21.11.2024",
-      client: "Asfaltari Express",
-      produs: "Asfalt tip C",
-      cantitate: "52t",
-      status: "planificat",
-      sofer: "Vasile Dumitrescu",
-    },
-  ];
+  const livrari: any[] = [];
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { variant: "default" | "secondary" | "destructive" | "outline", label: string }> = {
@@ -121,10 +93,35 @@ const Livrari = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Istoric Livrări</CardTitle>
-          <CardDescription>
-            Toate livrările către clienți
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Istoric Livrări</CardTitle>
+              <CardDescription>
+                Toate livrările către clienți
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <Label className="text-sm">Înregistrări per pagină:</Label>
+              <Select
+                value={itemsPerPage.toString()}
+                onValueChange={(value) => {
+                  setItemsPerPage(Number(value));
+                  setCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="w-[70px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <Table>
@@ -163,25 +160,6 @@ const Livrari = () => {
           {/* Pagination Controls */}
           <div className="flex items-center justify-between px-2 py-4">
             <div className="flex items-center gap-2">
-              <Label className="text-sm">Înregistrări per pagină:</Label>
-              <Select
-                value={itemsPerPage.toString()}
-                onValueChange={(value) => {
-                  setItemsPerPage(Number(value));
-                  setCurrentPage(1);
-                }}
-              >
-                <SelectTrigger className="w-[70px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="5">5</SelectItem>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                </SelectContent>
-              </Select>
               <span className="text-sm text-muted-foreground">
                 Afișare {startIndex + 1}-{Math.min(endIndex, livrari.length)} din {livrari.length}
               </span>

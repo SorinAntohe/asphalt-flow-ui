@@ -708,10 +708,33 @@ export default function Comenzi() {
           <Card>
             <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
               <CardTitle className="text-lg sm:text-xl">Comenzi Materie Primă</CardTitle>
-              <Button size="sm" className="w-full sm:w-auto" onClick={handleOpenAddMP}>
-                <Plus className="mr-2 h-4 w-4" />
-                Adaugă Comandă
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Select
+                    value={itemsPerPageMP.toString()}
+                    onValueChange={(value) => {
+                      setItemsPerPageMP(Number(value));
+                      setCurrentPageMP(1);
+                    }}
+                  >
+                    <SelectTrigger className="w-[70px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button size="sm" className="w-full sm:w-auto" onClick={handleOpenAddMP}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Adaugă Comandă
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="overflow-x-auto">
               <Table className="min-w-[1200px]">
@@ -933,25 +956,6 @@ export default function Comenzi() {
             {/* Pagination Controls MP */}
             <div className="flex items-center justify-between px-6 py-4">
               <div className="flex items-center gap-2">
-                <Label className="text-sm">Înregistrări per pagină:</Label>
-                <Select
-                  value={itemsPerPageMP.toString()}
-                  onValueChange={(value) => {
-                    setItemsPerPageMP(Number(value));
-                    setCurrentPageMP(1);
-                  }}
-                >
-                  <SelectTrigger className="w-[70px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                    <SelectItem value="100">100</SelectItem>
-                  </SelectContent>
-                </Select>
                 <span className="text-sm text-muted-foreground">
                   Afișare {startIndexMP + 1}-{Math.min(endIndexMP, filteredAndSortedMP.length)} din {filteredAndSortedMP.length}
                 </span>
@@ -992,10 +996,33 @@ export default function Comenzi() {
           <Card>
             <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
               <CardTitle className="text-lg sm:text-xl">Comenzi Produse Finite</CardTitle>
-              <Button size="sm" className="w-full sm:w-auto" onClick={handleOpenAddPF}>
-                <Plus className="mr-2 h-4 w-4" />
-                Adaugă Comandă
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Select
+                    value={itemsPerPagePF.toString()}
+                    onValueChange={(value) => {
+                      setItemsPerPagePF(Number(value));
+                      setCurrentPagePF(1);
+                    }}
+                  >
+                    <SelectTrigger className="w-[70px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button size="sm" className="w-full sm:w-auto" onClick={handleOpenAddPF}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Adaugă Comandă
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="overflow-x-auto">
               <Table className="min-w-[1200px]">
@@ -1243,25 +1270,6 @@ export default function Comenzi() {
             {/* Pagination Controls PF */}
             <div className="flex items-center justify-between px-6 py-4">
               <div className="flex items-center gap-2">
-                <Label className="text-sm">Înregistrări per pagină:</Label>
-                <Select
-                  value={itemsPerPagePF.toString()}
-                  onValueChange={(value) => {
-                    setItemsPerPagePF(Number(value));
-                    setCurrentPagePF(1);
-                  }}
-                >
-                  <SelectTrigger className="w-[70px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                    <SelectItem value="100">100</SelectItem>
-                  </SelectContent>
-                </Select>
                 <span className="text-sm text-muted-foreground">
                   Afișare {startIndexPF + 1}-{Math.min(endIndexPF, filteredAndSortedPF.length)} din {filteredAndSortedPF.length}
                 </span>

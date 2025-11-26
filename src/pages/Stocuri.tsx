@@ -118,7 +118,30 @@ export default function Stocuri() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg sm:text-xl">Stocuri Materiale</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg sm:text-xl">Stocuri Materiale</CardTitle>
+            <div className="flex items-center gap-2">
+              <Label className="text-sm">Înregistrări per pagină:</Label>
+              <Select
+                value={itemsPerPage.toString()}
+                onValueChange={(value) => {
+                  setItemsPerPage(Number(value));
+                  setCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="w-[70px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="overflow-x-auto">
           <Table>
@@ -246,25 +269,6 @@ export default function Stocuri() {
           {/* Pagination Controls */}
           <div className="flex items-center justify-between px-2 py-4">
             <div className="flex items-center gap-2">
-              <Label className="text-sm">Înregistrări per pagină:</Label>
-              <Select
-                value={itemsPerPage.toString()}
-                onValueChange={(value) => {
-                  setItemsPerPage(Number(value));
-                  setCurrentPage(1);
-                }}
-              >
-                <SelectTrigger className="w-[70px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="5">5</SelectItem>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                </SelectContent>
-              </Select>
               <span className="text-sm text-muted-foreground">
                 Afișare {startIndex + 1}-{Math.min(endIndex, filteredAndSortedStocuri.length)} din {filteredAndSortedStocuri.length}
               </span>
