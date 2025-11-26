@@ -107,11 +107,13 @@ export default function Comenzi() {
   const [openAddEditMP, setOpenAddEditMP] = useState(false);
   const [editingMP, setEditingMP] = useState<ComandaMateriePrima | null>(null);
   const [deletingMP, setDeletingMP] = useState<ComandaMateriePrima | null>(null);
+  const [viewingDetailsMP, setViewingDetailsMP] = useState<ComandaMateriePrima | null>(null);
   
   // Dialog states for PF
   const [openAddEditPF, setOpenAddEditPF] = useState(false);
   const [editingPF, setEditingPF] = useState<ComandaProdusFinal | null>(null);
   const [deletingPF, setDeletingPF] = useState<ComandaProdusFinal | null>(null);
+  const [viewingDetailsPF, setViewingDetailsPF] = useState<ComandaProdusFinal | null>(null);
   
   // Form states for MP
   const [formMP, setFormMP] = useState({
@@ -828,15 +830,12 @@ export default function Comenzi() {
                         </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="text-right h-10 text-xs">
-                      <span>Acțiuni</span>
-                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {loadingMP ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="h-24 text-center">
+                      <TableCell colSpan={7} className="h-24 text-center">
                         <div className="flex items-center justify-center">
                           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                         </div>
@@ -844,13 +843,17 @@ export default function Comenzi() {
                     </TableRow>
                   ) : filteredAndSortedMP.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
+                      <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                         Nu există comenzi disponibile
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredAndSortedMP.map((comanda) => (
-                      <TableRow key={comanda.id} className="h-10">
+                      <TableRow 
+                        key={comanda.id} 
+                        className="h-10 cursor-pointer hover:bg-muted/50"
+                        onClick={() => setViewingDetailsMP(comanda)}
+                      >
                         <TableCell className="py-1 text-xs">{comanda.id}</TableCell>
                         <TableCell className="font-medium py-1 text-xs">{comanda.cod}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.data}</TableCell>
@@ -858,18 +861,6 @@ export default function Comenzi() {
                         <TableCell className="py-1 text-xs">{comanda.material}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.cantitate}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.pret_fara_tva}</TableCell>
-                        <TableCell className="text-right py-1">
-                          <div className="flex items-center justify-end gap-1">
-                            <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => handleOpenEditMP(comanda)}>
-                              <Pencil className="w-3 h-3" />
-                              Editează
-                            </Button>
-                            <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs" onClick={() => setDeletingMP(comanda)}>
-                              <Trash2 className="w-3 h-3" />
-                              Șterge
-                            </Button>
-                          </div>
-                        </TableCell>
                       </TableRow>
                     ))
                   )}
@@ -1092,15 +1083,12 @@ export default function Comenzi() {
                         </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="text-right h-10 text-xs">
-                      <span>Acțiuni</span>
-                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {loadingPF ? (
                     <TableRow>
-                      <TableCell colSpan={9} className="h-24 text-center">
+                      <TableCell colSpan={8} className="h-24 text-center">
                         <div className="flex items-center justify-center">
                           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                         </div>
@@ -1108,33 +1096,25 @@ export default function Comenzi() {
                     </TableRow>
                   ) : filteredAndSortedPF.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={9} className="h-24 text-center text-muted-foreground">
+                      <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
                         Nu există comenzi disponibile
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredAndSortedPF.map((comanda) => (
-                      <TableRow key={comanda.id} className="h-10">
+                      <TableRow 
+                        key={comanda.id} 
+                        className="h-10 cursor-pointer hover:bg-muted/50"
+                        onClick={() => setViewingDetailsPF(comanda)}
+                      >
                         <TableCell className="py-1 text-xs">{comanda.id}</TableCell>
                         <TableCell className="font-medium py-1 text-xs">{comanda.cod}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.data}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.client}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.produs}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.cantitate}</TableCell>
-                        <TableCell className="py-1 text-xs">{comanda.punct_descarcare || '-'}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.punct_descarcare || "-"}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.pret_fara_tva}</TableCell>
-                        <TableCell className="text-right py-1">
-                          <div className="flex items-center justify-end gap-1">
-                            <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => handleOpenEditPF(comanda)}>
-                              <Pencil className="w-3 h-3" />
-                              Editează
-                            </Button>
-                            <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs" onClick={() => setDeletingPF(comanda)}>
-                              <Trash2 className="w-3 h-3" />
-                              Șterge
-                            </Button>
-                          </div>
-                        </TableCell>
                       </TableRow>
                     ))
                   )}
@@ -1277,6 +1257,106 @@ export default function Comenzi() {
             </Button>
             <Button onClick={handleSaveMP}>
               {editingMP ? "Salvează Modificările" : "Adaugă Comanda"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Details Dialog for Materie Prima */}
+      <Dialog open={!!viewingDetailsMP} onOpenChange={() => setViewingDetailsMP(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Detalii Comandă Materie Primă</DialogTitle>
+            <DialogDescription>
+              Informații complete despre comanda {viewingDetailsMP?.cod}
+            </DialogDescription>
+          </DialogHeader>
+          {viewingDetailsMP && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">ID</Label>
+                  <p className="font-medium">{viewingDetailsMP.id}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Cod</Label>
+                  <p className="font-medium">{viewingDetailsMP.cod}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Data</Label>
+                  <p className="font-medium">{viewingDetailsMP.data}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Furnizor</Label>
+                  <p className="font-medium">{viewingDetailsMP.furnizor}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Material</Label>
+                  <p className="font-medium">{viewingDetailsMP.material}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Unitate Măsură</Label>
+                  <p className="font-medium">{viewingDetailsMP.unitate_masura}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Cantitate</Label>
+                  <p className="font-medium">{viewingDetailsMP.cantitate}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Punct Descărcare</Label>
+                  <p className="font-medium">{viewingDetailsMP.punct_descarcare || "-"}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Preț fără TVA</Label>
+                  <p className="font-medium">{viewingDetailsMP.pret_fara_tva}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Preț Transport</Label>
+                  <p className="font-medium">{viewingDetailsMP.pret_transport || "-"}</p>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-muted-foreground">Observații</Label>
+                <p className="font-medium">{viewingDetailsMP.observatii || "-"}</p>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="flex gap-2">
+            <Button variant="outline" onClick={() => setViewingDetailsMP(null)}>
+              Închide
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => {
+                if (viewingDetailsMP) {
+                  handleOpenEditMP(viewingDetailsMP);
+                  setViewingDetailsMP(null);
+                }
+              }}
+            >
+              <Pencil className="w-4 h-4 mr-2" />
+              Editează
+            </Button>
+            <Button 
+              variant="destructive"
+              className="bg-red-700 hover:bg-red-600"
+              onClick={() => {
+                if (viewingDetailsMP) {
+                  setDeletingMP(viewingDetailsMP);
+                  setViewingDetailsMP(null);
+                }
+              }}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Șterge
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1432,6 +1512,106 @@ export default function Comenzi() {
             </Button>
             <Button onClick={handleSavePF}>
               {editingPF ? "Salvează Modificările" : "Adaugă Comanda"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Details Dialog for Produs Finit */}
+      <Dialog open={!!viewingDetailsPF} onOpenChange={() => setViewingDetailsPF(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Detalii Comandă Produs Finit</DialogTitle>
+            <DialogDescription>
+              Informații complete despre comanda {viewingDetailsPF?.cod}
+            </DialogDescription>
+          </DialogHeader>
+          {viewingDetailsPF && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">ID</Label>
+                  <p className="font-medium">{viewingDetailsPF.id}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Cod</Label>
+                  <p className="font-medium">{viewingDetailsPF.cod}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Data</Label>
+                  <p className="font-medium">{viewingDetailsPF.data}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Client</Label>
+                  <p className="font-medium">{viewingDetailsPF.client}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Produs</Label>
+                  <p className="font-medium">{viewingDetailsPF.produs}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Unitate Măsură</Label>
+                  <p className="font-medium">{viewingDetailsPF.unitate_masura}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Cantitate</Label>
+                  <p className="font-medium">{viewingDetailsPF.cantitate}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Punct Descărcare</Label>
+                  <p className="font-medium">{viewingDetailsPF.punct_descarcare || "-"}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Preț fără TVA</Label>
+                  <p className="font-medium">{viewingDetailsPF.pret_fara_tva}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Preț Transport</Label>
+                  <p className="font-medium">{viewingDetailsPF.pret_transport || "-"}</p>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-muted-foreground">Observații</Label>
+                <p className="font-medium">{viewingDetailsPF.observatii || "-"}</p>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="flex gap-2">
+            <Button variant="outline" onClick={() => setViewingDetailsPF(null)}>
+              Închide
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => {
+                if (viewingDetailsPF) {
+                  handleOpenEditPF(viewingDetailsPF);
+                  setViewingDetailsPF(null);
+                }
+              }}
+            >
+              <Pencil className="w-4 h-4 mr-2" />
+              Editează
+            </Button>
+            <Button 
+              variant="destructive"
+              className="bg-red-700 hover:bg-red-600"
+              onClick={() => {
+                if (viewingDetailsPF) {
+                  setDeletingPF(viewingDetailsPF);
+                  setViewingDetailsPF(null);
+                }
+              }}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Șterge
             </Button>
           </DialogFooter>
         </DialogContent>
