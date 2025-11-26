@@ -970,45 +970,41 @@ const Liste = () => {
              </CardContent>
            </Card>
 
-           <Dialog open={materiiPrimeDialog.open} onOpenChange={(open) => setMateriiPrimeDialog({ ...materiiPrimeDialog, open })}>
-             <DialogContent className="sm:max-w-[500px]">
-               <DialogHeader>
-                 <DialogTitle>{materiiPrimeDialog.mode === 'add' ? 'Adaugă Materie Primă' : 'Editează Materie Primă'}</DialogTitle>
-                 <DialogDescription>
-                   {materiiPrimeDialog.mode === 'add' ? 'Selectați materia primă din lista disponibilă.' : 'Modificați materia primă selectată.'}
-                 </DialogDescription>
-               </DialogHeader>
-               <div className="grid gap-4 py-4">
-                 <div className="grid gap-2">
-                   <Label htmlFor="denumire">Denumire *</Label>
-                   <Select value={materiiPrimeFormData.denumire} onValueChange={(value) => setMateriiPrimeFormData({ denumire: value })}>
-                     <SelectTrigger id="denumire">
-                       <SelectValue placeholder="Selectează materie primă" />
-                     </SelectTrigger>
-                     <SelectContent>
-                       {materiiPrimeList.map(mp => (
-                         <SelectItem key={mp} value={mp}>{mp}</SelectItem>
-                       ))}
-                     </SelectContent>
-                   </Select>
-                 </div>
-               </div>
-               <DialogFooter>
-                 <Button variant="outline" onClick={() => setMateriiPrimeDialog({ ...materiiPrimeDialog, open: false })}>
-                   Anulează
-                 </Button>
-                 <Button onClick={() => {
-                   toast({
-                     title: "Succes",
-                     description: `Materia primă a fost ${materiiPrimeDialog.mode === 'add' ? 'adăugată' : 'actualizată'} cu succes`
-                   });
-                   setMateriiPrimeDialog({ ...materiiPrimeDialog, open: false });
-                 }}>
-                   {materiiPrimeDialog.mode === 'add' ? 'Adaugă' : 'Salvează'}
-                 </Button>
-               </DialogFooter>
-             </DialogContent>
-           </Dialog>
+            <Dialog open={materiiPrimeDialog.open} onOpenChange={(open) => setMateriiPrimeDialog({ ...materiiPrimeDialog, open })}>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle>{materiiPrimeDialog.mode === 'add' ? 'Adaugă Materie Primă' : 'Editează Materie Primă'}</DialogTitle>
+                  <DialogDescription>
+                    {materiiPrimeDialog.mode === 'add' ? 'Completați formularul pentru a adăuga o materie primă nouă.' : 'Modificați denumirea materiei prime.'}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="denumire">Denumire *</Label>
+                    <Input
+                      id="denumire"
+                      placeholder="Ex: 0/4 NAT, BITUM 50/70, CTL"
+                      value={materiiPrimeFormData.denumire}
+                      onChange={(e) => setMateriiPrimeFormData({ denumire: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setMateriiPrimeDialog({ ...materiiPrimeDialog, open: false })}>
+                    Anulează
+                  </Button>
+                  <Button onClick={() => {
+                    toast({
+                      title: "Succes",
+                      description: `Materia primă a fost ${materiiPrimeDialog.mode === 'add' ? 'adăugată' : 'actualizată'} cu succes`
+                    });
+                    setMateriiPrimeDialog({ ...materiiPrimeDialog, open: false });
+                  }}>
+                    {materiiPrimeDialog.mode === 'add' ? 'Adaugă' : 'Salvează'}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
 
            <AlertDialog open={materiiPrimeDeleteDialog.open} onOpenChange={(open) => setMateriiPrimeDeleteDialog({ ...materiiPrimeDeleteDialog, open })}>
              <AlertDialogContent>
