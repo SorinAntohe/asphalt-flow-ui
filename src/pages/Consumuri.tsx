@@ -2047,11 +2047,11 @@ const Consumuri = () => {
 
       {/* Consum Form Dialog */}
       <Dialog open={isConsumFormOpen} onOpenChange={setIsConsumFormOpen}>
-        <DialogContent className="max-w-5xl">
+        <DialogContent className="w-[95vw] max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader className="pb-2">
             <DialogTitle className="text-base">{isEditingConsum ? 'Editează Consum' : 'Adaugă Consum'}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
             <div className="space-y-1">
               <Label className="text-xs">Produs</Label>
               <Input
