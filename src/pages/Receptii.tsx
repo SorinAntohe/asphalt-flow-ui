@@ -14,6 +14,7 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FilterableSelect } from "@/components/ui/filterable-select";
 import { z } from "zod";
+import { API_BASE_URL } from "@/lib/api";
 
 interface ReceptieMaterial {
   id: number;
@@ -125,7 +126,7 @@ export default function Receptii() {
 
   const fetchReceptii = async () => {
     try {
-      const response = await fetch('http://192.168.15.4:8002/receptii/returneaza/materiale');
+      const response = await fetch(`${API_BASE_URL}/receptii/returneaza/materiale`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -143,7 +144,7 @@ export default function Receptii() {
     
     const fetchCodes = async () => {
       try {
-        const response = await fetch('http://192.168.15.4:8002/receptii/materiale/returneaza_coduri');
+        const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_coduri`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setAvailableCodes(Array.isArray(data) ? data : []);
@@ -155,7 +156,7 @@ export default function Receptii() {
     
     const fetchDrivers = async () => {
       try {
-        const response = await fetch('http://192.168.15.4:8002/receptii/materiale/returneaza_nume_soferi');
+        const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_nume_soferi`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setAvailableDrivers(Array.isArray(data) ? data : []);
@@ -167,7 +168,7 @@ export default function Receptii() {
     
     const fetchRegistrationNumbers = async () => {
       try {
-        const response = await fetch('http://192.168.15.4:8002/receptii/materiale/returneaza_nr_inmatriculare');
+        const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_nr_inmatriculare`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setAvailableRegistrationNumbers(Array.isArray(data) ? data : []);
@@ -194,7 +195,7 @@ export default function Receptii() {
       if (!form.nr_inmatriculare) return;
       
       try {
-        const response = await fetch(`http://192.168.15.4:8002/receptii/materiale/returneaza_tip_masina_dupa_nr/${form.nr_inmatriculare}`);
+        const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_tip_masina_dupa_nr/${form.nr_inmatriculare}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setForm(prev => ({ ...prev, tip_masina: data }));
@@ -212,7 +213,7 @@ export default function Receptii() {
       if (!form.cod) return;
       
       try {
-        const response = await fetch(`http://192.168.15.4:8002/receptii/materiale/returneaza_cantitate_dupa_cod/${form.cod}`);
+        const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_cantitate_dupa_cod/${form.cod}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setForm(prev => ({ ...prev, cantitate_livrata: data }));
@@ -230,7 +231,7 @@ export default function Receptii() {
       if (!form.cod) return;
       
       try {
-        const response = await fetch(`http://192.168.15.4:8002/receptii/materiale/returneaza_furnizor_dupa_cod/${form.cod}`);
+        const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_furnizor_dupa_cod/${form.cod}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setForm(prev => ({ ...prev, furnizor: data }));
@@ -248,7 +249,7 @@ export default function Receptii() {
       if (!form.cod) return;
       
       try {
-        const response = await fetch(`http://192.168.15.4:8002/receptii/materiale/returneaza_material_dupa_cod/${form.cod}`);
+        const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_material_dupa_cod/${form.cod}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setForm(prev => ({ ...prev, material: data }));
@@ -266,7 +267,7 @@ export default function Receptii() {
       if (!form.cod || !form.cantitate_receptionata) return;
       
       try {
-        const response = await fetch(`http://192.168.15.4:8002/receptii/materiale/returneaza_preturi_dupa_cod/${form.cod}/${form.cantitate_receptionata}`);
+        const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_preturi_dupa_cod/${form.cod}/${form.cantitate_receptionata}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setForm(prev => ({ 
@@ -348,7 +349,7 @@ export default function Receptii() {
       
       if (editing) {
         // Edit
-        const response = await fetch('http://192.168.15.4:8002/editeaza', {
+        const response = await fetch(`${API_BASE_URL}/editeaza`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -390,7 +391,7 @@ export default function Receptii() {
           cantitate_receptionata: form.cantitate_receptionata
         };
         
-        const response = await fetch('http://192.168.15.4:8002/receptii/materiale/adauga', {
+        const response = await fetch(`${API_BASE_URL}/receptii/materiale/adauga`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ receptie, tostoc })
@@ -429,7 +430,7 @@ export default function Receptii() {
     if (!deleting) return;
     
     try {
-      const response = await fetch(`http://192.168.15.4:8002/sterge_fifo_stoc_dupa_cod/${deleting.cod}`, {
+      const response = await fetch(`${API_BASE_URL}/sterge_fifo_stoc_dupa_cod/${deleting.cod}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -9,6 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/api";
 
 interface StocItem {
   id: number;
@@ -39,7 +40,7 @@ export default function Stocuri() {
   useEffect(() => {
     const fetchStocuri = async () => {
       try {
-        const response = await fetch('http://192.168.15.4:8002/liste/returneaza/stocuri');
+        const response = await fetch(`${API_BASE_URL}/liste/returneaza/stocuri`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setStocuri(Array.isArray(data) ? data : []);

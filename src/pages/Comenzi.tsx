@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FilterableSelect } from "@/components/ui/filterable-select";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { z } from "zod";
+import { API_BASE_URL } from "@/lib/api";
 
 interface Furnizor {
   id: number;
@@ -151,7 +152,7 @@ export default function Comenzi() {
 
   const fetchFurnizori = async () => {
     try {
-      const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza_furnizori/material');
+      const response = await fetch(`${API_BASE_URL}/comenzi/returneaza_furnizori/material`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setFurnizori(Array.isArray(data) ? data : []);
@@ -164,7 +165,7 @@ export default function Comenzi() {
 
   const fetchClienti = async () => {
     try {
-      const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza_clienti/produs');
+      const response = await fetch(`${API_BASE_URL}/comenzi/returneaza_clienti/produs`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setClienti(Array.isArray(data) ? data : []);
@@ -177,7 +178,7 @@ export default function Comenzi() {
 
   const fetchMateriale = async () => {
     try {
-      const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza_materiale/material');
+      const response = await fetch(`${API_BASE_URL}/comenzi/returneaza_materiale/material`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setMateriale(Array.isArray(data) ? data : []);
@@ -190,7 +191,7 @@ export default function Comenzi() {
 
   const fetchProduse = async () => {
     try {
-      const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza_produse/produs');
+      const response = await fetch(`${API_BASE_URL}/comenzi/returneaza_produse/produs`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setProduse(Array.isArray(data) ? data : []);
@@ -203,7 +204,7 @@ export default function Comenzi() {
 
   const fetchComenziMP = async () => {
     try {
-      const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza/material');
+      const response = await fetch(`${API_BASE_URL}/comenzi/returneaza/material`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setComenziMateriePrima(Array.isArray(data) ? data : []);
@@ -216,7 +217,7 @@ export default function Comenzi() {
 
   const fetchComenziPF = async () => {
     try {
-      const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza/produs');
+      const response = await fetch(`${API_BASE_URL}/comenzi/returneaza/produs`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setComenziProduseFinite(Array.isArray(data) ? data : []);
@@ -283,7 +284,7 @@ export default function Comenzi() {
       
       if (editingMP) {
         // Edit
-        const response = await fetch('http://192.168.15.4:8002/editeaza', {
+        const response = await fetch(`${API_BASE_URL}/editeaza`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -312,7 +313,7 @@ export default function Comenzi() {
           observatii: validatedData.observatii || ""
         };
         
-        const response = await fetch('http://192.168.15.4:8002/comenzi/adauga/material', {
+        const response = await fetch(`${API_BASE_URL}/comenzi/adauga/material`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(comandaPayload)
@@ -351,7 +352,7 @@ export default function Comenzi() {
     if (!deletingMP) return;
     
     try {
-      const response = await fetch('http://192.168.15.4:8002/sterge', {
+      const response = await fetch(`${API_BASE_URL}/sterge`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -425,7 +426,7 @@ export default function Comenzi() {
       
       if (editingPF) {
         // Edit
-        const response = await fetch('http://192.168.15.4:8002/editeaza', {
+        const response = await fetch(`${API_BASE_URL}/editeaza`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -454,7 +455,7 @@ export default function Comenzi() {
           observatii: validatedData.observatii || ""
         };
         
-        const response = await fetch('http://192.168.15.4:8002/comenzi/adauga/produs', {
+        const response = await fetch(`${API_BASE_URL}/comenzi/adauga/produs`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(comandaPayload)
@@ -493,7 +494,7 @@ export default function Comenzi() {
     if (!deletingPF) return;
     
     try {
-      const response = await fetch('http://192.168.15.4:8002/sterge', {
+      const response = await fetch(`${API_BASE_URL}/sterge`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
