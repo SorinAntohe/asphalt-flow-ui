@@ -1222,6 +1222,7 @@ const Consumuri = () => {
               <Label>Index Vechi</Label>
               <Input
                 type="number"
+                step="0.01"
                 value={contorCurentFormData.index_vechi || ''}
                 disabled
                 className="bg-muted"
