@@ -400,7 +400,7 @@ const Livrari = () => {
               </span>
             </div>
             
-            {totalPages > 0 && (
+            {totalPages > 1 && (
               <Pagination>
                 <PaginationContent>
                   <PaginationItem>
