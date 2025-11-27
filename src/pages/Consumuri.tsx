@@ -1188,7 +1188,7 @@ const Consumuri = () => {
                 onChange={(e) => {
                   const indexNou = Number(e.target.value);
                   const indexVechi = contorCurentFormData.index_vechi || 0;
-                  const consum = indexNou - indexVechi;
+                  const consum = (indexNou - indexVechi) * 200;
                   const pret = contorCurentFormData.pret || 0;
                   setContorCurentFormData({ 
                     ...contorCurentFormData, 
