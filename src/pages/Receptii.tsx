@@ -237,6 +237,24 @@ export default function Receptii() {
     fetchFurnizor();
   }, [form.cod]);
 
+  // Fetch material based on selected cod
+  useEffect(() => {
+    const fetchMaterial = async () => {
+      if (!form.cod) return;
+      
+      try {
+        const response = await fetch(`http://192.168.15.4:8002/receptii/materiale/returneaza_material_dupa_cod/${form.cod}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        setForm(prev => ({ ...prev, material: data }));
+      } catch (error) {
+        console.error('Error fetching material:', error);
+      }
+    };
+    
+    fetchMaterial();
+  }, [form.cod]);
+
   // Add/Edit handlers
   const handleOpenAdd = () => {
     setEditing(null);
@@ -693,8 +711,8 @@ export default function Receptii() {
                 <Input
                   id="material"
                   value={form.material}
-                  onChange={(e) => setForm({ ...form, material: e.target.value })}
-                  className={formErrors.material ? "border-destructive" : ""}
+                  disabled
+                  className="bg-muted"
                 />
                 {formErrors.material && <p className="text-sm text-destructive">{formErrors.material}</p>}
               </div>
