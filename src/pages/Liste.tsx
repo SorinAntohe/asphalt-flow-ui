@@ -762,7 +762,7 @@ const Liste = () => {
                   <AlertDialogCancel>Anulează</AlertDialogCancel>
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
-                      const response = await fetch('http://192.168.15.4:8002/sterge', {
+                      const response = await fetch('http://192.168.15.4:8002/stergere', {
                         method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
@@ -1116,7 +1116,7 @@ const Liste = () => {
                   <AlertDialogCancel>Anulează</AlertDialogCancel>
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
-                      const response = await fetch('http://192.168.15.4:8002/sterge', {
+                      const response = await fetch('http://192.168.15.4:8002/stergere', {
                         method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
@@ -1429,7 +1429,7 @@ const Liste = () => {
                   <AlertDialogCancel>Anulează</AlertDialogCancel>
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
-                      const response = await fetch('http://192.168.15.4:8002/sterge', {
+                      const response = await fetch('http://192.168.15.4:8002/stergere', {
                         method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
@@ -1741,7 +1741,7 @@ const Liste = () => {
                   <AlertDialogCancel>Anulează</AlertDialogCancel>
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
-                      const response = await fetch('http://192.168.15.4:8002/sterge', {
+                      const response = await fetch('http://192.168.15.4:8002/stergere', {
                         method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
@@ -2167,7 +2167,7 @@ const Liste = () => {
                   <AlertDialogCancel>Anulează</AlertDialogCancel>
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
-                      const response = await fetch('http://192.168.15.4:8002/sterge', {
+                      const response = await fetch('http://192.168.15.4:8002/stergere', {
                         method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
@@ -2596,7 +2596,7 @@ const Liste = () => {
                   <AlertDialogCancel>Anulează</AlertDialogCancel>
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
-                      const response = await fetch('http://192.168.15.4:8002/sterge', {
+                      const response = await fetch('http://192.168.15.4:8002/stergere', {
                         method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
