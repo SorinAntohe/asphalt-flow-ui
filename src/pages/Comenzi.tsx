@@ -94,9 +94,37 @@ const comandaPFSchema = z.object({
 
 export default function Comenzi() {
   const { toast } = useToast();
-  const [comenziMateriePrima, setComenziMateriePrima] = useState<ComandaMateriePrima[]>([]);
+  const [comenziMateriePrima, setComenziMateriePrima] = useState<ComandaMateriePrima[]>([
+    {
+      id: 1,
+      cod: "CMP-001",
+      data: "27/11/2024",
+      furnizor: "Cariera Berceni SRL",
+      material: "0/4 NAT",
+      unitate_masura: "tone",
+      cantitate: 100,
+      punct_descarcare: "Stația Asfalt",
+      pret_fara_tva: 4500,
+      pret_transport: 350,
+      observatii: "Livrare urgentă"
+    }
+  ]);
   const [loadingMP, setLoadingMP] = useState(false);
-  const [comenziProduseFinite, setComenziProduseFinite] = useState<ComandaProdusFinal[]>([]);
+  const [comenziProduseFinite, setComenziProduseFinite] = useState<ComandaProdusFinal[]>([
+    {
+      id: 1,
+      cod: "CPF-001",
+      data: "27/11/2024",
+      client: "Constructii Moderne SRL",
+      produs: "BA16",
+      unitate_masura: "tone",
+      cantitate: 50,
+      punct_descarcare: "Șantier Autostrada A3",
+      pret_fara_tva: 8500,
+      pret_transport: 600,
+      observatii: "Livrare dimineața"
+    }
+  ]);
   const [loadingPF, setLoadingPF] = useState(false);
   const [furnizori, setFurnizori] = useState<Furnizor[]>([]);
   const [loadingFurnizori, setLoadingFurnizori] = useState(true);

@@ -166,7 +166,16 @@ const Consumuri = () => {
   const [contorCurentCurrentPage, setContorCurentCurrentPage] = useState(1);
   const [contorCurentFilters, setContorCurentFilters] = useState<Record<string, string>>({});
   const [contorCurentSort, setContorCurentSort] = useState<{ field: string; direction: 'asc' | 'desc' } | null>(null);
-  const [contorCurentData, setContorCurentData] = useState<ContorCurent[]>([]);
+  const [contorCurentData, setContorCurentData] = useState<ContorCurent[]>([
+    {
+      id: 1,
+      data: "27/11/2024",
+      index_vechi: 15000,
+      index_nou: 15250,
+      consum_kw: 50000,
+      pret: 35000
+    }
+  ]);
   const [isLoadingContorCurent, setIsLoadingContorCurent] = useState(true);
   const [selectedContorCurent, setSelectedContorCurent] = useState<ContorCurent | null>(null);
   const [isContorCurentDetailsOpen, setIsContorCurentDetailsOpen] = useState(false);
@@ -180,7 +189,18 @@ const Consumuri = () => {
   const [contorCTLCurrentPage, setContorCTLCurrentPage] = useState(1);
   const [contorCTLFilters, setContorCTLFilters] = useState<Record<string, string>>({});
   const [contorCTLSort, setContorCTLSort] = useState<{ field: string; direction: 'asc' | 'desc' } | null>(null);
-  const [contorCTLData, setContorCTLData] = useState<ContorCTL[]>([]);
+  const [contorCTLData, setContorCTLData] = useState<ContorCTL[]>([
+    {
+      id: 1,
+      data: "27/11/2024",
+      index_vechi_tur: 5000,
+      index_nou_tur: 5150,
+      retur_exces_vechi: 100,
+      retur_exces_nou: 120,
+      consum_l: 130,
+      consum_to: 110.5
+    }
+  ]);
   const [isLoadingContorCTL, setIsLoadingContorCTL] = useState(true);
   const [selectedContorCTL, setSelectedContorCTL] = useState<ContorCTL | null>(null);
   const [isContorCTLDetailsOpen, setIsContorCTLDetailsOpen] = useState(false);
@@ -194,7 +214,34 @@ const Consumuri = () => {
   const [consumuriCurrentPage, setConsumuriCurrentPage] = useState(1);
   const [consumuriFilters, setConsumuriFilters] = useState<Record<string, string>>({});
   const [consumuriSort, setConsumuriSort] = useState<{ field: string; direction: 'asc' | 'desc' } | null>(null);
-  const [consumuriData, setConsumuriData] = useState<Consum[]>([]);
+  const [consumuriData, setConsumuriData] = useState<Consum[]>([
+    {
+      id: 1,
+      data: "27/11/2024",
+      produs: "BA16",
+      cantitate: 100,
+      "04_nat": 25,
+      "04_conc": 15,
+      "04_cribluri": 10,
+      "48_conc": 12,
+      "48_cribluri": 8,
+      "816_conc": 10,
+      "816_cribluri": 5,
+      "16224_conc": 0,
+      "16224_cribluri": 0,
+      "16315_conc": 0,
+      "16315_cribluri": 0,
+      filler: 5,
+      bitum: 6,
+      acid_clorhidric: 0,
+      emulgator: 0,
+      sare: 0,
+      apa: 2,
+      topcel_technocel: 0,
+      consum_curent: 150,
+      consum_ctl: 45
+    }
+  ]);
   const [selectedConsum, setSelectedConsum] = useState<Consum | null>(null);
   const [isConsumDetailsOpen, setIsConsumDetailsOpen] = useState(false);
   const [isConsumFormOpen, setIsConsumFormOpen] = useState(false);
