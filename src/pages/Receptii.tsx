@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FilterableSelect } from "@/components/ui/filterable-select";
 import { z } from "zod";
 
 interface ReceptieMaterial {
@@ -177,11 +178,11 @@ export default function Receptii() {
     fetchRegistrationNumbers();
   }, []);
 
-  // Calculate diferenta when cantitate values change
+  // Calculate diferenta when cantitate_receptionata changes
   useEffect(() => {
     const diferenta = form.cantitate_livrata - form.cantitate_receptionata;
     setForm(prev => ({ ...prev, diferenta }));
-  }, [form.cantitate_livrata, form.cantitate_receptionata]);
+  }, [form.cantitate_receptionata]);
 
   // Fetch tip_masina based on selected nr_inmatriculare
   useEffect(() => {
@@ -674,24 +675,15 @@ export default function Receptii() {
               )}
               <div className="grid gap-2">
                 <Label htmlFor="cod">Cod *</Label>
-                <Select
+                <FilterableSelect
+                  id="cod"
                   value={form.cod}
                   onValueChange={(value) => setForm({ ...form, cod: value })}
-                >
-                  <SelectTrigger 
-                    id="cod"
-                    className={formErrors.cod ? "border-destructive" : ""}
-                  >
-                    <SelectValue placeholder="Selectează cod" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover z-50">
-                    {availableCodes.map((code) => (
-                      <SelectItem key={code} value={code}>
-                        {code}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  options={availableCodes.map(code => ({ value: code, label: code }))}
+                  placeholder="Selectează cod"
+                  searchPlaceholder="Caută cod..."
+                  className={formErrors.cod ? "border-destructive" : ""}
+                />
                 {formErrors.cod && <p className="text-sm text-destructive">{formErrors.cod}</p>}
               </div>
             </div>
@@ -738,46 +730,28 @@ export default function Receptii() {
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="nume_sofer">Nume Șofer *</Label>
-                <Select
+                <FilterableSelect
+                  id="nume_sofer"
                   value={form.nume_sofer}
                   onValueChange={(value) => setForm({ ...form, nume_sofer: value })}
-                >
-                  <SelectTrigger 
-                    id="nume_sofer"
-                    className={formErrors.nume_sofer ? "border-destructive" : ""}
-                  >
-                    <SelectValue placeholder="Selectează șofer" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover z-50">
-                    {availableDrivers.map((driver) => (
-                      <SelectItem key={driver} value={driver}>
-                        {driver}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  options={availableDrivers.map(driver => ({ value: driver, label: driver }))}
+                  placeholder="Selectează șofer"
+                  searchPlaceholder="Caută șofer..."
+                  className={formErrors.nume_sofer ? "border-destructive" : ""}
+                />
                 {formErrors.nume_sofer && <p className="text-sm text-destructive">{formErrors.nume_sofer}</p>}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="nr_inmatriculare">Nr. Înmatriculare *</Label>
-                <Select
+                <FilterableSelect
+                  id="nr_inmatriculare"
                   value={form.nr_inmatriculare}
                   onValueChange={(value) => setForm({ ...form, nr_inmatriculare: value })}
-                >
-                  <SelectTrigger 
-                    id="nr_inmatriculare"
-                    className={formErrors.nr_inmatriculare ? "border-destructive" : ""}
-                  >
-                    <SelectValue placeholder="Selectează nr. înmatriculare" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover z-50">
-                    {availableRegistrationNumbers.map((regNum) => (
-                      <SelectItem key={regNum} value={regNum}>
-                        {regNum}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  options={availableRegistrationNumbers.map(regNum => ({ value: regNum, label: regNum }))}
+                  placeholder="Selectează nr. înmatriculare"
+                  searchPlaceholder="Caută nr. înmatriculare..."
+                  className={formErrors.nr_inmatriculare ? "border-destructive" : ""}
+                />
                 {formErrors.nr_inmatriculare && <p className="text-sm text-destructive">{formErrors.nr_inmatriculare}</p>}
               </div>
             </div>
@@ -811,8 +785,8 @@ export default function Receptii() {
                   type="number"
                   step="0.01"
                   value={form.cantitate_receptionata}
-                  disabled
-                  className="bg-muted"
+                  onChange={(e) => setForm({ ...form, cantitate_receptionata: parseFloat(e.target.value) || 0 })}
+                  className={formErrors.cantitate_receptionata ? "border-destructive" : ""}
                 />
                 {formErrors.cantitate_receptionata && <p className="text-sm text-destructive">{formErrors.cantitate_receptionata}</p>}
               </div>
@@ -836,8 +810,8 @@ export default function Receptii() {
                   type="number"
                   step="0.01"
                   value={form.pret_material_total}
-                  onChange={(e) => setForm({ ...form, pret_material_total: parseFloat(e.target.value) || 0 })}
-                  className={formErrors.pret_material_total ? "border-destructive" : ""}
+                  disabled
+                  className="bg-muted"
                 />
                 {formErrors.pret_material_total && <p className="text-sm text-destructive">{formErrors.pret_material_total}</p>}
               </div>
@@ -848,8 +822,8 @@ export default function Receptii() {
                   type="number"
                   step="0.01"
                   value={form.pret_transport_total}
-                  onChange={(e) => setForm({ ...form, pret_transport_total: parseFloat(e.target.value) || 0 })}
-                  className={formErrors.pret_transport_total ? "border-destructive" : ""}
+                  disabled
+                  className="bg-muted"
                 />
                 {formErrors.pret_transport_total && <p className="text-sm text-destructive">{formErrors.pret_transport_total}</p>}
               </div>
@@ -860,8 +834,8 @@ export default function Receptii() {
                   type="number"
                   step="0.01"
                   value={form.pret_total}
-                  onChange={(e) => setForm({ ...form, pret_total: parseFloat(e.target.value) || 0 })}
-                  className={formErrors.pret_total ? "border-destructive" : ""}
+                  disabled
+                  className="bg-muted"
                 />
                 {formErrors.pret_total && <p className="text-sm text-destructive">{formErrors.pret_total}</p>}
               </div>

@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FilterableSelect } from "@/components/ui/filterable-select";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { z } from "zod";
 
@@ -1220,52 +1221,32 @@ export default function Comenzi() {
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="furnizor">Furnizor *</Label>
-              <Select
+              <FilterableSelect
+                id="furnizor"
                 value={formMP.furnizor}
                 onValueChange={(value) => setFormMP({ ...formMP, furnizor: value })}
-              >
-                <SelectTrigger className={formErrorsMP.furnizor ? "border-destructive" : ""}>
-                  <SelectValue placeholder="Selectează furnizor" />
-                </SelectTrigger>
-                <SelectContent>
-                  {loadingFurnizori ? (
-                    <SelectItem value="loading" disabled>Se încarcă...</SelectItem>
-                  ) : furnizori.length === 0 ? (
-                    <SelectItem value="empty" disabled>Fără furnizori</SelectItem>
-                  ) : (
-                    furnizori.map((furnizor) => (
-                      <SelectItem key={furnizor.id} value={furnizor.nume}>
-                        {furnizor.nume}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
+                options={loadingFurnizori ? [] : furnizori.map(f => ({ value: f.nume, label: f.nume }))}
+                placeholder={loadingFurnizori ? "Se încarcă..." : "Selectează furnizor"}
+                searchPlaceholder="Caută furnizor..."
+                emptyText="Fără furnizori"
+                className={formErrorsMP.furnizor ? "border-destructive" : ""}
+                disabled={loadingFurnizori}
+              />
               {formErrorsMP.furnizor && <p className="text-sm text-destructive">{formErrorsMP.furnizor}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="material">Material *</Label>
-              <Select
+              <FilterableSelect
+                id="material"
                 value={formMP.material}
                 onValueChange={(value) => setFormMP({ ...formMP, material: value })}
-              >
-                <SelectTrigger className={formErrorsMP.material ? "border-destructive" : ""}>
-                  <SelectValue placeholder="Selectează material" />
-                </SelectTrigger>
-                <SelectContent>
-                  {loadingMateriale ? (
-                    <SelectItem value="loading" disabled>Se încarcă...</SelectItem>
-                  ) : materiale.length === 0 ? (
-                    <SelectItem value="empty" disabled>Fără materiale</SelectItem>
-                  ) : (
-                    materiale.map((material, index) => (
-                      <SelectItem key={index} value={material.materiale_prime}>
-                        {material.materiale_prime}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
+                options={loadingMateriale ? [] : materiale.map(m => ({ value: m.materiale_prime, label: m.materiale_prime }))}
+                placeholder={loadingMateriale ? "Se încarcă..." : "Selectează material"}
+                searchPlaceholder="Caută material..."
+                emptyText="Fără materiale"
+                className={formErrorsMP.material ? "border-destructive" : ""}
+                disabled={loadingMateriale}
+              />
               {formErrorsMP.material && <p className="text-sm text-destructive">{formErrorsMP.material}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -1475,52 +1456,32 @@ export default function Comenzi() {
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="client">Client *</Label>
-              <Select
+              <FilterableSelect
+                id="client"
                 value={formPF.client}
                 onValueChange={(value) => setFormPF({ ...formPF, client: value })}
-              >
-                <SelectTrigger className={formErrorsPF.client ? "border-destructive" : ""}>
-                  <SelectValue placeholder="Selectează client" />
-                </SelectTrigger>
-                <SelectContent>
-                  {loadingClienti ? (
-                    <SelectItem value="loading" disabled>Se încarcă...</SelectItem>
-                  ) : clienti.length === 0 ? (
-                    <SelectItem value="empty" disabled>Fără clienți</SelectItem>
-                  ) : (
-                    clienti.map((client) => (
-                      <SelectItem key={client.id} value={client.nume}>
-                        {client.nume}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
+                options={loadingClienti ? [] : clienti.map(c => ({ value: c.nume, label: c.nume }))}
+                placeholder={loadingClienti ? "Se încarcă..." : "Selectează client"}
+                searchPlaceholder="Caută client..."
+                emptyText="Fără clienți"
+                className={formErrorsPF.client ? "border-destructive" : ""}
+                disabled={loadingClienti}
+              />
               {formErrorsPF.client && <p className="text-sm text-destructive">{formErrorsPF.client}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="produs">Produs *</Label>
-              <Select
+              <FilterableSelect
+                id="produs"
                 value={formPF.produs}
                 onValueChange={(value) => setFormPF({ ...formPF, produs: value })}
-              >
-                <SelectTrigger className={formErrorsPF.produs ? "border-destructive" : ""}>
-                  <SelectValue placeholder="Selectează produs" />
-                </SelectTrigger>
-                <SelectContent>
-                  {loadingProduse ? (
-                    <SelectItem value="loading" disabled>Se încarcă...</SelectItem>
-                  ) : produse.length === 0 ? (
-                    <SelectItem value="empty" disabled>Fără produse</SelectItem>
-                  ) : (
-                    produse.map((produs, index) => (
-                      <SelectItem key={index} value={produs.produs}>
-                        {produs.produs}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
+                options={loadingProduse ? [] : produse.map(p => ({ value: p.produs, label: p.produs }))}
+                placeholder={loadingProduse ? "Se încarcă..." : "Selectează produs"}
+                searchPlaceholder="Caută produs..."
+                emptyText="Fără produse"
+                className={formErrorsPF.produs ? "border-destructive" : ""}
+                disabled={loadingProduse}
+              />
               {formErrorsPF.produs && <p className="text-sm text-destructive">{formErrorsPF.produs}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
