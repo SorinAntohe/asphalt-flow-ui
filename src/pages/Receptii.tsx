@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2, ArrowUpDown, Ticket, Download } from "lucide-react";
+import { Plus, Pencil, Trash2, ArrowUpDown, Ticket, Download, X } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
@@ -1176,7 +1176,10 @@ export default function Receptii() {
               <Trash2 className="w-4 h-4 mr-2" />
               Șterge
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setViewingDetails(null)}>Închide</Button>
+            <Button variant="outline" size="sm" onClick={() => setViewingDetails(null)}>
+              <X className="w-4 h-4 mr-2" />
+              Închide
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
