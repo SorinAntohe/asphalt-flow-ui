@@ -238,9 +238,9 @@ const Liste = () => {
   );
 
   const filterSoferi = soferi.filter(item =>
-    (item.id?.toString() || '').includes(soferiFilters.id) &&
-    (item.nume?.toLowerCase() || '').includes(soferiFilters.nume.toLowerCase()) &&
-    (item.ci?.toLowerCase() || '').includes(soferiFilters.ci.toLowerCase())
+    `${item.id ?? ""}`.includes(soferiFilters.id) &&
+    `${item.nume ?? ""}`.toLowerCase().includes(soferiFilters.nume.toLowerCase()) &&
+    `${item.ci ?? ""}`.toLowerCase().includes(soferiFilters.ci.toLowerCase())
   );
 
   const filterMateriiPrime = materiiPrime.filter(item =>
