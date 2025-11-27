@@ -20,7 +20,13 @@ interface StocItem {
 
 export default function Stocuri() {
   const { toast } = useToast();
-  const [stocuri, setStocuri] = useState<StocItem[]>([]);
+  const [stocuri, setStocuri] = useState<StocItem[]>([
+    { id: 1, materiale_prime: "0/4 NAT", stoc: 1250 },
+    { id: 2, materiale_prime: "0/4 CONC", stoc: 800 },
+    { id: 3, materiale_prime: "BITUM 50/70", stoc: 45 },
+    { id: 4, materiale_prime: "FILLER", stoc: 320 },
+    { id: 5, materiale_prime: "8/16 CONC", stoc: 650 }
+  ]);
   const [loading, setLoading] = useState(true);
   
   // Pagination
