@@ -533,7 +533,7 @@ const Livrari = () => {
 
       {/* Details View Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto" hideCloseButton>
           <DialogHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -615,9 +615,6 @@ const Livrari = () => {
             </div>
           )}
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="outline" size="sm" onClick={() => setViewingDetails(null)}>
-              Închide
-            </Button>
             <Button 
               variant="outline"
               size="sm"
@@ -643,6 +640,9 @@ const Livrari = () => {
             >
               <Trash2 className="w-4 h-4 mr-2" />
               Șterge
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setViewingDetails(null)}>
+              Închide
             </Button>
           </DialogFooter>
         </DialogContent>
