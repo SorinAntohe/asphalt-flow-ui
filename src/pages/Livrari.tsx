@@ -70,7 +70,20 @@ const Livrari = () => {
     field: '', direction: null 
   });
   
-  const livrari: Livrare[] = [];
+  const livrari: Livrare[] = [
+    {
+      id: 1,
+      data: "27/11/2024",
+      cod: "BA16",
+      nr_aviz: "AV-2024-001",
+      nr_inmatriculare: "B-456-DEF",
+      tip_masina: "8X4",
+      nume_sofer: "Gheorghe Ionescu",
+      pret_material_total: 12500,
+      pret_transport_total: 550,
+      pret_total: 13050
+    }
+  ];
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "-";
