@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Plus, Truck, ArrowUpDown, Pencil, Trash2, FileText } from "lucide-react";
+import { Plus, Truck, ArrowUpDown, Pencil, Trash2, FileText, Download } from "lucide-react";
+import { exportToCSV } from "@/lib/exportUtils";
 import {
   Table,
   TableBody,
@@ -299,6 +300,26 @@ const Livrari = () => {
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => exportToCSV(filteredAndSorted, 'livrari', [
+                  { key: 'id', label: 'ID' },
+                  { key: 'data', label: 'Data' },
+                  { key: 'cod', label: 'Cod' },
+                  { key: 'nr_aviz', label: 'Nr. Aviz' },
+                  { key: 'nr_inmatriculare', label: 'Nr. Înmatr.' },
+                  { key: 'tip_masina', label: 'Tip Mașină' },
+                  { key: 'nume_sofer', label: 'Nume Șofer' },
+                  { key: 'pret_material_total', label: 'Preț Material' },
+                  { key: 'pret_transport_total', label: 'Preț Transport' },
+                  { key: 'pret_total', label: 'Preț Total' }
+                ])}
+                disabled={filteredAndSorted.length === 0}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export
+              </Button>
               <Label className="text-sm">Înregistrări per pagină:</Label>
               <Select
                 value={itemsPerPage.toString()}

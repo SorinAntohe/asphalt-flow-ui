@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown, Download } from "lucide-react";
+import { exportToCSV } from "@/lib/exportUtils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -635,6 +636,27 @@ export default function Comenzi() {
               <CardTitle className="text-lg sm:text-xl">Comenzi Materie Primă</CardTitle>
               <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => exportToCSV(filteredAndSortedMP, 'comenzi_materie_prima', [
+                      { key: 'id', label: 'ID' },
+                      { key: 'cod', label: 'Cod' },
+                      { key: 'data', label: 'Data' },
+                      { key: 'furnizor', label: 'Furnizor' },
+                      { key: 'material', label: 'Material' },
+                      { key: 'unitate_masura', label: 'UM' },
+                      { key: 'cantitate', label: 'Cantitate' },
+                      { key: 'punct_descarcare', label: 'Punct Descărcare' },
+                      { key: 'pret_fara_tva', label: 'Preț fără TVA' },
+                      { key: 'pret_transport', label: 'Preț Transport' },
+                      { key: 'observatii', label: 'Observații' }
+                    ])}
+                    disabled={filteredAndSortedMP.length === 0}
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Export
+                  </Button>
                   <Label className="text-sm">Înregistrări per pagină:</Label>
                   <Select
                     value={itemsPerPageMP.toString()}
@@ -923,6 +945,27 @@ export default function Comenzi() {
               <CardTitle className="text-lg sm:text-xl">Comenzi Produse Finite</CardTitle>
               <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => exportToCSV(filteredAndSortedPF, 'comenzi_produse_finite', [
+                      { key: 'id', label: 'ID' },
+                      { key: 'cod', label: 'Cod' },
+                      { key: 'data', label: 'Data' },
+                      { key: 'client', label: 'Client' },
+                      { key: 'produs', label: 'Produs' },
+                      { key: 'unitate_masura', label: 'UM' },
+                      { key: 'cantitate', label: 'Cantitate' },
+                      { key: 'punct_descarcare', label: 'Punct Descărcare' },
+                      { key: 'pret_fara_tva', label: 'Preț fără TVA' },
+                      { key: 'pret_transport', label: 'Preț Transport' },
+                      { key: 'observatii', label: 'Observații' }
+                    ])}
+                    disabled={filteredAndSortedPF.length === 0}
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Export
+                  </Button>
                   <Label className="text-sm">Înregistrări per pagină:</Label>
                   <Select
                     value={itemsPerPagePF.toString()}

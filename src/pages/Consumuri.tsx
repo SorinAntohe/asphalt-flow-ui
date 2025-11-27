@@ -5,7 +5,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, X, Eye } from "lucide-react";
+import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, X, Eye, Download } from "lucide-react";
+import { exportToCSV } from "@/lib/exportUtils";
 import {
   Table,
   TableBody,
@@ -832,6 +833,22 @@ const Consumuri = () => {
                 <CardTitle>Contor Curent</CardTitle>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => exportToCSV(filterAndSortData(contorCurentData, contorCurentFilters, contorCurentSort), 'contor_curent', [
+                        { key: 'id', label: 'Nr Crt' },
+                        { key: 'data', label: 'Data' },
+                        { key: 'index_vechi', label: 'Index Vechi' },
+                        { key: 'index_nou', label: 'Index Nou' },
+                        { key: 'consum_kw', label: 'Consum kW' },
+                        { key: 'pret', label: 'Preț' }
+                      ])}
+                      disabled={contorCurentData.length === 0}
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Export
+                    </Button>
                     <Label className="text-sm">Înregistrări per pagină:</Label>
                     <Select
                       value={contorCurentItemsPerPage.toString()}
@@ -992,9 +1009,26 @@ const Consumuri = () => {
                 <CardTitle>Contor CTL</CardTitle>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => exportToCSV(filterAndSortData(contorCTLData, contorCTLFilters, contorCTLSort), 'contor_ctl', [
+                        { key: 'id', label: 'ID' },
+                        { key: 'data', label: 'Data' },
+                        { key: 'index_vechi_tur', label: 'Index Vechi Tur' },
+                        { key: 'index_nou_tur', label: 'Index Nou Tur' },
+                        { key: 'retur_exces_vechi', label: 'Retur Exces Vechi' },
+                        { key: 'retur_exces_nou', label: 'Retur Exces Nou' },
+                        { key: 'consum_l', label: 'Consum (L)' },
+                        { key: 'consum_to', label: 'Consum (TO)' }
+                      ])}
+                      disabled={contorCTLData.length === 0}
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Export
+                    </Button>
                     <Label className="text-sm">Înregistrări per pagină:</Label>
                     <Select
-                      value={contorCTLItemsPerPage.toString()}
                       onValueChange={(value) => {
                         setContorCTLItemsPerPage(Number(value));
                         setContorCTLCurrentPage(1);
@@ -1172,9 +1206,33 @@ const Consumuri = () => {
                 <CardTitle>Consumuri Materiale</CardTitle>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => exportToCSV(filterAndSortData(consumuriData, consumuriFilters, consumuriSort), 'consumuri_materiale', [
+                        { key: 'id', label: 'ID' },
+                        { key: 'data', label: 'Data' },
+                        { key: 'produs', label: 'Produs' },
+                        { key: 'cantitate', label: 'Cantitate' },
+                        { key: '04_nat', label: '0/4 NAT' },
+                        { key: '04_conc', label: '0/4 CONC' },
+                        { key: '04_cribluri', label: '0/4 CRIBLURI' },
+                        { key: '48_conc', label: '4/8 CONC' },
+                        { key: '48_cribluri', label: '4/8 CRIBLURI' },
+                        { key: '816_conc', label: '8/16 CONC' },
+                        { key: '816_cribluri', label: '8/16 CRIBLURI' },
+                        { key: 'filler', label: 'Filler' },
+                        { key: 'bitum', label: 'Bitum' },
+                        { key: 'consum_curent', label: 'Consum Curent' },
+                        { key: 'consum_ctl', label: 'Consum CTL' }
+                      ])}
+                      disabled={consumuriData.length === 0}
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Export
+                    </Button>
                     <Label className="text-sm">Înregistrări per pagină:</Label>
                     <Select
-                      value={consumuriItemsPerPage.toString()}
                       onValueChange={(value) => {
                         setConsumuriItemsPerPage(Number(value));
                         setConsumuriCurrentPage(1);
