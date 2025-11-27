@@ -850,13 +850,13 @@ export default function Receptii() {
 
       {/* Add/Edit Dialog */}
       <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
-        <DialogContent className="max-w-5xl">
+        <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader className="pb-2">
             <DialogTitle className="text-base">{editing ? "Editează Recepția" : "Adaugă Recepție Nouă"}</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-2 py-2">
-            {/* Row 1: Cod, Furnizor, Material, Nr. Aviz Provizoriu, Nr. Aviz Intrare */}
-            <div className="grid grid-cols-5 gap-3">
+          <div className="grid gap-3 py-2">
+            {/* Row 1 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <div className="grid gap-1">
                 <Label htmlFor="cod" className="text-xs">Cod *</Label>
                 <FilterableSelect
@@ -878,6 +878,18 @@ export default function Receptii() {
                 <Input id="material" value={form.material} disabled className="h-8 text-xs bg-muted" />
               </div>
               <div className="grid gap-1">
+                <Label htmlFor="nr_factura" className="text-xs">Nr. Factură</Label>
+                <Input
+                  id="nr_factura"
+                  value={form.nr_factura}
+                  onChange={(e) => setForm({ ...form, nr_factura: e.target.value })}
+                  className="h-8 text-xs"
+                />
+              </div>
+            </div>
+            {/* Row 2 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="grid gap-1">
                 <Label htmlFor="nr_aviz_provizoriu" className="text-xs">Nr. Aviz Prov.</Label>
                 <Input
                   id="nr_aviz_provizoriu"
@@ -892,18 +904,6 @@ export default function Receptii() {
                   id="nr_aviz_intrare"
                   value={form.nr_aviz_intrare}
                   onChange={(e) => setForm({ ...form, nr_aviz_intrare: e.target.value })}
-                  className="h-8 text-xs"
-                />
-              </div>
-            </div>
-            {/* Row 2: Nr. Factură, Nume Șofer, Nr. Înmatriculare, Tip Mașină, empty */}
-            <div className="grid grid-cols-5 gap-3">
-              <div className="grid gap-1">
-                <Label htmlFor="nr_factura" className="text-xs">Nr. Factură</Label>
-                <Input
-                  id="nr_factura"
-                  value={form.nr_factura}
-                  onChange={(e) => setForm({ ...form, nr_factura: e.target.value })}
                   className="h-8 text-xs"
                 />
               </div>
@@ -931,14 +931,13 @@ export default function Receptii() {
                   className={`h-8 text-xs ${formErrors.nr_inmatriculare ? "border-destructive" : ""}`}
                 />
               </div>
+            </div>
+            {/* Row 3 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <div className="grid gap-1">
                 <Label htmlFor="tip_masina" className="text-xs">Tip Mașină *</Label>
                 <Input id="tip_masina" value={form.tip_masina} disabled className="h-8 text-xs bg-muted" />
               </div>
-              <div></div>
-            </div>
-            {/* Row 3: Cantități și Prețuri */}
-            <div className="grid grid-cols-6 gap-3">
               <div className="grid gap-1">
                 <Label htmlFor="cantitate_livrata" className="text-xs">Cant. Livrată *</Label>
                 <Input
@@ -965,6 +964,9 @@ export default function Receptii() {
                 <Label htmlFor="diferenta" className="text-xs">Diferență</Label>
                 <Input id="diferenta" type="number" value={form.diferenta} disabled className="h-8 text-xs bg-muted" />
               </div>
+            </div>
+            {/* Row 4: Prețuri */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="grid gap-1">
                 <Label htmlFor="pret_material_total" className="text-xs">Preț Material</Label>
                 <Input id="pret_material_total" type="number" value={form.pret_material_total} disabled className="h-8 text-xs bg-muted" />
@@ -978,7 +980,7 @@ export default function Receptii() {
                 <Input id="pret_total" type="number" value={form.pret_total} disabled className="h-8 text-xs bg-muted" />
               </div>
             </div>
-            {/* Row 4: Observații */}
+            {/* Row 5: Observații */}
             <div className="grid gap-1">
               <Label htmlFor="observatii" className="text-xs">Observații</Label>
               <Textarea
@@ -990,7 +992,7 @@ export default function Receptii() {
               />
             </div>
           </div>
-          <DialogFooter className="pt-2">
+          <DialogFooter className="pt-2 flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" onClick={() => setOpenAddEdit(false)}>Anulează</Button>
             <Button size="sm" onClick={handleSave}>{editing ? "Salvează" : "Adaugă"}</Button>
           </DialogFooter>
@@ -999,13 +1001,14 @@ export default function Receptii() {
 
       {/* Details View Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
-        <DialogContent className="max-w-5xl">
+        <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader className="pb-2">
             <DialogTitle className="text-base">Detalii Recepție - Cod: {viewingDetails?.cod}</DialogTitle>
           </DialogHeader>
           {viewingDetails && (
-            <div className="grid gap-2 py-2">
-              <div className="grid grid-cols-5 gap-3">
+            <div className="grid gap-3 py-2">
+              {/* Row 1 */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
                   <Label className="text-xs text-muted-foreground">ID</Label>
                   <p className="text-sm font-medium">{viewingDetails.id}</p>
@@ -1022,24 +1025,28 @@ export default function Receptii() {
                   <Label className="text-xs text-muted-foreground">Furnizor</Label>
                   <p className="text-sm font-medium">{viewingDetails.furnizor}</p>
                 </div>
+              </div>
+              {/* Row 2 */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
                   <Label className="text-xs text-muted-foreground">Material</Label>
                   <p className="text-sm font-medium">{viewingDetails.material}</p>
                 </div>
-              </div>
-              <div className="grid grid-cols-5 gap-3">
                 <div>
-                  <Label className="text-xs text-muted-foreground">Nr. Aviz Provizoriu</Label>
+                  <Label className="text-xs text-muted-foreground">Nr. Aviz Prov.</Label>
                   <p className="text-sm font-medium">{viewingDetails.nr_aviz_provizoriu || "-"}</p>
                 </div>
                 <div>
-                  <Label className="text-xs text-muted-foreground">Nr. Aviz Intrare</Label>
+                  <Label className="text-xs text-muted-foreground">Nr. Aviz Intr.</Label>
                   <p className="text-sm font-medium">{viewingDetails.nr_aviz_intrare || "-"}</p>
                 </div>
                 <div>
                   <Label className="text-xs text-muted-foreground">Nr. Factură</Label>
                   <p className="text-sm font-medium">{viewingDetails.nr_factura || "-"}</p>
                 </div>
+              </div>
+              {/* Row 3 */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
                   <Label className="text-xs text-muted-foreground">Nr. Tichet</Label>
                   <p className="text-sm font-medium">{viewingDetails.nr_tichet || "-"}</p>
@@ -1048,34 +1055,36 @@ export default function Receptii() {
                   <Label className="text-xs text-muted-foreground">Nume Șofer</Label>
                   <p className="text-sm font-medium">{viewingDetails.nume_sofer}</p>
                 </div>
-              </div>
-              <div className="grid grid-cols-5 gap-3">
                 <div>
-                  <Label className="text-xs text-muted-foreground">Nr. Înmatriculare</Label>
+                  <Label className="text-xs text-muted-foreground">Nr. Înmatr.</Label>
                   <p className="text-sm font-medium">{viewingDetails.nr_inmatriculare}</p>
                 </div>
                 <div>
                   <Label className="text-xs text-muted-foreground">Tip Mașină</Label>
                   <p className="text-sm font-medium">{viewingDetails.tip_masina}</p>
                 </div>
+              </div>
+              {/* Row 4 */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
                   <Label className="text-xs text-muted-foreground">Cant. Livrată</Label>
                   <p className="text-sm font-medium">{viewingDetails.cantitate_livrata}</p>
                 </div>
                 <div>
-                  <Label className="text-xs text-muted-foreground">Cant. Recepționată</Label>
+                  <Label className="text-xs text-muted-foreground">Cant. Recepț.</Label>
                   <p className="text-sm font-medium">{viewingDetails.cantitate_receptionata}</p>
                 </div>
                 <div>
                   <Label className="text-xs text-muted-foreground">Diferență</Label>
                   <p className="text-sm font-medium">{viewingDetails.diferenta}</p>
                 </div>
-              </div>
-              <div className="grid grid-cols-5 gap-3">
                 <div>
                   <Label className="text-xs text-muted-foreground">Preț Material</Label>
                   <p className="text-sm font-medium">{viewingDetails.pret_material_total}</p>
                 </div>
+              </div>
+              {/* Row 5 */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
                   <Label className="text-xs text-muted-foreground">Preț Transport</Label>
                   <p className="text-sm font-medium">{viewingDetails.pret_transport_total}</p>
@@ -1091,12 +1100,11 @@ export default function Receptii() {
               </div>
             </div>
           )}
-          <DialogFooter className="flex gap-2">
-            <Button variant="outline" onClick={() => setViewingDetails(null)}>
-              Închide
-            </Button>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => setViewingDetails(null)}>Închide</Button>
             <Button 
               variant="outline"
+              size="sm"
               onClick={() => {
                 if (viewingDetails) {
                   handleOpenEdit(viewingDetails);
@@ -1109,6 +1117,7 @@ export default function Receptii() {
             </Button>
             <Button 
               variant="destructive"
+              size="sm"
               onClick={() => {
                 if (viewingDetails) {
                   setDeleting(viewingDetails);
