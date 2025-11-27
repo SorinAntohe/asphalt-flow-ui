@@ -120,7 +120,7 @@ export default function Receptii() {
 
   const fetchReceptii = async () => {
     try {
-      const response = await fetch('http://192.168.15.4:8002/receptii/returneaza/material');
+      const response = await fetch('http://192.168.15.4:8002/receptii/returneaza/materiale');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
