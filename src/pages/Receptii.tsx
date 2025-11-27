@@ -183,11 +183,11 @@ export default function Receptii() {
     fetchRegistrationNumbers();
   }, []);
 
-  // Calculate diferenta when cantitate_receptionata changes
+  // Calculate diferenta when cantitate_livrata or cantitate_receptionata changes
   useEffect(() => {
     const diferenta = form.cantitate_livrata - form.cantitate_receptionata;
     setForm(prev => ({ ...prev, diferenta }));
-  }, [form.cantitate_receptionata]);
+  }, [form.cantitate_livrata, form.cantitate_receptionata]);
 
   // Fetch tip_masina based on selected nr_inmatriculare
   useEffect(() => {
