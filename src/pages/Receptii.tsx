@@ -183,50 +183,58 @@ export default function Receptii() {
     setForm(prev => ({ ...prev, diferenta }));
   }, [form.cantitate_livrata, form.cantitate_receptionata]);
 
-  // Mock fetch tip_masina based on selected nr_inmatriculare
+  // Fetch tip_masina based on selected nr_inmatriculare
   useEffect(() => {
-    const mockTipMasinaMap: Record<string, string> = {
-      "B-123-ABC": "Articulata",
-      "B-456-DEF": "8X4",
-      "B-789-GHI": "4X2",
-      "CT-111-XYZ": "Articulata",
-      "IF-222-MNO": "8X4",
-      "CJ-333-PQR": "4X2",
+    const fetchTipMasina = async () => {
+      if (!form.nr_inmatriculare) return;
+      
+      try {
+        const response = await fetch(`http://192.168.15.4:8002/receptii/materiale/returneaza_tip_masina_dupa_nr/${form.nr_inmatriculare}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        setForm(prev => ({ ...prev, tip_masina: data }));
+      } catch (error) {
+        console.error('Error fetching tip masina:', error);
+      }
     };
     
-    if (form.nr_inmatriculare && mockTipMasinaMap[form.nr_inmatriculare]) {
-      setForm(prev => ({ ...prev, tip_masina: mockTipMasinaMap[form.nr_inmatriculare] }));
-    }
+    fetchTipMasina();
   }, [form.nr_inmatriculare]);
 
-  // Mock fetch cantitate_receptionata based on selected cod
+  // Fetch cantitate_livrata based on selected cod
   useEffect(() => {
-    const mockCantitateMap: Record<string, number> = {
-      "CM000001": 39.5,
-      "CM000002": 30.0,
-      "CM000003": 11.8,
-      "CM000004": 40.0,
-      "CM000005": 25.0,
+    const fetchCantitate = async () => {
+      if (!form.cod) return;
+      
+      try {
+        const response = await fetch(`http://192.168.15.4:8002/receptii/materiale/returneaza_cantitate_dupa_cod/${form.cod}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        setForm(prev => ({ ...prev, cantitate_livrata: data }));
+      } catch (error) {
+        console.error('Error fetching cantitate livrata:', error);
+      }
     };
     
-    if (form.cod && mockCantitateMap[form.cod]) {
-      setForm(prev => ({ ...prev, cantitate_receptionata: mockCantitateMap[form.cod] }));
-    }
+    fetchCantitate();
   }, [form.cod]);
 
-  // Mock fetch furnizor based on selected cod
+  // Fetch furnizor based on selected cod
   useEffect(() => {
-    const mockFurnizorMap: Record<string, string> = {
-      "CM000001": "AGREGATE ROMANIA",
-      "CM000002": "BITUM INVEST",
-      "CM000003": "MATERIALE CONSTRUCT",
-      "CM000004": "AGREGATE ROMANIA",
-      "CM000005": "FILLER PRO",
+    const fetchFurnizor = async () => {
+      if (!form.cod) return;
+      
+      try {
+        const response = await fetch(`http://192.168.15.4:8002/receptii/materiale/returneaza_furnizor_dupa_cod/${form.cod}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        setForm(prev => ({ ...prev, furnizor: data }));
+      } catch (error) {
+        console.error('Error fetching furnizor:', error);
+      }
     };
     
-    if (form.cod && mockFurnizorMap[form.cod]) {
-      setForm(prev => ({ ...prev, furnizor: mockFurnizorMap[form.cod] }));
-    }
+    fetchFurnizor();
   }, [form.cod]);
 
   // Add/Edit handlers
@@ -773,8 +781,8 @@ export default function Receptii() {
                   type="number"
                   step="0.01"
                   value={form.cantitate_livrata}
-                  onChange={(e) => setForm({ ...form, cantitate_livrata: parseFloat(e.target.value) || 0 })}
-                  className={formErrors.cantitate_livrata ? "border-destructive" : ""}
+                  disabled
+                  className="bg-muted"
                 />
                 {formErrors.cantitate_livrata && <p className="text-sm text-destructive">{formErrors.cantitate_livrata}</p>}
               </div>
