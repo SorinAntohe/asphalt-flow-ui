@@ -178,10 +178,12 @@ export default function Receptii() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      setReceptii(Array.isArray(data) ? data : []);
+      if (Array.isArray(data) && data.length > 0) {
+        setReceptii(data);
+      }
     } catch (error) {
       console.error('Error fetching receptii:', error);
-      setReceptii([]);
+      // Keep mock data when API fails
     }
     setLoading(false);
   };
