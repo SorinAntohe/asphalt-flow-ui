@@ -1044,39 +1044,41 @@ const Consumuri = () => {
               </div>
 
               {/* Pagination */}
-              <div className="flex items-center justify-between px-2 py-4">
-                <span className="text-sm text-muted-foreground">
-                  Afișare {filteredContorCurent.length === 0 ? 0 : (contorCurentCurrentPage - 1) * contorCurentItemsPerPage + 1}-
-                  {Math.min(contorCurentCurrentPage * contorCurentItemsPerPage, filteredContorCurent.length)} din {filteredContorCurent.length}
-                </span>
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious
-                        onClick={() => setContorCurentCurrentPage(Math.max(1, contorCurentCurrentPage - 1))}
-                        className={contorCurentCurrentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                      />
-                    </PaginationItem>
-                    {Array.from({ length: contorCurentTotalPages }, (_, i) => i + 1).map((page) => (
-                      <PaginationItem key={page}>
-                        <PaginationLink
-                          onClick={() => setContorCurentCurrentPage(page)}
-                          isActive={contorCurentCurrentPage === page}
-                          className="cursor-pointer"
-                        >
-                          {page}
-                        </PaginationLink>
+              {contorCurentTotalPages > 1 && (
+                <div className="flex items-center justify-between px-2 py-4">
+                  <span className="text-sm text-muted-foreground">
+                    Afișare {filteredContorCurent.length === 0 ? 0 : (contorCurentCurrentPage - 1) * contorCurentItemsPerPage + 1}-
+                    {Math.min(contorCurentCurrentPage * contorCurentItemsPerPage, filteredContorCurent.length)} din {filteredContorCurent.length}
+                  </span>
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          onClick={() => setContorCurentCurrentPage(Math.max(1, contorCurentCurrentPage - 1))}
+                          className={contorCurentCurrentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
                       </PaginationItem>
-                    ))}
-                    <PaginationItem>
-                      <PaginationNext
-                        onClick={() => setContorCurentCurrentPage(Math.min(contorCurentTotalPages, contorCurentCurrentPage + 1))}
-                        className={contorCurentCurrentPage === contorCurentTotalPages || contorCurentTotalPages === 0 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              </div>
+                      {Array.from({ length: contorCurentTotalPages }, (_, i) => i + 1).map((page) => (
+                        <PaginationItem key={page}>
+                          <PaginationLink
+                            onClick={() => setContorCurentCurrentPage(page)}
+                            isActive={contorCurentCurrentPage === page}
+                            className="cursor-pointer"
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+                      <PaginationItem>
+                        <PaginationNext
+                          onClick={() => setContorCurentCurrentPage(Math.min(contorCurentTotalPages, contorCurentCurrentPage + 1))}
+                          className={contorCurentCurrentPage === contorCurentTotalPages || contorCurentTotalPages === 0 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -1218,39 +1220,41 @@ const Consumuri = () => {
               </div>
 
               {/* Pagination */}
-              <div className="flex items-center justify-between px-2 py-4">
-                <span className="text-sm text-muted-foreground">
-                  Afișare {filteredContorCTL.length === 0 ? 0 : (contorCTLCurrentPage - 1) * contorCTLItemsPerPage + 1}-
-                  {Math.min(contorCTLCurrentPage * contorCTLItemsPerPage, filteredContorCTL.length)} din {filteredContorCTL.length}
-                </span>
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious
-                        onClick={() => setContorCTLCurrentPage(Math.max(1, contorCTLCurrentPage - 1))}
-                        className={contorCTLCurrentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                      />
-                    </PaginationItem>
-                    {Array.from({ length: contorCTLTotalPages }, (_, i) => i + 1).map((page) => (
-                      <PaginationItem key={page}>
-                        <PaginationLink
-                          onClick={() => setContorCTLCurrentPage(page)}
-                          isActive={contorCTLCurrentPage === page}
-                          className="cursor-pointer"
-                        >
-                          {page}
-                        </PaginationLink>
+              {contorCTLTotalPages > 1 && (
+                <div className="flex items-center justify-between px-2 py-4">
+                  <span className="text-sm text-muted-foreground">
+                    Afișare {filteredContorCTL.length === 0 ? 0 : (contorCTLCurrentPage - 1) * contorCTLItemsPerPage + 1}-
+                    {Math.min(contorCTLCurrentPage * contorCTLItemsPerPage, filteredContorCTL.length)} din {filteredContorCTL.length}
+                  </span>
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          onClick={() => setContorCTLCurrentPage(Math.max(1, contorCTLCurrentPage - 1))}
+                          className={contorCTLCurrentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
                       </PaginationItem>
-                    ))}
-                    <PaginationItem>
-                      <PaginationNext
-                        onClick={() => setContorCTLCurrentPage(Math.min(contorCTLTotalPages, contorCTLCurrentPage + 1))}
-                        className={contorCTLCurrentPage === contorCTLTotalPages || contorCTLTotalPages === 0 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              </div>
+                      {Array.from({ length: contorCTLTotalPages }, (_, i) => i + 1).map((page) => (
+                        <PaginationItem key={page}>
+                          <PaginationLink
+                            onClick={() => setContorCTLCurrentPage(page)}
+                            isActive={contorCTLCurrentPage === page}
+                            className="cursor-pointer"
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+                      <PaginationItem>
+                        <PaginationNext
+                          onClick={() => setContorCTLCurrentPage(Math.min(contorCTLTotalPages, contorCTLCurrentPage + 1))}
+                          className={contorCTLCurrentPage === contorCTLTotalPages || contorCTLTotalPages === 0 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -1552,39 +1556,41 @@ const Consumuri = () => {
               </div>
 
               {/* Pagination */}
-              <div className="flex items-center justify-between px-2 py-4">
-                <span className="text-sm text-muted-foreground">
-                  Afișare {filteredConsumuri.length === 0 ? 0 : (consumuriCurrentPage - 1) * consumuriItemsPerPage + 1}-
-                  {Math.min(consumuriCurrentPage * consumuriItemsPerPage, filteredConsumuri.length)} din {filteredConsumuri.length}
-                </span>
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious
-                        onClick={() => setConsumuriCurrentPage(Math.max(1, consumuriCurrentPage - 1))}
-                        className={consumuriCurrentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                      />
-                    </PaginationItem>
-                    {Array.from({ length: consumuriTotalPages }, (_, i) => i + 1).map((page) => (
-                      <PaginationItem key={page}>
-                        <PaginationLink
-                          onClick={() => setConsumuriCurrentPage(page)}
-                          isActive={consumuriCurrentPage === page}
-                          className="cursor-pointer"
-                        >
-                          {page}
-                        </PaginationLink>
+              {consumuriTotalPages > 1 && (
+                <div className="flex items-center justify-between px-2 py-4">
+                  <span className="text-sm text-muted-foreground">
+                    Afișare {filteredConsumuri.length === 0 ? 0 : (consumuriCurrentPage - 1) * consumuriItemsPerPage + 1}-
+                    {Math.min(consumuriCurrentPage * consumuriItemsPerPage, filteredConsumuri.length)} din {filteredConsumuri.length}
+                  </span>
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          onClick={() => setConsumuriCurrentPage(Math.max(1, consumuriCurrentPage - 1))}
+                          className={consumuriCurrentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
                       </PaginationItem>
-                    ))}
-                    <PaginationItem>
-                      <PaginationNext
-                        onClick={() => setConsumuriCurrentPage(Math.min(consumuriTotalPages, consumuriCurrentPage + 1))}
-                        className={consumuriCurrentPage === consumuriTotalPages || consumuriTotalPages === 0 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              </div>
+                      {Array.from({ length: consumuriTotalPages }, (_, i) => i + 1).map((page) => (
+                        <PaginationItem key={page}>
+                          <PaginationLink
+                            onClick={() => setConsumuriCurrentPage(page)}
+                            isActive={consumuriCurrentPage === page}
+                            className="cursor-pointer"
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+                      <PaginationItem>
+                        <PaginationNext
+                          onClick={() => setConsumuriCurrentPage(Math.min(consumuriTotalPages, consumuriCurrentPage + 1))}
+                          className={consumuriCurrentPage === consumuriTotalPages || consumuriTotalPages === 0 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

@@ -965,33 +965,35 @@ export default function Comenzi() {
                 </span>
               </div>
               
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious 
-                      onClick={() => setCurrentPageMP(Math.max(1, currentPageMP - 1))}
-                      className={currentPageMP === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                  {Array.from({ length: totalPagesMP }, (_, i) => i + 1).map((page) => (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        onClick={() => setCurrentPageMP(page)}
-                        isActive={currentPageMP === page}
-                        className="cursor-pointer"
-                      >
-                        {page}
-                      </PaginationLink>
+              {totalPagesMP > 1 && (
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setCurrentPageMP(Math.max(1, currentPageMP - 1))}
+                        className={currentPageMP === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
                     </PaginationItem>
-                  ))}
-                  <PaginationItem>
-                    <PaginationNext 
-                      onClick={() => setCurrentPageMP(Math.min(totalPagesMP, currentPageMP + 1))}
-                      className={currentPageMP === totalPagesMP ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
+                    {Array.from({ length: totalPagesMP }, (_, i) => i + 1).map((page) => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => setCurrentPageMP(page)}
+                          isActive={currentPageMP === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setCurrentPageMP(Math.min(totalPagesMP, currentPageMP + 1))}
+                        className={currentPageMP === totalPagesMP ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              )}
             </div>
           </Card>
         </TabsContent>
@@ -1273,33 +1275,35 @@ export default function Comenzi() {
                 </span>
               </div>
               
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious 
-                      onClick={() => setCurrentPagePF(Math.max(1, currentPagePF - 1))}
-                      className={currentPagePF === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                  {Array.from({ length: totalPagesPF }, (_, i) => i + 1).map((page) => (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        onClick={() => setCurrentPagePF(page)}
-                        isActive={currentPagePF === page}
-                        className="cursor-pointer"
-                      >
-                        {page}
-                      </PaginationLink>
+              {totalPagesPF > 1 && (
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setCurrentPagePF(Math.max(1, currentPagePF - 1))}
+                        className={currentPagePF === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
                     </PaginationItem>
-                  ))}
-                  <PaginationItem>
-                    <PaginationNext 
-                      onClick={() => setCurrentPagePF(Math.min(totalPagesPF, currentPagePF + 1))}
-                      className={currentPagePF === totalPagesPF ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
+                    {Array.from({ length: totalPagesPF }, (_, i) => i + 1).map((page) => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => setCurrentPagePF(page)}
+                          isActive={currentPagePF === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setCurrentPagePF(Math.min(totalPagesPF, currentPagePF + 1))}
+                        className={currentPagePF === totalPagesPF ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              )}
             </div>
           </Card>
         </TabsContent>
