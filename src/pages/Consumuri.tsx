@@ -672,24 +672,24 @@ const Consumuri = () => {
           req: {
             id_consum: consumFormData.id || 0,
             col_to_material_map: {
-              "04_nat": "0/4 NAT",
-              "04_conc": "0/4 CONC",
-              "04_cribluri": "0/4 CRIBLURI",
-              "48_conc": "4/8 CONC",
-              "48_cribluri": "4/8 CRIBLURI",
-              "816_conc": "8/16 CONC",
-              "816_cribluri": "8/16 CRIBLURI",
-              "16224_conc": "16/22.4 CONC",
-              "16224_cribluri": "16/22.4 CRIBLURI",
-              "16315_conc": "16/31.5 CONC",
-              "16315_cribluri": "16/31.5 CRIBLURI",
-              filler: "FILLER",
-              bitum: "BITUM 50/70",
-              acid_clorhidric: "ACID CLORHIDRIC",
-              emulgator: "EMULGATOR",
-              sare: "SARE",
-              apa: "APA",
-              topcel_technocel: "CELULOZA TOPCEL/TECHNOCEL"
+              "04_nat": "0/4 Nat",
+              "04_conc": "0/4 Conc",
+              "04_cribluri": "0/4 Cribluri",
+              "48_conc": "4/8 Ccon",
+              "48_cribluri": "4/8 Cribluri",
+              "816_conc": "8/16 Conc",
+              "816_cribluri": "8/16 Cribluri",
+              "16224_conc": "16/22.4 Conc",
+              "16224_cribluri": "16/22.4 Cribluri",
+              "16315_conc": "16/31.5 Conc",
+              "16315_cribluri": "16/31.5 Cribluri",
+              filler: "Filler",
+              bitum: "Bitum",
+              acid_clorhidric: "Acid Clorhidric",
+              emulgator: "Emulgator",
+              sare: "Sare",
+              apa: "Apa",
+              topcel_technocel: "Celuloza Topcel/Technocel"
             }
           }
         };
