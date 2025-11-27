@@ -148,63 +148,28 @@ export default function Comenzi() {
   });
   const [formErrorsPF, setFormErrorsPF] = useState<Record<string, string>>({});
 
-  // Mock furnizori data
   const fetchFurnizori = async () => {
-    const mockData = [
-      { id: 1, nume: "AGREGATE ROMANIA", adresa: "Brașov, Str. Carierelor 5", cui: "RO98765432", nr_reg: "J08/9876/2017" },
-      { id: 2, nume: "BITUM INVEST", adresa: "Ploiești, Bd. Petrolului 100", cui: "RO87654321", nr_reg: "J29/8765/2016" },
-      { id: 3, nume: "MATERIALE CONSTRUCT", adresa: "Constanța, Str. Portului 15", cui: "RO76543210", nr_reg: "J13/7654/2019" },
-    ];
-    setFurnizori(mockData);
+    setFurnizori([]);
     setLoadingFurnizori(false);
   };
 
-  // Mock clienti data
   const fetchClienti = async () => {
-    const mockData = [
-      { id: 1, nume: "CONSTRUCT SRL", adresa: "București, Str. Industrială 23", cui: "RO12345678", nr_reg: "J40/1234/2020" },
-      { id: 2, nume: "DRUMURI SA", adresa: "Cluj-Napoca, Bd. Muncii 45", cui: "RO23456789", nr_reg: "J12/2345/2019" },
-      { id: 3, nume: "INFRASTRUCTURA TOTAL", adresa: "Timișoara, Str. Fabricii 10", cui: "RO34567890", nr_reg: "J35/3456/2021" },
-    ];
-    setClienti(mockData);
+    setClienti([]);
     setLoadingClienti(false);
   };
 
-  // Mock materiale data
   const fetchMateriale = async () => {
-    const mockData = [
-      { materiale_prime: "0/4 NAT" },
-      { materiale_prime: "0/4 CONC" },
-      { materiale_prime: "8/16 CONC" },
-      { materiale_prime: "BITUM 50/70" },
-      { materiale_prime: "FILLER" },
-      { materiale_prime: "MOTORINA" },
-    ];
-    setMateriale(mockData);
+    setMateriale([]);
     setLoadingMateriale(false);
   };
 
-  // Mock produse data
   const fetchProduse = async () => {
-    const mockData = [
-      { produs: "Asfalt BA16" },
-      { produs: "Asfalt BA8" },
-      { produs: "Beton Stabilizat BSC" },
-      { produs: "Emulsie Cationica" },
-    ];
-    setProduse(mockData);
+    setProduse([]);
     setLoadingProduse(false);
   };
 
-  // Mock comenzi materie prima data
   const fetchComenziMP = async () => {
-    const mockData = [
-      { id: 1, cod: "CM000001", data: "26/11/2024", furnizor: "AGREGATE ROMANIA", material: "0/4 NAT", unitate_masura: "tone", cantitate: 250.5, punct_descarcare: "Depozit Central", pret_fara_tva: 12500.00, pret_transport: 1250.00, observatii: "Livrare urgentă" },
-      { id: 2, cod: "CM000002", data: "25/11/2024", furnizor: "BITUM INVEST", material: "BITUM 50/70", unitate_masura: "tone", cantitate: 80.0, punct_descarcare: null, pret_fara_tva: 32000.00, pret_transport: null, observatii: "" },
-      { id: 3, cod: "CM000003", data: "24/11/2024", furnizor: "MATERIALE CONSTRUCT", material: "8/16 CONC", unitate_masura: "tone", cantitate: 150.75, punct_descarcare: "Șantier A", pret_fara_tva: 9045.00, pret_transport: 900.00, observatii: "Livrare în 2 tranșe" },
-      { id: 4, cod: "CM000004", data: "23/11/2024", furnizor: "AGREGATE ROMANIA", material: "FILLER", unitate_masura: "tone", cantitate: 50.0, punct_descarcare: "Depozit Central", pret_fara_tva: 5000.00, pret_transport: 500.00, observatii: "" },
-    ];
-    setComenziMateriePrima(mockData);
+    setComenziMateriePrima([]);
     setLoadingMP(false);
   };
   
