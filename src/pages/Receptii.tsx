@@ -384,7 +384,6 @@ export default function Receptii() {
           nr_aviz_provizoriu: form.nr_aviz_provizoriu || "",
           nr_aviz_intrare: form.nr_aviz_intrare || "",
           nr_factura: form.nr_factura || "",
-          nr_tichet: form.nr_tichet || "",
           nume_sofer: form.nume_sofer,
           nr_inmatriculare: form.nr_inmatriculare,
           tip_masina: form.tip_masina,
@@ -791,14 +790,6 @@ export default function Receptii() {
                 id="nr_factura"
                 value={form.nr_factura}
                 onChange={(e) => setForm({ ...form, nr_factura: e.target.value })}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="nr_tichet">Nr. Tichet</Label>
-              <Input
-                id="nr_tichet"
-                value={form.nr_tichet}
-                onChange={(e) => setForm(prev => ({ ...prev, nr_tichet: e.target.value }))}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
