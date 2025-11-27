@@ -798,7 +798,7 @@ export default function Receptii() {
               <Input
                 id="nr_tichet"
                 value={form.nr_tichet}
-                onChange={(e) => setForm({ ...form, nr_tichet: e.target.value })}
+                onChange={(e) => setForm(prev => ({ ...prev, nr_tichet: e.target.value }))}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
