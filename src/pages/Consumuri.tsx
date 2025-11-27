@@ -61,7 +61,7 @@ interface ContorCTL {
 interface Consum {
   id: number;
   data: string;
-  tip_material: string;
+  produs: string;
   cantitate: number;
   "04_nat": number;
   "04_conc": number;
@@ -1038,11 +1038,11 @@ const Consumuri = () => {
                       </TableHead>
                       <TableHead className="text-xs">
                         <FilterHeader
-                          label="Tip Material"
-                          filterValue={consumuriFilters['tip_material'] || ''}
-                          onFilterChange={(value) => handleConsumuriFilterChange('tip_material', value)}
-                          sortDirection={consumuriSort?.field === 'tip_material' ? consumuriSort.direction : null}
-                          onSort={(dir) => handleConsumuriSort('tip_material', dir)}
+                          label="Produs"
+                          filterValue={consumuriFilters['produs'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('produs', value)}
+                          sortDirection={consumuriSort?.field === 'produs' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('produs', dir)}
                         />
                       </TableHead>
                       <TableHead className="text-xs">
@@ -1252,7 +1252,7 @@ const Consumuri = () => {
                         >
                           <TableCell className="py-1 text-xs">{item.id}</TableCell>
                           <TableCell className="py-1 text-xs">{item.data}</TableCell>
-                          <TableCell className="py-1 text-xs">{item.tip_material}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.produs}</TableCell>
                           <TableCell className="py-1 text-xs">{item.cantitate}</TableCell>
                           <TableCell className="py-1 text-xs">{item["04_nat"]}</TableCell>
                           <TableCell className="py-1 text-xs">{item["04_conc"]}</TableCell>
@@ -1667,8 +1667,8 @@ const Consumuri = () => {
                   <p className="font-medium">{selectedConsum.data}</p>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground text-xs">Tip Material</Label>
-                  <p className="font-medium">{selectedConsum.tip_material}</p>
+                  <Label className="text-muted-foreground text-xs">Produs</Label>
+                  <p className="font-medium">{selectedConsum.produs}</p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground text-xs">Cantitate</Label>
@@ -1781,10 +1781,10 @@ const Consumuri = () => {
           </DialogHeader>
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label>Tip Material</Label>
+              <Label>Produs</Label>
               <Input
-                value={consumFormData.tip_material || ''}
-                onChange={(e) => setConsumFormData({ ...consumFormData, tip_material: e.target.value })}
+                value={consumFormData.produs || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, produs: e.target.value })}
               />
             </div>
             <div className="space-y-2">
