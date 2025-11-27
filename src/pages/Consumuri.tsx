@@ -59,10 +59,28 @@ interface ContorCTL {
 interface Consum {
   id: number;
   data: string;
-  material: string;
+  tip_material: string;
   cantitate: number;
-  unitate_masura: string;
-  observatii: string;
+  "04_nat": number;
+  "04_conc": number;
+  "04_cribluri": number;
+  "48_conc": number;
+  "48_cribluri": number;
+  "816_conc": number;
+  "816_cribluri": number;
+  "16224_conc": number;
+  "16224_cribluri": number;
+  "16315_conc": number;
+  "16315_cribluri": number;
+  filler: number;
+  bitum: number;
+  acid_clorhidric: number;
+  emulgator: number;
+  sare: number;
+  apa: number;
+  topcel_technocel: number;
+  consum_curent: number;
+  consum_ctl: number;
 }
 
 // Filter Header Component
@@ -734,11 +752,11 @@ const Consumuri = () => {
                       </TableHead>
                       <TableHead className="text-xs">
                         <FilterHeader
-                          label="Material"
-                          filterValue={consumuriFilters['material'] || ''}
-                          onFilterChange={(value) => handleConsumuriFilterChange('material', value)}
-                          sortDirection={consumuriSort?.field === 'material' ? consumuriSort.direction : null}
-                          onSort={(dir) => handleConsumuriSort('material', dir)}
+                          label="Tip Material"
+                          filterValue={consumuriFilters['tip_material'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('tip_material', value)}
+                          sortDirection={consumuriSort?.field === 'tip_material' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('tip_material', dir)}
                         />
                       </TableHead>
                       <TableHead className="text-xs">
@@ -752,20 +770,20 @@ const Consumuri = () => {
                       </TableHead>
                       <TableHead className="text-xs">
                         <FilterHeader
-                          label="Unitate Măsură"
-                          filterValue={consumuriFilters['unitate_masura'] || ''}
-                          onFilterChange={(value) => handleConsumuriFilterChange('unitate_masura', value)}
-                          sortDirection={consumuriSort?.field === 'unitate_masura' ? consumuriSort.direction : null}
-                          onSort={(dir) => handleConsumuriSort('unitate_masura', dir)}
+                          label="Consum Curent"
+                          filterValue={consumuriFilters['consum_curent'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('consum_curent', value)}
+                          sortDirection={consumuriSort?.field === 'consum_curent' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('consum_curent', dir)}
                         />
                       </TableHead>
                       <TableHead className="text-xs">
                         <FilterHeader
-                          label="Observații"
-                          filterValue={consumuriFilters['observatii'] || ''}
-                          onFilterChange={(value) => handleConsumuriFilterChange('observatii', value)}
-                          sortDirection={consumuriSort?.field === 'observatii' ? consumuriSort.direction : null}
-                          onSort={(dir) => handleConsumuriSort('observatii', dir)}
+                          label="Consum CTL"
+                          filterValue={consumuriFilters['consum_ctl'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('consum_ctl', value)}
+                          sortDirection={consumuriSort?.field === 'consum_ctl' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('consum_ctl', dir)}
                         />
                       </TableHead>
                     </TableRow>
@@ -786,10 +804,10 @@ const Consumuri = () => {
                         >
                           <TableCell className="py-1 text-xs">{item.id}</TableCell>
                           <TableCell className="py-1 text-xs">{item.data}</TableCell>
-                          <TableCell className="py-1 text-xs">{item.material}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.tip_material}</TableCell>
                           <TableCell className="py-1 text-xs">{item.cantitate}</TableCell>
-                          <TableCell className="py-1 text-xs">{item.unitate_masura}</TableCell>
-                          <TableCell className="py-1 text-xs">{item.observatii}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.consum_curent}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.consum_ctl}</TableCell>
                         </TableRow>
                       ))
                     )}
@@ -1108,16 +1126,16 @@ const Consumuri = () => {
 
       {/* Consum Details Dialog */}
       <Dialog open={isConsumDetailsOpen} onOpenChange={setIsConsumDetailsOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Eye className="h-5 w-5" />
-              Detalii Consum
+              Detalii Consum Materie Prima
             </DialogTitle>
           </DialogHeader>
           {selectedConsum && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label className="text-muted-foreground text-xs">ID</Label>
                   <p className="font-medium">{selectedConsum.id}</p>
@@ -1127,20 +1145,92 @@ const Consumuri = () => {
                   <p className="font-medium">{selectedConsum.data}</p>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground text-xs">Material</Label>
-                  <p className="font-medium">{selectedConsum.material}</p>
+                  <Label className="text-muted-foreground text-xs">Tip Material</Label>
+                  <p className="font-medium">{selectedConsum.tip_material}</p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground text-xs">Cantitate</Label>
                   <p className="font-medium">{selectedConsum.cantitate}</p>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground text-xs">Unitate Măsură</Label>
-                  <p className="font-medium">{selectedConsum.unitate_masura}</p>
+                  <Label className="text-muted-foreground text-xs">0/4 NAT</Label>
+                  <p className="font-medium">{selectedConsum["04_nat"]}</p>
                 </div>
-                <div className="col-span-2">
-                  <Label className="text-muted-foreground text-xs">Observații</Label>
-                  <p className="font-medium">{selectedConsum.observatii || '-'}</p>
+                <div>
+                  <Label className="text-muted-foreground text-xs">0/4 CONC</Label>
+                  <p className="font-medium">{selectedConsum["04_conc"]}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">0/4 CRIBLURI</Label>
+                  <p className="font-medium">{selectedConsum["04_cribluri"]}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">4/8 CONC</Label>
+                  <p className="font-medium">{selectedConsum["48_conc"]}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">4/8 CRIBLURI</Label>
+                  <p className="font-medium">{selectedConsum["48_cribluri"]}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">8/16 CONC</Label>
+                  <p className="font-medium">{selectedConsum["816_conc"]}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">8/16 CRIBLURI</Label>
+                  <p className="font-medium">{selectedConsum["816_cribluri"]}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">16/22.4 CONC</Label>
+                  <p className="font-medium">{selectedConsum["16224_conc"]}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">16/22.4 CRIBLURI</Label>
+                  <p className="font-medium">{selectedConsum["16224_cribluri"]}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">16/31.5 CONC</Label>
+                  <p className="font-medium">{selectedConsum["16315_conc"]}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">16/31.5 CRIBLURI</Label>
+                  <p className="font-medium">{selectedConsum["16315_cribluri"]}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Filler</Label>
+                  <p className="font-medium">{selectedConsum.filler}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Bitum</Label>
+                  <p className="font-medium">{selectedConsum.bitum}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Acid Clorhidric</Label>
+                  <p className="font-medium">{selectedConsum.acid_clorhidric}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Emulgator</Label>
+                  <p className="font-medium">{selectedConsum.emulgator}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Sare</Label>
+                  <p className="font-medium">{selectedConsum.sare}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Apă</Label>
+                  <p className="font-medium">{selectedConsum.apa}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Topcel/Technocel</Label>
+                  <p className="font-medium">{selectedConsum.topcel_technocel}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Consum Curent</Label>
+                  <p className="font-medium">{selectedConsum.consum_curent}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Consum CTL</Label>
+                  <p className="font-medium">{selectedConsum.consum_ctl}</p>
                 </div>
               </div>
             </div>
@@ -1160,41 +1250,208 @@ const Consumuri = () => {
 
       {/* Consum Form Dialog */}
       <Dialog open={isConsumFormOpen} onOpenChange={setIsConsumFormOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{isEditingConsum ? 'Editează Consum' : 'Adaugă Consum'}</DialogTitle>
             <DialogDescription>
               {isEditingConsum ? 'Modifică datele consumului' : 'Completează datele pentru noul consum'}
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label>Material</Label>
+              <Label>Tip Material</Label>
               <Input
-                value={consumFormData.material || ''}
-                onChange={(e) => setConsumFormData({ ...consumFormData, material: e.target.value })}
+                value={consumFormData.tip_material || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, tip_material: e.target.value })}
               />
             </div>
             <div className="space-y-2">
               <Label>Cantitate</Label>
               <Input
                 type="number"
+                step="0.01"
                 value={consumFormData.cantitate || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, cantitate: Number(e.target.value) })}
               />
             </div>
             <div className="space-y-2">
-              <Label>Unitate Măsură</Label>
+              <Label>0/4 NAT</Label>
               <Input
-                value={consumFormData.unitate_masura || ''}
-                onChange={(e) => setConsumFormData({ ...consumFormData, unitate_masura: e.target.value })}
+                type="number"
+                step="0.01"
+                value={consumFormData["04_nat"] || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, "04_nat": Number(e.target.value) })}
               />
             </div>
             <div className="space-y-2">
-              <Label>Observații</Label>
+              <Label>0/4 CONC</Label>
               <Input
-                value={consumFormData.observatii || ''}
-                onChange={(e) => setConsumFormData({ ...consumFormData, observatii: e.target.value })}
+                type="number"
+                step="0.01"
+                value={consumFormData["04_conc"] || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, "04_conc": Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>0/4 CRIBLURI</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData["04_cribluri"] || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, "04_cribluri": Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>4/8 CONC</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData["48_conc"] || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, "48_conc": Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>4/8 CRIBLURI</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData["48_cribluri"] || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, "48_cribluri": Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>8/16 CONC</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData["816_conc"] || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, "816_conc": Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>8/16 CRIBLURI</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData["816_cribluri"] || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, "816_cribluri": Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>16/22.4 CONC</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData["16224_conc"] || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, "16224_conc": Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>16/22.4 CRIBLURI</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData["16224_cribluri"] || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, "16224_cribluri": Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>16/31.5 CONC</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData["16315_conc"] || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, "16315_conc": Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>16/31.5 CRIBLURI</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData["16315_cribluri"] || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, "16315_cribluri": Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Filler</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData.filler || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, filler: Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Bitum</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData.bitum || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, bitum: Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Acid Clorhidric</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData.acid_clorhidric || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, acid_clorhidric: Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Emulgator</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData.emulgator || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, emulgator: Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Sare</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData.sare || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, sare: Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Apă</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData.apa || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, apa: Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Topcel/Technocel</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData.topcel_technocel || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, topcel_technocel: Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Consum Curent</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData.consum_curent || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, consum_curent: Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Consum CTL</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={consumFormData.consum_ctl || ''}
+                onChange={(e) => setConsumFormData({ ...consumFormData, consum_ctl: Number(e.target.value) })}
               />
             </div>
           </div>
