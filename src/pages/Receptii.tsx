@@ -24,7 +24,7 @@ interface ReceptieMaterial {
   material: string;
   nr_aviz_provizoriu: string;
   nr_aviz_intrare: string;
-  numar_factura: string;
+  nr_factura: string;
   nume_sofer: string;
   nr_inmatriculare: string;
   tip_masina: string;
@@ -44,7 +44,7 @@ const receptieSchema = z.object({
   material: z.string().trim().min(1, "Materialul este obligatoriu").max(100),
   nr_aviz_provizoriu: z.string().trim().max(10).optional(),
   nr_aviz_intrare: z.string().trim().max(10).optional(),
-  numar_factura: z.string().trim().max(20).optional(),
+  nr_factura: z.string().trim().max(20).optional(),
   nume_sofer: z.string().trim().min(1, "Numele șoferului este obligatoriu").max(100),
   nr_inmatriculare: z.string().trim().min(1, "Numărul de înmatriculare este obligatoriu").max(10),
   tip_masina: z.string().trim().min(1, "Tipul mașinii este obligatoriu").max(20),
@@ -83,7 +83,7 @@ export default function Receptii() {
     material: "",
     nr_aviz_provizoriu: "",
     nr_aviz_intrare: "",
-    numar_factura: "",
+    nr_factura: "",
     nume_sofer: "",
     nr_inmatriculare: "",
     tip_masina: "",
@@ -106,7 +106,7 @@ export default function Receptii() {
     material: "", 
     nr_aviz_provizoriu: "",
     nr_aviz_intrare: "",
-    numar_factura: "",
+    nr_factura: "",
     nume_sofer: "",
     nr_inmatriculare: "",
     tip_masina: "",
@@ -294,7 +294,7 @@ export default function Receptii() {
       material: "",
       nr_aviz_provizoriu: "",
       nr_aviz_intrare: "",
-      numar_factura: "",
+      nr_factura: "",
       nume_sofer: "",
       nr_inmatriculare: "",
       tip_masina: "",
@@ -319,7 +319,7 @@ export default function Receptii() {
       material: receptie.material,
       nr_aviz_provizoriu: receptie.nr_aviz_provizoriu || "",
       nr_aviz_intrare: receptie.nr_aviz_intrare || "",
-      numar_factura: receptie.numar_factura || "",
+      nr_factura: receptie.nr_factura || "",
       nume_sofer: receptie.nume_sofer,
       nr_inmatriculare: receptie.nr_inmatriculare,
       tip_masina: receptie.tip_masina,
@@ -373,7 +373,7 @@ export default function Receptii() {
           material: form.material,
           nr_aviz_provizoriu: form.nr_aviz_provizoriu || "",
           nr_aviz_intrare: form.nr_aviz_intrare || "",
-          numar_factura: form.numar_factura || "",
+          nr_factura: form.nr_factura || "",
           nume_sofer: form.nume_sofer,
           nr_inmatriculare: form.nr_inmatriculare,
           tip_masina: form.tip_masina,
@@ -468,7 +468,7 @@ export default function Receptii() {
         (item.material || "").toLowerCase().includes(filters.material.toLowerCase()) &&
         (item.nr_aviz_provizoriu || "").toLowerCase().includes(filters.nr_aviz_provizoriu.toLowerCase()) &&
         (item.nr_aviz_intrare || "").toLowerCase().includes(filters.nr_aviz_intrare.toLowerCase()) &&
-        (item.numar_factura || "").toLowerCase().includes(filters.numar_factura.toLowerCase()) &&
+        (item.nr_factura || "").toLowerCase().includes(filters.nr_factura.toLowerCase()) &&
         (item.nume_sofer || "").toLowerCase().includes(filters.nume_sofer.toLowerCase()) &&
         (item.nr_inmatriculare || "").toLowerCase().includes(filters.nr_inmatriculare.toLowerCase()) &&
         (item.tip_masina || "").toLowerCase().includes(filters.tip_masina.toLowerCase()) &&
@@ -619,7 +619,7 @@ export default function Receptii() {
                   <FilterHeader field="pret_transport_total" label="Preț Transport" />
                   <FilterHeader field="pret_total" label="Preț Total" />
                   <FilterHeader field="observatii" label="Observații" />
-                  <FilterHeader field="numar_factura" label="Nr. Factură" />
+                  <FilterHeader field="nr_factura" label="Nr. Factură" />
                 </TableRow>
               </TableHeader>
               <TableBody key={`receptii-page-${currentPage}`} className="animate-fade-in">
@@ -659,7 +659,7 @@ export default function Receptii() {
                       <TableCell className="py-1 text-xs">{receptie.pret_transport_total}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.pret_total}</TableCell>
                       <TableCell className="py-1 text-xs max-w-xs truncate">{receptie.observatii || "-"}</TableCell>
-                      <TableCell className="py-1 text-xs">{receptie.numar_factura || "-"}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.nr_factura || "-"}</TableCell>
                     </TableRow>
                   ))
                 )}
@@ -784,11 +784,11 @@ export default function Receptii() {
               </div>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="numar_factura">Nr. Factură</Label>
+              <Label htmlFor="nr_factura">Nr. Factură</Label>
               <Input
-                id="numar_factura"
-                value={form.numar_factura}
-                onChange={(e) => setForm({ ...form, numar_factura: e.target.value })}
+                id="nr_factura"
+                value={form.nr_factura}
+                onChange={(e) => setForm({ ...form, nr_factura: e.target.value })}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -963,7 +963,7 @@ export default function Receptii() {
                 </div>
                 <div className="space-y-1">
                   <Label className="text-muted-foreground">Nr. Factură</Label>
-                  <p className="font-medium">{viewingDetails.numar_factura || "-"}</p>
+                  <p className="font-medium">{viewingDetails.nr_factura || "-"}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -1016,7 +1016,7 @@ export default function Receptii() {
               </div>
               <div className="space-y-1">
                 <Label className="text-muted-foreground">Nr. Factură</Label>
-                <p className="font-medium">{viewingDetails.numar_factura || "-"}</p>
+                <p className="font-medium">{viewingDetails.nr_factura || "-"}</p>
               </div>
             </div>
           )}
