@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2, ArrowUpDown } from "lucide-react";
+import { Plus, Pencil, Trash2, ArrowUpDown, Ticket } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -1102,6 +1102,22 @@ export default function Receptii() {
           )}
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" onClick={() => setViewingDetails(null)}>Închide</Button>
+            <Button 
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                if (viewingDetails) {
+                  toast({
+                    title: "Generare tichet",
+                    description: `Se generează tichetul pentru recepția ${viewingDetails.cod}...`,
+                  });
+                  // TODO: Implement ticket generation logic
+                }
+              }}
+            >
+              <Ticket className="w-4 h-4 mr-2" />
+              Generează Tichet
+            </Button>
             <Button 
               variant="outline"
               size="sm"
