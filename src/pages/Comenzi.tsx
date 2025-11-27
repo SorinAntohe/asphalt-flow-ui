@@ -300,11 +300,22 @@ export default function Comenzi() {
           description: "Comanda a fost actualizată cu succes"
         });
       } else {
-        // Add
+        // Add - transform field names to match backend Pydantic model
+        const comandaPayload = {
+          furnizor: validatedData.furnizor,
+          material: validatedData.material,
+          unitate_de_masura: validatedData.unitate_masura,
+          cantitate: validatedData.cantitate,
+          punct_descarcare: validatedData.punct_descarcare || "",
+          pret_fara_tva: validatedData.pret_fara_tva,
+          pret_transport: validatedData.pret_transport || 0,
+          observatii: validatedData.observatii || ""
+        };
+        
         const response = await fetch('http://192.168.15.4:8002/comenzi/adauga/material', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(validatedData)
+          body: JSON.stringify(comandaPayload)
         });
         
         if (!response.ok) throw new Error('Failed to add comanda');
