@@ -315,7 +315,7 @@ export default function Receptii() {
     // Calculate diferenta automatically
     const diferenta = receptie.cantitate_livrata - receptie.cantitate_receptionata;
     setForm({
-      data: receptie.data,
+      data: "",
       cod: receptie.cod,
       furnizor: receptie.furnizor,
       material: receptie.material,
