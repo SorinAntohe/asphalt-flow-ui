@@ -82,6 +82,27 @@ export default function Receptii() {
       pret_total: 16500,
       pret_transport_total: 700,
       observatii: "Recepție exemplu"
+    },
+    {
+      id: 2,
+      data: "26/11/2024",
+      cod: "BITUM 50/70",
+      furnizor: "Rafinăria Petrotel SRL",
+      material: "BITUM 50/70",
+      nr_aviz_provizoriu: "AP-002",
+      nr_aviz_intrare: "AI-002",
+      nr_factura: "F-2024-002",
+      nr_tichet: "T-002",
+      nume_sofer: "Vasile Marin",
+      nr_inmatriculare: "CT-99-XYZ",
+      tip_masina: "8X4",
+      cantitate_livrata: 30,
+      cantitate_receptionata: 29.8,
+      diferenta: 0.2,
+      pret_material_total: 45000,
+      pret_total: 46200,
+      pret_transport_total: 1200,
+      observatii: "Bitum pentru producție"
     }
   ]);
   const [loading, setLoading] = useState(false);
