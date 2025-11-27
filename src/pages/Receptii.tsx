@@ -1057,100 +1057,95 @@ export default function Receptii() {
 
       {/* Details View Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Detalii Recepție - Cod: {viewingDetails?.cod}</DialogTitle>
-            <DialogDescription>
-              Informații complete despre recepție
-            </DialogDescription>
+        <DialogContent className="max-w-5xl">
+          <DialogHeader className="pb-2">
+            <DialogTitle className="text-base">Detalii Recepție - Cod: {viewingDetails?.cod}</DialogTitle>
           </DialogHeader>
           {viewingDetails && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">ID</Label>
-                  <p className="font-medium">{viewingDetails.id}</p>
+            <div className="grid gap-2 py-2">
+              <div className="grid grid-cols-5 gap-3">
+                <div>
+                  <Label className="text-xs text-muted-foreground">ID</Label>
+                  <p className="text-sm font-medium">{viewingDetails.id}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Data</Label>
-                  <p className="font-medium">{viewingDetails.data}</p>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Data</Label>
+                  <p className="text-sm font-medium">{viewingDetails.data}</p>
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Cod</Label>
-                  <p className="font-medium">{viewingDetails.cod}</p>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Cod</Label>
+                  <p className="text-sm font-medium">{viewingDetails.cod}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Nr. Aviz Provizoriu</Label>
-                  <p className="font-medium">{viewingDetails.nr_aviz_provizoriu || "-"}</p>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Furnizor</Label>
+                  <p className="text-sm font-medium">{viewingDetails.furnizor}</p>
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Nr. Aviz Intrare</Label>
-                  <p className="font-medium">{viewingDetails.nr_aviz_intrare || "-"}</p>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Nr. Factură</Label>
-                  <p className="font-medium">{viewingDetails.nr_factura || "-"}</p>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Material</Label>
+                  <p className="text-sm font-medium">{viewingDetails.material}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Nume Șofer</Label>
-                  <p className="font-medium">{viewingDetails.nume_sofer}</p>
+              <div className="grid grid-cols-5 gap-3">
+                <div>
+                  <Label className="text-xs text-muted-foreground">Nr. Aviz Provizoriu</Label>
+                  <p className="text-sm font-medium">{viewingDetails.nr_aviz_provizoriu || "-"}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Nr. Înmatriculare</Label>
-                  <p className="font-medium">{viewingDetails.nr_inmatriculare}</p>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Nr. Aviz Intrare</Label>
+                  <p className="text-sm font-medium">{viewingDetails.nr_aviz_intrare || "-"}</p>
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Tip Mașină</Label>
-                  <p className="font-medium">{viewingDetails.tip_masina}</p>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Nr. Factură</Label>
+                  <p className="text-sm font-medium">{viewingDetails.nr_factura || "-"}</p>
                 </div>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Cantitate Livrată</Label>
-                  <p className="font-medium">{viewingDetails.cantitate_livrata}</p>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Nr. Tichet</Label>
+                  <p className="text-sm font-medium">{viewingDetails.nr_tichet || "-"}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Cantitate Recepționată</Label>
-                  <p className="font-medium">{viewingDetails.cantitate_receptionata}</p>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Diferență</Label>
-                  <p className="font-medium">{viewingDetails.diferenta}</p>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Nume Șofer</Label>
+                  <p className="text-sm font-medium">{viewingDetails.nume_sofer}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Preț Material Total</Label>
-                  <p className="font-medium">{viewingDetails.pret_material_total}</p>
+              <div className="grid grid-cols-5 gap-3">
+                <div>
+                  <Label className="text-xs text-muted-foreground">Nr. Înmatriculare</Label>
+                  <p className="text-sm font-medium">{viewingDetails.nr_inmatriculare}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Preț Transport Total</Label>
-                  <p className="font-medium">{viewingDetails.pret_transport_total}</p>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Tip Mașină</Label>
+                  <p className="text-sm font-medium">{viewingDetails.tip_masina}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Preț Total</Label>
-                  <p className="font-medium">{viewingDetails.pret_total}</p>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Cant. Livrată</Label>
+                  <p className="text-sm font-medium">{viewingDetails.cantitate_livrata}</p>
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Cant. Recepționată</Label>
+                  <p className="text-sm font-medium">{viewingDetails.cantitate_receptionata}</p>
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Diferență</Label>
+                  <p className="text-sm font-medium">{viewingDetails.diferenta}</p>
                 </div>
               </div>
-              <div className="space-y-1">
-                <Label className="text-muted-foreground">Observații</Label>
-                <p className="font-medium">{viewingDetails.observatii || "-"}</p>
-              </div>
-              <div className="space-y-1">
-                <Label className="text-muted-foreground">Nr. Factură</Label>
-                <p className="font-medium">{viewingDetails.nr_factura || "-"}</p>
-              </div>
-              <div className="space-y-1">
-                <Label className="text-muted-foreground">Nr. Tichet</Label>
-                <p className="font-medium">{viewingDetails.nr_tichet || "-"}</p>
+              <div className="grid grid-cols-5 gap-3">
+                <div>
+                  <Label className="text-xs text-muted-foreground">Preț Material</Label>
+                  <p className="text-sm font-medium">{viewingDetails.pret_material_total}</p>
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Preț Transport</Label>
+                  <p className="text-sm font-medium">{viewingDetails.pret_transport_total}</p>
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Preț Total</Label>
+                  <p className="text-sm font-medium">{viewingDetails.pret_total}</p>
+                </div>
+                <div className="col-span-2">
+                  <Label className="text-xs text-muted-foreground">Observații</Label>
+                  <p className="text-sm font-medium">{viewingDetails.observatii || "-"}</p>
+                </div>
               </div>
             </div>
           )}
