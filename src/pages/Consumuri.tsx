@@ -45,6 +45,7 @@ interface ContorCurent {
   index_nou: number;
   consum_kw: number;
   pret: number;
+  pret_total: number;
 }
 
 interface ContorCTL {
@@ -491,11 +492,20 @@ const Consumuri = () => {
                       </TableHead>
                       <TableHead className="text-xs">
                         <FilterHeader
-                          label="Preț Total"
+                          label="Preț"
                           filterValue={contorCurentFilters['pret'] || ''}
                           onFilterChange={(value) => handleContorCurentFilterChange('pret', value)}
                           sortDirection={contorCurentSort?.field === 'pret' ? contorCurentSort.direction : null}
                           onSort={(dir) => handleContorCurentSort('pret', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="Preț Total"
+                          filterValue={contorCurentFilters['pret_total'] || ''}
+                          onFilterChange={(value) => handleContorCurentFilterChange('pret_total', value)}
+                          sortDirection={contorCurentSort?.field === 'pret_total' ? contorCurentSort.direction : null}
+                          onSort={(dir) => handleContorCurentSort('pret_total', dir)}
                         />
                       </TableHead>
                     </TableRow>
@@ -503,7 +513,7 @@ const Consumuri = () => {
                   <TableBody>
                     {paginatedContorCurent.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                        <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                           Nu există înregistrări
                         </TableCell>
                       </TableRow>
@@ -520,6 +530,7 @@ const Consumuri = () => {
                           <TableCell className="py-1 text-xs">{item.index_nou}</TableCell>
                           <TableCell className="py-1 text-xs">{item.consum_kw}</TableCell>
                           <TableCell className="py-1 text-xs">{item.pret}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.pret_total}</TableCell>
                         </TableRow>
                       ))
                     )}
@@ -1119,8 +1130,12 @@ const Consumuri = () => {
                   <p className="font-medium">{selectedContorCurent.consum_kw}</p>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground text-xs">Preț Total</Label>
+                  <Label className="text-muted-foreground text-xs">Preț</Label>
                   <p className="font-medium">{selectedContorCurent.pret}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Preț Total</Label>
+                  <p className="font-medium">{selectedContorCurent.pret_total}</p>
                 </div>
               </div>
             </div>
@@ -1168,16 +1183,44 @@ const Consumuri = () => {
               <Label>Consum (kW)</Label>
               <Input
                 type="number"
+                step="0.01"
                 value={contorCurentFormData.consum_kw || ''}
-                onChange={(e) => setContorCurentFormData({ ...contorCurentFormData, consum_kw: Number(e.target.value) })}
+                onChange={(e) => {
+                  const consum = Number(e.target.value);
+                  const pret = contorCurentFormData.pret || 0;
+                  setContorCurentFormData({ 
+                    ...contorCurentFormData, 
+                    consum_kw: consum,
+                    pret_total: consum * pret
+                  });
+                }}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Preț</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={contorCurentFormData.pret || ''}
+                onChange={(e) => {
+                  const pret = Number(e.target.value);
+                  const consum = contorCurentFormData.consum_kw || 0;
+                  setContorCurentFormData({ 
+                    ...contorCurentFormData, 
+                    pret: pret,
+                    pret_total: pret * consum
+                  });
+                }}
               />
             </div>
             <div className="space-y-2">
               <Label>Preț Total</Label>
               <Input
                 type="number"
-                value={contorCurentFormData.pret || ''}
-                onChange={(e) => setContorCurentFormData({ ...contorCurentFormData, pret: Number(e.target.value) })}
+                step="0.01"
+                value={contorCurentFormData.pret_total || ''}
+                disabled
+                className="bg-muted"
               />
             </div>
           </div>
