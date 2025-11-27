@@ -193,7 +193,7 @@ const Consumuri = () => {
   const [consumuriCurrentPage, setConsumuriCurrentPage] = useState(1);
   const [consumuriFilters, setConsumuriFilters] = useState<Record<string, string>>({});
   const [consumuriSort, setConsumuriSort] = useState<{ field: string; direction: 'asc' | 'desc' } | null>(null);
-  const [consumuriData] = useState<Consum[]>([]);
+  const [consumuriData, setConsumuriData] = useState<Consum[]>([]);
   const [selectedConsum, setSelectedConsum] = useState<Consum | null>(null);
   const [isConsumDetailsOpen, setIsConsumDetailsOpen] = useState(false);
   const [isConsumFormOpen, setIsConsumFormOpen] = useState(false);
@@ -596,69 +596,119 @@ const Consumuri = () => {
 
   const handleConsumSave = async () => {
     try {
-      const payload = {
-        produs: consumFormData.produs || '',
-        cantiate: consumFormData.cantitate || 0,
-        "04_nat": consumFormData["04_nat"] || 0,
-        "04_conc": consumFormData["04_conc"] || 0,
-        "04_cribluri": consumFormData["04_cribluri"] || 0,
-        "48_conc": consumFormData["48_conc"] || 0,
-        "48_cribluri": consumFormData["48_cribluri"] || 0,
-        "816_conc": consumFormData["816_conc"] || 0,
-        "816_cribluri": consumFormData["816_cribluri"] || 0,
-        "16224_conc": consumFormData["16224_conc"] || 0,
-        "16224_cribluri": consumFormData["16224_cribluri"] || 0,
-        "16315_conc": consumFormData["16315_conc"] || 0,
-        "16315_cribluri": consumFormData["16315_cribluri"] || 0,
-        filler: consumFormData.filler || 0,
-        bitum: consumFormData.bitum || 0,
-        acid_clorhidric: consumFormData.acid_clorhidric || 0,
-        emulgator: consumFormData.emulgator || 0,
-        sare: consumFormData.sare || 0,
-        apa: consumFormData.apa || 0,
-        topcel_technocel: consumFormData.topcel_technocel || 0,
-        consum_curent: consumFormData.consum_curent || 0,
-        consum_ctl: consumFormData.consum_ctl || 0,
-        id_consum: consumFormData.id || 0,
-        col_to_material_map: {
-          "04_nat": "0/4 NAT",
-          "04_conc": "0/4 CONC",
-          "04_cribluri": "0/4 CRIBLURI",
-          "48_conc": "4/8 CONC",
-          "48_cribluri": "4/8 CRIBLURI",
-          "816_conc": "8/16 CONC",
-          "816_cribluri": "8/16 CRIBLURI",
-          "16224_conc": "16/22.4 CONC",
-          "16224_cribluri": "16/22.4 CRIBLURI",
-          "16315_conc": "16/31.5 CONC",
-          "16315_cribluri": "16/31.5 CRIBLURI",
-          "filler": "FILLER",
-          "bitum": "BITUM 50/70",
-          "acid_clorhidric": "ACID CLORHIDRIC",
-          "emulgator": "EMULGATOR",
-          "sare": "SARE",
-          "apa": "APA",
-          "topcel_technocel": "CELULOZA TOPCEL/TECHNOCEL"
+      if (isEditingConsum && consumFormData.id) {
+        // Edit mode - use universal edit endpoint
+        const updatePayload = {
+          produs: consumFormData.produs || '',
+          cantitate: consumFormData.cantitate || 0,
+          "04_nat": consumFormData["04_nat"] || 0,
+          "04_conc": consumFormData["04_conc"] || 0,
+          "04_cribluri": consumFormData["04_cribluri"] || 0,
+          "48_conc": consumFormData["48_conc"] || 0,
+          "48_cribluri": consumFormData["48_cribluri"] || 0,
+          "816_conc": consumFormData["816_conc"] || 0,
+          "816_cribluri": consumFormData["816_cribluri"] || 0,
+          "16224_conc": consumFormData["16224_conc"] || 0,
+          "16224_cribluri": consumFormData["16224_cribluri"] || 0,
+          "16315_conc": consumFormData["16315_conc"] || 0,
+          "16315_cribluri": consumFormData["16315_cribluri"] || 0,
+          filler: consumFormData.filler || 0,
+          bitum: consumFormData.bitum || 0,
+          acid_clorhidric: consumFormData.acid_clorhidric || 0,
+          emulgator: consumFormData.emulgator || 0,
+          sare: consumFormData.sare || 0,
+          apa: consumFormData.apa || 0,
+          topcel_technocel: consumFormData.topcel_technocel || 0,
+          consum_curent: consumFormData.consum_curent || 0,
+          consum_ctl: consumFormData.consum_ctl || 0
+        };
+
+        const response = await fetch(`${API_BASE_URL}/editeaza`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tabel: "consumuri_materie_prima",
+            id: consumFormData.id,
+            update: updatePayload
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || 'Eroare la editarea consumului');
         }
-      };
 
-      const response = await fetch(`${API_BASE_URL}/consumuri/adauga/materie_prima`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+        toast({
+          title: "Succes",
+          description: "Consum editat cu succes"
+        });
+      } else {
+        // Add mode - use specialized endpoint
+        const payload = {
+          produs: consumFormData.produs || '',
+          cantiate: consumFormData.cantitate || 0,
+          "04_nat": consumFormData["04_nat"] || 0,
+          "04_conc": consumFormData["04_conc"] || 0,
+          "04_cribluri": consumFormData["04_cribluri"] || 0,
+          "48_conc": consumFormData["48_conc"] || 0,
+          "48_cribluri": consumFormData["48_cribluri"] || 0,
+          "816_conc": consumFormData["816_conc"] || 0,
+          "816_cribluri": consumFormData["816_cribluri"] || 0,
+          "16224_conc": consumFormData["16224_conc"] || 0,
+          "16224_cribluri": consumFormData["16224_cribluri"] || 0,
+          "16315_conc": consumFormData["16315_conc"] || 0,
+          "16315_cribluri": consumFormData["16315_cribluri"] || 0,
+          filler: consumFormData.filler || 0,
+          bitum: consumFormData.bitum || 0,
+          acid_clorhidric: consumFormData.acid_clorhidric || 0,
+          emulgator: consumFormData.emulgator || 0,
+          sare: consumFormData.sare || 0,
+          apa: consumFormData.apa || 0,
+          topcel_technocel: consumFormData.topcel_technocel || 0,
+          consum_curent: consumFormData.consum_curent || 0,
+          consum_ctl: consumFormData.consum_ctl || 0,
+          id_consum: consumFormData.id || 0,
+          col_to_material_map: {
+            "04_nat": "0/4 NAT",
+            "04_conc": "0/4 CONC",
+            "04_cribluri": "0/4 CRIBLURI",
+            "48_conc": "4/8 CONC",
+            "48_cribluri": "4/8 CRIBLURI",
+            "816_conc": "8/16 CONC",
+            "816_cribluri": "8/16 CRIBLURI",
+            "16224_conc": "16/22.4 CONC",
+            "16224_cribluri": "16/22.4 CRIBLURI",
+            "16315_conc": "16/31.5 CONC",
+            "16315_cribluri": "16/31.5 CRIBLURI",
+            "filler": "FILLER",
+            "bitum": "BITUM 50/70",
+            "acid_clorhidric": "ACID CLORHIDRIC",
+            "emulgator": "EMULGATOR",
+            "sare": "SARE",
+            "apa": "APA",
+            "topcel_technocel": "CELULOZA TOPCEL/TECHNOCEL"
+          }
+        };
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Eroare la salvarea consumului');
+        const response = await fetch(`${API_BASE_URL}/consumuri/adauga/materie_prima`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || 'Eroare la salvarea consumului');
+        }
+
+        toast({
+          title: "Succes",
+          description: "Consum adăugat cu succes"
+        });
       }
 
-      toast({
-        title: "Succes",
-        description: "Consum adăugat cu succes"
-      });
-
       setIsConsumFormOpen(false);
+      fetchConsumuriData();
     } catch (error) {
       console.error('Error saving consum:', error);
       toast({
@@ -673,6 +723,59 @@ const Consumuri = () => {
     setSelectedConsum(item);
     setIsConsumDetailsOpen(true);
   };
+
+  // Fetch Consumuri data
+  const fetchConsumuriData = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/consumuri/returneaza/materie_prima`);
+      if (!response.ok) throw new Error('Failed to fetch consumuri data');
+      const data = await response.json();
+      setConsumuriData(data);
+    } catch (error) {
+      console.error('Error fetching consumuri:', error);
+      toast({
+        title: "Eroare",
+        description: "Nu s-au putut încărca datele de consumuri",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleConsumDelete = async () => {
+    if (!selectedConsum) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/sterge`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tabel: "consumuri_materie_prima",
+          id: selectedConsum.id
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to delete consum');
+
+      toast({
+        title: "Succes",
+        description: "Consum șters cu succes"
+      });
+
+      setIsConsumDeleteOpen(false);
+      fetchConsumuriData();
+    } catch (error) {
+      console.error('Error deleting consum:', error);
+      toast({
+        title: "Eroare",
+        description: "Eroare la ștergerea consumului",
+        variant: "destructive"
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchConsumuriData();
+  }, []);
 
   // Filtered and paginated data
   const filteredContorCurent = filterAndSortData(contorCurentData, contorCurentFilters, contorCurentSort);
@@ -2070,7 +2173,10 @@ const Consumuri = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Anulează</AlertDialogCancel>
-            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogAction 
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={handleConsumDelete}
+            >
               Șterge
             </AlertDialogAction>
           </AlertDialogFooter>
