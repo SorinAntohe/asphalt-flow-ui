@@ -315,7 +315,7 @@ export default function Receptii() {
     // Only set editable fields - auto-populated fields will be filled by useEffect API calls
     setForm({
       data: "", // Excluded from edit
-      cod: receptie.cod, // Pre-filled, triggers API calls
+      cod: String(receptie.cod ?? ""), // Pre-filled as string, triggers API calls
       furnizor: "", // Will be auto-populated from API based on cod
       material: "", // Will be auto-populated from API based on cod
       nr_aviz_provizoriu: receptie.nr_aviz_provizoriu || "",
