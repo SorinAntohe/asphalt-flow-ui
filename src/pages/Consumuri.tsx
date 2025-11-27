@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { API_BASE_URL } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -156,12 +158,15 @@ const FilterHeader = ({
 };
 
 const Consumuri = () => {
+  const { toast } = useToast();
+
   // Contor Curent state
   const [contorCurentItemsPerPage, setContorCurentItemsPerPage] = useState(10);
   const [contorCurentCurrentPage, setContorCurentCurrentPage] = useState(1);
   const [contorCurentFilters, setContorCurentFilters] = useState<Record<string, string>>({});
   const [contorCurentSort, setContorCurentSort] = useState<{ field: string; direction: 'asc' | 'desc' } | null>(null);
-  const [contorCurentData] = useState<ContorCurent[]>([]);
+  const [contorCurentData, setContorCurentData] = useState<ContorCurent[]>([]);
+  const [isLoadingContorCurent, setIsLoadingContorCurent] = useState(true);
   const [selectedContorCurent, setSelectedContorCurent] = useState<ContorCurent | null>(null);
   const [isContorCurentDetailsOpen, setIsContorCurentDetailsOpen] = useState(false);
   const [isContorCurentFormOpen, setIsContorCurentFormOpen] = useState(false);
@@ -174,7 +179,8 @@ const Consumuri = () => {
   const [contorCTLCurrentPage, setContorCTLCurrentPage] = useState(1);
   const [contorCTLFilters, setContorCTLFilters] = useState<Record<string, string>>({});
   const [contorCTLSort, setContorCTLSort] = useState<{ field: string; direction: 'asc' | 'desc' } | null>(null);
-  const [contorCTLData] = useState<ContorCTL[]>([]);
+  const [contorCTLData, setContorCTLData] = useState<ContorCTL[]>([]);
+  const [isLoadingContorCTL, setIsLoadingContorCTL] = useState(true);
   const [selectedContorCTL, setSelectedContorCTL] = useState<ContorCTL | null>(null);
   const [isContorCTLDetailsOpen, setIsContorCTLDetailsOpen] = useState(false);
   const [isContorCTLFormOpen, setIsContorCTLFormOpen] = useState(false);
@@ -194,6 +200,52 @@ const Consumuri = () => {
   const [isConsumDeleteOpen, setIsConsumDeleteOpen] = useState(false);
   const [consumFormData, setConsumFormData] = useState<Partial<Consum>>({});
   const [isEditingConsum, setIsEditingConsum] = useState(false);
+
+  // Fetch Contor Curent data
+  useEffect(() => {
+    const fetchContorCurent = async () => {
+      setIsLoadingContorCurent(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/contori/returneaza/curent`);
+        if (!response.ok) throw new Error('Failed to fetch contor curent data');
+        const data = await response.json();
+        setContorCurentData(data);
+      } catch (error) {
+        console.error('Error fetching contor curent:', error);
+        toast({
+          title: "Eroare",
+          description: "Nu s-au putut încărca datele pentru Contor Curent",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoadingContorCurent(false);
+      }
+    };
+    fetchContorCurent();
+  }, [toast]);
+
+  // Fetch Contor CTL data
+  useEffect(() => {
+    const fetchContorCTL = async () => {
+      setIsLoadingContorCTL(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/contori/returneaza/ctl`);
+        if (!response.ok) throw new Error('Failed to fetch contor CTL data');
+        const data = await response.json();
+        setContorCTLData(data);
+      } catch (error) {
+        console.error('Error fetching contor CTL:', error);
+        toast({
+          title: "Eroare",
+          description: "Nu s-au putut încărca datele pentru Contor CTL",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoadingContorCTL(false);
+      }
+    };
+    fetchContorCTL();
+  }, [toast]);
 
   // Generic filter and sort functions
   const filterAndSortData = <T extends Record<string, any>>(
