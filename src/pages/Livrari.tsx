@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Plus, Truck, ArrowUpDown, Pencil, Trash2, FileText, Download } from "lucide-react";
+import { Plus, Truck, ArrowUpDown, Pencil, Trash2, FileText, Download, X } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import {
   Table,
@@ -642,6 +642,7 @@ const Livrari = () => {
               Șterge
             </Button>
             <Button variant="outline" size="sm" onClick={() => setViewingDetails(null)}>
+              <X className="w-4 h-4 mr-2" />
               Închide
             </Button>
           </DialogFooter>
