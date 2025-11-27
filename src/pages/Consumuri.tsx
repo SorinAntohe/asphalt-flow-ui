@@ -48,8 +48,12 @@ interface ContorCurent {
 interface ContorCTL {
   id: number;
   data: string;
-  valoare: number;
-  observatii: string;
+  index_vechi_tur: number;
+  index_nou_tur: number;
+  retur_exces_vechi: number;
+  retur_exces_nou: number;
+  consum_l: number;
+  consum_to: number;
 }
 
 interface Consum {
@@ -550,20 +554,56 @@ const Consumuri = () => {
                       </TableHead>
                       <TableHead className="text-xs">
                         <FilterHeader
-                          label="Valoare"
-                          filterValue={contorCTLFilters['valoare'] || ''}
-                          onFilterChange={(value) => handleContorCTLFilterChange('valoare', value)}
-                          sortDirection={contorCTLSort?.field === 'valoare' ? contorCTLSort.direction : null}
-                          onSort={(dir) => handleContorCTLSort('valoare', dir)}
+                          label="Index Vechi Tur"
+                          filterValue={contorCTLFilters['index_vechi_tur'] || ''}
+                          onFilterChange={(value) => handleContorCTLFilterChange('index_vechi_tur', value)}
+                          sortDirection={contorCTLSort?.field === 'index_vechi_tur' ? contorCTLSort.direction : null}
+                          onSort={(dir) => handleContorCTLSort('index_vechi_tur', dir)}
                         />
                       </TableHead>
                       <TableHead className="text-xs">
                         <FilterHeader
-                          label="Observații"
-                          filterValue={contorCTLFilters['observatii'] || ''}
-                          onFilterChange={(value) => handleContorCTLFilterChange('observatii', value)}
-                          sortDirection={contorCTLSort?.field === 'observatii' ? contorCTLSort.direction : null}
-                          onSort={(dir) => handleContorCTLSort('observatii', dir)}
+                          label="Index Nou Tur"
+                          filterValue={contorCTLFilters['index_nou_tur'] || ''}
+                          onFilterChange={(value) => handleContorCTLFilterChange('index_nou_tur', value)}
+                          sortDirection={contorCTLSort?.field === 'index_nou_tur' ? contorCTLSort.direction : null}
+                          onSort={(dir) => handleContorCTLSort('index_nou_tur', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="Retur Exces Vechi"
+                          filterValue={contorCTLFilters['retur_exces_vechi'] || ''}
+                          onFilterChange={(value) => handleContorCTLFilterChange('retur_exces_vechi', value)}
+                          sortDirection={contorCTLSort?.field === 'retur_exces_vechi' ? contorCTLSort.direction : null}
+                          onSort={(dir) => handleContorCTLSort('retur_exces_vechi', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="Retur Exces Nou"
+                          filterValue={contorCTLFilters['retur_exces_nou'] || ''}
+                          onFilterChange={(value) => handleContorCTLFilterChange('retur_exces_nou', value)}
+                          sortDirection={contorCTLSort?.field === 'retur_exces_nou' ? contorCTLSort.direction : null}
+                          onSort={(dir) => handleContorCTLSort('retur_exces_nou', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="Consum (L)"
+                          filterValue={contorCTLFilters['consum_l'] || ''}
+                          onFilterChange={(value) => handleContorCTLFilterChange('consum_l', value)}
+                          sortDirection={contorCTLSort?.field === 'consum_l' ? contorCTLSort.direction : null}
+                          onSort={(dir) => handleContorCTLSort('consum_l', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="Consum (TO)"
+                          filterValue={contorCTLFilters['consum_to'] || ''}
+                          onFilterChange={(value) => handleContorCTLFilterChange('consum_to', value)}
+                          sortDirection={contorCTLSort?.field === 'consum_to' ? contorCTLSort.direction : null}
+                          onSort={(dir) => handleContorCTLSort('consum_to', dir)}
                         />
                       </TableHead>
                     </TableRow>
@@ -571,7 +611,7 @@ const Consumuri = () => {
                   <TableBody>
                     {paginatedContorCTL.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                        <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                           Nu există înregistrări
                         </TableCell>
                       </TableRow>
@@ -584,8 +624,12 @@ const Consumuri = () => {
                         >
                           <TableCell className="py-1 text-xs">{item.id}</TableCell>
                           <TableCell className="py-1 text-xs">{item.data}</TableCell>
-                          <TableCell className="py-1 text-xs">{item.valoare}</TableCell>
-                          <TableCell className="py-1 text-xs">{item.observatii}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.index_vechi_tur}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.index_nou_tur}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.retur_exces_vechi}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.retur_exces_nou}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.consum_l}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.consum_to}</TableCell>
                         </TableRow>
                       ))
                     )}
@@ -933,12 +977,28 @@ const Consumuri = () => {
                   <p className="font-medium">{selectedContorCTL.data}</p>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground text-xs">Valoare</Label>
-                  <p className="font-medium">{selectedContorCTL.valoare}</p>
+                  <Label className="text-muted-foreground text-xs">Index Vechi Tur</Label>
+                  <p className="font-medium">{selectedContorCTL.index_vechi_tur}</p>
                 </div>
-                <div className="col-span-2">
-                  <Label className="text-muted-foreground text-xs">Observații</Label>
-                  <p className="font-medium">{selectedContorCTL.observatii || '-'}</p>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Index Nou Tur</Label>
+                  <p className="font-medium">{selectedContorCTL.index_nou_tur}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Retur Exces Vechi</Label>
+                  <p className="font-medium">{selectedContorCTL.retur_exces_vechi}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Retur Exces Nou</Label>
+                  <p className="font-medium">{selectedContorCTL.retur_exces_nou}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Consum (L)</Label>
+                  <p className="font-medium">{selectedContorCTL.consum_l}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Consum (TO)</Label>
+                  <p className="font-medium">{selectedContorCTL.consum_to}</p>
                 </div>
               </div>
             </div>
@@ -967,18 +1027,57 @@ const Consumuri = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Valoare</Label>
+              <Label>Index Vechi Tur</Label>
               <Input
                 type="number"
-                value={contorCTLFormData.valoare || ''}
-                onChange={(e) => setContorCTLFormData({ ...contorCTLFormData, valoare: Number(e.target.value) })}
+                step="0.01"
+                value={contorCTLFormData.index_vechi_tur || ''}
+                onChange={(e) => setContorCTLFormData({ ...contorCTLFormData, index_vechi_tur: Number(e.target.value) })}
               />
             </div>
             <div className="space-y-2">
-              <Label>Observații</Label>
+              <Label>Index Nou Tur</Label>
               <Input
-                value={contorCTLFormData.observatii || ''}
-                onChange={(e) => setContorCTLFormData({ ...contorCTLFormData, observatii: e.target.value })}
+                type="number"
+                step="0.01"
+                value={contorCTLFormData.index_nou_tur || ''}
+                onChange={(e) => setContorCTLFormData({ ...contorCTLFormData, index_nou_tur: Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Retur Exces Vechi</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={contorCTLFormData.retur_exces_vechi || ''}
+                onChange={(e) => setContorCTLFormData({ ...contorCTLFormData, retur_exces_vechi: Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Retur Exces Nou</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={contorCTLFormData.retur_exces_nou || ''}
+                onChange={(e) => setContorCTLFormData({ ...contorCTLFormData, retur_exces_nou: Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Consum (L)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={contorCTLFormData.consum_l || ''}
+                onChange={(e) => setContorCTLFormData({ ...contorCTLFormData, consum_l: Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Consum (TO)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={contorCTLFormData.consum_to || ''}
+                onChange={(e) => setContorCTLFormData({ ...contorCTLFormData, consum_to: Number(e.target.value) })}
               />
             </div>
           </div>
