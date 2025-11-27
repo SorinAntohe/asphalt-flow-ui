@@ -585,9 +585,6 @@ const Liste = () => {
                         </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="text-right h-10 text-xs">
-                      <span>Acțiuni</span>
-                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody key={`autoturisme-page-${autoturismePage}`} className="animate-fade-in">
@@ -598,21 +595,6 @@ const Liste = () => {
                       <TableCell className="py-1 text-xs">{auto.sarcinaMax}</TableCell>
                       <TableCell className="py-1 text-xs">{auto.tipTransport}</TableCell>
                       <TableCell className="py-1 text-xs">{auto.tara}</TableCell>
-                      <TableCell className="text-right py-1" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
-                            setAutoturismeFormData({ tipMasina: auto.tipMasina, nrAuto: auto.nrAuto, sarcinaMax: auto.sarcinaMax, tipTransport: auto.tipTransport, tara: auto.tara });
-                            setAutoturismeDialog({ open: true, mode: 'edit', data: auto });
-                          }}>
-                            <Pencil className="w-3 h-3" />
-                            Editează
-                          </Button>
-                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs" onClick={() => setAutoturismeDeleteDialog({ open: true, id: auto.id })}>
-                            <Trash2 className="w-3 h-3" />
-                            Șterge
-                          </Button>
-                        </div>
-                      </TableCell>
                     </TableRow>)}
                 </TableBody>
               </Table>
@@ -994,9 +976,6 @@ const Liste = () => {
                         </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="text-right h-10 text-xs">
-                      <span>Acțiuni</span>
-                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody key={`soferi-page-${soferiPage}`} className="animate-fade-in">
@@ -1004,21 +983,6 @@ const Liste = () => {
                       <TableCell className="font-medium py-1 text-xs">{sofer.id}</TableCell>
                       <TableCell className="py-1 text-xs">{sofer.nume}</TableCell>
                       <TableCell className="py-1 text-xs">{sofer.ci}</TableCell>
-                      <TableCell className="text-right py-1" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
-                            setSoferiFormData({ numeSofer: sofer.nume, ci: sofer.ci });
-                            setSoferiDialog({ open: true, mode: 'edit', data: sofer });
-                          }}>
-                            <Pencil className="w-3 h-3" />
-                            Editează
-                          </Button>
-                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs" onClick={() => setSoferiDeleteDialog({ open: true, id: sofer.id })}>
-                            <Trash2 className="w-3 h-3" />
-                            Șterge
-                          </Button>
-                        </div>
-                      </TableCell>
                     </TableRow>)}
                 </TableBody>
               </Table>
@@ -1311,30 +1275,12 @@ const Liste = () => {
                         </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="text-right h-10 text-xs">
-                      <span>Acțiuni</span>
-                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody key={`materii-page-${materiiPrimePage}`} className="animate-fade-in">
                   {paginatedMateriiPrime.map(materie => <TableRow key={materie.id} className="h-10 cursor-pointer hover:bg-muted/50" onClick={() => setViewingMateriePrima(materie)}>
                       <TableCell className="font-medium py-1 text-xs">{materie.id}</TableCell>
                       <TableCell className="py-1 text-xs">{materie.denumire}</TableCell>
-                      <TableCell className="text-right py-1" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
-                            setMateriiPrimeFormData({ denumire: materie.denumire });
-                            setMateriiPrimeDialog({ open: true, mode: 'edit', data: materie });
-                          }}>
-                            <Pencil className="w-3 h-3" />
-                            Editează
-                          </Button>
-                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs" onClick={() => setMateriiPrimeDeleteDialog({ open: true, id: materie.id })}>
-                            <Trash2 className="w-3 h-3" />
-                            Șterge
-                          </Button>
-                        </div>
-                      </TableCell>
                     </TableRow>)}
                 </TableBody>
               </Table>
@@ -1614,30 +1560,12 @@ const Liste = () => {
                         </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="text-right h-10 text-xs">
-                      <span>Acțiuni</span>
-                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody key={`produse-page-${produseFinitePage}`} className="animate-fade-in">
                   {paginatedProduseFinite.map(produs => <TableRow key={produs.id} className="h-10 cursor-pointer hover:bg-muted/50" onClick={() => setViewingProdusFinit(produs)}>
                       <TableCell className="font-medium py-1 text-xs">{produs.id}</TableCell>
                       <TableCell className="py-1 text-xs">{produs.denumire}</TableCell>
-                      <TableCell className="text-right py-1" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
-                            setProduseFiniteFormData({ denumire: produs.denumire });
-                            setProduseFiniteDialog({ open: true, mode: 'edit', data: produs });
-                          }}>
-                            <Pencil className="w-3 h-3" />
-                            Editează
-                          </Button>
-                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs" onClick={() => setProduseFiniteDeleteDialog({ open: true, id: produs.id })}>
-                            <Trash2 className="w-3 h-3" />
-                            Șterge
-                          </Button>
-                        </div>
-                      </TableCell>
                     </TableRow>)}
                 </TableBody>
               </Table>
@@ -1992,9 +1920,6 @@ const Liste = () => {
                         </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="text-right h-10 text-xs">
-                      <span>Acțiuni</span>
-                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody key={`clienti-page-${clientiPage}`} className="animate-fade-in">
@@ -2004,21 +1929,6 @@ const Liste = () => {
                       <TableCell className="py-1 text-xs">{client.sediu}</TableCell>
                       <TableCell className="py-1 text-xs">{client.cui}</TableCell>
                       <TableCell className="py-1 text-xs">{client.nrReg}</TableCell>
-                      <TableCell className="text-right py-1" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
-                            setClientiFormData({ denumire: client.denumire, sediu: client.sediu, cui: client.cui, nrReg: client.nrReg });
-                            setClientiDialog({ open: true, mode: 'edit', data: client });
-                          }}>
-                            <Pencil className="w-3 h-3" />
-                            Editează
-                          </Button>
-                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs" onClick={() => setClientiDeleteDialog({ open: true, id: client.id })}>
-                            <Trash2 className="w-3 h-3" />
-                            Șterge
-                          </Button>
-                        </div>
-                      </TableCell>
                     </TableRow>)}
                 </TableBody>
               </Table>
@@ -2412,9 +2322,6 @@ const Liste = () => {
                         </Popover>
                       </div>
                     </TableHead>
-                    <TableHead className="text-right h-10 text-xs">
-                      <span>Acțiuni</span>
-                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody key={`furnizori-page-${furnizoriPage}`} className="animate-fade-in">
@@ -2424,21 +2331,6 @@ const Liste = () => {
                       <TableCell className="py-1 text-xs">{furnizor.sediu}</TableCell>
                       <TableCell className="py-1 text-xs">{furnizor.cui}</TableCell>
                       <TableCell className="py-1 text-xs">{furnizor.nrReg}</TableCell>
-                      <TableCell className="text-right py-1" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
-                            setFurnizoriFormData({ denumire: furnizor.denumire, sediu: furnizor.sediu, cui: furnizor.cui, nrReg: furnizor.nrReg });
-                            setFurnizoriDialog({ open: true, mode: 'edit', data: furnizor });
-                          }}>
-                            <Pencil className="w-3 h-3" />
-                            Editează
-                          </Button>
-                          <Button variant="destructive" size="sm" className="gap-1 bg-red-700 hover:bg-red-600 h-7 px-2 text-xs" onClick={() => setFurnizoriDeleteDialog({ open: true, id: furnizor.id })}>
-                            <Trash2 className="w-3 h-3" />
-                            Șterge
-                          </Button>
-                        </div>
-                      </TableCell>
                     </TableRow>)}
                 </TableBody>
               </Table>
