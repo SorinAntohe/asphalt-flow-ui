@@ -317,25 +317,25 @@ export default function Receptii() {
   
   const handleOpenEdit = (receptie: ReceptieMaterial) => {
     setEditing(receptie);
-    // Only set editable fields - auto-populated fields will be filled by useEffect API calls
+    // Pre-populate all fields from selected row
     setForm({
       data: "", // Excluded from edit
-      cod: String(receptie.cod ?? ""), // Pre-filled as string, triggers API calls
-      furnizor: "", // Will be auto-populated from API based on cod
-      material: "", // Will be auto-populated from API based on cod
+      cod: String(receptie.cod ?? ""),
+      furnizor: receptie.furnizor,
+      material: receptie.material,
       nr_aviz_provizoriu: receptie.nr_aviz_provizoriu || "",
       nr_aviz_intrare: receptie.nr_aviz_intrare || "",
       nr_factura: receptie.nr_factura || "",
       nr_tichet: receptie.nr_tichet || "",
       nume_sofer: receptie.nume_sofer,
       nr_inmatriculare: receptie.nr_inmatriculare,
-      tip_masina: "", // Will be auto-populated from API based on nr_inmatriculare
-      cantitate_livrata: 0, // Will be auto-populated from API based on cod
+      tip_masina: receptie.tip_masina,
+      cantitate_livrata: receptie.cantitate_livrata,
       cantitate_receptionata: receptie.cantitate_receptionata,
-      diferenta: 0, // Will be auto-calculated
-      pret_material_total: 0, // Will be auto-populated from API
-      pret_total: 0, // Will be auto-populated from API
-      pret_transport_total: 0, // Will be auto-populated from API
+      diferenta: receptie.diferenta,
+      pret_material_total: receptie.pret_material_total,
+      pret_total: receptie.pret_total,
+      pret_transport_total: receptie.pret_transport_total,
       observatii: receptie.observatii || ""
     });
     setFormErrors({});
