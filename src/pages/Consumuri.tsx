@@ -226,25 +226,26 @@ const Consumuri = () => {
   }, [toast]);
 
   // Fetch Contor CTL data
+  const fetchContorCTL = async () => {
+    setIsLoadingContorCTL(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/contori/returneaza/ctl`);
+      if (!response.ok) throw new Error('Failed to fetch contor CTL data');
+      const data = await response.json();
+      setContorCTLData(data);
+    } catch (error) {
+      console.error('Error fetching contor CTL:', error);
+      toast({
+        title: "Eroare",
+        description: "Nu s-au putut încărca datele pentru Contor CTL",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingContorCTL(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchContorCTL = async () => {
-      setIsLoadingContorCTL(true);
-      try {
-        const response = await fetch(`${API_BASE_URL}/contori/returneaza/ctl`);
-        if (!response.ok) throw new Error('Failed to fetch contor CTL data');
-        const data = await response.json();
-        setContorCTLData(data);
-      } catch (error) {
-        console.error('Error fetching contor CTL:', error);
-        toast({
-          title: "Eroare",
-          description: "Nu s-au putut încărca datele pentru Contor CTL",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoadingContorCTL(false);
-      }
-    };
     fetchContorCTL();
   }, [toast]);
 
@@ -390,6 +391,44 @@ const Consumuri = () => {
   const handleContorCTLRowClick = (item: ContorCTL) => {
     setSelectedContorCTL(item);
     setIsContorCTLDetailsOpen(true);
+  };
+
+  const handleContorCTLSave = async () => {
+    try {
+      const payload = {
+        index_vechi_tur: contorCTLFormData.index_vechi_tur || 0,
+        index_nou_tur: contorCTLFormData.index_nou_tur || 0,
+        retur_exces_vechi: contorCTLFormData.retur_exces_vechi || 0,
+        retur_exces_nou: contorCTLFormData.retur_exces_nou || 0,
+        consum_l: contorCTLFormData.consum_l || 0,
+        consum_to: contorCTLFormData.consum_to || 0
+      };
+
+      const response = await fetch(`${API_BASE_URL}/contori/adauga/ctl`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error('Failed to add contor CTL');
+
+      toast({
+        title: "Success",
+        description: "Contorul CTL a fost adăugat cu succes",
+      });
+
+      setIsContorCTLFormOpen(false);
+      fetchContorCTL();
+    } catch (error) {
+      console.error('Error adding contor CTL:', error);
+      toast({
+        title: "Eroare",
+        description: "Nu s-a putut adăuga contorul CTL",
+        variant: "destructive",
+      });
+    }
   };
 
   // Consumuri handlers
@@ -1438,7 +1477,7 @@ const Consumuri = () => {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsContorCTLFormOpen(false)}>Anulează</Button>
-            <Button onClick={() => setIsContorCTLFormOpen(false)}>Salvează</Button>
+            <Button onClick={handleContorCTLSave}>Salvează</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
