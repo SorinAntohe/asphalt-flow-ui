@@ -300,11 +300,11 @@ export default function Comenzi() {
           description: "Comanda a fost actualizată cu succes"
         });
       } else {
-        // Add - transform field names to match backend Pydantic model
+        // Add - prepare payload for backend
         const comandaPayload = {
           furnizor: validatedData.furnizor,
           material: validatedData.material,
-          unitate_de_masura: validatedData.unitate_masura,
+          unitate_masura: validatedData.unitate_masura,
           cantitate: validatedData.cantitate,
           punct_descarcare: validatedData.punct_descarcare || "",
           pret_fara_tva: validatedData.pret_fara_tva,
