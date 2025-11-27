@@ -770,6 +770,168 @@ const Consumuri = () => {
                       </TableHead>
                       <TableHead className="text-xs">
                         <FilterHeader
+                          label="0/4 NAT"
+                          filterValue={consumuriFilters['04_nat'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('04_nat', value)}
+                          sortDirection={consumuriSort?.field === '04_nat' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('04_nat', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="0/4 CONC"
+                          filterValue={consumuriFilters['04_conc'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('04_conc', value)}
+                          sortDirection={consumuriSort?.field === '04_conc' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('04_conc', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="0/4 CRIBLURI"
+                          filterValue={consumuriFilters['04_cribluri'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('04_cribluri', value)}
+                          sortDirection={consumuriSort?.field === '04_cribluri' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('04_cribluri', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="4/8 CONC"
+                          filterValue={consumuriFilters['48_conc'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('48_conc', value)}
+                          sortDirection={consumuriSort?.field === '48_conc' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('48_conc', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="4/8 CRIBLURI"
+                          filterValue={consumuriFilters['48_cribluri'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('48_cribluri', value)}
+                          sortDirection={consumuriSort?.field === '48_cribluri' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('48_cribluri', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="8/16 CONC"
+                          filterValue={consumuriFilters['816_conc'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('816_conc', value)}
+                          sortDirection={consumuriSort?.field === '816_conc' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('816_conc', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="8/16 CRIBLURI"
+                          filterValue={consumuriFilters['816_cribluri'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('816_cribluri', value)}
+                          sortDirection={consumuriSort?.field === '816_cribluri' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('816_cribluri', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="16/22.4 CONC"
+                          filterValue={consumuriFilters['16224_conc'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('16224_conc', value)}
+                          sortDirection={consumuriSort?.field === '16224_conc' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('16224_conc', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="16/22.4 CRIBLURI"
+                          filterValue={consumuriFilters['16224_cribluri'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('16224_cribluri', value)}
+                          sortDirection={consumuriSort?.field === '16224_cribluri' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('16224_cribluri', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="16/31.5 CONC"
+                          filterValue={consumuriFilters['16315_conc'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('16315_conc', value)}
+                          sortDirection={consumuriSort?.field === '16315_conc' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('16315_conc', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="16/31.5 CRIBLURI"
+                          filterValue={consumuriFilters['16315_cribluri'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('16315_cribluri', value)}
+                          sortDirection={consumuriSort?.field === '16315_cribluri' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('16315_cribluri', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="Filler"
+                          filterValue={consumuriFilters['filler'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('filler', value)}
+                          sortDirection={consumuriSort?.field === 'filler' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('filler', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="Bitum"
+                          filterValue={consumuriFilters['bitum'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('bitum', value)}
+                          sortDirection={consumuriSort?.field === 'bitum' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('bitum', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="Acid Clorhidric"
+                          filterValue={consumuriFilters['acid_clorhidric'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('acid_clorhidric', value)}
+                          sortDirection={consumuriSort?.field === 'acid_clorhidric' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('acid_clorhidric', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="Emulgator"
+                          filterValue={consumuriFilters['emulgator'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('emulgator', value)}
+                          sortDirection={consumuriSort?.field === 'emulgator' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('emulgator', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="Sare"
+                          filterValue={consumuriFilters['sare'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('sare', value)}
+                          sortDirection={consumuriSort?.field === 'sare' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('sare', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="Apă"
+                          filterValue={consumuriFilters['apa'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('apa', value)}
+                          sortDirection={consumuriSort?.field === 'apa' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('apa', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="Topcel/Technocel"
+                          filterValue={consumuriFilters['topcel_technocel'] || ''}
+                          onFilterChange={(value) => handleConsumuriFilterChange('topcel_technocel', value)}
+                          sortDirection={consumuriSort?.field === 'topcel_technocel' ? consumuriSort.direction : null}
+                          onSort={(dir) => handleConsumuriSort('topcel_technocel', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
                           label="Consum Curent"
                           filterValue={consumuriFilters['consum_curent'] || ''}
                           onFilterChange={(value) => handleConsumuriFilterChange('consum_curent', value)}
@@ -791,7 +953,7 @@ const Consumuri = () => {
                   <TableBody>
                     {paginatedConsumuri.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                        <TableCell colSpan={24} className="text-center py-8 text-muted-foreground">
                           Nu există înregistrări
                         </TableCell>
                       </TableRow>
@@ -806,6 +968,24 @@ const Consumuri = () => {
                           <TableCell className="py-1 text-xs">{item.data}</TableCell>
                           <TableCell className="py-1 text-xs">{item.tip_material}</TableCell>
                           <TableCell className="py-1 text-xs">{item.cantitate}</TableCell>
+                          <TableCell className="py-1 text-xs">{item["04_nat"]}</TableCell>
+                          <TableCell className="py-1 text-xs">{item["04_conc"]}</TableCell>
+                          <TableCell className="py-1 text-xs">{item["04_cribluri"]}</TableCell>
+                          <TableCell className="py-1 text-xs">{item["48_conc"]}</TableCell>
+                          <TableCell className="py-1 text-xs">{item["48_cribluri"]}</TableCell>
+                          <TableCell className="py-1 text-xs">{item["816_conc"]}</TableCell>
+                          <TableCell className="py-1 text-xs">{item["816_cribluri"]}</TableCell>
+                          <TableCell className="py-1 text-xs">{item["16224_conc"]}</TableCell>
+                          <TableCell className="py-1 text-xs">{item["16224_cribluri"]}</TableCell>
+                          <TableCell className="py-1 text-xs">{item["16315_conc"]}</TableCell>
+                          <TableCell className="py-1 text-xs">{item["16315_cribluri"]}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.filler}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.bitum}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.acid_clorhidric}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.emulgator}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.sare}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.apa}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.topcel_technocel}</TableCell>
                           <TableCell className="py-1 text-xs">{item.consum_curent}</TableCell>
                           <TableCell className="py-1 text-xs">{item.consum_ctl}</TableCell>
                         </TableRow>
