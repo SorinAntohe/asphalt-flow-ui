@@ -363,6 +363,7 @@ export default function Receptii() {
         const receptie = {
           cod: form.cod,
           furnizor: form.furnizor,
+          material: form.material,
           nr_aviz_provizoriu: form.nr_aviz_provizoriu || "",
           nr_aviz_intrare: form.nr_aviz_intrare || "",
           nume_sofer: form.nume_sofer,
