@@ -228,7 +228,7 @@ export default function Comenzi() {
       
       if (editingMP) {
         // Edit
-        const response = await fetch('http://192.168.1.22:8002/editeaza', {
+        const response = await fetch('http://192.168.15.4:8002/editeaza', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -246,7 +246,7 @@ export default function Comenzi() {
         });
       } else {
         // Add
-        const response = await fetch('http://192.168.1.22:8002/comenzi/adauga/material', {
+        const response = await fetch('http://192.168.15.4:8002/comenzi/adauga/material', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(validatedData)
@@ -285,7 +285,7 @@ export default function Comenzi() {
     if (!deletingMP) return;
     
     try {
-      const response = await fetch('http://192.168.1.22:8002/sterge', {
+      const response = await fetch('http://192.168.15.4:8002/sterge', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -359,7 +359,7 @@ export default function Comenzi() {
       
       if (editingPF) {
         // Edit
-        const response = await fetch('http://192.168.1.22:8002/editeaza', {
+        const response = await fetch('http://192.168.15.4:8002/editeaza', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -377,7 +377,7 @@ export default function Comenzi() {
         });
       } else {
         // Add
-        const response = await fetch('http://192.168.1.22:8002/comenzi/adauga/produs', {
+        const response = await fetch('http://192.168.15.4:8002/comenzi/adauga/produs', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(validatedData)
@@ -416,7 +416,7 @@ export default function Comenzi() {
     if (!deletingPF) return;
     
     try {
-      const response = await fetch('http://192.168.1.22:8002/sterge', {
+      const response = await fetch('http://192.168.15.4:8002/sterge', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
