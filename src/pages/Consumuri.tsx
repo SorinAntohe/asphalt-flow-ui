@@ -350,7 +350,7 @@ const Consumuri = () => {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="contor-curent">Contor Curent</TabsTrigger>
           <TabsTrigger value="contor-ctl">Contor CTL</TabsTrigger>
-          <TabsTrigger value="consumuri">Consumuri</TabsTrigger>
+          <TabsTrigger value="consumuri">Consumuri Materiale</TabsTrigger>
         </TabsList>
 
         {/* Contor Curent Tab */}
@@ -698,7 +698,7 @@ const Consumuri = () => {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Consumuri</CardTitle>
+                <CardTitle>Consumuri Materiale</CardTitle>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <Label className="text-sm">Înregistrări per pagină:</Label>
