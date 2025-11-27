@@ -442,11 +442,22 @@ export default function Comenzi() {
           description: "Comanda a fost actualizată cu succes"
         });
       } else {
-        // Add
+        // Add - prepare payload for backend
+        const comandaPayload = {
+          client: validatedData.client,
+          produs: validatedData.produs,
+          unitate_de_masura: validatedData.unitate_masura,
+          cantitate: validatedData.cantitate,
+          punct_descarcare: validatedData.punct_descarcare || "",
+          pret_fara_tva: validatedData.pret_fara_tva,
+          pret_transport: validatedData.pret_transport || 0,
+          observatii: validatedData.observatii || ""
+        };
+        
         const response = await fetch('http://192.168.15.4:8002/comenzi/adauga/produs', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(validatedData)
+          body: JSON.stringify(comandaPayload)
         });
         
         if (!response.ok) throw new Error('Failed to add comanda');
