@@ -19,14 +19,7 @@ const Livrari = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   
-  const livrari = [
-    { id: 1, data: "26/11/2024", client: "CONSTRUCT SRL", produs: "Asfalt BA16", cantitate: "45 tone", sofer: "Ion Popescu", status: "livrat" },
-    { id: 2, data: "26/11/2024", client: "DRUMURI SA", produs: "Beton Stabilizat BSC", cantitate: "30 mc", sofer: "Maria Ionescu", status: "in_tranzit" },
-    { id: 3, data: "25/11/2024", client: "INFRASTRUCTURA TOTAL", produs: "Asfalt BA8", cantitate: "28 tone", sofer: "Gheorghe Popa", status: "livrat" },
-    { id: 4, data: "25/11/2024", client: "BETON PLUS", produs: "Emulsie Cationica", cantitate: "15 tone", sofer: "Ana Muresan", status: "livrat" },
-    { id: 5, data: "27/11/2024", client: "CONSTRUCT SRL", produs: "Asfalt BA16", cantitate: "50 tone", sofer: "Vasile Constantin", status: "planificat" },
-    { id: 6, data: "27/11/2024", client: "DRUMURI SA", produs: "Beton Rutier C25/30", cantitate: "40 mc", sofer: "Elena Dumitru", status: "planificat" },
-  ];
+  const livrari: any[] = [];
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { variant: "default" | "secondary" | "destructive" | "outline", label: string }> = {

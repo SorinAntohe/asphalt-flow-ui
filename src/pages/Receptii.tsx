@@ -118,38 +118,13 @@ export default function Receptii() {
     field: '', direction: null 
   });
 
-  // Mock receptii data
   const fetchReceptii = async () => {
-    const mockData = [
-      { id: 1, data: "26/11/2024", cod: "CM000001", furnizor: "AGREGATE ROMANIA", material: "0/4 NAT", nr_aviz_provizoriu: "AP12345", nr_aviz_intrare: "AI001", nume_sofer: "Ion Popescu", nr_inmatriculare: "B-123-ABC", tip_masina: "Articulata", cantitate_livrata: 40.0, cantitate_receptionata: 39.5, diferenta: 0.5, pret_material_total: 2000.00, pret_total: 2250.00, pret_transport_total: 250.00, observatii: "Diferență acceptată" },
-      { id: 2, data: "25/11/2024", cod: "CM000002", furnizor: "BITUM INVEST", material: "BITUM 50/70", nr_aviz_provizoriu: "AP12346", nr_aviz_intrare: "AI002", nume_sofer: "Maria Ionescu", nr_inmatriculare: "B-456-DEF", tip_masina: "8X4", cantitate_livrata: 30.0, cantitate_receptionata: 30.0, diferenta: 0.0, pret_material_total: 12000.00, pret_total: 13200.00, pret_transport_total: 1200.00, observatii: "" },
-      { id: 3, data: "24/11/2024", cod: "CM000003", furnizor: "MATERIALE CONSTRUCT", material: "8/16 CONC", nr_aviz_provizoriu: "AP12347", nr_aviz_intrare: "AI003", nume_sofer: "Gheorghe Popa", nr_inmatriculare: "B-789-GHI", tip_masina: "4X2", cantitate_livrata: 12.0, cantitate_receptionata: 11.8, diferenta: 0.2, pret_material_total: 720.00, pret_total: 792.00, pret_transport_total: 72.00, observatii: "Mică diferență din cauza umidității" },
-      { id: 4, data: "23/11/2024", cod: "CM000004", furnizor: "AGREGATE ROMANIA", material: "FILLER", nr_aviz_provizoriu: "AP12348", nr_aviz_intrare: "AI004", nume_sofer: "Ana Muresan", nr_inmatriculare: "CT-111-XYZ", tip_masina: "Articulata", cantitate_livrata: 40.0, cantitate_receptionata: 40.0, diferenta: 0.0, pret_material_total: 4000.00, pret_total: 4400.00, pret_transport_total: 400.00, observatii: "Recepție completă" },
-    ];
-    setReceptii(mockData);
+    setReceptii([]);
     setLoading(false);
   };
   
   useEffect(() => {
     fetchReceptii();
-  }, []);
-
-  // Mock available codes
-  useEffect(() => {
-    const mockCodes = ["CM000001", "CM000002", "CM000003", "CM000004", "CM000005"];
-    setAvailableCodes(mockCodes);
-  }, []);
-
-  // Mock available drivers
-  useEffect(() => {
-    const mockDrivers = ["Ion Popescu", "Maria Ionescu", "Gheorghe Popa", "Ana Muresan", "Vasile Constantin", "Elena Dumitru"];
-    setAvailableDrivers(mockDrivers);
-  }, []);
-
-  // Mock available registration numbers
-  useEffect(() => {
-    const mockRegistrationNumbers = ["B-123-ABC", "B-456-DEF", "B-789-GHI", "CT-111-XYZ", "IF-222-MNO", "CJ-333-PQR"];
-    setAvailableRegistrationNumbers(mockRegistrationNumbers);
   }, []);
 
   // Calculate diferenta when cantitate values change
