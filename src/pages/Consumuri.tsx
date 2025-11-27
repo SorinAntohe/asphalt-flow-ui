@@ -107,7 +107,7 @@ const FilterHeader = ({
           {filterValue && <span className="ml-1 h-2 w-2 rounded-full bg-primary" />}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-40 p-2" align="start">
+      <PopoverContent className="w-48 p-2" align="start">
         <div className="space-y-2">
           <Input
             placeholder={`Filtrează ${label.toLowerCase()}...`}
