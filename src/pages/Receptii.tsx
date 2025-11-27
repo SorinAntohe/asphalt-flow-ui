@@ -851,7 +851,7 @@ export default function Receptii() {
                   type="number"
                   step="0.01"
                   value={form.cantitate_receptionata}
-                  onChange={(e) => setForm({ ...form, cantitate_receptionata: parseFloat(e.target.value) || 0 })}
+                  onChange={(e) => setForm(prev => ({ ...prev, cantitate_receptionata: parseFloat(e.target.value) || 0 }))}
                   className={formErrors.cantitate_receptionata ? "border-destructive" : ""}
                 />
                 {formErrors.cantitate_receptionata && <p className="text-sm text-destructive">{formErrors.cantitate_receptionata}</p>}
