@@ -229,44 +229,44 @@ const Liste = () => {
 
   // Filter helpers
   const filterAutoturisme = autoturisme.filter(item => 
-    item.id.toString().includes(autoturismeFilters.id) &&
-    item.tipMasina.toLowerCase().includes(autoturismeFilters.tipMasina.toLowerCase()) &&
-    item.nrAuto.toLowerCase().includes(autoturismeFilters.nrAuto.toLowerCase()) &&
-    item.sarcinaMax.toLowerCase().includes(autoturismeFilters.sarcinaMax.toLowerCase()) &&
-    item.tipTransport.toLowerCase().includes(autoturismeFilters.tipTransport.toLowerCase()) &&
-    item.tara.toLowerCase().includes(autoturismeFilters.tara.toLowerCase())
+    (item.id?.toString() || '').includes(autoturismeFilters.id) &&
+    (item.tipMasina?.toLowerCase() || '').includes(autoturismeFilters.tipMasina.toLowerCase()) &&
+    (item.nrAuto?.toLowerCase() || '').includes(autoturismeFilters.nrAuto.toLowerCase()) &&
+    (item.sarcinaMax?.toLowerCase() || '').includes(autoturismeFilters.sarcinaMax.toLowerCase()) &&
+    (item.tipTransport?.toLowerCase() || '').includes(autoturismeFilters.tipTransport.toLowerCase()) &&
+    (item.tara?.toLowerCase() || '').includes(autoturismeFilters.tara.toLowerCase())
   );
 
   const filterSoferi = soferi.filter(item =>
-    item.id.toString().includes(soferiFilters.id) &&
-    item.nume.toLowerCase().includes(soferiFilters.nume.toLowerCase()) &&
-    item.ci.toLowerCase().includes(soferiFilters.ci.toLowerCase())
+    (item.id?.toString() || '').includes(soferiFilters.id) &&
+    (item.nume?.toLowerCase() || '').includes(soferiFilters.nume.toLowerCase()) &&
+    (item.ci?.toLowerCase() || '').includes(soferiFilters.ci.toLowerCase())
   );
 
   const filterMateriiPrime = materiiPrime.filter(item =>
-    item.id.toString().includes(materiiPrimeFilters.id) &&
-    item.denumire.toLowerCase().includes(materiiPrimeFilters.denumire.toLowerCase())
+    (item.id?.toString() || '').includes(materiiPrimeFilters.id) &&
+    (item.denumire?.toLowerCase() || '').includes(materiiPrimeFilters.denumire.toLowerCase())
   );
 
   const filterProduseFinite = produseFinite.filter(item =>
-    item.id.toString().includes(produseFiniteFilters.id) &&
-    item.denumire.toLowerCase().includes(produseFiniteFilters.denumire.toLowerCase())
+    (item.id?.toString() || '').includes(produseFiniteFilters.id) &&
+    (item.denumire?.toLowerCase() || '').includes(produseFiniteFilters.denumire.toLowerCase())
   );
 
   const filterClienti = clienti.filter(item =>
-    item.id.toString().includes(clientiFilters.id) &&
-    item.denumire.toLowerCase().includes(clientiFilters.denumire.toLowerCase()) &&
-    item.sediu.toLowerCase().includes(clientiFilters.sediu.toLowerCase()) &&
-    item.cui.toLowerCase().includes(clientiFilters.cui.toLowerCase()) &&
-    item.nrReg.toLowerCase().includes(clientiFilters.nrReg.toLowerCase())
+    (item.id?.toString() || '').includes(clientiFilters.id) &&
+    (item.denumire?.toLowerCase() || '').includes(clientiFilters.denumire.toLowerCase()) &&
+    (item.sediu?.toLowerCase() || '').includes(clientiFilters.sediu.toLowerCase()) &&
+    (item.cui?.toLowerCase() || '').includes(clientiFilters.cui.toLowerCase()) &&
+    (item.nrReg?.toLowerCase() || '').includes(clientiFilters.nrReg.toLowerCase())
   );
 
   const filterFurnizori = furnizori.filter(item =>
-    item.id.toString().includes(furnizoriFilters.id) &&
-    item.denumire.toLowerCase().includes(furnizoriFilters.denumire.toLowerCase()) &&
-    item.sediu.toLowerCase().includes(furnizoriFilters.sediu.toLowerCase()) &&
-    item.cui.toLowerCase().includes(furnizoriFilters.cui.toLowerCase()) &&
-    item.nrReg.toLowerCase().includes(furnizoriFilters.nrReg.toLowerCase())
+    (item.id?.toString() || '').includes(furnizoriFilters.id) &&
+    (item.denumire?.toLowerCase() || '').includes(furnizoriFilters.denumire.toLowerCase()) &&
+    (item.sediu?.toLowerCase() || '').includes(furnizoriFilters.sediu.toLowerCase()) &&
+    (item.cui?.toLowerCase() || '').includes(furnizoriFilters.cui.toLowerCase()) &&
+    (item.nrReg?.toLowerCase() || '').includes(furnizoriFilters.nrReg.toLowerCase())
   );
 
   const sortedAutoturisme = sortData(filterAutoturisme, autoturismeSort.field, autoturismeSort.direction);
