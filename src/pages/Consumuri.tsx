@@ -956,7 +956,7 @@ const Consumuri = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border overflow-x-auto">
+              <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow className="h-10">
@@ -1112,7 +1112,7 @@ const Consumuri = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border overflow-x-auto">
+              <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow className="h-10">
@@ -1288,7 +1288,7 @@ const Consumuri = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border overflow-x-auto">
+              <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow className="h-10">
