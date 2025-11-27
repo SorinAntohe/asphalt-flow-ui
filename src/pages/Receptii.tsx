@@ -351,13 +351,16 @@ export default function Receptii() {
       
       if (editing) {
         // Edit - use specialized endpoint with cod and cantitate_receptionata
+        // Exclude 'data' field from update payload
+        const { data, ...updatePayload } = validatedData;
+        
         const response = await fetch(`${API_BASE_URL}/receptii/editeaza/material/${form.cod}/${form.cantitate_receptionata}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             tabel: "receptii_materiale",
             id: editing.id,
-            update: validatedData
+            update: updatePayload
           })
         });
         
@@ -719,24 +722,12 @@ export default function Receptii() {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
-              {editing && (
-                <div className="grid gap-2">
-                  <Label htmlFor="data">Data</Label>
-                  <Input
-                    id="data"
-                    type="date"
-                    value={form.data}
-                    disabled
-                    className="bg-muted"
-                  />
-                </div>
-              )}
               <div className="grid gap-2">
                 <Label htmlFor="cod">Cod *</Label>
                 <FilterableSelect
                   id="cod"
                   value={form.cod}
-                  onValueChange={(value) => setForm({ ...form, cod: value })}
+                  onValueChange={(value) => setForm(prev => ({ ...prev, cod: value }))}
                   options={availableCodes.map(code => ({ value: code, label: code }))}
                   placeholder="Selectează cod"
                   searchPlaceholder="Caută cod..."
