@@ -429,7 +429,7 @@ export default function Receptii() {
     if (!deleting) return;
     
     try {
-      const response = await fetch('http://192.168.15.4:8002/sterge', {
+      const response = await fetch(`http://192.168.15.4:8002/sterge_fifo_stoc_dupa_cod/${deleting.cod}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
