@@ -348,8 +348,8 @@ export default function Receptii() {
       setFormErrors({});
       
       if (editing) {
-        // Edit
-        const response = await fetch(`${API_BASE_URL}/editeaza`, {
+        // Edit - use specialized endpoint with cod and cantitate_receptionata
+        const response = await fetch(`${API_BASE_URL}/receptii/editeaza/material/${form.cod}/${form.cantitate_receptionata}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
