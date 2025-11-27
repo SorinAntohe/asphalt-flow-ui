@@ -121,10 +121,14 @@ export default function Receptii() {
   const fetchReceptii = async () => {
     try {
       const response = await fetch('http://192.168.15.4:8002/receptii/returneaza/material');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
-      setReceptii(data);
+      setReceptii(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching receptii:', error);
+      setReceptii([]);
     }
     setLoading(false);
   };
@@ -135,30 +139,36 @@ export default function Receptii() {
     const fetchCodes = async () => {
       try {
         const response = await fetch('http://192.168.15.4:8002/receptii/materiale/returneaza_coduri');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setAvailableCodes(data);
+        setAvailableCodes(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error fetching codes:', error);
+        setAvailableCodes([]);
       }
     };
     
     const fetchDrivers = async () => {
       try {
         const response = await fetch('http://192.168.15.4:8002/receptii/materiale/returneaza_nume_soferi');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setAvailableDrivers(data);
+        setAvailableDrivers(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error fetching drivers:', error);
+        setAvailableDrivers([]);
       }
     };
     
     const fetchRegistrationNumbers = async () => {
       try {
         const response = await fetch('http://192.168.15.4:8002/receptii/materiale/returneaza_nr_inmatriculare');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setAvailableRegistrationNumbers(data);
+        setAvailableRegistrationNumbers(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error fetching registration numbers:', error);
+        setAvailableRegistrationNumbers([]);
       }
     };
     

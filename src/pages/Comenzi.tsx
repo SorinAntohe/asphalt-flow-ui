@@ -151,10 +151,12 @@ export default function Comenzi() {
   const fetchFurnizori = async () => {
     try {
       const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza_furnizori/material');
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      setFurnizori(data);
+      setFurnizori(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching furnizori:', error);
+      setFurnizori([]);
     }
     setLoadingFurnizori(false);
   };
@@ -162,10 +164,12 @@ export default function Comenzi() {
   const fetchClienti = async () => {
     try {
       const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza_clienti/produs');
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      setClienti(data);
+      setClienti(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching clienti:', error);
+      setClienti([]);
     }
     setLoadingClienti(false);
   };
@@ -173,10 +177,12 @@ export default function Comenzi() {
   const fetchMateriale = async () => {
     try {
       const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza_materiale/material');
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      setMateriale(data);
+      setMateriale(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching materiale:', error);
+      setMateriale([]);
     }
     setLoadingMateriale(false);
   };
@@ -184,10 +190,12 @@ export default function Comenzi() {
   const fetchProduse = async () => {
     try {
       const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza_produse/produs');
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      setProduse(data);
+      setProduse(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching produse:', error);
+      setProduse([]);
     }
     setLoadingProduse(false);
   };
@@ -195,10 +203,12 @@ export default function Comenzi() {
   const fetchComenziMP = async () => {
     try {
       const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza/material');
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      setComenziMateriePrima(data);
+      setComenziMateriePrima(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching comenzi MP:', error);
+      setComenziMateriePrima([]);
     }
     setLoadingMP(false);
   };
@@ -206,10 +216,12 @@ export default function Comenzi() {
   const fetchComenziPF = async () => {
     try {
       const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza/produs');
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      setComenziProduseFinite(data);
+      setComenziProduseFinite(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching comenzi PF:', error);
+      setComenziProduseFinite([]);
     }
     setLoadingPF(false);
   };

@@ -90,18 +90,20 @@ const Liste = () => {
     const fetchAutoturisme = async () => {
       try {
         const response = await fetch('http://192.168.15.4:8002/liste/returneaza/masini');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        const mappedData = data.map((item: any) => ({
+        const mappedData = Array.isArray(data) ? data.map((item: any) => ({
           id: item.id,
           nrAuto: item.nr_inmatriculare,
           tipMasina: item.tip_masina,
           tipTransport: item.tip_transport,
           sarcinaMax: item.masa_max_admisa?.toString() || "",
           tara: item.tara?.toString() || ""
-        }));
+        })) : [];
         setAutoturisme(mappedData);
       } catch (error) {
         console.error('Error fetching autoturisme:', error);
+        setAutoturisme([]);
       }
     };
     fetchAutoturisme();
@@ -112,15 +114,17 @@ const Liste = () => {
     const fetchSoferi = async () => {
       try {
         const response = await fetch('http://192.168.15.4:8002/liste/returneaza/soferi');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        const mappedData = data.map((item: any) => ({
+        const mappedData = Array.isArray(data) ? data.map((item: any) => ({
           id: item.id,
           nume: item.nume_sofer,
           ci: item.ci
-        }));
+        })) : [];
         setSoferi(mappedData);
       } catch (error) {
         console.error('Error fetching soferi:', error);
+        setSoferi([]);
       }
     };
     fetchSoferi();
@@ -131,14 +135,16 @@ const Liste = () => {
     const fetchMateriiPrime = async () => {
       try {
         const response = await fetch('http://192.168.15.4:8002/liste/returneaza/materiale');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        const mappedData = data.map((item: any) => ({
+        const mappedData = Array.isArray(data) ? data.map((item: any) => ({
           id: item.id,
           denumire: item.materiale_prime
-        }));
+        })) : [];
         setMateriiPrime(mappedData);
       } catch (error) {
         console.error('Error fetching materii prime:', error);
+        setMateriiPrime([]);
       }
     };
     fetchMateriiPrime();
@@ -149,14 +155,16 @@ const Liste = () => {
     const fetchProduseFinite = async () => {
       try {
         const response = await fetch('http://192.168.15.4:8002/liste/returneaza/produse');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        const mappedData = data.map((item: any) => ({
+        const mappedData = Array.isArray(data) ? data.map((item: any) => ({
           id: item.id,
           denumire: item.produs
-        }));
+        })) : [];
         setProduseFinite(mappedData);
       } catch (error) {
         console.error('Error fetching produse finite:', error);
+        setProduseFinite([]);
       }
     };
     fetchProduseFinite();
@@ -167,17 +175,19 @@ const Liste = () => {
     const fetchClienti = async () => {
       try {
         const response = await fetch('http://192.168.15.4:8002/liste/returneaza/clienti');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        const mappedData = data.map((item: any) => ({
+        const mappedData = Array.isArray(data) ? data.map((item: any) => ({
           id: item.id,
           denumire: item.nume,
           sediu: item.adresa,
           cui: item.cui,
           nrReg: item.nr_reg
-        }));
+        })) : [];
         setClienti(mappedData);
       } catch (error) {
         console.error('Error fetching clienti:', error);
+        setClienti([]);
       }
     };
     fetchClienti();
@@ -188,17 +198,19 @@ const Liste = () => {
     const fetchFurnizori = async () => {
       try {
         const response = await fetch('http://192.168.15.4:8002/liste/returneaza/furnizori');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        const mappedData = data.map((item: any) => ({
+        const mappedData = Array.isArray(data) ? data.map((item: any) => ({
           id: item.id,
           denumire: item.nume,
           sediu: item.adresa,
           cui: item.cui,
           nrReg: item.nr_reg
-        }));
+        })) : [];
         setFurnizori(mappedData);
       } catch (error) {
         console.error('Error fetching furnizori:', error);
+        setFurnizori([]);
       }
     };
     fetchFurnizori();
