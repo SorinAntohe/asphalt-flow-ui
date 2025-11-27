@@ -4,7 +4,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { ArrowUp, ArrowDown, ArrowUpDown, Download } from "lucide-react";
+import { exportToCSV } from "@/lib/exportUtils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -113,6 +114,19 @@ export default function Stocuri() {
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg sm:text-xl">Stocuri Materiale</CardTitle>
             <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => exportToCSV(filteredAndSortedStocuri, 'stocuri', [
+                  { key: 'id', label: 'ID' },
+                  { key: 'materiale_prime', label: 'Tip Material' },
+                  { key: 'stoc', label: 'Cantitate Stoc' }
+                ])}
+                disabled={filteredAndSortedStocuri.length === 0}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export
+              </Button>
               <Label className="text-sm">Înregistrări per pagină:</Label>
               <Select
                 value={itemsPerPage.toString()}

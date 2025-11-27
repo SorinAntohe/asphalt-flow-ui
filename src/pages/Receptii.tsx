@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2, ArrowUpDown, Ticket } from "lucide-react";
+import { Plus, Pencil, Trash2, ArrowUpDown, Ticket, Download } from "lucide-react";
+import { exportToCSV } from "@/lib/exportUtils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -715,6 +716,34 @@ export default function Receptii() {
           <div className="flex items-center justify-between">
             <CardTitle>Lista Recepții</CardTitle>
             <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => exportToCSV(filteredAndSorted, 'receptii_materiale', [
+                  { key: 'id', label: 'ID' },
+                  { key: 'data', label: 'Data' },
+                  { key: 'cod', label: 'Cod' },
+                  { key: 'furnizor', label: 'Furnizor' },
+                  { key: 'material', label: 'Material' },
+                  { key: 'nr_aviz_provizoriu', label: 'Nr. Aviz Prov.' },
+                  { key: 'nr_aviz_intrare', label: 'Nr. Aviz Intr.' },
+                  { key: 'nr_factura', label: 'Nr. Factură' },
+                  { key: 'nume_sofer', label: 'Nume Șofer' },
+                  { key: 'nr_inmatriculare', label: 'Nr. Înmatr.' },
+                  { key: 'tip_masina', label: 'Tip Mașină' },
+                  { key: 'cantitate_livrata', label: 'Cant. Livrată' },
+                  { key: 'cantitate_receptionata', label: 'Cant. Recepț.' },
+                  { key: 'diferenta', label: 'Diferență' },
+                  { key: 'pret_material_total', label: 'Preț Material' },
+                  { key: 'pret_transport_total', label: 'Preț Transport' },
+                  { key: 'pret_total', label: 'Preț Total' },
+                  { key: 'observatii', label: 'Observații' }
+                ])}
+                disabled={filteredAndSorted.length === 0}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export
+              </Button>
               <Label className="text-sm">Înregistrări per pagină:</Label>
               <Select
                 value={itemsPerPage.toString()}
