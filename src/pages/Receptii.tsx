@@ -242,7 +242,7 @@ export default function Receptii() {
       
       if (editing) {
         // Edit
-        const response = await fetch('http://192.168.1.22:8002/editeaza', {
+        const response = await fetch('http://192.168.15.4:8002/editeaza', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -260,7 +260,7 @@ export default function Receptii() {
         });
       } else {
         // Add
-        const response = await fetch('http://192.168.1.22:8002/receptii/adauga/material', {
+        const response = await fetch('http://192.168.15.4:8002/receptii/adauga/material', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(validatedData)
@@ -299,7 +299,7 @@ export default function Receptii() {
     if (!deleting) return;
     
     try {
-      const response = await fetch('http://192.168.1.22:8002/sterge', {
+      const response = await fetch('http://192.168.15.4:8002/sterge', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
