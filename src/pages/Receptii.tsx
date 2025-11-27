@@ -1032,7 +1032,7 @@ export default function Receptii() {
 
       {/* Details View Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
-        <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto" hideCloseButton>
           <DialogHeader className="pb-2">
             <div className="flex items-center justify-between">
               <DialogTitle className="text-base">Detalii Recepție - Cod: {viewingDetails?.cod}</DialogTitle>
@@ -1150,7 +1150,6 @@ export default function Receptii() {
             </div>
           )}
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="outline" size="sm" onClick={() => setViewingDetails(null)}>Închide</Button>
             <Button 
               variant="outline"
               size="sm"
@@ -1177,6 +1176,7 @@ export default function Receptii() {
               <Trash2 className="w-4 h-4 mr-2" />
               Șterge
             </Button>
+            <Button variant="outline" size="sm" onClick={() => setViewingDetails(null)}>Închide</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
