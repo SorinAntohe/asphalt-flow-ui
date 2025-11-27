@@ -647,7 +647,7 @@ const Consumuri = () => {
         const payload = {
           consumuri: {
             produs: consumFormData.produs || '',
-            cantiate: consumFormData.cantitate || 0,
+            cantitate: consumFormData.cantitate || 0,
             "04_nat": consumFormData["04_nat"] || 0,
             "04_conc": consumFormData["04_conc"] || 0,
             "04_cribluri": consumFormData["04_cribluri"] || 0,
