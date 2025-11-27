@@ -71,6 +71,7 @@ const Liste = () => {
   const [produseFiniteFormData, setProduseFiniteFormData] = useState({ denumire: "" });
   const [clientiFormData, setClientiFormData] = useState({ denumire: "", sediu: "", cui: "", nrReg: "" });
   const [furnizoriFormData, setFurnizoriFormData] = useState({ denumire: "", sediu: "", cui: "", nrReg: "" });
+  const [activeTab, setActiveTab] = useState("autoturisme");
   
   const materiiPrimeList = [
     "0/4 NAT", "0/4 CONC", "0/4 CRIBLURI", "4/8 CONC", "4/8 CRIBLURI", "4/8 NAT",
@@ -309,7 +310,7 @@ const Liste = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="autoturisme" className="w-full">
+      <Tabs defaultValue="autoturisme" className="w-full" onValueChange={setActiveTab}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
           <TabsList className="grid w-full sm:w-auto grid-cols-3 sm:grid-cols-6 h-auto">
             <TabsTrigger value="autoturisme" className="text-xs sm:text-sm">Autoturisme</TabsTrigger>
@@ -324,7 +325,6 @@ const Liste = () => {
               variant="outline" 
               size="sm"
               onClick={() => {
-                const activeTab = document.querySelector('[data-state="active"][role="tab"]')?.getAttribute('value');
                 if (activeTab === 'autoturisme') {
                   exportToCSV(sortedAutoturisme, 'autoturisme', [
                     { key: 'id', label: 'ID' }, { key: 'tipMasina', label: 'Tip Mașină' }, { key: 'nrAuto', label: 'Nr. Auto' },
@@ -353,7 +353,6 @@ const Liste = () => {
               Export
             </Button>
             <Button className="gap-2" onClick={() => {
-              const activeTab = document.querySelector('[data-state="active"][role="tab"]')?.getAttribute('value');
               if (activeTab === 'autoturisme') {
                 setAutoturismeFormData({ tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "", tara: "" });
                 setAutoturismeDialog({ open: true, mode: 'add' });
@@ -375,7 +374,12 @@ const Liste = () => {
               }
             }}>
               <Plus className="w-4 h-4" />
-              Adaugă
+              {activeTab === 'autoturisme' && 'Adaugă Autoturism'}
+              {activeTab === 'soferi' && 'Adaugă Șofer'}
+              {activeTab === 'materii' && 'Adaugă Materie Primă'}
+              {activeTab === 'produse' && 'Adaugă Produs Finit'}
+              {activeTab === 'clienti' && 'Adaugă Client'}
+              {activeTab === 'furnizori' && 'Adaugă Furnizor'}
             </Button>
           </div>
         </div>
