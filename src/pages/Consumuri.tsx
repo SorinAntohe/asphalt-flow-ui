@@ -2047,204 +2047,223 @@ const Consumuri = () => {
 
       {/* Consum Form Dialog */}
       <Dialog open={isConsumFormOpen} onOpenChange={setIsConsumFormOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{isEditingConsum ? 'Editează Consum' : 'Adaugă Consum'}</DialogTitle>
-            <DialogDescription>
-              {isEditingConsum ? 'Modifică datele consumului' : 'Completează datele pentru noul consum'}
-            </DialogDescription>
+        <DialogContent className="max-w-5xl">
+          <DialogHeader className="pb-2">
+            <DialogTitle className="text-base">{isEditingConsum ? 'Editează Consum' : 'Adaugă Consum'}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label>Produs</Label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+            <div className="space-y-1">
+              <Label className="text-xs">Produs</Label>
               <Input
+                className="h-8 text-sm"
                 value={consumFormData.produs || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, produs: e.target.value })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>Cantitate</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">Cantitate</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData.cantitate || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, cantitate: Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>0/4 NAT</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">0/4 NAT</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData["04_nat"] || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, "04_nat": Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>0/4 CONC</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">0/4 CONC</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData["04_conc"] || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, "04_conc": Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>0/4 CRIBLURI</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">0/4 CRIBLURI</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData["04_cribluri"] || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, "04_cribluri": Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>4/8 CONC</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">4/8 CONC</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData["48_conc"] || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, "48_conc": Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>4/8 CRIBLURI</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">4/8 CRIBLURI</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData["48_cribluri"] || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, "48_cribluri": Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>8/16 CONC</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">8/16 CONC</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData["816_conc"] || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, "816_conc": Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>8/16 CRIBLURI</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">8/16 CRIBLURI</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData["816_cribluri"] || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, "816_cribluri": Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>16/22.4 CONC</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">16/22.4 CONC</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData["16224_conc"] || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, "16224_conc": Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>16/22.4 CRIBLURI</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">16/22.4 CRIBLURI</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData["16224_cribluri"] || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, "16224_cribluri": Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>16/31.5 CONC</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">16/31.5 CONC</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData["16315_conc"] || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, "16315_conc": Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>16/31.5 CRIBLURI</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">16/31.5 CRIBLURI</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData["16315_cribluri"] || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, "16315_cribluri": Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>Filler</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">Filler</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData.filler || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, filler: Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>Bitum</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">Bitum</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData.bitum || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, bitum: Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>Acid Clorhidric</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">Acid Clorhidric</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData.acid_clorhidric || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, acid_clorhidric: Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>Emulgator</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">Emulgator</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData.emulgator || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, emulgator: Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>Sare</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">Sare</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData.sare || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, sare: Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>Apă</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">Apă</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData.apa || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, apa: Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>Topcel/Technocel</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">Topcel/Technocel</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData.topcel_technocel || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, topcel_technocel: Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>Consum Curent</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">Consum Curent</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData.consum_curent || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, consum_curent: Number(e.target.value) })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>Consum CTL</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">Consum CTL</Label>
               <Input
+                className="h-8 text-sm"
                 type="number"
                 step="0.01"
                 value={consumFormData.consum_ctl || ''}
@@ -2252,9 +2271,9 @@ const Consumuri = () => {
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsConsumFormOpen(false)}>Anulează</Button>
-            <Button onClick={handleConsumSave}>Salvează</Button>
+          <DialogFooter className="pt-2">
+            <Button variant="outline" size="sm" onClick={() => setIsConsumFormOpen(false)}>Anulează</Button>
+            <Button size="sm" onClick={handleConsumSave}>Salvează</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
