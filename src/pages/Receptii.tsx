@@ -119,12 +119,52 @@ export default function Receptii() {
   });
 
   const fetchReceptii = async () => {
-    setReceptii([]);
+    try {
+      const response = await fetch('http://192.168.15.4:8002/receptii/returneaza/material');
+      const data = await response.json();
+      setReceptii(data);
+    } catch (error) {
+      console.error('Error fetching receptii:', error);
+    }
     setLoading(false);
   };
   
   useEffect(() => {
     fetchReceptii();
+    
+    const fetchCodes = async () => {
+      try {
+        const response = await fetch('http://192.168.15.4:8002/receptii/materiale/returneaza_coduri');
+        const data = await response.json();
+        setAvailableCodes(data);
+      } catch (error) {
+        console.error('Error fetching codes:', error);
+      }
+    };
+    
+    const fetchDrivers = async () => {
+      try {
+        const response = await fetch('http://192.168.15.4:8002/receptii/materiale/returneaza_nume_soferi');
+        const data = await response.json();
+        setAvailableDrivers(data);
+      } catch (error) {
+        console.error('Error fetching drivers:', error);
+      }
+    };
+    
+    const fetchRegistrationNumbers = async () => {
+      try {
+        const response = await fetch('http://192.168.15.4:8002/receptii/materiale/returneaza_nr_inmatriculare');
+        const data = await response.json();
+        setAvailableRegistrationNumbers(data);
+      } catch (error) {
+        console.error('Error fetching registration numbers:', error);
+      }
+    };
+    
+    fetchCodes();
+    fetchDrivers();
+    fetchRegistrationNumbers();
   }, []);
 
   // Calculate diferenta when cantitate values change

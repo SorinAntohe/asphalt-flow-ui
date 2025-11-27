@@ -149,28 +149,69 @@ export default function Comenzi() {
   const [formErrorsPF, setFormErrorsPF] = useState<Record<string, string>>({});
 
   const fetchFurnizori = async () => {
-    setFurnizori([]);
+    try {
+      const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza_furnizori/material');
+      const data = await response.json();
+      setFurnizori(data);
+    } catch (error) {
+      console.error('Error fetching furnizori:', error);
+    }
     setLoadingFurnizori(false);
   };
 
   const fetchClienti = async () => {
-    setClienti([]);
+    try {
+      const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza_clienti/produs');
+      const data = await response.json();
+      setClienti(data);
+    } catch (error) {
+      console.error('Error fetching clienti:', error);
+    }
     setLoadingClienti(false);
   };
 
   const fetchMateriale = async () => {
-    setMateriale([]);
+    try {
+      const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza_materiale/material');
+      const data = await response.json();
+      setMateriale(data);
+    } catch (error) {
+      console.error('Error fetching materiale:', error);
+    }
     setLoadingMateriale(false);
   };
 
   const fetchProduse = async () => {
-    setProduse([]);
+    try {
+      const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza_produse/produs');
+      const data = await response.json();
+      setProduse(data);
+    } catch (error) {
+      console.error('Error fetching produse:', error);
+    }
     setLoadingProduse(false);
   };
 
   const fetchComenziMP = async () => {
-    setComenziMateriePrima([]);
+    try {
+      const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza/material');
+      const data = await response.json();
+      setComenziMateriePrima(data);
+    } catch (error) {
+      console.error('Error fetching comenzi MP:', error);
+    }
     setLoadingMP(false);
+  };
+
+  const fetchComenziPF = async () => {
+    try {
+      const response = await fetch('http://192.168.15.4:8002/comenzi/returneaza/produs');
+      const data = await response.json();
+      setComenziProduseFinite(data);
+    } catch (error) {
+      console.error('Error fetching comenzi PF:', error);
+    }
+    setLoadingPF(false);
   };
   
   useEffect(() => {
@@ -179,7 +220,8 @@ export default function Comenzi() {
     fetchMateriale();
     fetchProduse();
     fetchComenziMP();
-  }, [toast]);
+    fetchComenziPF();
+  }, []);
   
   // Add/Edit handlers for MP
   const handleOpenAddMP = () => {
@@ -488,26 +530,6 @@ export default function Comenzi() {
   useEffect(() => {
     setCurrentPageMP(1);
   }, [filtersMP]);
-
-  // Mock comenzi produse finite data
-  const fetchComenziPF = async () => {
-    const mockData = [
-      { id: 1, cod: "CPF000001", data: "26/11/2024", client: "CONSTRUCT SRL", produs: "Asfalt BA16", unitate_masura: "tone", cantitate: 180.0, punct_descarcare: "Șantier B", pret_fara_tva: 27000.00, pret_transport: 2700.00, observatii: "Include transport la destintație" },
-      { id: 2, cod: "CPF000002", data: "25/11/2024", client: "DRUMURI SA", produs: "Beton Stabilizat BSC", unitate_masura: "mc", cantitate: 120.5, punct_descarcare: "Drum Național DN1", pret_fara_tva: 18075.00, pret_transport: 1800.00, observatii: "" },
-      { id: 3, cod: "CPF000003", data: "24/11/2024", client: "INFRASTRUCTURA TOTAL", produs: "Asfalt BA8", unitate_masura: "tone", cantitate: 95.25, punct_descarcare: "Lot 3", pret_fara_tva: 14287.50, pret_transport: 1400.00, observatii: "Livrare etapizată" },
-    ];
-    setComenziProduseFinite(mockData);
-    setLoadingPF(false);
-  };
-  
-  useEffect(() => {
-    fetchFurnizori();
-    fetchClienti();
-    fetchMateriale();
-    fetchProduse();
-    fetchComenziMP();
-    fetchComenziPF();
-  }, []);
 
   // Filters for Produs Finit
   const [filtersPF, setFiltersPF] = useState({

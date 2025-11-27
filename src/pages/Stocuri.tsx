@@ -37,8 +37,17 @@ export default function Stocuri() {
   } | null>(null);
 
   useEffect(() => {
-    setStocuri([]);
-    setLoading(false);
+    const fetchStocuri = async () => {
+      try {
+        const response = await fetch('http://192.168.15.4:8002/liste/returneaza/stocuri');
+        const data = await response.json();
+        setStocuri(data);
+      } catch (error) {
+        console.error('Error fetching stocuri:', error);
+      }
+      setLoading(false);
+    };
+    fetchStocuri();
   }, []);
 
   const filteredAndSortedStocuri = stocuri
