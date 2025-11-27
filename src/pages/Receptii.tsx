@@ -312,6 +312,8 @@ export default function Receptii() {
   
   const handleOpenEdit = (receptie: ReceptieMaterial) => {
     setEditing(receptie);
+    // Calculate diferenta automatically
+    const diferenta = receptie.cantitate_livrata - receptie.cantitate_receptionata;
     setForm({
       data: receptie.data,
       cod: receptie.cod,
@@ -325,7 +327,7 @@ export default function Receptii() {
       tip_masina: receptie.tip_masina,
       cantitate_livrata: receptie.cantitate_livrata,
       cantitate_receptionata: receptie.cantitate_receptionata,
-      diferenta: receptie.diferenta,
+      diferenta: diferenta,
       pret_material_total: receptie.pret_material_total,
       pret_total: receptie.pret_total,
       pret_transport_total: receptie.pret_transport_total,
