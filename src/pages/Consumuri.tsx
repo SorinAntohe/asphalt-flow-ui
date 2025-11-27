@@ -1396,7 +1396,20 @@ const Consumuri = () => {
                 type="number"
                 step="0.01"
                 value={contorCTLFormData.index_nou_tur || ''}
-                onChange={(e) => setContorCTLFormData({ ...contorCTLFormData, index_nou_tur: Number(e.target.value) })}
+                onChange={(e) => {
+                  const indexNouTur = Number(e.target.value);
+                  const indexVechiTur = contorCTLFormData.index_vechi_tur || 0;
+                  const returExcesNou = contorCTLFormData.retur_exces_nou || 0;
+                  const returExcesVechi = contorCTLFormData.retur_exces_vechi || 0;
+                  const consumL = (indexNouTur - indexVechiTur) - (returExcesNou - returExcesVechi);
+                  const consumTo = consumL * 0.85;
+                  setContorCTLFormData({ 
+                    ...contorCTLFormData, 
+                    index_nou_tur: indexNouTur,
+                    consum_l: consumL,
+                    consum_to: consumTo
+                  });
+                }}
               />
             </div>
             <div className="space-y-2">
@@ -1415,7 +1428,20 @@ const Consumuri = () => {
                 type="number"
                 step="0.01"
                 value={contorCTLFormData.retur_exces_nou || ''}
-                onChange={(e) => setContorCTLFormData({ ...contorCTLFormData, retur_exces_nou: Number(e.target.value) })}
+                onChange={(e) => {
+                  const returExcesNou = Number(e.target.value);
+                  const returExcesVechi = contorCTLFormData.retur_exces_vechi || 0;
+                  const indexNouTur = contorCTLFormData.index_nou_tur || 0;
+                  const indexVechiTur = contorCTLFormData.index_vechi_tur || 0;
+                  const consumL = (indexNouTur - indexVechiTur) - (returExcesNou - returExcesVechi);
+                  const consumTo = consumL * 0.85;
+                  setContorCTLFormData({ 
+                    ...contorCTLFormData, 
+                    retur_exces_nou: returExcesNou,
+                    consum_l: consumL,
+                    consum_to: consumTo
+                  });
+                }}
               />
             </div>
             <div className="space-y-2">
@@ -1424,7 +1450,8 @@ const Consumuri = () => {
                 type="number"
                 step="0.01"
                 value={contorCTLFormData.consum_l || ''}
-                onChange={(e) => setContorCTLFormData({ ...contorCTLFormData, consum_l: Number(e.target.value) })}
+                disabled
+                className="bg-muted"
               />
             </div>
             <div className="space-y-2">
@@ -1433,7 +1460,8 @@ const Consumuri = () => {
                 type="number"
                 step="0.01"
                 value={contorCTLFormData.consum_to || ''}
-                onChange={(e) => setContorCTLFormData({ ...contorCTLFormData, consum_to: Number(e.target.value) })}
+                disabled
+                className="bg-muted"
               />
             </div>
           </div>
