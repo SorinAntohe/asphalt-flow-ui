@@ -160,6 +160,7 @@ const FilterHeader = ({
 
 const Consumuri = () => {
   const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState("contor-curent");
 
   // Contor Curent state
   const [contorCurentItemsPerPage, setContorCurentItemsPerPage] = useState(10);
@@ -865,7 +866,7 @@ const Consumuri = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="contor-curent" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
           <TabsList className="grid w-full sm:w-auto grid-cols-3">
             <TabsTrigger value="contor-curent">Contor Curent</TabsTrigger>
@@ -877,7 +878,6 @@ const Consumuri = () => {
               variant="outline" 
               size="sm"
               onClick={() => {
-                const activeTab = document.querySelector('[data-state="active"][role="tab"]')?.getAttribute('value');
                 if (activeTab === 'contor-ctl') {
                   exportToCSV(filterAndSortData(contorCTLData, contorCTLFilters, contorCTLSort), 'contor_ctl', [
                     { key: 'id', label: 'ID' },
@@ -912,7 +912,6 @@ const Consumuri = () => {
               Export
             </Button>
             <Button className="gap-2" onClick={() => {
-              const activeTab = document.querySelector('[data-state="active"][role="tab"]')?.getAttribute('value');
               if (activeTab === 'contor-ctl') {
                 handleOpenContorCTLAdd();
               } else if (activeTab === 'consumuri') {
