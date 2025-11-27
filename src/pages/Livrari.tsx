@@ -36,6 +36,20 @@ const Livrari = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [viewingDetails, setViewingDetails] = useState<Livrare | null>(null);
   const [deleting, setDeleting] = useState<Livrare | null>(null);
+  const [openAddEdit, setOpenAddEdit] = useState(false);
+  const [editing, setEditing] = useState<Livrare | null>(null);
+  
+  // Form state
+  const [form, setForm] = useState({
+    cod: "",
+    nr_aviz: "",
+    nr_inmatriculare: "",
+    tip_masina: "",
+    nume_sofer: "",
+    pret_material_total: 0,
+    pret_transport_total: 0,
+    pret_total: 0
+  });
   
   // Filters
   const [filters, setFilters] = useState({
@@ -124,6 +138,41 @@ const Livrari = () => {
     }));
   };
 
+  const handleOpenAdd = () => {
+    setEditing(null);
+    setForm({
+      cod: "",
+      nr_aviz: "",
+      nr_inmatriculare: "",
+      tip_masina: "",
+      nume_sofer: "",
+      pret_material_total: 0,
+      pret_transport_total: 0,
+      pret_total: 0
+    });
+    setOpenAddEdit(true);
+  };
+
+  const handleOpenEdit = (livrare: Livrare) => {
+    setEditing(livrare);
+    setForm({
+      cod: livrare.cod || "",
+      nr_aviz: livrare.nr_aviz || "",
+      nr_inmatriculare: livrare.nr_inmatriculare || "",
+      tip_masina: livrare.tip_masina || "",
+      nume_sofer: livrare.nume_sofer || "",
+      pret_material_total: livrare.pret_material_total || 0,
+      pret_transport_total: livrare.pret_transport_total || 0,
+      pret_total: livrare.pret_total || 0
+    });
+    setOpenAddEdit(true);
+  };
+
+  const handleSave = async () => {
+    // TODO: Implement save API call
+    setOpenAddEdit(false);
+  };
+
   const handleDelete = async () => {
     if (!deleting) return;
     // TODO: Implement delete API call
@@ -180,7 +229,7 @@ const Livrari = () => {
             Gestionare livrări produse finite către clienți
           </p>
         </div>
-        <Button className="gap-2">
+        <Button onClick={handleOpenAdd} className="gap-2">
           <Plus className="w-4 h-4" />
           Livrare Nouă
         </Button>
@@ -346,6 +395,104 @@ const Livrari = () => {
         </CardContent>
       </Card>
 
+      {/* Add/Edit Dialog */}
+      <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editing ? "Editează Livrarea" : "Adaugă Livrare Nouă"}</DialogTitle>
+            <DialogDescription>
+              {editing ? "Modifică detaliile livrării" : "Completează detaliile pentru noua livrare"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="cod">Cod</Label>
+                <Input
+                  id="cod"
+                  value={form.cod}
+                  onChange={(e) => setForm({ ...form, cod: e.target.value })}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="nr_aviz">Nr. Aviz</Label>
+                <Input
+                  id="nr_aviz"
+                  value={form.nr_aviz}
+                  onChange={(e) => setForm({ ...form, nr_aviz: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="nr_inmatriculare">Nr. Înmatriculare</Label>
+                <Input
+                  id="nr_inmatriculare"
+                  value={form.nr_inmatriculare}
+                  onChange={(e) => setForm({ ...form, nr_inmatriculare: e.target.value })}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="tip_masina">Tip Mașină</Label>
+                <Input
+                  id="tip_masina"
+                  value={form.tip_masina}
+                  onChange={(e) => setForm({ ...form, tip_masina: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="nume_sofer">Nume Șofer</Label>
+              <Input
+                id="nume_sofer"
+                value={form.nume_sofer}
+                onChange={(e) => setForm({ ...form, nume_sofer: e.target.value })}
+              />
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="pret_material_total">Preț Material Total</Label>
+                <Input
+                  id="pret_material_total"
+                  type="number"
+                  step="0.01"
+                  value={form.pret_material_total}
+                  onChange={(e) => setForm({ ...form, pret_material_total: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="pret_transport_total">Preț Transport Total</Label>
+                <Input
+                  id="pret_transport_total"
+                  type="number"
+                  step="0.01"
+                  value={form.pret_transport_total}
+                  onChange={(e) => setForm({ ...form, pret_transport_total: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="pret_total">Preț Total</Label>
+                <Input
+                  id="pret_total"
+                  type="number"
+                  step="0.01"
+                  value={form.pret_total}
+                  onChange={(e) => setForm({ ...form, pret_total: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenAddEdit(false)}>
+              Anulează
+            </Button>
+            <Button onClick={handleSave}>
+              {editing ? "Salvează Modificările" : "Adaugă Livrarea"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Details View Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -416,8 +563,10 @@ const Livrari = () => {
             <Button 
               variant="outline"
               onClick={() => {
-                // TODO: Implement edit functionality
-                setViewingDetails(null);
+                if (viewingDetails) {
+                  handleOpenEdit(viewingDetails);
+                  setViewingDetails(null);
+                }
               }}
             >
               <Pencil className="w-4 h-4 mr-2" />
