@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FilterableSelect } from "@/components/ui/filterable-select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -584,10 +585,11 @@ const Liste = () => {
                       />
                     </div>
                   )}
-                   <div className="grid gap-2">
-                     <Label htmlFor="tipMasina">Tip Mașină *</Label>
-                    <Select 
-                      value={autoturismeFormData.tipMasina} 
+                  <div className="grid gap-2">
+                    <Label htmlFor="tipMasina">Tip Mașină *</Label>
+                    <FilterableSelect
+                      id="tipMasina"
+                      value={autoturismeFormData.tipMasina}
                       onValueChange={(value) => {
                         const sarcinaMap: Record<string, string> = {
                           "Articulata": "40",
@@ -600,16 +602,14 @@ const Liste = () => {
                           sarcinaMax: sarcinaMap[value] || ""
                         });
                       }}
-                    >
-                      <SelectTrigger id="tipMasina">
-                        <SelectValue placeholder="Selectează tip mașină" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Articulata">Articulata</SelectItem>
-                        <SelectItem value="8X4">8X4</SelectItem>
-                        <SelectItem value="4X2">4X2</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      options={[
+                        { value: "Articulata", label: "Articulata" },
+                        { value: "8X4", label: "8X4" },
+                        { value: "4X2", label: "4X2" }
+                      ]}
+                      placeholder="Selectează tip mașină"
+                      searchPlaceholder="Caută tip mașină..."
+                    />
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="nrAuto">Număr Auto *</Label>
@@ -631,16 +631,18 @@ const Liste = () => {
                   </div>
                  <div className="grid gap-2">
                    <Label htmlFor="tipTransport">Tip Transport *</Label>
-                   <Select value={autoturismeFormData.tipTransport} onValueChange={(value) => setAutoturismeFormData({ ...autoturismeFormData, tipTransport: value })}>
-                     <SelectTrigger id="tipTransport">
-                       <SelectValue placeholder="Selectează tip transport" />
-                     </SelectTrigger>
-                     <SelectContent>
-                       <SelectItem value="Propriu">Propriu</SelectItem>
-                       <SelectItem value="Inchiriat">Închiriat</SelectItem>
-                       <SelectItem value="Extern">Extern</SelectItem>
-                     </SelectContent>
-                   </Select>
+                   <FilterableSelect
+                     id="tipTransport"
+                     value={autoturismeFormData.tipTransport}
+                     onValueChange={(value) => setAutoturismeFormData({ ...autoturismeFormData, tipTransport: value })}
+                     options={[
+                       { value: "Propriu", label: "Propriu" },
+                       { value: "Inchiriat", label: "Închiriat" },
+                       { value: "Extern", label: "Extern" }
+                     ]}
+                     placeholder="Selectează tip transport"
+                     searchPlaceholder="Caută tip transport..."
+                   />
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="tara">Tara *</Label>
