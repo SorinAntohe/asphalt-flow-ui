@@ -102,11 +102,26 @@ export default function Stocuri() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Stocuri</h1>
-        <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
-          Vizualizează stocurile de materii prime
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Stocuri</h1>
+          <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
+            Vizualizează stocurile de materii prime
+          </p>
+        </div>
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={() => exportToCSV(filteredAndSortedStocuri, 'stocuri', [
+            { key: 'id', label: 'ID' },
+            { key: 'materiale_prime', label: 'Tip Material' },
+            { key: 'stoc', label: 'Cantitate Stoc' }
+          ])}
+          disabled={filteredAndSortedStocuri.length === 0}
+        >
+          <Download className="w-4 h-4 mr-2" />
+          Export
+        </Button>
       </div>
 
       <Card>
@@ -114,19 +129,6 @@ export default function Stocuri() {
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg sm:text-xl">Stocuri Materiale</CardTitle>
             <div className="flex items-center gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => exportToCSV(filteredAndSortedStocuri, 'stocuri', [
-                  { key: 'id', label: 'ID' },
-                  { key: 'materiale_prime', label: 'Tip Material' },
-                  { key: 'stoc', label: 'Cantitate Stoc' }
-                ])}
-                disabled={filteredAndSortedStocuri.length === 0}
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Export
-              </Button>
               <Label className="text-sm">Înregistrări per pagină:</Label>
               <Select
                 value={itemsPerPage.toString()}
