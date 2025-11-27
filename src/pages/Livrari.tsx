@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Plus, Truck, ArrowUpDown, Pencil, Trash2 } from "lucide-react";
+import { Plus, Truck, ArrowUpDown, Pencil, Trash2, FileText } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -17,6 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 interface Livrare {
   id: number;
@@ -32,6 +33,7 @@ interface Livrare {
 }
 
 const Livrari = () => {
+  const { toast } = useToast();
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [viewingDetails, setViewingDetails] = useState<Livrare | null>(null);
@@ -569,12 +571,29 @@ const Livrari = () => {
               </div>
             </div>
           )}
-          <DialogFooter className="flex gap-2">
-            <Button variant="outline" onClick={() => setViewingDetails(null)}>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => setViewingDetails(null)}>
               Închide
             </Button>
             <Button 
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                if (viewingDetails) {
+                  toast({
+                    title: "Generare aviz",
+                    description: `Se generează avizul pentru livrarea ${viewingDetails.cod}...`,
+                  });
+                  // TODO: Implement notice generation logic
+                }
+              }}
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              Generează Aviz
+            </Button>
+            <Button 
               variant="outline"
+              size="sm"
               onClick={() => {
                 if (viewingDetails) {
                   handleOpenEdit(viewingDetails);
@@ -587,6 +606,7 @@ const Livrari = () => {
             </Button>
             <Button 
               variant="destructive"
+              size="sm"
               onClick={() => {
                 if (viewingDetails) {
                   setDeleting(viewingDetails);
