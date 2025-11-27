@@ -675,7 +675,7 @@ const Consumuri = () => {
               "04_nat": "0/4 Nat",
               "04_conc": "0/4 Conc",
               "04_cribluri": "0/4 Cribluri",
-              "48_conc": "4/8 Ccon",
+              "48_conc": "4/8 Conc",
               "48_cribluri": "4/8 Cribluri",
               "816_conc": "8/16 Conc",
               "816_cribluri": "8/16 Cribluri",
@@ -689,7 +689,7 @@ const Consumuri = () => {
               emulgator: "Emulgator",
               sare: "Sare",
               apa: "Apa",
-              topcel_technocel: "Celuloza Topcel/Technocel"
+              topcel_technocel: "Topcel/Technocel"
             }
           }
         };
