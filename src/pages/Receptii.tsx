@@ -366,7 +366,7 @@ export default function Receptii() {
           nume_sofer: form.nume_sofer,
           nr_inmatriculare: form.nr_inmatriculare,
           tip_masina: form.tip_masina,
-          cantitate_livrata: form.cantitate_livrata,
+          cantiate_livrata: form.cantitate_livrata,
           cantitate_receptionata: form.cantitate_receptionata,
           diferenta: form.diferenta,
           pret_material_total: form.pret_material_total,
