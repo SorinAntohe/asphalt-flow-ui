@@ -850,207 +850,149 @@ export default function Receptii() {
 
       {/* Add/Edit Dialog */}
       <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{editing ? "Editează Recepția" : "Adaugă Recepție Nouă"}</DialogTitle>
-            <DialogDescription>
-              {editing ? "Modifică detaliile recepției" : "Completează detaliile pentru noua recepție"}
-            </DialogDescription>
+        <DialogContent className="max-w-5xl">
+          <DialogHeader className="pb-2">
+            <DialogTitle className="text-base">{editing ? "Editează Recepția" : "Adaugă Recepție Nouă"}</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="cod">Cod *</Label>
+          <div className="grid gap-2 py-2">
+            {/* Row 1: Cod, Furnizor, Material, Nr. Aviz Provizoriu, Nr. Aviz Intrare */}
+            <div className="grid grid-cols-5 gap-3">
+              <div className="grid gap-1">
+                <Label htmlFor="cod" className="text-xs">Cod *</Label>
                 <FilterableSelect
                   id="cod"
                   value={form.cod}
                   onValueChange={(value) => setForm(prev => ({ ...prev, cod: value }))}
                   options={availableCodes.map(code => ({ value: code, label: code }))}
-                  placeholder="Selectează cod"
-                  searchPlaceholder="Caută cod..."
-                  className={formErrors.cod ? "border-destructive" : ""}
+                  placeholder="Cod"
+                  searchPlaceholder="Caută..."
+                  className={`h-8 text-xs ${formErrors.cod ? "border-destructive" : ""}`}
                 />
-                {formErrors.cod && <p className="text-sm text-destructive">{formErrors.cod}</p>}
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="furnizor">Furnizor *</Label>
-                <Input
-                  id="furnizor"
-                  value={form.furnizor}
-                  disabled
-                  className="bg-muted"
-                />
-                {formErrors.furnizor && <p className="text-sm text-destructive">{formErrors.furnizor}</p>}
+              <div className="grid gap-1">
+                <Label htmlFor="furnizor" className="text-xs">Furnizor *</Label>
+                <Input id="furnizor" value={form.furnizor} disabled className="h-8 text-xs bg-muted" />
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="material">Material *</Label>
-                <Input
-                  id="material"
-                  value={form.material}
-                  disabled
-                  className="bg-muted"
-                />
-                {formErrors.material && <p className="text-sm text-destructive">{formErrors.material}</p>}
+              <div className="grid gap-1">
+                <Label htmlFor="material" className="text-xs">Material *</Label>
+                <Input id="material" value={form.material} disabled className="h-8 text-xs bg-muted" />
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="nr_aviz_provizoriu">Nr. Aviz Provizoriu</Label>
+              <div className="grid gap-1">
+                <Label htmlFor="nr_aviz_provizoriu" className="text-xs">Nr. Aviz Prov.</Label>
                 <Input
                   id="nr_aviz_provizoriu"
                   value={form.nr_aviz_provizoriu}
                   onChange={(e) => setForm({ ...form, nr_aviz_provizoriu: e.target.value })}
+                  className="h-8 text-xs"
                 />
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="nr_aviz_intrare">Nr. Aviz Intrare</Label>
+              <div className="grid gap-1">
+                <Label htmlFor="nr_aviz_intrare" className="text-xs">Nr. Aviz Intr.</Label>
                 <Input
                   id="nr_aviz_intrare"
                   value={form.nr_aviz_intrare}
                   onChange={(e) => setForm({ ...form, nr_aviz_intrare: e.target.value })}
+                  className="h-8 text-xs"
                 />
               </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="nr_factura">Nr. Factură</Label>
-              <Input
-                id="nr_factura"
-                value={form.nr_factura}
-                onChange={(e) => setForm({ ...form, nr_factura: e.target.value })}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="nume_sofer">Nume Șofer *</Label>
+            {/* Row 2: Nr. Factură, Nume Șofer, Nr. Înmatriculare, Tip Mașină, empty */}
+            <div className="grid grid-cols-5 gap-3">
+              <div className="grid gap-1">
+                <Label htmlFor="nr_factura" className="text-xs">Nr. Factură</Label>
+                <Input
+                  id="nr_factura"
+                  value={form.nr_factura}
+                  onChange={(e) => setForm({ ...form, nr_factura: e.target.value })}
+                  className="h-8 text-xs"
+                />
+              </div>
+              <div className="grid gap-1">
+                <Label htmlFor="nume_sofer" className="text-xs">Nume Șofer *</Label>
                 <FilterableSelect
                   id="nume_sofer"
                   value={form.nume_sofer}
                   onValueChange={(value) => setForm({ ...form, nume_sofer: value })}
                   options={availableDrivers.map(driver => ({ value: driver, label: driver }))}
-                  placeholder="Selectează șofer"
-                  searchPlaceholder="Caută șofer..."
-                  className={formErrors.nume_sofer ? "border-destructive" : ""}
+                  placeholder="Șofer"
+                  searchPlaceholder="Caută..."
+                  className={`h-8 text-xs ${formErrors.nume_sofer ? "border-destructive" : ""}`}
                 />
-                {formErrors.nume_sofer && <p className="text-sm text-destructive">{formErrors.nume_sofer}</p>}
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="nr_inmatriculare">Nr. Înmatriculare *</Label>
+              <div className="grid gap-1">
+                <Label htmlFor="nr_inmatriculare" className="text-xs">Nr. Înmatr. *</Label>
                 <FilterableSelect
                   id="nr_inmatriculare"
                   value={form.nr_inmatriculare}
                   onValueChange={(value) => setForm({ ...form, nr_inmatriculare: value })}
                   options={availableRegistrationNumbers.map(regNum => ({ value: regNum, label: regNum }))}
-                  placeholder="Selectează nr. înmatriculare"
-                  searchPlaceholder="Caută nr. înmatriculare..."
-                  className={formErrors.nr_inmatriculare ? "border-destructive" : ""}
+                  placeholder="Nr. auto"
+                  searchPlaceholder="Caută..."
+                  className={`h-8 text-xs ${formErrors.nr_inmatriculare ? "border-destructive" : ""}`}
                 />
-                {formErrors.nr_inmatriculare && <p className="text-sm text-destructive">{formErrors.nr_inmatriculare}</p>}
               </div>
+              <div className="grid gap-1">
+                <Label htmlFor="tip_masina" className="text-xs">Tip Mașină *</Label>
+                <Input id="tip_masina" value={form.tip_masina} disabled className="h-8 text-xs bg-muted" />
+              </div>
+              <div></div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="tip_masina">Tip Mașină *</Label>
-              <Input
-                id="tip_masina"
-                value={form.tip_masina}
-                disabled
-                className="bg-muted"
-              />
-              {formErrors.tip_masina && <p className="text-sm text-destructive">{formErrors.tip_masina}</p>}
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="cantitate_livrata">Cantitate Livrată *</Label>
+            {/* Row 3: Cantități și Prețuri */}
+            <div className="grid grid-cols-6 gap-3">
+              <div className="grid gap-1">
+                <Label htmlFor="cantitate_livrata" className="text-xs">Cant. Livrată *</Label>
                 <Input
                   id="cantitate_livrata"
                   type="number"
                   step="0.01"
                   value={form.cantitate_livrata}
                   disabled
-                  className="bg-muted"
+                  className="h-8 text-xs bg-muted"
                 />
-                {formErrors.cantitate_livrata && <p className="text-sm text-destructive">{formErrors.cantitate_livrata}</p>}
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="cantitate_receptionata">Cantitate Recepționată *</Label>
+              <div className="grid gap-1">
+                <Label htmlFor="cantitate_receptionata" className="text-xs">Cant. Recepț. *</Label>
                 <Input
                   id="cantitate_receptionata"
                   type="number"
                   step="0.01"
                   value={form.cantitate_receptionata}
                   onChange={(e) => setForm(prev => ({ ...prev, cantitate_receptionata: parseFloat(e.target.value) || 0 }))}
-                  className={formErrors.cantitate_receptionata ? "border-destructive" : ""}
-                />
-                {formErrors.cantitate_receptionata && <p className="text-sm text-destructive">{formErrors.cantitate_receptionata}</p>}
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="diferenta">Diferență</Label>
-                <Input
-                  id="diferenta"
-                  type="number"
-                  step="0.01"
-                  value={form.diferenta}
-                  disabled
-                  className="bg-muted"
+                  className={`h-8 text-xs ${formErrors.cantitate_receptionata ? "border-destructive" : ""}`}
                 />
               </div>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="pret_material_total">Preț Material Total *</Label>
-                <Input
-                  id="pret_material_total"
-                  type="number"
-                  step="0.01"
-                  value={form.pret_material_total}
-                  disabled
-                  className="bg-muted"
-                />
-                {formErrors.pret_material_total && <p className="text-sm text-destructive">{formErrors.pret_material_total}</p>}
+              <div className="grid gap-1">
+                <Label htmlFor="diferenta" className="text-xs">Diferență</Label>
+                <Input id="diferenta" type="number" value={form.diferenta} disabled className="h-8 text-xs bg-muted" />
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="pret_transport_total">Preț Transport Total *</Label>
-                <Input
-                  id="pret_transport_total"
-                  type="number"
-                  step="0.01"
-                  value={form.pret_transport_total}
-                  disabled
-                  className="bg-muted"
-                />
-                {formErrors.pret_transport_total && <p className="text-sm text-destructive">{formErrors.pret_transport_total}</p>}
+              <div className="grid gap-1">
+                <Label htmlFor="pret_material_total" className="text-xs">Preț Material</Label>
+                <Input id="pret_material_total" type="number" value={form.pret_material_total} disabled className="h-8 text-xs bg-muted" />
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="pret_total">Preț Total *</Label>
-                <Input
-                  id="pret_total"
-                  type="number"
-                  step="0.01"
-                  value={form.pret_total}
-                  disabled
-                  className="bg-muted"
-                />
-                {formErrors.pret_total && <p className="text-sm text-destructive">{formErrors.pret_total}</p>}
+              <div className="grid gap-1">
+                <Label htmlFor="pret_transport_total" className="text-xs">Preț Transport</Label>
+                <Input id="pret_transport_total" type="number" value={form.pret_transport_total} disabled className="h-8 text-xs bg-muted" />
+              </div>
+              <div className="grid gap-1">
+                <Label htmlFor="pret_total" className="text-xs">Preț Total</Label>
+                <Input id="pret_total" type="number" value={form.pret_total} disabled className="h-8 text-xs bg-muted" />
               </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="observatii">Observații</Label>
+            {/* Row 4: Observații */}
+            <div className="grid gap-1">
+              <Label htmlFor="observatii" className="text-xs">Observații</Label>
               <Textarea
                 id="observatii"
                 value={form.observatii}
                 onChange={(e) => setForm({ ...form, observatii: e.target.value })}
-                rows={3}
+                rows={2}
+                className="text-xs"
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenAddEdit(false)}>
-              Anulează
-            </Button>
-            <Button onClick={handleSave}>
-              {editing ? "Salvează Modificările" : "Adaugă Recepția"}
-            </Button>
+          <DialogFooter className="pt-2">
+            <Button variant="outline" size="sm" onClick={() => setOpenAddEdit(false)}>Anulează</Button>
+            <Button size="sm" onClick={handleSave}>{editing ? "Salvează" : "Adaugă"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
