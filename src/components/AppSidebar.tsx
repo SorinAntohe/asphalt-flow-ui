@@ -24,10 +24,10 @@ const dashboardItem = { title: "Dashboard", url: "/dashboard", icon: LayoutDashb
 const gestiuneItems = [
   { title: "Liste", url: "/liste", icon: ListChecks },
   { title: "Comenzi", url: "/comenzi", icon: ClipboardList },
-  { title: "Stocuri", url: "/stocuri", icon: Package },
   { title: "Receptii", url: "/receptii", icon: PackageCheck },
   { title: "Livrari", url: "/livrari", icon: Truck },
   { title: "Consumuri", url: "/consumuri", icon: BarChart3 },
+  { title: "Stocuri", url: "/stocuri", icon: Package },
 ];
 
 export function AppSidebar() {
