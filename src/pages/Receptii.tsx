@@ -1034,7 +1034,25 @@ export default function Receptii() {
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
         <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader className="pb-2">
-            <DialogTitle className="text-base">Detalii Recepție - Cod: {viewingDetails?.cod}</DialogTitle>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-base">Detalii Recepție - Cod: {viewingDetails?.cod}</DialogTitle>
+              <Button 
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  if (viewingDetails) {
+                    toast({
+                      title: "Generare tichet",
+                      description: `Se generează tichetul pentru recepția ${viewingDetails.cod}...`,
+                    });
+                    // TODO: Implement ticket generation logic
+                  }
+                }}
+              >
+                <Ticket className="w-4 h-4 mr-2" />
+                Generează Tichet
+              </Button>
+            </div>
           </DialogHeader>
           {viewingDetails && (
             <div className="grid gap-3 py-2">
@@ -1133,22 +1151,6 @@ export default function Receptii() {
           )}
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" onClick={() => setViewingDetails(null)}>Închide</Button>
-            <Button 
-              variant="secondary"
-              size="sm"
-              onClick={() => {
-                if (viewingDetails) {
-                  toast({
-                    title: "Generare tichet",
-                    description: `Se generează tichetul pentru recepția ${viewingDetails.cod}...`,
-                  });
-                  // TODO: Implement ticket generation logic
-                }
-              }}
-            >
-              <Ticket className="w-4 h-4 mr-2" />
-              Generează Tichet
-            </Button>
             <Button 
               variant="outline"
               size="sm"
