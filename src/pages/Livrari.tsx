@@ -245,10 +245,32 @@ const Livrari = () => {
             Gestionare livrări produse finite către clienți
           </p>
         </div>
-        <Button onClick={handleOpenAdd} className="gap-2">
-          <Plus className="w-4 h-4" />
-          Livrare Nouă
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => exportToCSV(filteredAndSorted, 'livrari', [
+              { key: 'id', label: 'ID' },
+              { key: 'data', label: 'Data' },
+              { key: 'cod', label: 'Cod' },
+              { key: 'nr_aviz', label: 'Nr. Aviz' },
+              { key: 'nr_inmatriculare', label: 'Nr. Înmatr.' },
+              { key: 'tip_masina', label: 'Tip Mașină' },
+              { key: 'nume_sofer', label: 'Nume Șofer' },
+              { key: 'pret_material_total', label: 'Preț Material' },
+              { key: 'pret_transport_total', label: 'Preț Transport' },
+              { key: 'pret_total', label: 'Preț Total' }
+            ])}
+            disabled={filteredAndSorted.length === 0}
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Export
+          </Button>
+          <Button onClick={handleOpenAdd} className="gap-2">
+            <Plus className="w-4 h-4" />
+            Livrare Nouă
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
@@ -300,26 +322,6 @@ const Livrari = () => {
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => exportToCSV(filteredAndSorted, 'livrari', [
-                  { key: 'id', label: 'ID' },
-                  { key: 'data', label: 'Data' },
-                  { key: 'cod', label: 'Cod' },
-                  { key: 'nr_aviz', label: 'Nr. Aviz' },
-                  { key: 'nr_inmatriculare', label: 'Nr. Înmatr.' },
-                  { key: 'tip_masina', label: 'Tip Mașină' },
-                  { key: 'nume_sofer', label: 'Nume Șofer' },
-                  { key: 'pret_material_total', label: 'Preț Material' },
-                  { key: 'pret_transport_total', label: 'Preț Transport' },
-                  { key: 'pret_total', label: 'Preț Total' }
-                ])}
-                disabled={filteredAndSorted.length === 0}
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Export
-              </Button>
               <Label className="text-sm">Înregistrări per pagină:</Label>
               <Select
                 value={itemsPerPage.toString()}
