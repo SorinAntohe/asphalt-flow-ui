@@ -231,7 +231,7 @@ const Consumuri = () => {
     const fetchContorCTL = async () => {
       setIsLoadingContorCTL(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/contori/returneaza/ctl`);
+        const response = await fetch(`${API_BASE_URL}/contori/returneaza/curent`);
         if (!response.ok) throw new Error('Failed to fetch contor CTL data');
         const data = await response.json();
         setContorCTLData(data);
