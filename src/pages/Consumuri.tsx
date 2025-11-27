@@ -322,7 +322,8 @@ const Consumuri = () => {
       const payload = {
         index_vechi: contorCurentFormData.index_vechi || 0,
         index_nou: contorCurentFormData.index_nou || 0,
-        consum_kw: contorCurentFormData.consum_kw || 0
+        consum_kw: contorCurentFormData.consum_kw || 0,
+        pret: (contorCurentFormData.pret || 0) * (contorCurentFormData.consum_kw || 0)
       };
 
       const response = await fetch(`${API_BASE_URL}/contori/adauga/curent`, {
