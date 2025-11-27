@@ -39,8 +39,10 @@ import {
 interface ContorCurent {
   id: number;
   data: string;
-  valoare: number;
-  observatii: string;
+  index_vechi: number;
+  index_nou: number;
+  consum_kw: number;
+  pret_total: number;
 }
 
 interface ContorCTL {
@@ -370,7 +372,7 @@ const Consumuri = () => {
                     <TableRow className="h-10">
                       <TableHead className="text-xs">
                         <FilterHeader
-                          label="ID"
+                          label="Nr Crt"
                           filterValue={contorCurentFilters['id'] || ''}
                           onFilterChange={(value) => handleContorCurentFilterChange('id', value)}
                           sortDirection={contorCurentSort?.field === 'id' ? contorCurentSort.direction : null}
@@ -388,20 +390,38 @@ const Consumuri = () => {
                       </TableHead>
                       <TableHead className="text-xs">
                         <FilterHeader
-                          label="Valoare"
-                          filterValue={contorCurentFilters['valoare'] || ''}
-                          onFilterChange={(value) => handleContorCurentFilterChange('valoare', value)}
-                          sortDirection={contorCurentSort?.field === 'valoare' ? contorCurentSort.direction : null}
-                          onSort={(dir) => handleContorCurentSort('valoare', dir)}
+                          label="Index Vechi"
+                          filterValue={contorCurentFilters['index_vechi'] || ''}
+                          onFilterChange={(value) => handleContorCurentFilterChange('index_vechi', value)}
+                          sortDirection={contorCurentSort?.field === 'index_vechi' ? contorCurentSort.direction : null}
+                          onSort={(dir) => handleContorCurentSort('index_vechi', dir)}
                         />
                       </TableHead>
                       <TableHead className="text-xs">
                         <FilterHeader
-                          label="Observații"
-                          filterValue={contorCurentFilters['observatii'] || ''}
-                          onFilterChange={(value) => handleContorCurentFilterChange('observatii', value)}
-                          sortDirection={contorCurentSort?.field === 'observatii' ? contorCurentSort.direction : null}
-                          onSort={(dir) => handleContorCurentSort('observatii', dir)}
+                          label="Index Nou"
+                          filterValue={contorCurentFilters['index_nou'] || ''}
+                          onFilterChange={(value) => handleContorCurentFilterChange('index_nou', value)}
+                          sortDirection={contorCurentSort?.field === 'index_nou' ? contorCurentSort.direction : null}
+                          onSort={(dir) => handleContorCurentSort('index_nou', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="Consum (kW)"
+                          filterValue={contorCurentFilters['consum_kw'] || ''}
+                          onFilterChange={(value) => handleContorCurentFilterChange('consum_kw', value)}
+                          sortDirection={contorCurentSort?.field === 'consum_kw' ? contorCurentSort.direction : null}
+                          onSort={(dir) => handleContorCurentSort('consum_kw', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="Preț Total"
+                          filterValue={contorCurentFilters['pret_total'] || ''}
+                          onFilterChange={(value) => handleContorCurentFilterChange('pret_total', value)}
+                          sortDirection={contorCurentSort?.field === 'pret_total' ? contorCurentSort.direction : null}
+                          onSort={(dir) => handleContorCurentSort('pret_total', dir)}
                         />
                       </TableHead>
                     </TableRow>
@@ -409,7 +429,7 @@ const Consumuri = () => {
                   <TableBody>
                     {paginatedContorCurent.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                        <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                           Nu există înregistrări
                         </TableCell>
                       </TableRow>
@@ -422,8 +442,10 @@ const Consumuri = () => {
                         >
                           <TableCell className="py-1 text-xs">{item.id}</TableCell>
                           <TableCell className="py-1 text-xs">{item.data}</TableCell>
-                          <TableCell className="py-1 text-xs">{item.valoare}</TableCell>
-                          <TableCell className="py-1 text-xs">{item.observatii}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.index_vechi}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.index_nou}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.consum_kw}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.pret_total}</TableCell>
                         </TableRow>
                       ))
                     )}
@@ -783,7 +805,7 @@ const Consumuri = () => {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-muted-foreground text-xs">ID</Label>
+                  <Label className="text-muted-foreground text-xs">Nr Crt</Label>
                   <p className="font-medium">{selectedContorCurent.id}</p>
                 </div>
                 <div>
@@ -791,12 +813,20 @@ const Consumuri = () => {
                   <p className="font-medium">{selectedContorCurent.data}</p>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground text-xs">Valoare</Label>
-                  <p className="font-medium">{selectedContorCurent.valoare}</p>
+                  <Label className="text-muted-foreground text-xs">Index Vechi</Label>
+                  <p className="font-medium">{selectedContorCurent.index_vechi}</p>
                 </div>
-                <div className="col-span-2">
-                  <Label className="text-muted-foreground text-xs">Observații</Label>
-                  <p className="font-medium">{selectedContorCurent.observatii || '-'}</p>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Index Nou</Label>
+                  <p className="font-medium">{selectedContorCurent.index_nou}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Consum (kW)</Label>
+                  <p className="font-medium">{selectedContorCurent.consum_kw}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Preț Total</Label>
+                  <p className="font-medium">{selectedContorCurent.pret_total}</p>
                 </div>
               </div>
             </div>
@@ -825,18 +855,35 @@ const Consumuri = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Valoare</Label>
+              <Label>Index Vechi</Label>
               <Input
                 type="number"
-                value={contorCurentFormData.valoare || ''}
-                onChange={(e) => setContorCurentFormData({ ...contorCurentFormData, valoare: Number(e.target.value) })}
+                value={contorCurentFormData.index_vechi || ''}
+                onChange={(e) => setContorCurentFormData({ ...contorCurentFormData, index_vechi: Number(e.target.value) })}
               />
             </div>
             <div className="space-y-2">
-              <Label>Observații</Label>
+              <Label>Index Nou</Label>
               <Input
-                value={contorCurentFormData.observatii || ''}
-                onChange={(e) => setContorCurentFormData({ ...contorCurentFormData, observatii: e.target.value })}
+                type="number"
+                value={contorCurentFormData.index_nou || ''}
+                onChange={(e) => setContorCurentFormData({ ...contorCurentFormData, index_nou: Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Consum (kW)</Label>
+              <Input
+                type="number"
+                value={contorCurentFormData.consum_kw || ''}
+                onChange={(e) => setContorCurentFormData({ ...contorCurentFormData, consum_kw: Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Preț Total</Label>
+              <Input
+                type="number"
+                value={contorCurentFormData.pret_total || ''}
+                onChange={(e) => setContorCurentFormData({ ...contorCurentFormData, pret_total: Number(e.target.value) })}
               />
             </div>
           </div>
