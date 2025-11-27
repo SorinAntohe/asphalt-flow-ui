@@ -690,6 +690,8 @@ const Consumuri = () => {
           }
         };
 
+        console.log('Payload being sent:', JSON.stringify(payload, null, 2));
+
         const response = await fetch(`${API_BASE_URL}/consumuri/adauga/materie_prima`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -698,7 +700,8 @@ const Consumuri = () => {
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.detail || 'Eroare la salvarea consumului');
+          console.error('Backend error response:', errorData);
+          throw new Error(JSON.stringify(errorData) || 'Eroare la salvarea consumului');
         }
 
         toast({
