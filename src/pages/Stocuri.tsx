@@ -40,10 +40,12 @@ export default function Stocuri() {
     const fetchStocuri = async () => {
       try {
         const response = await fetch('http://192.168.15.4:8002/liste/returneaza/stocuri');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setStocuri(data);
+        setStocuri(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error fetching stocuri:', error);
+        setStocuri([]);
       }
       setLoading(false);
     };
