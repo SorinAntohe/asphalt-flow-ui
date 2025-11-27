@@ -11,25 +11,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+interface Livrare {
+  id: number;
+  data: string | null;
+  cod: string | null;
+  nr_aviz: string | null;
+  nr_inmatriculare: string | null;
+  tip_masina: string | null;
+  nume_sofer: string | null;
+  pret_material_total: number | null;
+  pret_transport_total: number | null;
+  pret_total: number | null;
+}
 
 const Livrari = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   
-  const livrari: any[] = [];
-
-  const getStatusBadge = (status: string) => {
-    const variants: Record<string, { variant: "default" | "secondary" | "destructive" | "outline", label: string }> = {
-      livrat: { variant: "default", label: "Livrat" },
-      in_tranzit: { variant: "secondary", label: "În Tranzit" },
-      planificat: { variant: "outline", label: "Planificat" },
-    };
-    const config = variants[status] || variants.planificat;
-    return <Badge variant={config.variant}>{config.label}</Badge>;
-  };
+  const livrari: Livrare[] = [];
 
   // Pagination logic
   const totalPages = Math.ceil(livrari.length / itemsPerPage);
@@ -37,13 +39,30 @@ const Livrari = () => {
   const endIndex = startIndex + itemsPerPage;
   const paginatedData = livrari.slice(startIndex, endIndex);
 
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "-";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("ro-RO", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const formatNumber = (value: number | null) => {
+    if (value === null || value === undefined) return "-";
+    return value.toLocaleString("ro-RO", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Livrări</h1>
           <p className="text-muted-foreground mt-2">
-            Gestionare livrări produse către clienți
+            Gestionare livrări produse finite către clienți
           </p>
         </div>
         <Button className="gap-2">
@@ -59,33 +78,33 @@ const Livrari = () => {
             <Truck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">18</div>
-            <p className="text-xs text-green-600">
-              +3 față de ieri
+            <div className="text-2xl font-bold">0</div>
+            <p className="text-xs text-muted-foreground">
+              Total livrări azi
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">În Tranzit</CardTitle>
+            <CardTitle className="text-sm font-medium">Valoare Totală</CardTitle>
             <Truck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">7</div>
+            <div className="text-2xl font-bold">0 RON</div>
             <p className="text-xs text-muted-foreground">
-              Livrări active
+              Valoare livrări azi
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Planificate</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Livrări</CardTitle>
             <Truck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
+            <div className="text-2xl font-bold">{livrari.length}</div>
             <p className="text-xs text-muted-foreground">
-              Următoarele 24h
+              Înregistrări totale
             </p>
           </CardContent>
         </Card>
@@ -95,9 +114,9 @@ const Livrari = () => {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Istoric Livrări</CardTitle>
+              <CardTitle>Istoric Livrări Produs Finit</CardTitle>
               <CardDescription>
-                Toate livrările către clienți
+                Toate livrările de produse finite către clienți
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
@@ -126,34 +145,48 @@ const Livrari = () => {
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>ID Livrare</TableHead>
-                <TableHead>Data</TableHead>
-                <TableHead>Client</TableHead>
-                <TableHead>Produs</TableHead>
-                <TableHead>Cantitate</TableHead>
-                <TableHead>Șofer</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Acțiuni</TableHead>
+              <TableRow className="h-10">
+                <TableHead className="text-xs">ID</TableHead>
+                <TableHead className="text-xs">Data</TableHead>
+                <TableHead className="text-xs">Cod</TableHead>
+                <TableHead className="text-xs">Nr. Aviz</TableHead>
+                <TableHead className="text-xs">Nr. Înmatriculare</TableHead>
+                <TableHead className="text-xs">Tip Mașină</TableHead>
+                <TableHead className="text-xs">Nume Șofer</TableHead>
+                <TableHead className="text-xs text-right">Preț Material Total</TableHead>
+                <TableHead className="text-xs text-right">Preț Transport Total</TableHead>
+                <TableHead className="text-xs text-right">Preț Total</TableHead>
+                <TableHead className="text-xs text-right">Acțiuni</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedData.map((livrare) => (
-                <TableRow key={livrare.id}>
-                  <TableCell className="font-medium">{livrare.id}</TableCell>
-                  <TableCell>{livrare.data}</TableCell>
-                  <TableCell>{livrare.client}</TableCell>
-                  <TableCell>{livrare.produs}</TableCell>
-                  <TableCell>{livrare.cantitate}</TableCell>
-                  <TableCell>{livrare.sofer}</TableCell>
-                  <TableCell>{getStatusBadge(livrare.status)}</TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="sm">
-                      Detalii
-                    </Button>
+              {paginatedData.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={11} className="text-center py-8 text-muted-foreground">
+                    Nu există livrări înregistrate
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                paginatedData.map((livrare) => (
+                  <TableRow key={livrare.id} className="h-10">
+                    <TableCell className="py-1 text-xs font-medium">{livrare.id}</TableCell>
+                    <TableCell className="py-1 text-xs">{formatDate(livrare.data)}</TableCell>
+                    <TableCell className="py-1 text-xs">{livrare.cod || "-"}</TableCell>
+                    <TableCell className="py-1 text-xs">{livrare.nr_aviz || "-"}</TableCell>
+                    <TableCell className="py-1 text-xs">{livrare.nr_inmatriculare || "-"}</TableCell>
+                    <TableCell className="py-1 text-xs">{livrare.tip_masina || "-"}</TableCell>
+                    <TableCell className="py-1 text-xs">{livrare.nume_sofer || "-"}</TableCell>
+                    <TableCell className="py-1 text-xs text-right">{formatNumber(livrare.pret_material_total)}</TableCell>
+                    <TableCell className="py-1 text-xs text-right">{formatNumber(livrare.pret_transport_total)}</TableCell>
+                    <TableCell className="py-1 text-xs text-right">{formatNumber(livrare.pret_total)}</TableCell>
+                    <TableCell className="py-1 text-xs text-right">
+                      <Button variant="ghost" size="sm" className="h-7 text-xs">
+                        Detalii
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
           
@@ -161,37 +194,39 @@ const Livrari = () => {
           <div className="flex items-center justify-between px-2 py-4">
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">
-                Afișare {startIndex + 1}-{Math.min(endIndex, livrari.length)} din {livrari.length}
+                Afișare {livrari.length > 0 ? startIndex + 1 : 0}-{Math.min(endIndex, livrari.length)} din {livrari.length}
               </span>
             </div>
             
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious 
-                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                  />
-                </PaginationItem>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <PaginationItem key={page}>
-                    <PaginationLink
-                      onClick={() => setCurrentPage(page)}
-                      isActive={currentPage === page}
-                      className="cursor-pointer"
-                    >
-                      {page}
-                    </PaginationLink>
+            {totalPages > 0 && (
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
                   </PaginationItem>
-                ))}
-                <PaginationItem>
-                  <PaginationNext 
-                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => setCurrentPage(page)}
+                        isActive={currentPage === page}
+                        className="cursor-pointer"
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  <PaginationItem>
+                    <PaginationNext 
+                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            )}
           </div>
         </CardContent>
       </Card>
