@@ -312,25 +312,24 @@ export default function Receptii() {
   
   const handleOpenEdit = (receptie: ReceptieMaterial) => {
     setEditing(receptie);
-    // Calculate diferenta automatically
-    const diferenta = receptie.cantitate_livrata - receptie.cantitate_receptionata;
+    // Only set editable fields - auto-populated fields will be filled by useEffect API calls
     setForm({
-      data: "",
-      cod: receptie.cod,
-      furnizor: receptie.furnizor,
-      material: receptie.material,
+      data: "", // Excluded from edit
+      cod: receptie.cod, // Pre-filled, triggers API calls
+      furnizor: "", // Will be auto-populated from API based on cod
+      material: "", // Will be auto-populated from API based on cod
       nr_aviz_provizoriu: receptie.nr_aviz_provizoriu || "",
       nr_aviz_intrare: receptie.nr_aviz_intrare || "",
       nr_factura: receptie.nr_factura || "",
       nume_sofer: receptie.nume_sofer,
       nr_inmatriculare: receptie.nr_inmatriculare,
-      tip_masina: receptie.tip_masina,
-      cantitate_livrata: receptie.cantitate_livrata,
+      tip_masina: "", // Will be auto-populated from API based on nr_inmatriculare
+      cantitate_livrata: 0, // Will be auto-populated from API based on cod
       cantitate_receptionata: receptie.cantitate_receptionata,
-      diferenta: diferenta,
-      pret_material_total: receptie.pret_material_total,
-      pret_total: receptie.pret_total,
-      pret_transport_total: receptie.pret_transport_total,
+      diferenta: 0, // Will be auto-calculated
+      pret_material_total: 0, // Will be auto-populated from API
+      pret_total: 0, // Will be auto-populated from API
+      pret_transport_total: 0, // Will be auto-populated from API
       observatii: receptie.observatii || ""
     });
     setFormErrors({});
