@@ -203,25 +203,26 @@ const Consumuri = () => {
   const [isEditingConsum, setIsEditingConsum] = useState(false);
 
   // Fetch Contor Curent data
+  const fetchContorCurent = async () => {
+    setIsLoadingContorCurent(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/contori/returneaza/curent`);
+      if (!response.ok) throw new Error('Failed to fetch contor curent data');
+      const data = await response.json();
+      setContorCurentData(data);
+    } catch (error) {
+      console.error('Error fetching contor curent:', error);
+      toast({
+        title: "Eroare",
+        description: "Nu s-au putut încărca datele pentru Contor Curent",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingContorCurent(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchContorCurent = async () => {
-      setIsLoadingContorCurent(true);
-      try {
-        const response = await fetch(`${API_BASE_URL}/contori/returneaza/curent`);
-        if (!response.ok) throw new Error('Failed to fetch contor curent data');
-        const data = await response.json();
-        setContorCurentData(data);
-      } catch (error) {
-        console.error('Error fetching contor curent:', error);
-        toast({
-          title: "Eroare",
-          description: "Nu s-au putut încărca datele pentru Contor Curent",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoadingContorCurent(false);
-      }
-    };
     fetchContorCurent();
   }, [toast]);
 
@@ -315,6 +316,42 @@ const Consumuri = () => {
   const handleContorCurentRowClick = (item: ContorCurent) => {
     setSelectedContorCurent(item);
     setIsContorCurentDetailsOpen(true);
+  };
+
+  const handleContorCurentSave = async () => {
+    try {
+      const payload = {
+        index_vechi: contorCurentFormData.index_vechi || 0,
+        index_nou: contorCurentFormData.index_nou || 0,
+        consum_kw: contorCurentFormData.consum_kw || 0,
+        pret: contorCurentFormData.pret || 0
+      };
+
+      const response = await fetch(`${API_BASE_URL}/contori/adauga/curent`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error('Failed to add contor curent');
+
+      toast({
+        title: "Success",
+        description: "Contorul a fost adăugat cu succes",
+      });
+
+      setIsContorCurentFormOpen(false);
+      fetchContorCurent();
+    } catch (error) {
+      console.error('Error adding contor curent:', error);
+      toast({
+        title: "Eroare",
+        description: "Nu s-a putut adăuga contorul",
+        variant: "destructive",
+      });
+    }
   };
 
   // Contor CTL handlers
@@ -1239,7 +1276,7 @@ const Consumuri = () => {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsContorCurentFormOpen(false)}>Anulează</Button>
-            <Button onClick={() => setIsContorCurentFormOpen(false)}>Salvează</Button>
+            <Button onClick={handleContorCurentSave}>Salvează</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
