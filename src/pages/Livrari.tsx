@@ -535,10 +535,30 @@ const Livrari = () => {
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Detalii Livrare - Cod: {viewingDetails?.cod || "-"}</DialogTitle>
-            <DialogDescription>
-              Informații complete despre livrare
-            </DialogDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <DialogTitle>Detalii Livrare - Cod: {viewingDetails?.cod || "-"}</DialogTitle>
+                <DialogDescription>
+                  Informații complete despre livrare
+                </DialogDescription>
+              </div>
+              <Button 
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  if (viewingDetails) {
+                    toast({
+                      title: "Generare aviz",
+                      description: `Se generează avizul pentru livrarea ${viewingDetails.cod}...`,
+                    });
+                    // TODO: Implement notice generation logic
+                  }
+                }}
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Generează Aviz
+              </Button>
+            </div>
           </DialogHeader>
           {viewingDetails && (
             <div className="grid gap-4 py-4">
@@ -597,22 +617,6 @@ const Livrari = () => {
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" onClick={() => setViewingDetails(null)}>
               Închide
-            </Button>
-            <Button 
-              variant="secondary"
-              size="sm"
-              onClick={() => {
-                if (viewingDetails) {
-                  toast({
-                    title: "Generare aviz",
-                    description: `Se generează avizul pentru livrarea ${viewingDetails.cod}...`,
-                  });
-                  // TODO: Implement notice generation logic
-                }
-              }}
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              Generează Aviz
             </Button>
             <Button 
               variant="outline"
