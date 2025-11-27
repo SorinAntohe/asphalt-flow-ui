@@ -365,7 +365,18 @@ const Consumuri = () => {
   };
 
   const handleOpenContorCTLAdd = () => {
-    setContorCTLFormData({});
+    // Get the last index_nou_tur and retur_exces_nou from the table
+    const lastIndexNouTur = contorCTLData.length > 0 
+      ? contorCTLData[contorCTLData.length - 1].index_nou_tur 
+      : 0;
+    const lastReturExcesNou = contorCTLData.length > 0 
+      ? contorCTLData[contorCTLData.length - 1].retur_exces_nou 
+      : 0;
+    
+    setContorCTLFormData({
+      index_vechi_tur: lastIndexNouTur,
+      retur_exces_vechi: lastReturExcesNou
+    });
     setIsEditingContorCTL(false);
     setIsContorCTLFormOpen(true);
   };
@@ -1375,7 +1386,8 @@ const Consumuri = () => {
                 type="number"
                 step="0.01"
                 value={contorCTLFormData.index_vechi_tur || ''}
-                onChange={(e) => setContorCTLFormData({ ...contorCTLFormData, index_vechi_tur: Number(e.target.value) })}
+                disabled
+                className="bg-muted"
               />
             </div>
             <div className="space-y-2">
@@ -1393,7 +1405,8 @@ const Consumuri = () => {
                 type="number"
                 step="0.01"
                 value={contorCTLFormData.retur_exces_vechi || ''}
-                onChange={(e) => setContorCTLFormData({ ...contorCTLFormData, retur_exces_vechi: Number(e.target.value) })}
+                disabled
+                className="bg-muted"
               />
             </div>
             <div className="space-y-2">
