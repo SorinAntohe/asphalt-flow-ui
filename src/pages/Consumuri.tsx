@@ -307,7 +307,13 @@ const Consumuri = () => {
   };
 
   const handleOpenContorCurentEdit = (item: ContorCurent) => {
-    setContorCurentFormData(item);
+    // Calculate unit price from total price for display
+    const pretUnitar = item.consum_kw !== 0 ? item.pret / item.consum_kw : 0;
+    
+    setContorCurentFormData({
+      ...item,
+      pret: pretUnitar // Override with unit price for form display
+    });
     setIsEditingContorCurent(true);
     setIsContorCurentFormOpen(true);
     setIsContorCurentDetailsOpen(false);
