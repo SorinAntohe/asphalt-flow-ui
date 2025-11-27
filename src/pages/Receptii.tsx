@@ -370,6 +370,8 @@ export default function Receptii() {
           cantitate_receptionata: form.cantitate_receptionata,
           diferenta: form.diferenta,
           pret_material_total: form.pret_material_total,
+          pret_total: form.pret_total,
+          pret_transport_total: form.pret_transport_total,
           observatii: form.observatii || ""
         };
         
