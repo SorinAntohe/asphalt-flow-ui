@@ -183,9 +183,9 @@ export default function Receptii() {
     fetchRegistrationNumbers();
   }, []);
 
-  // Calculate diferenta (always positive) when cantitate_livrata or cantitate_receptionata changes
+  // Calculate diferenta when cantitate_livrata or cantitate_receptionata changes
   useEffect(() => {
-    const diferenta = Math.abs(form.cantitate_livrata - form.cantitate_receptionata);
+    const diferenta = form.cantitate_livrata - form.cantitate_receptionata;
     setForm(prev => ({ ...prev, diferenta }));
   }, [form.cantitate_livrata, form.cantitate_receptionata]);
 
@@ -312,8 +312,8 @@ export default function Receptii() {
   
   const handleOpenEdit = (receptie: ReceptieMaterial) => {
     setEditing(receptie);
-    // Calculate diferenta automatically (always positive)
-    const diferenta = Math.abs(receptie.cantitate_livrata - receptie.cantitate_receptionata);
+    // Calculate diferenta automatically
+    const diferenta = receptie.cantitate_livrata - receptie.cantitate_receptionata;
     setForm({
       data: receptie.data,
       cod: receptie.cod,
