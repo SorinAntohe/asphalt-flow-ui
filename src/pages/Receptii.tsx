@@ -608,7 +608,6 @@ export default function Receptii() {
                   <FilterHeader field="material" label="Material" />
                   <FilterHeader field="nr_aviz_provizoriu" label="Nr. Aviz Provizoriu" />
                   <FilterHeader field="nr_aviz_intrare" label="Nr. Aviz Intrare" />
-                  <FilterHeader field="numar_factura" label="Nr. Factură" />
                   <FilterHeader field="nume_sofer" label="Nume Șofer" />
                   <FilterHeader field="nr_inmatriculare" label="Nr. Înmatriculare" />
                   <FilterHeader field="tip_masina" label="Tip Mașină" />
@@ -619,6 +618,7 @@ export default function Receptii() {
                   <FilterHeader field="pret_transport_total" label="Preț Transport" />
                   <FilterHeader field="pret_total" label="Preț Total" />
                   <FilterHeader field="observatii" label="Observații" />
+                  <FilterHeader field="numar_factura" label="Nr. Factură" />
                 </TableRow>
               </TableHeader>
               <TableBody key={`receptii-page-${currentPage}`} className="animate-fade-in">
@@ -648,7 +648,6 @@ export default function Receptii() {
                       <TableCell className="py-1 text-xs">{receptie.material}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.nr_aviz_provizoriu || "-"}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.nr_aviz_intrare || "-"}</TableCell>
-                      <TableCell className="py-1 text-xs">{receptie.numar_factura || "-"}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.nume_sofer}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.nr_inmatriculare}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.tip_masina}</TableCell>
@@ -659,6 +658,7 @@ export default function Receptii() {
                       <TableCell className="py-1 text-xs">{receptie.pret_transport_total}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.pret_total}</TableCell>
                       <TableCell className="py-1 text-xs max-w-xs truncate">{receptie.observatii || "-"}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.numar_factura || "-"}</TableCell>
                     </TableRow>
                   ))
                 )}
@@ -1012,6 +1012,10 @@ export default function Receptii() {
               <div className="space-y-1">
                 <Label className="text-muted-foreground">Observații</Label>
                 <p className="font-medium">{viewingDetails.observatii || "-"}</p>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-muted-foreground">Nr. Factură</Label>
+                <p className="font-medium">{viewingDetails.numar_factura || "-"}</p>
               </div>
             </div>
           )}
