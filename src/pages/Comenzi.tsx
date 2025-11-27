@@ -617,48 +617,82 @@ export default function Comenzi() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Comenzi</h1>
-        <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
-          Gestionează comenzile de materii prime și produse finite
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Comenzi</h1>
+          <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
+            Gestionează comenzile de materii prime și produse finite
+          </p>
+        </div>
       </div>
 
       <Tabs defaultValue="materie-prima" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="materie-prima">Materie Prima</TabsTrigger>
-          <TabsTrigger value="produse-finite">Produs Finit</TabsTrigger>
-        </TabsList>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <TabsList>
+            <TabsTrigger value="materie-prima">Materie Prima</TabsTrigger>
+            <TabsTrigger value="produse-finite">Produs Finit</TabsTrigger>
+          </TabsList>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => {
+                const activeTab = document.querySelector('[data-state="active"][role="tab"]')?.getAttribute('value');
+                if (activeTab === 'produse-finite') {
+                  exportToCSV(filteredAndSortedPF, 'comenzi_produse_finite', [
+                    { key: 'id', label: 'ID' },
+                    { key: 'cod', label: 'Cod' },
+                    { key: 'data', label: 'Data' },
+                    { key: 'client', label: 'Client' },
+                    { key: 'produs', label: 'Produs' },
+                    { key: 'unitate_masura', label: 'UM' },
+                    { key: 'cantitate', label: 'Cantitate' },
+                    { key: 'punct_descarcare', label: 'Punct Descărcare' },
+                    { key: 'pret_fara_tva', label: 'Preț fără TVA' },
+                    { key: 'pret_transport', label: 'Preț Transport' },
+                    { key: 'observatii', label: 'Observații' }
+                  ]);
+                } else {
+                  exportToCSV(filteredAndSortedMP, 'comenzi_materie_prima', [
+                    { key: 'id', label: 'ID' },
+                    { key: 'cod', label: 'Cod' },
+                    { key: 'data', label: 'Data' },
+                    { key: 'furnizor', label: 'Furnizor' },
+                    { key: 'material', label: 'Material' },
+                    { key: 'unitate_masura', label: 'UM' },
+                    { key: 'cantitate', label: 'Cantitate' },
+                    { key: 'punct_descarcare', label: 'Punct Descărcare' },
+                    { key: 'pret_fara_tva', label: 'Preț fără TVA' },
+                    { key: 'pret_transport', label: 'Preț Transport' },
+                    { key: 'observatii', label: 'Observații' }
+                  ]);
+                }
+              }}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Export
+            </Button>
+            <Button className="gap-2" onClick={() => {
+              const activeTab = document.querySelector('[data-state="active"][role="tab"]')?.getAttribute('value');
+              if (activeTab === 'produse-finite') {
+                handleOpenAddPF();
+              } else {
+                handleOpenAddMP();
+              }
+            }}>
+              <Plus className="w-4 h-4" />
+              Comandă Nouă
+            </Button>
+          </div>
+        </div>
 
         <TabsContent value="materie-prima">
           <Card>
             <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
               <CardTitle className="text-lg sm:text-xl">Comenzi Materie Primă</CardTitle>
-              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                <div className="flex items-center gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => exportToCSV(filteredAndSortedMP, 'comenzi_materie_prima', [
-                      { key: 'id', label: 'ID' },
-                      { key: 'cod', label: 'Cod' },
-                      { key: 'data', label: 'Data' },
-                      { key: 'furnizor', label: 'Furnizor' },
-                      { key: 'material', label: 'Material' },
-                      { key: 'unitate_masura', label: 'UM' },
-                      { key: 'cantitate', label: 'Cantitate' },
-                      { key: 'punct_descarcare', label: 'Punct Descărcare' },
-                      { key: 'pret_fara_tva', label: 'Preț fără TVA' },
-                      { key: 'pret_transport', label: 'Preț Transport' },
-                      { key: 'observatii', label: 'Observații' }
-                    ])}
-                    disabled={filteredAndSortedMP.length === 0}
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    Export
-                  </Button>
-                  <Label className="text-sm">Înregistrări per pagină:</Label>
-                  <Select
+              <div className="flex items-center gap-2">
+                <Label className="text-sm">Înregistrări per pagină:</Label>
+                <Select
                     value={itemsPerPageMP.toString()}
                     onValueChange={(value) => {
                       setItemsPerPageMP(Number(value));
@@ -676,11 +710,6 @@ export default function Comenzi() {
                       <SelectItem value="100">100</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
-                <Button size="sm" className="w-full sm:w-auto" onClick={handleOpenAddMP}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Adaugă Comandă
-                </Button>
               </div>
             </CardHeader>
             <CardContent className="overflow-x-auto">
@@ -943,53 +972,26 @@ export default function Comenzi() {
           <Card>
             <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
               <CardTitle className="text-lg sm:text-xl">Comenzi Produse Finite</CardTitle>
-              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                <div className="flex items-center gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => exportToCSV(filteredAndSortedPF, 'comenzi_produse_finite', [
-                      { key: 'id', label: 'ID' },
-                      { key: 'cod', label: 'Cod' },
-                      { key: 'data', label: 'Data' },
-                      { key: 'client', label: 'Client' },
-                      { key: 'produs', label: 'Produs' },
-                      { key: 'unitate_masura', label: 'UM' },
-                      { key: 'cantitate', label: 'Cantitate' },
-                      { key: 'punct_descarcare', label: 'Punct Descărcare' },
-                      { key: 'pret_fara_tva', label: 'Preț fără TVA' },
-                      { key: 'pret_transport', label: 'Preț Transport' },
-                      { key: 'observatii', label: 'Observații' }
-                    ])}
-                    disabled={filteredAndSortedPF.length === 0}
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    Export
-                  </Button>
-                  <Label className="text-sm">Înregistrări per pagină:</Label>
-                  <Select
-                    value={itemsPerPagePF.toString()}
-                    onValueChange={(value) => {
-                      setItemsPerPagePF(Number(value));
-                      setCurrentPagePF(1);
-                    }}
-                  >
-                    <SelectTrigger className="w-[70px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button size="sm" className="w-full sm:w-auto" onClick={handleOpenAddPF}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Adaugă Comandă
-                </Button>
+              <div className="flex items-center gap-2">
+                <Label className="text-sm">Înregistrări per pagină:</Label>
+                <Select
+                  value={itemsPerPagePF.toString()}
+                  onValueChange={(value) => {
+                    setItemsPerPagePF(Number(value));
+                    setCurrentPagePF(1);
+                  }}
+                >
+                  <SelectTrigger className="w-[70px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </CardHeader>
             <CardContent className="overflow-x-auto">

@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2, Search, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, ArrowUpDown, ArrowUp, ArrowDown, Download } from "lucide-react";
+import { exportToCSV } from "@/lib/exportUtils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
@@ -309,46 +310,98 @@ const Liste = () => {
       </div>
 
       <Tabs defaultValue="autoturisme" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 h-auto">
-          <TabsTrigger value="autoturisme" className="text-xs sm:text-sm">Autoturisme</TabsTrigger>
-          <TabsTrigger value="soferi" className="text-xs sm:text-sm">Șoferi</TabsTrigger>
-          <TabsTrigger value="materii" className="text-xs sm:text-sm">Materii</TabsTrigger>
-          <TabsTrigger value="produse" className="text-xs sm:text-sm">Produse</TabsTrigger>
-          <TabsTrigger value="clienti" className="text-xs sm:text-sm">Clienți</TabsTrigger>
-          <TabsTrigger value="furnizori" className="text-xs sm:text-sm">Furnizori</TabsTrigger>
-        </TabsList>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+          <TabsList className="grid w-full sm:w-auto grid-cols-3 sm:grid-cols-6 h-auto">
+            <TabsTrigger value="autoturisme" className="text-xs sm:text-sm">Autoturisme</TabsTrigger>
+            <TabsTrigger value="soferi" className="text-xs sm:text-sm">Șoferi</TabsTrigger>
+            <TabsTrigger value="materii" className="text-xs sm:text-sm">Materii</TabsTrigger>
+            <TabsTrigger value="produse" className="text-xs sm:text-sm">Produse</TabsTrigger>
+            <TabsTrigger value="clienti" className="text-xs sm:text-sm">Clienți</TabsTrigger>
+            <TabsTrigger value="furnizori" className="text-xs sm:text-sm">Furnizori</TabsTrigger>
+          </TabsList>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => {
+                const activeTab = document.querySelector('[data-state="active"][role="tab"]')?.getAttribute('value');
+                if (activeTab === 'autoturisme') {
+                  exportToCSV(sortedAutoturisme, 'autoturisme', [
+                    { key: 'id', label: 'ID' }, { key: 'tipMasina', label: 'Tip Mașină' }, { key: 'nrAuto', label: 'Nr. Auto' },
+                    { key: 'sarcinaMax', label: 'Sarcina Max' }, { key: 'tipTransport', label: 'Tip Transport' }, { key: 'tara', label: 'Tara' }
+                  ]);
+                } else if (activeTab === 'soferi') {
+                  exportToCSV(sortedSoferi, 'soferi', [{ key: 'id', label: 'ID' }, { key: 'nume', label: 'Nume' }, { key: 'ci', label: 'C.I.' }]);
+                } else if (activeTab === 'materii') {
+                  exportToCSV(sortedMateriiPrime, 'materii_prime', [{ key: 'id', label: 'ID' }, { key: 'denumire', label: 'Denumire' }]);
+                } else if (activeTab === 'produse') {
+                  exportToCSV(sortedProduseFinite, 'produse_finite', [{ key: 'id', label: 'ID' }, { key: 'denumire', label: 'Denumire' }]);
+                } else if (activeTab === 'clienti') {
+                  exportToCSV(sortedClienti, 'clienti', [
+                    { key: 'id', label: 'ID' }, { key: 'denumire', label: 'Denumire' }, { key: 'sediu', label: 'Sediu' },
+                    { key: 'cui', label: 'CUI' }, { key: 'nrReg', label: 'Nr. Reg' }
+                  ]);
+                } else if (activeTab === 'furnizori') {
+                  exportToCSV(sortedFurnizori, 'furnizori', [
+                    { key: 'id', label: 'ID' }, { key: 'denumire', label: 'Denumire' }, { key: 'sediu', label: 'Sediu' },
+                    { key: 'cui', label: 'CUI' }, { key: 'nrReg', label: 'Nr. Reg' }
+                  ]);
+                }
+              }}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Export
+            </Button>
+            <Button className="gap-2" onClick={() => {
+              const activeTab = document.querySelector('[data-state="active"][role="tab"]')?.getAttribute('value');
+              if (activeTab === 'autoturisme') {
+                setAutoturismeFormData({ tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "", tara: "" });
+                setAutoturismeDialog({ open: true, mode: 'add' });
+              } else if (activeTab === 'soferi') {
+                setSoferiFormData({ numeSofer: "", ci: "" });
+                setSoferiDialog({ open: true, mode: 'add' });
+              } else if (activeTab === 'materii') {
+                setMateriiPrimeFormData({ denumire: "" });
+                setMateriiPrimeDialog({ open: true, mode: 'add' });
+              } else if (activeTab === 'produse') {
+                setProduseFiniteFormData({ denumire: "" });
+                setProduseFiniteDialog({ open: true, mode: 'add' });
+              } else if (activeTab === 'clienti') {
+                setClientiFormData({ denumire: "", sediu: "", cui: "", nrReg: "" });
+                setClientiDialog({ open: true, mode: 'add' });
+              } else if (activeTab === 'furnizori') {
+                setFurnizoriFormData({ denumire: "", sediu: "", cui: "", nrReg: "" });
+                setFurnizoriDialog({ open: true, mode: 'add' });
+              }
+            }}>
+              <Plus className="w-4 h-4" />
+              Adaugă
+            </Button>
+          </div>
+        </div>
 
         <TabsContent value="autoturisme">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Lista Autoturisme</CardTitle>
-                <Button className="gap-2" onClick={() => {
-                  setAutoturismeFormData({ tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "", tara: "" });
-                  setAutoturismeDialog({ open: true, mode: 'add' });
-                }}>
-                  <Plus className="w-4 h-4" />
-                  Adaugă Autoturism
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Select value={autoturismePerPage.toString()} onValueChange={(value) => { setAutoturismePerPage(Number(value)); setAutoturismePage(1); }}>
+                    <SelectTrigger className="w-[70px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </CardHeader>
-            <div className="px-6 pb-4">
-              <div className="flex items-center gap-2">
-                <Label className="text-sm">Înregistrări per pagină:</Label>
-                <Select value={autoturismePerPage.toString()} onValueChange={(value) => { setAutoturismePerPage(Number(value)); setAutoturismePage(1); }}>
-                  <SelectTrigger className="w-[70px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                    <SelectItem value="100">100</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
             <CardContent className="overflow-x-auto">
               <Table className="min-w-[800px]">
                 <TableHeader>
@@ -816,32 +869,23 @@ const Liste = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Lista Șoferi</CardTitle>
-                <Button className="gap-2" onClick={() => {
-                  setSoferiFormData({ numeSofer: "", ci: "" });
-                  setSoferiDialog({ open: true, mode: 'add' });
-                }}>
-                  <Plus className="w-4 h-4" />
-                  Adaugă Șofer
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Select value={soferiPerPage.toString()} onValueChange={(value) => { setSoferiPerPage(Number(value)); setSoferiPage(1); }}>
+                    <SelectTrigger className="w-[70px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </CardHeader>
-            <div className="px-6 pb-4">
-              <div className="flex items-center gap-2">
-                <Label className="text-sm">Înregistrări per pagină:</Label>
-                <Select value={soferiPerPage.toString()} onValueChange={(value) => { setSoferiPerPage(Number(value)); setSoferiPage(1); }}>
-                  <SelectTrigger className="w-[70px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                    <SelectItem value="100">100</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
             <CardContent>
               <Table>
                 <TableHeader>
@@ -1167,32 +1211,23 @@ const Liste = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Lista Materii Prime</CardTitle>
-                <Button className="gap-2" onClick={() => {
-                  setMateriiPrimeFormData({ denumire: "" });
-                  setMateriiPrimeDialog({ open: true, mode: 'add' });
-                }}>
-                  <Plus className="w-4 h-4" />
-                  Adaugă Materie Primă
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Select value={materiiPrimePerPage.toString()} onValueChange={(value) => { setMateriiPrimePerPage(Number(value)); setMateriiPrimePage(1); }}>
+                    <SelectTrigger className="w-[70px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </CardHeader>
-            <div className="px-6 pb-4">
-              <div className="flex items-center gap-2">
-                <Label className="text-sm">Înregistrări per pagină:</Label>
-                <Select value={materiiPrimePerPage.toString()} onValueChange={(value) => { setMateriiPrimePerPage(Number(value)); setMateriiPrimePage(1); }}>
-                  <SelectTrigger className="w-[70px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                    <SelectItem value="100">100</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
             <CardContent>
               <Table>
                 <TableHeader>
@@ -1479,32 +1514,23 @@ const Liste = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Lista Produse Finite</CardTitle>
-                <Button className="gap-2" onClick={() => {
-                  setProduseFiniteFormData({ denumire: "" });
-                  setProduseFiniteDialog({ open: true, mode: 'add' });
-                }}>
-                  <Plus className="w-4 h-4" />
-                  Adaugă Produs
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Select value={produseFinitePerPage.toString()} onValueChange={(value) => { setProduseFinitePerPage(Number(value)); setProduseFinitePage(1); }}>
+                    <SelectTrigger className="w-[70px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </CardHeader>
-            <div className="px-6 pb-4">
-              <div className="flex items-center gap-2">
-                <Label className="text-sm">Înregistrări per pagină:</Label>
-                <Select value={produseFinitePerPage.toString()} onValueChange={(value) => { setProduseFinitePerPage(Number(value)); setProduseFinitePage(1); }}>
-                  <SelectTrigger className="w-[70px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                    <SelectItem value="100">100</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
             <CardContent>
               <Table>
                 <TableHeader>
@@ -1791,32 +1817,23 @@ const Liste = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Lista Clienți</CardTitle>
-                <Button className="gap-2" onClick={() => {
-                  setClientiFormData({ denumire: "", sediu: "", cui: "", nrReg: "" });
-                  setClientiDialog({ open: true, mode: 'add' });
-                }}>
-                  <Plus className="w-4 h-4" />
-                  Adaugă Client
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Select value={clientiPerPage.toString()} onValueChange={(value) => { setClientiPerPage(Number(value)); setClientiPage(1); }}>
+                    <SelectTrigger className="w-[70px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </CardHeader>
-            <div className="px-6 pb-4">
-              <div className="flex items-center gap-2">
-                <Label className="text-sm">Înregistrări per pagină:</Label>
-                <Select value={clientiPerPage.toString()} onValueChange={(value) => { setClientiPerPage(Number(value)); setClientiPage(1); }}>
-                  <SelectTrigger className="w-[70px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                    <SelectItem value="100">100</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
             <CardContent>
               <Table>
                 <TableHeader>
@@ -2220,32 +2237,23 @@ const Liste = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Lista Furnizori</CardTitle>
-                <Button className="gap-2" onClick={() => {
-                  setFurnizoriFormData({ denumire: "", sediu: "", cui: "", nrReg: "" });
-                  setFurnizoriDialog({ open: true, mode: 'add' });
-                }}>
-                  <Plus className="w-4 h-4" />
-                  Adaugă Furnizor
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Select value={furnizoriPerPage.toString()} onValueChange={(value) => { setFurnizoriPerPage(Number(value)); setFurnizoriPage(1); }}>
+                    <SelectTrigger className="w-[70px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </CardHeader>
-            <div className="px-6 pb-4">
-              <div className="flex items-center gap-2">
-                <Label className="text-sm">Înregistrări per pagină:</Label>
-                <Select value={furnizoriPerPage.toString()} onValueChange={(value) => { setFurnizoriPerPage(Number(value)); setFurnizoriPage(1); }}>
-                  <SelectTrigger className="w-[70px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                    <SelectItem value="100">100</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
             <CardContent>
               <Table>
                 <TableHeader>

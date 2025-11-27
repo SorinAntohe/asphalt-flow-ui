@@ -819,11 +819,66 @@ const Consumuri = () => {
       </div>
 
       <Tabs defaultValue="contor-curent" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="contor-curent">Contor Curent</TabsTrigger>
-          <TabsTrigger value="contor-ctl">Contor CTL</TabsTrigger>
-          <TabsTrigger value="consumuri">Consumuri Materiale</TabsTrigger>
-        </TabsList>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+          <TabsList className="grid w-full sm:w-auto grid-cols-3">
+            <TabsTrigger value="contor-curent">Contor Curent</TabsTrigger>
+            <TabsTrigger value="contor-ctl">Contor CTL</TabsTrigger>
+            <TabsTrigger value="consumuri">Consumuri Materiale</TabsTrigger>
+          </TabsList>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => {
+                const activeTab = document.querySelector('[data-state="active"][role="tab"]')?.getAttribute('value');
+                if (activeTab === 'contor-ctl') {
+                  exportToCSV(filterAndSortData(contorCTLData, contorCTLFilters, contorCTLSort), 'contor_ctl', [
+                    { key: 'id', label: 'ID' },
+                    { key: 'data', label: 'Data' },
+                    { key: 'index_vechi_tur', label: 'Index Vechi Tur' },
+                    { key: 'index_nou_tur', label: 'Index Nou Tur' },
+                    { key: 'retur_exces_vechi', label: 'Retur Exces Vechi' },
+                    { key: 'retur_exces_nou', label: 'Retur Exces Nou' },
+                    { key: 'consum_l', label: 'Consum (L)' },
+                    { key: 'consum_to', label: 'Consum (TO)' }
+                  ]);
+                } else if (activeTab === 'consumuri') {
+                  exportToCSV(filterAndSortData(consumuriData, consumuriFilters, consumuriSort), 'consumuri_materiale', [
+                    { key: 'id', label: 'ID' },
+                    { key: 'data', label: 'Data' },
+                    { key: 'produs', label: 'Produs' },
+                    { key: 'cantitate', label: 'Cantitate' }
+                  ]);
+                } else {
+                  exportToCSV(filterAndSortData(contorCurentData, contorCurentFilters, contorCurentSort), 'contor_curent', [
+                    { key: 'id', label: 'Nr Crt' },
+                    { key: 'data', label: 'Data' },
+                    { key: 'index_vechi', label: 'Index Vechi' },
+                    { key: 'index_nou', label: 'Index Nou' },
+                    { key: 'consum_kw', label: 'Consum kW' },
+                    { key: 'pret', label: 'Preț' }
+                  ]);
+                }
+              }}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Export
+            </Button>
+            <Button className="gap-2" onClick={() => {
+              const activeTab = document.querySelector('[data-state="active"][role="tab"]')?.getAttribute('value');
+              if (activeTab === 'contor-ctl') {
+                handleOpenContorCTLAdd();
+              } else if (activeTab === 'consumuri') {
+                handleOpenConsumAdd();
+              } else {
+                handleOpenContorCurentAdd();
+              }
+            }}>
+              <Plus className="w-4 h-4" />
+              Adaugă
+            </Button>
+          </div>
+        </div>
 
         {/* Contor Curent Tab */}
         <TabsContent value="contor-curent">
@@ -831,47 +886,25 @@ const Consumuri = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Contor Curent</CardTitle>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => exportToCSV(filterAndSortData(contorCurentData, contorCurentFilters, contorCurentSort), 'contor_curent', [
-                        { key: 'id', label: 'Nr Crt' },
-                        { key: 'data', label: 'Data' },
-                        { key: 'index_vechi', label: 'Index Vechi' },
-                        { key: 'index_nou', label: 'Index Nou' },
-                        { key: 'consum_kw', label: 'Consum kW' },
-                        { key: 'pret', label: 'Preț' }
-                      ])}
-                      disabled={contorCurentData.length === 0}
-                    >
-                      <Download className="w-4 h-4 mr-2" />
-                      Export
-                    </Button>
-                    <Label className="text-sm">Înregistrări per pagină:</Label>
-                    <Select
-                      value={contorCurentItemsPerPage.toString()}
-                      onValueChange={(value) => {
-                        setContorCurentItemsPerPage(Number(value));
-                        setContorCurentCurrentPage(1);
-                      }}
-                    >
-                      <SelectTrigger className="w-[70px] h-8">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="5">5</SelectItem>
-                        <SelectItem value="10">10</SelectItem>
-                        <SelectItem value="20">20</SelectItem>
-                        <SelectItem value="50">50</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button size="sm" className="gap-1" onClick={handleOpenContorCurentAdd}>
-                    <Plus className="h-4 w-4" />
-                    Adaugă
-                  </Button>
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Select
+                    value={contorCurentItemsPerPage.toString()}
+                    onValueChange={(value) => {
+                      setContorCurentItemsPerPage(Number(value));
+                      setContorCurentCurrentPage(1);
+                    }}
+                  >
+                    <SelectTrigger className="w-[70px] h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardHeader>
@@ -1007,48 +1040,25 @@ const Consumuri = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Contor CTL</CardTitle>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => exportToCSV(filterAndSortData(contorCTLData, contorCTLFilters, contorCTLSort), 'contor_ctl', [
-                        { key: 'id', label: 'ID' },
-                        { key: 'data', label: 'Data' },
-                        { key: 'index_vechi_tur', label: 'Index Vechi Tur' },
-                        { key: 'index_nou_tur', label: 'Index Nou Tur' },
-                        { key: 'retur_exces_vechi', label: 'Retur Exces Vechi' },
-                        { key: 'retur_exces_nou', label: 'Retur Exces Nou' },
-                        { key: 'consum_l', label: 'Consum (L)' },
-                        { key: 'consum_to', label: 'Consum (TO)' }
-                      ])}
-                      disabled={contorCTLData.length === 0}
-                    >
-                      <Download className="w-4 h-4 mr-2" />
-                      Export
-                    </Button>
-                    <Label className="text-sm">Înregistrări per pagină:</Label>
-                    <Select
-                      onValueChange={(value) => {
-                        setContorCTLItemsPerPage(Number(value));
-                        setContorCTLCurrentPage(1);
-                      }}
-                    >
-                      <SelectTrigger className="w-[70px] h-8">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="5">5</SelectItem>
-                        <SelectItem value="10">10</SelectItem>
-                        <SelectItem value="20">20</SelectItem>
-                        <SelectItem value="50">50</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button size="sm" className="gap-1" onClick={handleOpenContorCTLAdd}>
-                    <Plus className="h-4 w-4" />
-                    Adaugă
-                  </Button>
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Select
+                    value={contorCTLItemsPerPage.toString()}
+                    onValueChange={(value) => {
+                      setContorCTLItemsPerPage(Number(value));
+                      setContorCTLCurrentPage(1);
+                    }}
+                  >
+                    <SelectTrigger className="w-[70px] h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardHeader>
@@ -1204,55 +1214,25 @@ const Consumuri = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Consumuri Materiale</CardTitle>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => exportToCSV(filterAndSortData(consumuriData, consumuriFilters, consumuriSort), 'consumuri_materiale', [
-                        { key: 'id', label: 'ID' },
-                        { key: 'data', label: 'Data' },
-                        { key: 'produs', label: 'Produs' },
-                        { key: 'cantitate', label: 'Cantitate' },
-                        { key: '04_nat', label: '0/4 NAT' },
-                        { key: '04_conc', label: '0/4 CONC' },
-                        { key: '04_cribluri', label: '0/4 CRIBLURI' },
-                        { key: '48_conc', label: '4/8 CONC' },
-                        { key: '48_cribluri', label: '4/8 CRIBLURI' },
-                        { key: '816_conc', label: '8/16 CONC' },
-                        { key: '816_cribluri', label: '8/16 CRIBLURI' },
-                        { key: 'filler', label: 'Filler' },
-                        { key: 'bitum', label: 'Bitum' },
-                        { key: 'consum_curent', label: 'Consum Curent' },
-                        { key: 'consum_ctl', label: 'Consum CTL' }
-                      ])}
-                      disabled={consumuriData.length === 0}
-                    >
-                      <Download className="w-4 h-4 mr-2" />
-                      Export
-                    </Button>
-                    <Label className="text-sm">Înregistrări per pagină:</Label>
-                    <Select
-                      onValueChange={(value) => {
-                        setConsumuriItemsPerPage(Number(value));
-                        setConsumuriCurrentPage(1);
-                      }}
-                    >
-                      <SelectTrigger className="w-[70px] h-8">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="5">5</SelectItem>
-                        <SelectItem value="10">10</SelectItem>
-                        <SelectItem value="20">20</SelectItem>
-                        <SelectItem value="50">50</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button size="sm" className="gap-1" onClick={handleOpenConsumAdd}>
-                    <Plus className="h-4 w-4" />
-                    Adaugă
-                  </Button>
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Select
+                    value={consumuriItemsPerPage.toString()}
+                    onValueChange={(value) => {
+                      setConsumuriItemsPerPage(Number(value));
+                      setConsumuriCurrentPage(1);
+                    }}
+                  >
+                    <SelectTrigger className="w-[70px] h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardHeader>
