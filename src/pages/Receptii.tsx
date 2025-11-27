@@ -23,6 +23,7 @@ interface ReceptieMaterial {
   material: string;
   nr_aviz_provizoriu: string;
   nr_aviz_intrare: string;
+  numar_factura: string;
   nume_sofer: string;
   nr_inmatriculare: string;
   tip_masina: string;
@@ -42,6 +43,7 @@ const receptieSchema = z.object({
   material: z.string().trim().min(1, "Materialul este obligatoriu").max(100),
   nr_aviz_provizoriu: z.string().trim().max(10).optional(),
   nr_aviz_intrare: z.string().trim().max(10).optional(),
+  numar_factura: z.string().trim().max(20).optional(),
   nume_sofer: z.string().trim().min(1, "Numele șoferului este obligatoriu").max(100),
   nr_inmatriculare: z.string().trim().min(1, "Numărul de înmatriculare este obligatoriu").max(10),
   tip_masina: z.string().trim().min(1, "Tipul mașinii este obligatoriu").max(20),
@@ -80,6 +82,7 @@ export default function Receptii() {
     material: "",
     nr_aviz_provizoriu: "",
     nr_aviz_intrare: "",
+    numar_factura: "",
     nume_sofer: "",
     nr_inmatriculare: "",
     tip_masina: "",
@@ -102,6 +105,7 @@ export default function Receptii() {
     material: "", 
     nr_aviz_provizoriu: "",
     nr_aviz_intrare: "",
+    numar_factura: "",
     nume_sofer: "",
     nr_inmatriculare: "",
     tip_masina: "",
@@ -289,6 +293,7 @@ export default function Receptii() {
       material: "",
       nr_aviz_provizoriu: "",
       nr_aviz_intrare: "",
+      numar_factura: "",
       nume_sofer: "",
       nr_inmatriculare: "",
       tip_masina: "",
@@ -313,6 +318,7 @@ export default function Receptii() {
       material: receptie.material,
       nr_aviz_provizoriu: receptie.nr_aviz_provizoriu || "",
       nr_aviz_intrare: receptie.nr_aviz_intrare || "",
+      numar_factura: receptie.numar_factura || "",
       nume_sofer: receptie.nume_sofer,
       nr_inmatriculare: receptie.nr_inmatriculare,
       tip_masina: receptie.tip_masina,
@@ -366,6 +372,7 @@ export default function Receptii() {
           material: form.material,
           nr_aviz_provizoriu: form.nr_aviz_provizoriu || "",
           nr_aviz_intrare: form.nr_aviz_intrare || "",
+          numar_factura: form.numar_factura || "",
           nume_sofer: form.nume_sofer,
           nr_inmatriculare: form.nr_inmatriculare,
           tip_masina: form.tip_masina,
@@ -460,6 +467,7 @@ export default function Receptii() {
         (item.material || "").toLowerCase().includes(filters.material.toLowerCase()) &&
         (item.nr_aviz_provizoriu || "").toLowerCase().includes(filters.nr_aviz_provizoriu.toLowerCase()) &&
         (item.nr_aviz_intrare || "").toLowerCase().includes(filters.nr_aviz_intrare.toLowerCase()) &&
+        (item.numar_factura || "").toLowerCase().includes(filters.numar_factura.toLowerCase()) &&
         (item.nume_sofer || "").toLowerCase().includes(filters.nume_sofer.toLowerCase()) &&
         (item.nr_inmatriculare || "").toLowerCase().includes(filters.nr_inmatriculare.toLowerCase()) &&
         (item.tip_masina || "").toLowerCase().includes(filters.tip_masina.toLowerCase()) &&
@@ -600,6 +608,7 @@ export default function Receptii() {
                   <FilterHeader field="material" label="Material" />
                   <FilterHeader field="nr_aviz_provizoriu" label="Nr. Aviz Provizoriu" />
                   <FilterHeader field="nr_aviz_intrare" label="Nr. Aviz Intrare" />
+                  <FilterHeader field="numar_factura" label="Nr. Factură" />
                   <FilterHeader field="nume_sofer" label="Nume Șofer" />
                   <FilterHeader field="nr_inmatriculare" label="Nr. Înmatriculare" />
                   <FilterHeader field="tip_masina" label="Tip Mașină" />
@@ -615,13 +624,13 @@ export default function Receptii() {
               <TableBody key={`receptii-page-${currentPage}`} className="animate-fade-in">
                 {loading ? (
                   <TableRow className="h-10">
-                    <TableCell colSpan={17} className="text-center py-1 text-xs">
+                    <TableCell colSpan={18} className="text-center py-1 text-xs">
                       Se încarcă...
                     </TableCell>
                   </TableRow>
                 ) : paginatedData.length === 0 ? (
                   <TableRow className="h-10">
-                    <TableCell colSpan={17} className="text-center py-1 text-xs">
+                    <TableCell colSpan={18} className="text-center py-1 text-xs">
                       Nu există recepții înregistrate
                     </TableCell>
                   </TableRow>
@@ -639,6 +648,7 @@ export default function Receptii() {
                       <TableCell className="py-1 text-xs">{receptie.material}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.nr_aviz_provizoriu || "-"}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.nr_aviz_intrare || "-"}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.numar_factura || "-"}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.nume_sofer}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.nr_inmatriculare}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.tip_masina}</TableCell>
@@ -771,6 +781,14 @@ export default function Receptii() {
                   onChange={(e) => setForm({ ...form, nr_aviz_intrare: e.target.value })}
                 />
               </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="numar_factura">Nr. Factură</Label>
+              <Input
+                id="numar_factura"
+                value={form.numar_factura}
+                onChange={(e) => setForm({ ...form, numar_factura: e.target.value })}
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
@@ -943,15 +961,21 @@ export default function Receptii() {
                   <p className="font-medium">{viewingDetails.nr_aviz_intrare || "-"}</p>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-muted-foreground">Nume Șofer</Label>
-                  <p className="font-medium">{viewingDetails.nume_sofer}</p>
+                  <Label className="text-muted-foreground">Nr. Factură</Label>
+                  <p className="font-medium">{viewingDetails.numar_factura || "-"}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
+                  <Label className="text-muted-foreground">Nume Șofer</Label>
+                  <p className="font-medium">{viewingDetails.nume_sofer}</p>
+                </div>
+                <div className="space-y-1">
                   <Label className="text-muted-foreground">Nr. Înmatriculare</Label>
                   <p className="font-medium">{viewingDetails.nr_inmatriculare}</p>
                 </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <Label className="text-muted-foreground">Tip Mașină</Label>
                   <p className="font-medium">{viewingDetails.tip_masina}</p>
