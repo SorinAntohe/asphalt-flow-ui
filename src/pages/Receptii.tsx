@@ -256,6 +256,29 @@ export default function Receptii() {
     fetchMaterial();
   }, [form.cod]);
 
+  // Fetch prices based on cod and cantitate_receptionata
+  useEffect(() => {
+    const fetchPrices = async () => {
+      if (!form.cod || !form.cantitate_receptionata) return;
+      
+      try {
+        const response = await fetch(`http://192.168.15.4:8002/receptii/materiale/returneaza_preturi_dupa_cod/${form.cod}/${form.cantitate_receptionata}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        setForm(prev => ({ 
+          ...prev, 
+          pret_transport_total: data.pret_transport_total,
+          pret_material_total: data.pret_material_total,
+          pret_total: data.pret_total
+        }));
+      } catch (error) {
+        console.error('Error fetching prices:', error);
+      }
+    };
+    
+    fetchPrices();
+  }, [form.cod, form.cantitate_receptionata]);
+
   // Add/Edit handlers
   const handleOpenAdd = () => {
     setEditing(null);
