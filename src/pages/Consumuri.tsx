@@ -320,35 +320,101 @@ const Consumuri = () => {
 
   const handleContorCurentSave = async () => {
     try {
+      if (isEditingContorCurent && contorCurentFormData.id) {
+        // Edit mode
+        const payload = {
+          tabel: "contor_curent",
+          id: contorCurentFormData.id,
+          update: {
+            index_vechi: contorCurentFormData.index_vechi || 0,
+            index_nou: contorCurentFormData.index_nou || 0,
+            consum_kw: contorCurentFormData.consum_kw || 0,
+            pret: (contorCurentFormData.pret || 0) * (contorCurentFormData.consum_kw || 0)
+          }
+        };
+
+        const response = await fetch(`${API_BASE_URL}/editeaza`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) throw new Error('Failed to edit contor curent');
+
+        toast({
+          title: "Success",
+          description: "Contorul a fost editat cu succes",
+        });
+      } else {
+        // Add mode
+        const payload = {
+          index_vechi: contorCurentFormData.index_vechi || 0,
+          index_nou: contorCurentFormData.index_nou || 0,
+          consum_kw: contorCurentFormData.consum_kw || 0,
+          pret: (contorCurentFormData.pret || 0) * (contorCurentFormData.consum_kw || 0)
+        };
+
+        const response = await fetch(`${API_BASE_URL}/contori/adauga/curent`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) throw new Error('Failed to add contor curent');
+
+        toast({
+          title: "Success",
+          description: "Contorul a fost adăugat cu succes",
+        });
+      }
+
+      setIsContorCurentFormOpen(false);
+      fetchContorCurent();
+    } catch (error) {
+      console.error('Error saving contor curent:', error);
+      toast({
+        title: "Eroare",
+        description: `Nu s-a putut ${isEditingContorCurent ? 'edita' : 'adăuga'} contorul`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleContorCurentDelete = async () => {
+    if (!selectedContorCurent) return;
+
+    try {
       const payload = {
-        index_vechi: contorCurentFormData.index_vechi || 0,
-        index_nou: contorCurentFormData.index_nou || 0,
-        consum_kw: contorCurentFormData.consum_kw || 0,
-        pret: (contorCurentFormData.pret || 0) * (contorCurentFormData.consum_kw || 0)
+        tabel: "contor_curent",
+        id: selectedContorCurent.id
       };
 
-      const response = await fetch(`${API_BASE_URL}/contori/adauga/curent`, {
-        method: 'POST',
+      const response = await fetch(`${API_BASE_URL}/sterge`, {
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) throw new Error('Failed to add contor curent');
+      if (!response.ok) throw new Error('Failed to delete contor curent');
 
       toast({
         title: "Success",
-        description: "Contorul a fost adăugat cu succes",
+        description: "Contorul a fost șters cu succes",
       });
 
-      setIsContorCurentFormOpen(false);
+      setIsContorCurentDeleteOpen(false);
       fetchContorCurent();
     } catch (error) {
-      console.error('Error adding contor curent:', error);
+      console.error('Error deleting contor curent:', error);
       toast({
         title: "Eroare",
-        description: "Nu s-a putut adăuga contorul",
+        description: "Nu s-a putut șterge contorul",
         variant: "destructive",
       });
     }
@@ -395,37 +461,105 @@ const Consumuri = () => {
 
   const handleContorCTLSave = async () => {
     try {
+      if (isEditingContorCTL && contorCTLFormData.id) {
+        // Edit mode
+        const payload = {
+          tabel: "contor_ctl",
+          id: contorCTLFormData.id,
+          update: {
+            index_vechi_tur: contorCTLFormData.index_vechi_tur || 0,
+            index_nou_tur: contorCTLFormData.index_nou_tur || 0,
+            retur_exces_vechi: contorCTLFormData.retur_exces_vechi || 0,
+            retur_exces_nou: contorCTLFormData.retur_exces_nou || 0,
+            consum_l: contorCTLFormData.consum_l || 0,
+            consum_to: contorCTLFormData.consum_to || 0
+          }
+        };
+
+        const response = await fetch(`${API_BASE_URL}/editeaza`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) throw new Error('Failed to edit contor CTL');
+
+        toast({
+          title: "Success",
+          description: "Contorul CTL a fost editat cu succes",
+        });
+      } else {
+        // Add mode
+        const payload = {
+          index_vechi_tur: contorCTLFormData.index_vechi_tur || 0,
+          index_nou_tur: contorCTLFormData.index_nou_tur || 0,
+          retur_exces_vechi: contorCTLFormData.retur_exces_vechi || 0,
+          retur_exces_nou: contorCTLFormData.retur_exces_nou || 0,
+          consum_l: contorCTLFormData.consum_l || 0,
+          consum_to: contorCTLFormData.consum_to || 0
+        };
+
+        const response = await fetch(`${API_BASE_URL}/contori/adauga/ctl`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) throw new Error('Failed to add contor CTL');
+
+        toast({
+          title: "Success",
+          description: "Contorul CTL a fost adăugat cu succes",
+        });
+      }
+
+      setIsContorCTLFormOpen(false);
+      fetchContorCTL();
+    } catch (error) {
+      console.error('Error saving contor CTL:', error);
+      toast({
+        title: "Eroare",
+        description: `Nu s-a putut ${isEditingContorCTL ? 'edita' : 'adăuga'} contorul CTL`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleContorCTLDelete = async () => {
+    if (!selectedContorCTL) return;
+
+    try {
       const payload = {
-        index_vechi_tur: contorCTLFormData.index_vechi_tur || 0,
-        index_nou_tur: contorCTLFormData.index_nou_tur || 0,
-        retur_exces_vechi: contorCTLFormData.retur_exces_vechi || 0,
-        retur_exces_nou: contorCTLFormData.retur_exces_nou || 0,
-        consum_l: contorCTLFormData.consum_l || 0,
-        consum_to: contorCTLFormData.consum_to || 0
+        tabel: "contor_ctl",
+        id: selectedContorCTL.id
       };
 
-      const response = await fetch(`${API_BASE_URL}/contori/adauga/ctl`, {
-        method: 'POST',
+      const response = await fetch(`${API_BASE_URL}/sterge`, {
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) throw new Error('Failed to add contor CTL');
+      if (!response.ok) throw new Error('Failed to delete contor CTL');
 
       toast({
         title: "Success",
-        description: "Contorul CTL a fost adăugat cu succes",
+        description: "Contorul CTL a fost șters cu succes",
       });
 
-      setIsContorCTLFormOpen(false);
+      setIsContorCTLDeleteOpen(false);
       fetchContorCTL();
     } catch (error) {
-      console.error('Error adding contor CTL:', error);
+      console.error('Error deleting contor CTL:', error);
       toast({
         title: "Eroare",
-        description: "Nu s-a putut adăuga contorul CTL",
+        description: "Nu s-a putut șterge contorul CTL",
         variant: "destructive",
       });
     }
@@ -1313,7 +1447,10 @@ const Consumuri = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Anulează</AlertDialogCancel>
-            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogAction 
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={handleContorCurentDelete}
+            >
               Șterge
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -1493,7 +1630,10 @@ const Consumuri = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Anulează</AlertDialogCancel>
-            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogAction 
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={handleContorCTLDelete}
+            >
               Șterge
             </AlertDialogAction>
           </AlertDialogFooter>
