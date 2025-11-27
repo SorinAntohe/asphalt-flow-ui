@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2, Search, ArrowUpDown, ArrowUp, ArrowDown, Download } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, ArrowUpDown, ArrowUp, ArrowDown, Download, X } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -63,6 +63,14 @@ const Liste = () => {
   const [produseFiniteDeleteDialog, setProduseFiniteDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
   const [clientiDeleteDialog, setClientiDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
   const [furnizoriDeleteDialog, setFurnizoriDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
+
+  // Details view states
+  const [viewingAutoturism, setViewingAutoturism] = useState<any | null>(null);
+  const [viewingSofer, setViewingSofer] = useState<any | null>(null);
+  const [viewingMateriePrima, setViewingMateriePrima] = useState<any | null>(null);
+  const [viewingProdusFinit, setViewingProdusFinit] = useState<any | null>(null);
+  const [viewingClient, setViewingClient] = useState<any | null>(null);
+  const [viewingFurnizor, setViewingFurnizor] = useState<any | null>(null);
 
   // Form data states
   const [autoturismeFormData, setAutoturismeFormData] = useState({ tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "", tara: "" });
@@ -566,14 +574,14 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody key={`autoturisme-page-${autoturismePage}`} className="animate-fade-in">
-                  {paginatedAutoturisme.map(auto => <TableRow key={auto.id} className="h-10">
+                  {paginatedAutoturisme.map(auto => <TableRow key={auto.id} className="h-10 cursor-pointer hover:bg-muted/50" onClick={() => setViewingAutoturism(auto)}>
                       <TableCell className="font-medium py-1 text-xs">{auto.id}</TableCell>
                       <TableCell className="py-1 text-xs">{auto.tipMasina}</TableCell>
                       <TableCell className="py-1 text-xs">{auto.nrAuto}</TableCell>
                       <TableCell className="py-1 text-xs">{auto.sarcinaMax}</TableCell>
                       <TableCell className="py-1 text-xs">{auto.tipTransport}</TableCell>
                       <TableCell className="py-1 text-xs">{auto.tara}</TableCell>
-                      <TableCell className="text-right py-1">
+                      <TableCell className="text-right py-1" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-1">
                           <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
                             setAutoturismeFormData({ tipMasina: auto.tipMasina, nrAuto: auto.nrAuto, sarcinaMax: auto.sarcinaMax, tipTransport: auto.tipTransport, tara: auto.tara });
@@ -975,11 +983,11 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody key={`soferi-page-${soferiPage}`} className="animate-fade-in">
-                  {paginatedSoferi.map(sofer => <TableRow key={sofer.id} className="h-10">
+                  {paginatedSoferi.map(sofer => <TableRow key={sofer.id} className="h-10 cursor-pointer hover:bg-muted/50" onClick={() => setViewingSofer(sofer)}>
                       <TableCell className="font-medium py-1 text-xs">{sofer.id}</TableCell>
                       <TableCell className="py-1 text-xs">{sofer.nume}</TableCell>
                       <TableCell className="py-1 text-xs">{sofer.ci}</TableCell>
-                      <TableCell className="text-right py-1">
+                      <TableCell className="text-right py-1" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-1">
                           <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
                             setSoferiFormData({ numeSofer: sofer.nume, ci: sofer.ci });
@@ -1292,10 +1300,10 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody key={`materii-page-${materiiPrimePage}`} className="animate-fade-in">
-                  {paginatedMateriiPrime.map(materie => <TableRow key={materie.id} className="h-10">
+                  {paginatedMateriiPrime.map(materie => <TableRow key={materie.id} className="h-10 cursor-pointer hover:bg-muted/50" onClick={() => setViewingMateriePrima(materie)}>
                       <TableCell className="font-medium py-1 text-xs">{materie.id}</TableCell>
                       <TableCell className="py-1 text-xs">{materie.denumire}</TableCell>
-                      <TableCell className="text-right py-1">
+                      <TableCell className="text-right py-1" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-1">
                           <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
                             setMateriiPrimeFormData({ denumire: materie.denumire });
@@ -1595,10 +1603,10 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody key={`produse-page-${produseFinitePage}`} className="animate-fade-in">
-                  {paginatedProduseFinite.map(produs => <TableRow key={produs.id} className="h-10">
+                  {paginatedProduseFinite.map(produs => <TableRow key={produs.id} className="h-10 cursor-pointer hover:bg-muted/50" onClick={() => setViewingProdusFinit(produs)}>
                       <TableCell className="font-medium py-1 text-xs">{produs.id}</TableCell>
                       <TableCell className="py-1 text-xs">{produs.denumire}</TableCell>
-                      <TableCell className="text-right py-1">
+                      <TableCell className="text-right py-1" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-1">
                           <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
                             setProduseFiniteFormData({ denumire: produs.denumire });
@@ -1973,13 +1981,13 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody key={`clienti-page-${clientiPage}`} className="animate-fade-in">
-                  {paginatedClienti.map(client => <TableRow key={client.id} className="h-10">
+                  {paginatedClienti.map(client => <TableRow key={client.id} className="h-10 cursor-pointer hover:bg-muted/50" onClick={() => setViewingClient(client)}>
                       <TableCell className="font-medium py-1 text-xs">{client.id}</TableCell>
                       <TableCell className="py-1 text-xs">{client.denumire}</TableCell>
                       <TableCell className="py-1 text-xs">{client.sediu}</TableCell>
                       <TableCell className="py-1 text-xs">{client.cui}</TableCell>
                       <TableCell className="py-1 text-xs">{client.nrReg}</TableCell>
-                      <TableCell className="text-right py-1">
+                      <TableCell className="text-right py-1" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-1">
                           <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
                             setClientiFormData({ denumire: client.denumire, sediu: client.sediu, cui: client.cui, nrReg: client.nrReg });
@@ -2393,13 +2401,13 @@ const Liste = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody key={`furnizori-page-${furnizoriPage}`} className="animate-fade-in">
-                  {paginatedFurnizori.map(furnizor => <TableRow key={furnizor.id} className="h-10">
+                  {paginatedFurnizori.map(furnizor => <TableRow key={furnizor.id} className="h-10 cursor-pointer hover:bg-muted/50" onClick={() => setViewingFurnizor(furnizor)}>
                       <TableCell className="font-medium py-1 text-xs">{furnizor.id}</TableCell>
                       <TableCell className="py-1 text-xs">{furnizor.denumire}</TableCell>
                       <TableCell className="py-1 text-xs">{furnizor.sediu}</TableCell>
                       <TableCell className="py-1 text-xs">{furnizor.cui}</TableCell>
                       <TableCell className="py-1 text-xs">{furnizor.nrReg}</TableCell>
-                      <TableCell className="text-right py-1">
+                      <TableCell className="text-right py-1" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-1">
                           <Button variant="ghost" size="sm" className="gap-1 h-7 px-2 text-xs" onClick={() => {
                             setFurnizoriFormData({ denumire: furnizor.denumire, sediu: furnizor.sediu, cui: furnizor.cui, nrReg: furnizor.nrReg });
@@ -2656,6 +2664,347 @@ const Liste = () => {
            </AlertDialog>
          </TabsContent>
        </Tabs>
+
+      {/* Details Dialogs */}
+      {/* Autoturisme Details */}
+      <Dialog open={!!viewingAutoturism} onOpenChange={() => setViewingAutoturism(null)}>
+        <DialogContent className="max-w-lg" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle>Detalii Autoturism</DialogTitle>
+          </DialogHeader>
+          {viewingAutoturism && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">ID</Label>
+                  <p className="font-medium">{viewingAutoturism.id}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Tip Mașină</Label>
+                  <p className="font-medium">{viewingAutoturism.tipMasina}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Nr. Auto</Label>
+                  <p className="font-medium">{viewingAutoturism.nrAuto}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Sarcină Max</Label>
+                  <p className="font-medium">{viewingAutoturism.sarcinaMax}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Tip Transport</Label>
+                  <p className="font-medium">{viewingAutoturism.tipTransport}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Tara</Label>
+                  <p className="font-medium">{viewingAutoturism.tara}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => {
+              if (viewingAutoturism) {
+                setAutoturismeFormData({ tipMasina: viewingAutoturism.tipMasina, nrAuto: viewingAutoturism.nrAuto, sarcinaMax: viewingAutoturism.sarcinaMax, tipTransport: viewingAutoturism.tipTransport, tara: viewingAutoturism.tara });
+                setAutoturismeDialog({ open: true, mode: 'edit', data: viewingAutoturism });
+                setViewingAutoturism(null);
+              }
+            }}>
+              <Pencil className="w-4 h-4 mr-2" />
+              Editează
+            </Button>
+            <Button variant="destructive" size="sm" onClick={() => {
+              if (viewingAutoturism) {
+                setAutoturismeDeleteDialog({ open: true, id: viewingAutoturism.id });
+                setViewingAutoturism(null);
+              }
+            }}>
+              <Trash2 className="w-4 h-4 mr-2" />
+              Șterge
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setViewingAutoturism(null)}>
+              <X className="w-4 h-4 mr-2" />
+              Închide
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Soferi Details */}
+      <Dialog open={!!viewingSofer} onOpenChange={() => setViewingSofer(null)}>
+        <DialogContent className="max-w-lg" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle>Detalii Șofer</DialogTitle>
+          </DialogHeader>
+          {viewingSofer && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">ID</Label>
+                  <p className="font-medium">{viewingSofer.id}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Nume</Label>
+                  <p className="font-medium">{viewingSofer.nume}</p>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-muted-foreground">C.I.</Label>
+                <p className="font-medium">{viewingSofer.ci}</p>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => {
+              if (viewingSofer) {
+                setSoferiFormData({ numeSofer: viewingSofer.nume, ci: viewingSofer.ci });
+                setSoferiDialog({ open: true, mode: 'edit', data: viewingSofer });
+                setViewingSofer(null);
+              }
+            }}>
+              <Pencil className="w-4 h-4 mr-2" />
+              Editează
+            </Button>
+            <Button variant="destructive" size="sm" onClick={() => {
+              if (viewingSofer) {
+                setSoferiDeleteDialog({ open: true, id: viewingSofer.id });
+                setViewingSofer(null);
+              }
+            }}>
+              <Trash2 className="w-4 h-4 mr-2" />
+              Șterge
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setViewingSofer(null)}>
+              <X className="w-4 h-4 mr-2" />
+              Închide
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Materii Prime Details */}
+      <Dialog open={!!viewingMateriePrima} onOpenChange={() => setViewingMateriePrima(null)}>
+        <DialogContent className="max-w-lg" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle>Detalii Materie Primă</DialogTitle>
+          </DialogHeader>
+          {viewingMateriePrima && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">ID</Label>
+                  <p className="font-medium">{viewingMateriePrima.id}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Denumire</Label>
+                  <p className="font-medium">{viewingMateriePrima.denumire}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => {
+              if (viewingMateriePrima) {
+                setMateriiPrimeFormData({ denumire: viewingMateriePrima.denumire });
+                setMateriiPrimeDialog({ open: true, mode: 'edit', data: viewingMateriePrima });
+                setViewingMateriePrima(null);
+              }
+            }}>
+              <Pencil className="w-4 h-4 mr-2" />
+              Editează
+            </Button>
+            <Button variant="destructive" size="sm" onClick={() => {
+              if (viewingMateriePrima) {
+                setMateriiPrimeDeleteDialog({ open: true, id: viewingMateriePrima.id });
+                setViewingMateriePrima(null);
+              }
+            }}>
+              <Trash2 className="w-4 h-4 mr-2" />
+              Șterge
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setViewingMateriePrima(null)}>
+              <X className="w-4 h-4 mr-2" />
+              Închide
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Produse Finite Details */}
+      <Dialog open={!!viewingProdusFinit} onOpenChange={() => setViewingProdusFinit(null)}>
+        <DialogContent className="max-w-lg" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle>Detalii Produs Finit</DialogTitle>
+          </DialogHeader>
+          {viewingProdusFinit && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">ID</Label>
+                  <p className="font-medium">{viewingProdusFinit.id}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Denumire</Label>
+                  <p className="font-medium">{viewingProdusFinit.denumire}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => {
+              if (viewingProdusFinit) {
+                setProduseFiniteFormData({ denumire: viewingProdusFinit.denumire });
+                setProduseFiniteDialog({ open: true, mode: 'edit', data: viewingProdusFinit });
+                setViewingProdusFinit(null);
+              }
+            }}>
+              <Pencil className="w-4 h-4 mr-2" />
+              Editează
+            </Button>
+            <Button variant="destructive" size="sm" onClick={() => {
+              if (viewingProdusFinit) {
+                setProduseFiniteDeleteDialog({ open: true, id: viewingProdusFinit.id });
+                setViewingProdusFinit(null);
+              }
+            }}>
+              <Trash2 className="w-4 h-4 mr-2" />
+              Șterge
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setViewingProdusFinit(null)}>
+              <X className="w-4 h-4 mr-2" />
+              Închide
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Clienti Details */}
+      <Dialog open={!!viewingClient} onOpenChange={() => setViewingClient(null)}>
+        <DialogContent className="max-w-lg" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle>Detalii Client</DialogTitle>
+          </DialogHeader>
+          {viewingClient && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">ID</Label>
+                  <p className="font-medium">{viewingClient.id}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Denumire</Label>
+                  <p className="font-medium">{viewingClient.denumire}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Sediu</Label>
+                  <p className="font-medium">{viewingClient.sediu}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">CUI</Label>
+                  <p className="font-medium">{viewingClient.cui}</p>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-muted-foreground">Nr. Reg</Label>
+                <p className="font-medium">{viewingClient.nrReg}</p>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => {
+              if (viewingClient) {
+                setClientiFormData({ denumire: viewingClient.denumire, sediu: viewingClient.sediu, cui: viewingClient.cui, nrReg: viewingClient.nrReg });
+                setClientiDialog({ open: true, mode: 'edit', data: viewingClient });
+                setViewingClient(null);
+              }
+            }}>
+              <Pencil className="w-4 h-4 mr-2" />
+              Editează
+            </Button>
+            <Button variant="destructive" size="sm" onClick={() => {
+              if (viewingClient) {
+                setClientiDeleteDialog({ open: true, id: viewingClient.id });
+                setViewingClient(null);
+              }
+            }}>
+              <Trash2 className="w-4 h-4 mr-2" />
+              Șterge
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setViewingClient(null)}>
+              <X className="w-4 h-4 mr-2" />
+              Închide
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Furnizori Details */}
+      <Dialog open={!!viewingFurnizor} onOpenChange={() => setViewingFurnizor(null)}>
+        <DialogContent className="max-w-lg" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle>Detalii Furnizor</DialogTitle>
+          </DialogHeader>
+          {viewingFurnizor && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">ID</Label>
+                  <p className="font-medium">{viewingFurnizor.id}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Denumire</Label>
+                  <p className="font-medium">{viewingFurnizor.denumire}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Sediu</Label>
+                  <p className="font-medium">{viewingFurnizor.sediu}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">CUI</Label>
+                  <p className="font-medium">{viewingFurnizor.cui}</p>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-muted-foreground">Nr. Reg</Label>
+                <p className="font-medium">{viewingFurnizor.nrReg}</p>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => {
+              if (viewingFurnizor) {
+                setFurnizoriFormData({ denumire: viewingFurnizor.denumire, sediu: viewingFurnizor.sediu, cui: viewingFurnizor.cui, nrReg: viewingFurnizor.nrReg });
+                setFurnizoriDialog({ open: true, mode: 'edit', data: viewingFurnizor });
+                setViewingFurnizor(null);
+              }
+            }}>
+              <Pencil className="w-4 h-4 mr-2" />
+              Editează
+            </Button>
+            <Button variant="destructive" size="sm" onClick={() => {
+              if (viewingFurnizor) {
+                setFurnizoriDeleteDialog({ open: true, id: viewingFurnizor.id });
+                setViewingFurnizor(null);
+              }
+            }}>
+              <Trash2 className="w-4 h-4 mr-2" />
+              Șterge
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setViewingFurnizor(null)}>
+              <X className="w-4 h-4 mr-2" />
+              Închide
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
      </div>
  );
 };
