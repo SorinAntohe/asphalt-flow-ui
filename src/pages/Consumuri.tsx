@@ -293,7 +293,14 @@ const Consumuri = () => {
   };
 
   const handleOpenContorCurentAdd = () => {
-    setContorCurentFormData({});
+    // Get the last index_nou from the table
+    const lastIndexNou = contorCurentData.length > 0 
+      ? contorCurentData[contorCurentData.length - 1].index_nou 
+      : 0;
+    
+    setContorCurentFormData({
+      index_vechi: lastIndexNou
+    });
     setIsEditingContorCurent(false);
     setIsContorCurentFormOpen(true);
   };
@@ -1168,15 +1175,28 @@ const Consumuri = () => {
               <Input
                 type="number"
                 value={contorCurentFormData.index_vechi || ''}
-                onChange={(e) => setContorCurentFormData({ ...contorCurentFormData, index_vechi: Number(e.target.value) })}
+                disabled
+                className="bg-muted"
               />
             </div>
             <div className="space-y-2">
               <Label>Index Nou</Label>
               <Input
                 type="number"
+                step="0.01"
                 value={contorCurentFormData.index_nou || ''}
-                onChange={(e) => setContorCurentFormData({ ...contorCurentFormData, index_nou: Number(e.target.value) })}
+                onChange={(e) => {
+                  const indexNou = Number(e.target.value);
+                  const indexVechi = contorCurentFormData.index_vechi || 0;
+                  const consum = indexNou - indexVechi;
+                  const pret = contorCurentFormData.pret || 0;
+                  setContorCurentFormData({ 
+                    ...contorCurentFormData, 
+                    index_nou: indexNou,
+                    consum_kw: consum,
+                    pret_total: consum * pret
+                  });
+                }}
               />
             </div>
             <div className="space-y-2">
@@ -1185,15 +1205,8 @@ const Consumuri = () => {
                 type="number"
                 step="0.01"
                 value={contorCurentFormData.consum_kw || ''}
-                onChange={(e) => {
-                  const consum = Number(e.target.value);
-                  const pret = contorCurentFormData.pret || 0;
-                  setContorCurentFormData({ 
-                    ...contorCurentFormData, 
-                    consum_kw: consum,
-                    pret_total: consum * pret
-                  });
-                }}
+                disabled
+                className="bg-muted"
               />
             </div>
             <div className="space-y-2">
