@@ -61,7 +61,29 @@ const receptieSchema = z.object({
 
 export default function Receptii() {
   const { toast } = useToast();
-  const [receptii, setReceptii] = useState<ReceptieMaterial[]>([]);
+  const [receptii, setReceptii] = useState<ReceptieMaterial[]>([
+    {
+      id: 1,
+      data: "27/11/2024",
+      cod: "0/4 NAT",
+      furnizor: "Furnizor Exemplu SRL",
+      material: "0/4 NAT",
+      nr_aviz_provizoriu: "AP-001",
+      nr_aviz_intrare: "AI-001",
+      nr_factura: "F-2024-001",
+      nr_tichet: "T-001",
+      nume_sofer: "Ion Popescu",
+      nr_inmatriculare: "B-123-ABC",
+      tip_masina: "Articulata",
+      cantitate_livrata: 40,
+      cantitate_receptionata: 39.5,
+      diferenta: 0.5,
+      pret_material_total: 15800,
+      pret_total: 16500,
+      pret_transport_total: 700,
+      observatii: "Recepție exemplu"
+    }
+  ]);
   const [loading, setLoading] = useState(false);
   const [availableCodes, setAvailableCodes] = useState<string[]>([]);
   const [availableDrivers, setAvailableDrivers] = useState<string[]>([]);
