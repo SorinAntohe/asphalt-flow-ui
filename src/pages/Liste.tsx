@@ -90,29 +90,12 @@ const Liste = () => {
     "CELULOZA TOPCEL", "CELULOZA TECHNOCEL", "ADITIV ADEZIUNE", "POLIMER SBS",
     "FIBRĂ CELULOZICĂ", "NISIP SILICOS"
   ];
-  const [autoturisme, setAutoturisme] = useState<any[]>([
-    { id: 1, nrAuto: "B-123-ABC", tipMasina: "Articulata", tipTransport: "Propriu", sarcinaMax: "40", tara: "14" },
-    { id: 2, nrAuto: "CT-99-XYZ", tipMasina: "8X4", tipTransport: "Propriu", sarcinaMax: "30", tara: "12" }
-  ]);
-  const [soferi, setSoferi] = useState<any[]>([
-    { id: 1, nume: "Ion Popescu", ci: "CT123456" },
-    { id: 2, nume: "Vasile Marin", ci: "B987654" }
-  ]);
-  const [materiiPrime, setMateriiPrime] = useState<any[]>([
-    { id: 1, denumire: "0/4 NAT" },
-    { id: 2, denumire: "BITUM 50/70" },
-    { id: 3, denumire: "FILLER" }
-  ]);
-  const [produseFinite, setProduseFinite] = useState<any[]>([
-    { id: 1, denumire: "BA16" },
-    { id: 2, denumire: "BADPC16" }
-  ]);
-  const [clienti, setClienti] = useState<any[]>([
-    { id: 1, denumire: "Constructii Moderne SRL", sediu: "Str. Industriei 10, București", cui: "RO12345678", nrReg: "J40/123/2020" }
-  ]);
-  const [furnizori, setFurnizori] = useState<any[]>([
-    { id: 1, denumire: "Cariera Berceni SRL", sediu: "Str. Carierelor 5, Ilfov", cui: "RO87654321", nrReg: "J23/456/2018" }
-  ]);
+  const [autoturisme, setAutoturisme] = useState<any[]>([]);
+  const [soferi, setSoferi] = useState<any[]>([]);
+  const [materiiPrime, setMateriiPrime] = useState<any[]>([]);
+  const [produseFinite, setProduseFinite] = useState<any[]>([]);
+  const [clienti, setClienti] = useState<any[]>([]);
+  const [furnizori, setFurnizori] = useState<any[]>([]);
 
   // Fetch autoturisme data
   useEffect(() => {
