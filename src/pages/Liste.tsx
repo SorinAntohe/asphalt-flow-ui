@@ -85,7 +85,124 @@ const Liste = () => {
   const [clienti, setClienti] = useState<any[]>([]);
   const [furnizori, setFurnizori] = useState<any[]>([]);
 
+  // Fetch autoturisme data
+  useEffect(() => {
+    const fetchAutoturisme = async () => {
+      try {
+        const response = await fetch('http://192.168.15.4:8002/liste/returneaza/masini');
+        const data = await response.json();
+        const mappedData = data.map((item: any) => ({
+          id: item.id,
+          nrAuto: item.nr_inmatriculare,
+          tipMasina: item.tip_masina,
+          tipTransport: item.tip_transport,
+          sarcinaMax: item.masa_max_admisa?.toString() || "",
+          tara: item.tara?.toString() || ""
+        }));
+        setAutoturisme(mappedData);
+      } catch (error) {
+        console.error('Error fetching autoturisme:', error);
+      }
+    };
+    fetchAutoturisme();
+  }, []);
 
+  // Fetch soferi data
+  useEffect(() => {
+    const fetchSoferi = async () => {
+      try {
+        const response = await fetch('http://192.168.15.4:8002/liste/returneaza/soferi');
+        const data = await response.json();
+        const mappedData = data.map((item: any) => ({
+          id: item.id,
+          nume: item.nume_sofer,
+          ci: item.ci
+        }));
+        setSoferi(mappedData);
+      } catch (error) {
+        console.error('Error fetching soferi:', error);
+      }
+    };
+    fetchSoferi();
+  }, []);
+
+  // Fetch materii prime data
+  useEffect(() => {
+    const fetchMateriiPrime = async () => {
+      try {
+        const response = await fetch('http://192.168.15.4:8002/liste/returneaza/materiale');
+        const data = await response.json();
+        const mappedData = data.map((item: any) => ({
+          id: item.id,
+          denumire: item.materiale_prime
+        }));
+        setMateriiPrime(mappedData);
+      } catch (error) {
+        console.error('Error fetching materii prime:', error);
+      }
+    };
+    fetchMateriiPrime();
+  }, []);
+
+  // Fetch produse finite data
+  useEffect(() => {
+    const fetchProduseFinite = async () => {
+      try {
+        const response = await fetch('http://192.168.15.4:8002/liste/returneaza/produse');
+        const data = await response.json();
+        const mappedData = data.map((item: any) => ({
+          id: item.id,
+          denumire: item.produs
+        }));
+        setProduseFinite(mappedData);
+      } catch (error) {
+        console.error('Error fetching produse finite:', error);
+      }
+    };
+    fetchProduseFinite();
+  }, []);
+
+  // Fetch clienti data
+  useEffect(() => {
+    const fetchClienti = async () => {
+      try {
+        const response = await fetch('http://192.168.15.4:8002/liste/returneaza/clienti');
+        const data = await response.json();
+        const mappedData = data.map((item: any) => ({
+          id: item.id,
+          denumire: item.nume,
+          sediu: item.adresa,
+          cui: item.cui,
+          nrReg: item.nr_reg
+        }));
+        setClienti(mappedData);
+      } catch (error) {
+        console.error('Error fetching clienti:', error);
+      }
+    };
+    fetchClienti();
+  }, []);
+
+  // Fetch furnizori data
+  useEffect(() => {
+    const fetchFurnizori = async () => {
+      try {
+        const response = await fetch('http://192.168.15.4:8002/liste/returneaza/furnizori');
+        const data = await response.json();
+        const mappedData = data.map((item: any) => ({
+          id: item.id,
+          denumire: item.nume,
+          sediu: item.adresa,
+          cui: item.cui,
+          nrReg: item.nr_reg
+        }));
+        setFurnizori(mappedData);
+      } catch (error) {
+        console.error('Error fetching furnizori:', error);
+      }
+    };
+    fetchFurnizori();
+  }, []);
 
 
   // Pagination helpers
