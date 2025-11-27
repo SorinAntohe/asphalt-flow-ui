@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/api";
 
 const Liste = () => {
   const { toast } = useToast();
@@ -90,7 +91,7 @@ const Liste = () => {
   useEffect(() => {
     const fetchAutoturisme = async () => {
       try {
-        const response = await fetch('http://192.168.15.4:8002/liste/returneaza/masini');
+        const response = await fetch(`${API_BASE_URL}/liste/returneaza/masini`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         const mappedData = Array.isArray(data) ? data.map((item: any) => ({
@@ -114,7 +115,7 @@ const Liste = () => {
   useEffect(() => {
     const fetchSoferi = async () => {
       try {
-        const response = await fetch('http://192.168.15.4:8002/liste/returneaza/soferi');
+        const response = await fetch(`${API_BASE_URL}/liste/returneaza/soferi`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         const mappedData = Array.isArray(data) ? data.map((item: any) => ({
@@ -135,7 +136,7 @@ const Liste = () => {
   useEffect(() => {
     const fetchMateriiPrime = async () => {
       try {
-        const response = await fetch('http://192.168.15.4:8002/liste/returneaza/materiale');
+        const response = await fetch(`${API_BASE_URL}/liste/returneaza/materiale`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         const mappedData = Array.isArray(data) ? data.map((item: any) => ({
@@ -155,7 +156,7 @@ const Liste = () => {
   useEffect(() => {
     const fetchProduseFinite = async () => {
       try {
-        const response = await fetch('http://192.168.15.4:8002/liste/returneaza/produse');
+        const response = await fetch(`${API_BASE_URL}/liste/returneaza/produse`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         const mappedData = Array.isArray(data) ? data.map((item: any) => ({
@@ -175,7 +176,7 @@ const Liste = () => {
   useEffect(() => {
     const fetchClienti = async () => {
       try {
-        const response = await fetch('http://192.168.15.4:8002/liste/returneaza/clienti');
+        const response = await fetch(`${API_BASE_URL}/liste/returneaza/clienti`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         const mappedData = Array.isArray(data) ? data.map((item: any) => ({
@@ -198,7 +199,7 @@ const Liste = () => {
   useEffect(() => {
     const fetchFurnizori = async () => {
       try {
-        const response = await fetch('http://192.168.15.4:8002/liste/returneaza/furnizori');
+        const response = await fetch(`${API_BASE_URL}/liste/returneaza/furnizori`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         const mappedData = Array.isArray(data) ? data.map((item: any) => ({
@@ -670,7 +671,7 @@ const Liste = () => {
 
                     try {
                       if (autoturismeDialog.mode === 'edit' && autoturismeDialog.data) {
-                        const response = await fetch('http://192.168.15.4:8002/editeaza', {
+                        const response = await fetch(`${API_BASE_URL}/editeaza`, {
                           method: 'PATCH',
                           headers: {
                             'Content-Type': 'application/json',
@@ -705,7 +706,7 @@ const Liste = () => {
                           tara: parseInt(autoturismeFormData.tara)
                         };
 
-                        const response = await fetch('http://192.168.15.4:8002/liste/adauga/masina', {
+                        const response = await fetch(`${API_BASE_URL}/liste/adauga/masina`, {
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -724,7 +725,7 @@ const Liste = () => {
                       }
 
                       // Refresh the list
-                      const refreshResponse = await fetch('http://192.168.15.4:8002/liste/returneaza/masini');
+                      const refreshResponse = await fetch(`${API_BASE_URL}/liste/returneaza/masini`);
                       const data = await refreshResponse.json();
                       const mappedData = data.map((item: any) => ({
                         id: item.id,
@@ -762,7 +763,7 @@ const Liste = () => {
                   <AlertDialogCancel>Anulează</AlertDialogCancel>
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
-                      const response = await fetch('http://192.168.15.4:8002/sterge', {
+                      const response = await fetch(`${API_BASE_URL}/sterge`, {
                         method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
@@ -783,7 +784,7 @@ const Liste = () => {
                       });
 
                       // Refresh the list
-                      const refreshResponse = await fetch('http://192.168.15.4:8002/liste/returneaza/masini');
+                      const refreshResponse = await fetch(`${API_BASE_URL}/liste/returneaza/masini`);
                       const data = await refreshResponse.json();
                       const mappedData = data.map((item: any) => ({
                         id: item.id,
@@ -1035,7 +1036,7 @@ const Liste = () => {
 
                     try {
                       if (soferiDialog.mode === 'edit' && soferiDialog.data) {
-                        const response = await fetch('http://192.168.15.4:8002/editeaza', {
+                        const response = await fetch(`${API_BASE_URL}/editeaza`, {
                           method: 'PATCH',
                           headers: {
                             'Content-Type': 'application/json',
@@ -1059,7 +1060,7 @@ const Liste = () => {
                           description: "Șoferul a fost editat cu succes"
                         });
                       } else {
-                        const response = await fetch('http://192.168.15.4:8002/liste/adauga/sofer', {
+                        const response = await fetch(`${API_BASE_URL}/liste/adauga/sofer`, {
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -1082,7 +1083,7 @@ const Liste = () => {
                       setSoferiDialog({ ...soferiDialog, open: false });
                       
                       // Refresh the list
-                      const response = await fetch('http://192.168.15.4:8002/liste/returneaza/soferi');
+                      const response = await fetch(`${API_BASE_URL}/liste/returneaza/soferi`);
                       const data = await response.json();
                       const mappedData = data.map((item: any) => ({
                         id: item.id,
@@ -1116,7 +1117,7 @@ const Liste = () => {
                   <AlertDialogCancel>Anulează</AlertDialogCancel>
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
-                      const response = await fetch('http://192.168.15.4:8002/sterge', {
+                      const response = await fetch(`${API_BASE_URL}/sterge`, {
                         method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
@@ -1138,7 +1139,7 @@ const Liste = () => {
                       setSoferiDeleteDialog({ open: false });
                       
                       // Refresh the list
-                      const refreshResponse = await fetch('http://192.168.15.4:8002/liste/returneaza/soferi');
+                      const refreshResponse = await fetch(`${API_BASE_URL}/liste/returneaza/soferi`);
                       const data = await refreshResponse.json();
                       const mappedData = data.map((item: any) => ({
                         id: item.id,
@@ -1351,7 +1352,7 @@ const Liste = () => {
 
                      try {
                        if (materiiPrimeDialog.mode === 'edit' && materiiPrimeDialog.data) {
-                         const response = await fetch('http://192.168.15.4:8002/editeaza', {
+                         const response = await fetch(`${API_BASE_URL}/editeaza`, {
                            method: 'PATCH',
                            headers: {
                              'Content-Type': 'application/json',
@@ -1374,7 +1375,7 @@ const Liste = () => {
                            description: "Materia primă a fost editată cu succes"
                          });
                        } else {
-                         const response = await fetch('http://192.168.15.4:8002/liste/adauga/materiale', {
+                         const response = await fetch(`${API_BASE_URL}/liste/adauga/materiale`, {
                            method: 'POST',
                            headers: {
                              'Content-Type': 'application/json',
@@ -1396,7 +1397,7 @@ const Liste = () => {
                        setMateriiPrimeDialog({ ...materiiPrimeDialog, open: false });
                        
                        // Refresh the list
-                       const refreshResponse = await fetch('http://192.168.15.4:8002/liste/returneaza/materiale');
+                       const refreshResponse = await fetch(`${API_BASE_URL}/liste/returneaza/materiale`);
                        const data = await refreshResponse.json();
                        const mappedData = data.map((item: any) => ({
                          id: item.id,
@@ -1429,7 +1430,7 @@ const Liste = () => {
                   <AlertDialogCancel>Anulează</AlertDialogCancel>
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
-                      const response = await fetch('http://192.168.15.4:8002/sterge', {
+                      const response = await fetch(`${API_BASE_URL}/sterge`, {
                         method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
@@ -1451,7 +1452,7 @@ const Liste = () => {
                       setMateriiPrimeDeleteDialog({ open: false });
                       
                       // Refresh the list
-                      const refreshResponse = await fetch('http://192.168.15.4:8002/liste/returneaza/materiale');
+                      const refreshResponse = await fetch(`${API_BASE_URL}/liste/returneaza/materiale`);
                       const data = await refreshResponse.json();
                       const mappedData = data.map((item: any) => ({
                         id: item.id,
@@ -1663,7 +1664,7 @@ const Liste = () => {
 
                     try {
                       if (produseFiniteDialog.mode === 'edit' && produseFiniteDialog.data) {
-                        const response = await fetch('http://192.168.15.4:8002/editeaza', {
+                        const response = await fetch(`${API_BASE_URL}/editeaza`, {
                           method: 'PATCH',
                           headers: {
                             'Content-Type': 'application/json',
@@ -1686,7 +1687,7 @@ const Liste = () => {
                           description: "Produsul finit a fost editat cu succes"
                         });
                       } else {
-                        const response = await fetch('http://192.168.15.4:8002/liste/adauga/produs', {
+                        const response = await fetch(`${API_BASE_URL}/liste/adauga/produs`, {
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -1707,7 +1708,7 @@ const Liste = () => {
                       }
 
                       // Refresh the list
-                      const refreshResponse = await fetch('http://192.168.15.4:8002/liste/returneaza/produse');
+                      const refreshResponse = await fetch(`${API_BASE_URL}/liste/returneaza/produse`);
                       const data = await refreshResponse.json();
                       const mappedData = data.map((item: any) => ({
                         id: item.id,
@@ -1741,7 +1742,7 @@ const Liste = () => {
                   <AlertDialogCancel>Anulează</AlertDialogCancel>
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
-                      const response = await fetch('http://192.168.15.4:8002/sterge', {
+                      const response = await fetch(`${API_BASE_URL}/sterge`, {
                         method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
@@ -1763,7 +1764,7 @@ const Liste = () => {
                       setProduseFiniteDeleteDialog({ open: false });
                       
                       // Refresh the list
-                      const refreshResponse = await fetch('http://192.168.15.4:8002/liste/returneaza/produse');
+                      const refreshResponse = await fetch(`${API_BASE_URL}/liste/returneaza/produse`);
                       const data = await refreshResponse.json();
                       const mappedData = data.map((item: any) => ({
                         id: item.id,
@@ -2080,7 +2081,7 @@ const Liste = () => {
 
                     try {
                       if (clientiDialog.mode === 'edit' && clientiDialog.data) {
-                        const response = await fetch('http://192.168.15.4:8002/editeaza', {
+                        const response = await fetch(`${API_BASE_URL}/editeaza`, {
                           method: 'PATCH',
                           headers: {
                             'Content-Type': 'application/json',
@@ -2106,7 +2107,7 @@ const Liste = () => {
                           description: "Clientul a fost editat cu succes"
                         });
                       } else {
-                        const response = await fetch('http://192.168.15.4:8002/liste/adauga/client', {
+                        const response = await fetch(`${API_BASE_URL}/liste/adauga/client`, {
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -2130,7 +2131,7 @@ const Liste = () => {
                       }
 
                       // Refresh the list
-                      const refreshResponse = await fetch('http://192.168.15.4:8002/liste/returneaza/clienti');
+                      const refreshResponse = await fetch(`${API_BASE_URL}/liste/returneaza/clienti`);
                       const data = await refreshResponse.json();
                       const mappedData = data.map((item: any) => ({
                         id: item.id,
@@ -2167,7 +2168,7 @@ const Liste = () => {
                   <AlertDialogCancel>Anulează</AlertDialogCancel>
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
-                      const response = await fetch('http://192.168.15.4:8002/sterge', {
+                      const response = await fetch(`${API_BASE_URL}/sterge`, {
                         method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
@@ -2189,7 +2190,7 @@ const Liste = () => {
                       setClientiDeleteDialog({ open: false });
                       
                       // Refresh the list
-                      const refreshResponse = await fetch('http://192.168.15.4:8002/liste/returneaza/clienti');
+                      const refreshResponse = await fetch(`${API_BASE_URL}/liste/returneaza/clienti`);
                       const data = await refreshResponse.json();
                       const mappedData = data.map((item: any) => ({
                         id: item.id,
@@ -2509,7 +2510,7 @@ const Liste = () => {
 
                     try {
                       if (furnizoriDialog.mode === 'edit' && furnizoriDialog.data) {
-                        const response = await fetch('http://192.168.15.4:8002/editeaza', {
+                        const response = await fetch(`${API_BASE_URL}/editeaza`, {
                           method: 'PATCH',
                           headers: {
                             'Content-Type': 'application/json',
@@ -2535,7 +2536,7 @@ const Liste = () => {
                           description: "Furnizorul a fost editat cu succes"
                         });
                       } else {
-                        const response = await fetch('http://192.168.15.4:8002/liste/adauga/furnizor', {
+                        const response = await fetch(`${API_BASE_URL}/liste/adauga/furnizor`, {
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -2559,7 +2560,7 @@ const Liste = () => {
                       }
 
                       // Refresh the list
-                      const refreshResponse = await fetch('http://192.168.15.4:8002/liste/returneaza/furnizori');
+                      const refreshResponse = await fetch(`${API_BASE_URL}/liste/returneaza/furnizori`);
                       const data = await refreshResponse.json();
                       const mappedData = data.map((item: any) => ({
                         id: item.id,
@@ -2596,7 +2597,7 @@ const Liste = () => {
                   <AlertDialogCancel>Anulează</AlertDialogCancel>
                   <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
                     try {
-                      const response = await fetch('http://192.168.15.4:8002/sterge', {
+                      const response = await fetch(`${API_BASE_URL}/sterge`, {
                         method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
@@ -2618,7 +2619,7 @@ const Liste = () => {
                       setFurnizoriDeleteDialog({ open: false });
                       
                       // Refresh the list
-                      const refreshResponse = await fetch('http://192.168.15.4:8002/liste/returneaza/furnizori');
+                      const refreshResponse = await fetch(`${API_BASE_URL}/liste/returneaza/furnizori`);
                       const data = await refreshResponse.json();
                       const mappedData = data.map((item: any) => ({
                         id: item.id,
