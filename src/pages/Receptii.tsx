@@ -361,6 +361,8 @@ export default function Receptii() {
       } else {
         // Add - prepare ReceptieModel and ReceptieToStocuri
         const receptie = {
+          cod: form.cod,
+          furnizor: form.furnizor,
           nr_aviz_provizoriu: form.nr_aviz_provizoriu || "",
           nr_aviz_intrare: form.nr_aviz_intrare || "",
           nume_sofer: form.nume_sofer,
