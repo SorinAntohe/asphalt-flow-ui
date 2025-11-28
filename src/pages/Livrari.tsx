@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Plus, Truck, ArrowUpDown, Pencil, Trash2, FileText, Download, X } from "lucide-react";
+import { Plus, Truck, ArrowUpDown, Pencil, Trash2, FileText, Download, X, Calendar, TrendingUp, Package } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { FilterableSelect } from "@/components/ui/filterable-select";
 import { API_BASE_URL } from "@/lib/api";
@@ -509,18 +509,17 @@ const Livrari = () => {
     }
   };
 
-  // Calculate today's statistics
-  const getTodayDate = () => {
+  // Summary statistics - matching Receptii design
+  const summaryStats = useMemo(() => {
     const today = new Date();
-    const day = String(today.getDate()).padStart(2, '0');
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const year = today.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
-
-  const todayDate = getTodayDate();
-  const todayLivrari = livrari.filter(livrare => livrare.data === todayDate);
-  const todayTotalValue = todayLivrari.reduce((sum, livrare) => sum + (livrare.pret_total || 0), 0);
+    const todayStr = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
+    
+    const livrariAstazi = livrari.filter(l => l.data === todayStr).length;
+    const valoareTotala = livrari.reduce((sum, l) => sum + (l.pret_total || 0), 0);
+    const totalLivrari = livrari.length;
+    
+    return { livrariAstazi, valoareTotala, totalLivrari };
+  }, [livrari]);
 
   const FilterHeader = ({ field, label }: { field: keyof typeof filters; label: string }) => (
     <TableHead className="h-10 text-xs">
@@ -605,41 +604,45 @@ const Livrari = () => {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      {/* Summary Cards - matching Receptii design */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Livrări Astăzi</CardTitle>
-            <Truck className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{todayLivrari.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Total livrări azi
-            </p>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Livrări Astăzi</p>
+                <p className="text-2xl font-bold">{summaryStats.livrariAstazi}</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-primary" />
+              </div>
+            </div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Valoare Totală</CardTitle>
-            <Truck className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatNumber(todayTotalValue)} RON</div>
-            <p className="text-xs text-muted-foreground">
-              Valoare livrări azi
-            </p>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Valoare Totală</p>
+                <p className="text-2xl font-bold">{summaryStats.valoareTotala.toLocaleString('ro-RO')} lei</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
+                <TrendingUp className="h-6 w-6 text-green-500" />
+              </div>
+            </div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Livrări</CardTitle>
-            <Truck className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{livrari.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Înregistrări totale
-            </p>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Livrări</p>
+                <p className="text-2xl font-bold">{summaryStats.totalLivrari}</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
+                <Truck className="h-6 w-6 text-blue-500" />
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
