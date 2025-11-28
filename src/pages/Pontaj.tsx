@@ -322,7 +322,7 @@ export default function Pontaj() {
             <CardTitle className="text-lg">Selectează Data</CardTitle>
             <CardDescription>Vizualizează pontajul</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent>
             <Calendar
               mode="single"
               selected={selectedDate}
@@ -330,10 +330,6 @@ export default function Pontaj() {
               className="pointer-events-auto"
               locale={ro}
             />
-            <Button variant="outline" className="w-full justify-center" disabled>
-              <CalendarClock className="w-4 h-4 mr-2" />
-              {format(selectedDate, "dd MMMM yyyy", { locale: ro })}
-            </Button>
           </CardContent>
         </Card>
 
