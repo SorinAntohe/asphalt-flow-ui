@@ -357,10 +357,10 @@ const Liste = () => {
                 }
               }}
             >
-              <Download className="w-4 h-4 mr-2" />
-              Export
+              <Download className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Export</span>
             </Button>
-            <Button className="gap-2" onClick={() => {
+            <Button size="sm" onClick={() => {
               if (activeTab === 'autoturisme') {
                 setAutoturismeFormData({ tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "", tara: "" });
                 setAutoturismeDialog({ open: true, mode: 'add' });
@@ -381,13 +381,15 @@ const Liste = () => {
                 setFurnizoriDialog({ open: true, mode: 'add' });
               }
             }}>
-              <Plus className="w-4 h-4" />
-              {activeTab === 'autoturisme' && 'Adaugă Autoturism'}
-              {activeTab === 'soferi' && 'Adaugă Șofer'}
-              {activeTab === 'materii' && 'Adaugă Materie Primă'}
-              {activeTab === 'produse' && 'Adaugă Produs Finit'}
-              {activeTab === 'clienti' && 'Adaugă Client'}
-              {activeTab === 'furnizori' && 'Adaugă Furnizor'}
+              <Plus className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">
+                {activeTab === 'autoturisme' && 'Adaugă Autoturism'}
+                {activeTab === 'soferi' && 'Adaugă Șofer'}
+                {activeTab === 'materii' && 'Adaugă Materie Primă'}
+                {activeTab === 'produse' && 'Adaugă Produs Finit'}
+                {activeTab === 'clienti' && 'Adaugă Client'}
+                {activeTab === 'furnizori' && 'Adaugă Furnizor'}
+              </span>
             </Button>
           </div>
         </div>

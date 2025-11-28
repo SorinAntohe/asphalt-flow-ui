@@ -861,10 +861,10 @@ const Consumuri = () => {
                 }
               }}
             >
-              <Download className="w-4 h-4 mr-2" />
-              Export
+              <Download className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Export</span>
             </Button>
-            <Button className="gap-2" onClick={() => {
+            <Button size="sm" onClick={() => {
               if (activeTab === 'contor-ctl') {
                 handleOpenContorCTLAdd();
               } else if (activeTab === 'consumuri') {
@@ -873,8 +873,8 @@ const Consumuri = () => {
                 handleOpenContorCurentAdd();
               }
             }}>
-              <Plus className="w-4 h-4" />
-              Adaugă
+              <Plus className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Adaugă</span>
             </Button>
           </div>
         </div>

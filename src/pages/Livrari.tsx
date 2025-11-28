@@ -595,12 +595,12 @@ const Livrari = () => {
             ])}
             disabled={filteredAndSorted.length === 0}
           >
-            <Download className="w-4 h-4 mr-2" />
-            Export
+            <Download className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Export</span>
           </Button>
-          <Button onClick={handleOpenAdd} className="gap-2">
-            <Plus className="w-4 h-4" />
-            Livrare Nouă
+          <Button onClick={handleOpenAdd} size="sm">
+            <Plus className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Livrare Nouă</span>
           </Button>
         </div>
       </div>
