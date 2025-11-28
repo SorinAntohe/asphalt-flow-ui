@@ -78,6 +78,7 @@ const Livrari = () => {
   // Dropdown options
   const [codOptions, setCodOptions] = useState<Array<{ value: string; label: string }>>([]);
   const [nrInmatriculareOptions, setNrInmatriculareOptions] = useState<Array<{ value: string; label: string }>>([]);
+  const [numeSoferOptions, setNumeSoferOptions] = useState<Array<{ value: string; label: string }>>([]);
   
   const livrari: Livrare[] = [];
 
@@ -111,10 +112,41 @@ const Livrari = () => {
       } catch (error) {
         console.error("Error fetching nr_inmatriculare options:", error);
       }
+
+      try {
+        // Fetch nume_sofer options
+        const numeSoferResponse = await fetch(`${API_BASE_URL}/livrari/returneaza_soferii/livrari`);
+        if (numeSoferResponse.ok) {
+          const numeSoferData = await numeSoferResponse.json();
+          setNumeSoferOptions(numeSoferData.map((item: any) => ({ 
+            value: item.nume_sofer || item, 
+            label: item.nume_sofer || item 
+          })));
+        }
+      } catch (error) {
+        console.error("Error fetching nume_sofer options:", error);
+      }
     };
 
     fetchOptions();
   }, []);
+
+  // Fetch tip_masina when nr_inmatriculare changes
+  const handleNrInmatriculareChange = async (value: string) => {
+    setForm({ ...form, nr_inmatriculare: value, tip_masina: "" });
+    
+    if (value) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/livrari/returneaza_tip_masina_dupa_nr/livrari/${value}`);
+        if (response.ok) {
+          const data = await response.json();
+          setForm(prev => ({ ...prev, tip_masina: data.tip_masina || data }));
+        }
+      } catch (error) {
+        console.error("Error fetching tip_masina:", error);
+      }
+    }
+  };
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "-";
@@ -499,7 +531,7 @@ const Livrari = () => {
                 <FilterableSelect
                   id="nr_inmatriculare"
                   value={form.nr_inmatriculare}
-                  onValueChange={(value) => setForm({ ...form, nr_inmatriculare: value })}
+                  onValueChange={handleNrInmatriculareChange}
                   options={nrInmatriculareOptions}
                   placeholder="Selectează nr. înmatriculare..."
                   searchPlaceholder="Caută nr. înmatriculare..."
@@ -511,16 +543,21 @@ const Livrari = () => {
                 <Input
                   id="tip_masina"
                   value={form.tip_masina}
-                  onChange={(e) => setForm({ ...form, tip_masina: e.target.value })}
+                  disabled
+                  className="bg-muted"
                 />
               </div>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="nume_sofer">Nume Șofer</Label>
-              <Input
+              <FilterableSelect
                 id="nume_sofer"
                 value={form.nume_sofer}
-                onChange={(e) => setForm({ ...form, nume_sofer: e.target.value })}
+                onValueChange={(value) => setForm({ ...form, nume_sofer: value })}
+                options={numeSoferOptions}
+                placeholder="Selectează șofer..."
+                searchPlaceholder="Caută șofer..."
+                emptyText="Nu s-au găsit șoferi."
               />
             </div>
             <div className="grid grid-cols-3 gap-4">
