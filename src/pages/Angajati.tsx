@@ -433,10 +433,10 @@ export default function Angajati() {
             </div>
           ) : (
             <>
-              <div className="rounded-md border overflow-x-auto">
+              <div className="overflow-x-auto">
                 <Table>
-                  <TableHeader>
-                    <TableRow>
+                  <TableHeader className="[&_tr]:border-0 bg-muted/30">
+                    <TableRow className="border-0 hover:bg-transparent">
                       <FilterHeader column="id" label="ID" />
                       <FilterHeader column="nume" label="Nume" />
                       <FilterHeader column="functie" label="Funcție" />
@@ -447,7 +447,7 @@ export default function Angajati() {
                   </TableHeader>
                   <TableBody>
                     {paginatedData.length === 0 ? (
-                      <TableRow>
+                      <TableRow className="border-0 hover:bg-transparent">
                         <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
                           Nu există angajați.
                         </TableCell>
@@ -457,7 +457,7 @@ export default function Angajati() {
                         <TableRow
                           key={angajat.id}
                           onClick={() => openDetailDialog(angajat)}
-                          className="cursor-pointer"
+                          className="cursor-pointer border-0"
                         >
                           <TableCell className="font-medium">{angajat.id}</TableCell>
                           <TableCell>{angajat.nume}</TableCell>
