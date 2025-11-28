@@ -18,6 +18,7 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
@@ -37,6 +38,7 @@ interface Livrare {
   pret_produs_total: number | null;
   pret_transport_total: number | null;
   pret_total: number | null;
+  observatii: string | null;
 }
 
 const Livrari = () => {
@@ -62,7 +64,8 @@ const Livrari = () => {
     tara: 0,
     pret_produs_total: 0,
     pret_transport_total: 0,
-    pret_total: 0
+    pret_total: 0,
+    observatii: ""
   });
 
   // Store unit prices from API
@@ -86,7 +89,8 @@ const Livrari = () => {
     tara: "",
     pret_produs_total: "",
     pret_transport_total: "",
-    pret_total: ""
+    pret_total: "",
+    observatii: ""
   });
 
   // Sort
@@ -292,7 +296,8 @@ const Livrari = () => {
         (item.tara?.toString() || "").includes(filters.tara) &&
         (item.pret_produs_total?.toString() || "").includes(filters.pret_produs_total) &&
         (item.pret_transport_total?.toString() || "").includes(filters.pret_transport_total) &&
-        (item.pret_total?.toString() || "").includes(filters.pret_total)
+        (item.pret_total?.toString() || "").includes(filters.pret_total) &&
+        (item.observatii || "").toLowerCase().includes(filters.observatii.toLowerCase())
       );
     })
     .sort((a, b) => {
@@ -343,7 +348,8 @@ const Livrari = () => {
       tara: 0,
       pret_produs_total: 0,
       pret_transport_total: 0,
-      pret_total: 0
+      pret_total: 0,
+      observatii: ""
     });
     setOpenAddEdit(true);
   };
@@ -363,7 +369,8 @@ const Livrari = () => {
       tara: livrare.tara || 0,
       pret_produs_total: livrare.pret_produs_total || 0,
       pret_transport_total: livrare.pret_transport_total || 0,
-      pret_total: livrare.pret_total || 0
+      pret_total: livrare.pret_total || 0,
+      observatii: livrare.observatii || ""
     });
     setOpenAddEdit(true);
   };
@@ -393,7 +400,8 @@ const Livrari = () => {
           nume_sofer: form.nume_sofer,
           pret_produs_total: form.pret_produs_total.toString(),
           pret_transport_total: form.pret_transport_total.toString(),
-          pret_total: form.pret_total
+          pret_total: form.pret_total,
+          observatii: form.observatii
         };
 
         const response = await fetch(`${API_BASE_URL}/editeaza`, {
@@ -431,7 +439,8 @@ const Livrari = () => {
           nume_sofer: form.nume_sofer,
           pret_produs_total: form.pret_produs_total.toString(),
           pret_transport_total: form.pret_transport_total.toString(),
-          pret_total: form.pret_total
+          pret_total: form.pret_total,
+          observatii: form.observatii
         };
 
         const response = await fetch(`${API_BASE_URL}/livrari/adauga/livrare`, {
@@ -581,7 +590,8 @@ const Livrari = () => {
               { key: 'tara', label: 'Tara' },
               { key: 'pret_produs_total', label: 'Preț Produs' },
               { key: 'pret_transport_total', label: 'Preț Transport' },
-              { key: 'pret_total', label: 'Preț Total' }
+              { key: 'pret_total', label: 'Preț Total' },
+              { key: 'observatii', label: 'Observații' }
             ])}
             disabled={filteredAndSorted.length === 0}
           >
@@ -685,12 +695,13 @@ const Livrari = () => {
                   <FilterHeader field="pret_produs_total" label="Preț Produs" />
                   <FilterHeader field="pret_transport_total" label="Preț Transport" />
                   <FilterHeader field="pret_total" label="Preț Total" />
+                  <FilterHeader field="observatii" label="Observații" />
                 </TableRow>
               </TableHeader>
               <TableBody key={`livrari-page-${currentPage}`} className="animate-fade-in">
                 {paginatedData.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={14} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={15} className="text-center py-8 text-muted-foreground">
                       Nu există livrări înregistrate
                     </TableCell>
                   </TableRow>
@@ -715,6 +726,7 @@ const Livrari = () => {
                       <TableCell className="py-1 text-xs text-right">{formatNumber(livrare.pret_produs_total)}</TableCell>
                       <TableCell className="py-1 text-xs text-right">{formatNumber(livrare.pret_transport_total)}</TableCell>
                       <TableCell className="py-1 text-xs text-right">{formatNumber(livrare.pret_total)}</TableCell>
+                      <TableCell className="py-1 text-xs">{livrare.observatii || "-"}</TableCell>
                     </TableRow>
                   ))
                 )}
@@ -898,6 +910,16 @@ const Livrari = () => {
                 />
               </div>
             </div>
+            <div className="grid gap-2">
+              <Label htmlFor="observatii">Observații</Label>
+              <Textarea
+                id="observatii"
+                value={form.observatii}
+                onChange={(e) => setForm({ ...form, observatii: e.target.value })}
+                placeholder="Adaugă observații..."
+                rows={3}
+              />
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpenAddEdit(false)}>
@@ -1007,6 +1029,12 @@ const Livrari = () => {
                 <div className="space-y-1">
                   <Label className="text-muted-foreground">Preț Total</Label>
                   <p className="font-medium">{formatNumber(viewingDetails.pret_total)}</p>
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Observații</Label>
+                  <p className="font-medium">{viewingDetails.observatii || "-"}</p>
                 </div>
               </div>
             </div>
