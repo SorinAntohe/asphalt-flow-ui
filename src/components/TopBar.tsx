@@ -1,14 +1,18 @@
 import { useState } from "react";
-import { Search, Bell, User, Moon, Sun } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Search, Bell, User, Moon, Sun, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useAuth } from "@/hooks/useAuth";
 
 export function TopBar() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const { logout, user } = useAuth();
+  const navigate = useNavigate();
   
   const toggleTheme = () => {
     // Add transitioning class for smooth color transitions
@@ -22,6 +26,11 @@ export function TopBar() {
     setTimeout(() => {
       document.documentElement.classList.remove("transitioning");
     }, 200);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/auth");
   };
 
   return (
@@ -98,12 +107,18 @@ export function TopBar() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 p-2">
-              <DropdownMenuLabel className="text-sm font-semibold">Contul meu</DropdownMenuLabel>
+              <DropdownMenuLabel className="text-sm font-semibold">
+                {user?.email || "Contul meu"}
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="rounded-lg cursor-pointer">Profil</DropdownMenuItem>
               <DropdownMenuItem className="rounded-lg cursor-pointer">Setări</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive rounded-lg cursor-pointer">
+              <DropdownMenuItem 
+                className="text-destructive rounded-lg cursor-pointer"
+                onClick={handleLogout}
+              >
+                <LogOut className="w-4 h-4 mr-2" />
                 Deconectare
               </DropdownMenuItem>
             </DropdownMenuContent>

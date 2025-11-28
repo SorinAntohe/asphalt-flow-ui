@@ -2,7 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { Layout } from "./components/Layout";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -18,91 +19,45 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Protected Route wrapper
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuth();
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" replace />;
+  }
+  
+  return <Layout>{children}</Layout>;
+};
+
+const AppRoutes = () => (
+  <Routes>
+    <Route path="/auth" element={<Auth />} />
+    <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+    <Route path="/liste" element={<ProtectedRoute><Liste /></ProtectedRoute>} />
+    <Route path="/receptii" element={<ProtectedRoute><Receptii /></ProtectedRoute>} />
+    <Route path="/livrari" element={<ProtectedRoute><Livrari /></ProtectedRoute>} />
+    <Route path="/consumuri" element={<ProtectedRoute><Consumuri /></ProtectedRoute>} />
+    <Route path="/comenzi" element={<ProtectedRoute><Comenzi /></ProtectedRoute>} />
+    <Route path="/stocuri" element={<ProtectedRoute><Stocuri /></ProtectedRoute>} />
+    <Route path="/angajati" element={<ProtectedRoute><Angajati /></ProtectedRoute>} />
+    <Route path="/pontaj" element={<ProtectedRoute><Pontaj /></ProtectedRoute>} />
+    <Route path="/" element={<Auth />} />
+    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+    <Route path="*" element={<NotFound />} />
+  </Routes>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/auth" element={<Auth />} />
-          <Route
-            path="/dashboard"
-            element={
-              <Layout>
-                <Dashboard />
-              </Layout>
-            }
-          />
-          <Route
-            path="/liste"
-            element={
-              <Layout>
-                <Liste />
-              </Layout>
-            }
-          />
-          <Route
-            path="/receptii"
-            element={
-              <Layout>
-                <Receptii />
-              </Layout>
-            }
-          />
-          <Route
-            path="/livrari"
-            element={
-              <Layout>
-                <Livrari />
-              </Layout>
-            }
-          />
-          <Route
-            path="/consumuri"
-            element={
-              <Layout>
-                <Consumuri />
-              </Layout>
-            }
-          />
-          <Route
-            path="/comenzi"
-            element={
-              <Layout>
-                <Comenzi />
-              </Layout>
-            }
-          />
-          <Route
-            path="/stocuri"
-            element={
-              <Layout>
-                <Stocuri />
-              </Layout>
-            }
-          />
-          <Route
-            path="/angajati"
-            element={
-              <Layout>
-                <Angajati />
-              </Layout>
-            }
-          />
-          <Route
-            path="/pontaj"
-            element={
-              <Layout>
-                <Pontaj />
-              </Layout>
-            }
-          />
-          <Route path="/" element={<Auth />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

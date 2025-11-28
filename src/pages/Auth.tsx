@@ -1,18 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "@/hooks/useAuth";
+import { AlertCircle } from "lucide-react";
 import logo from "@/assets/logo-auth.png";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { login, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Authentication logic will be added later
-    console.log("Login attempt:", email);
+    setError("");
+    setIsLoading(true);
+
+    // Simulate network delay
+    setTimeout(() => {
+      const result = login(email, password);
+      if (result.success) {
+        navigate("/dashboard");
+      } else {
+        setError(result.error || "Eroare la autentificare");
+      }
+      setIsLoading(false);
+    }, 500);
   };
 
   return (
@@ -27,12 +52,18 @@ const Auth = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="nume@companie.ro"
+                placeholder="nume@email.ro"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -49,8 +80,8 @@ const Auth = () => {
                 required
               />
             </div>
-            <Button type="submit" className="w-full">
-              Autentificare
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Se autentifică..." : "Autentificare"}
             </Button>
           </form>
         </CardContent>
