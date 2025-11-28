@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +10,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FilterableSelect } from "@/components/ui/filterable-select";
-import { CalendarClock, Plus, CalendarIcon, Download, Pencil, Trash2, Eye, ArrowUpDown, ArrowUp, ArrowDown, Filter } from "lucide-react";
+import { CalendarClock, Plus, Download, Pencil, Trash2, ArrowUpDown, ArrowUp, ArrowDown, Filter } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/api";
 import { exportToCSV } from "@/lib/exportUtils";
@@ -59,7 +59,6 @@ export default function Pontaj() {
   const [editingPontaj, setEditingPontaj] = useState<Pontaj | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  // Form state
   const [formData, setFormData] = useState({
     angajat_id: "",
     prezenta: "Prezent",
@@ -68,17 +67,14 @@ export default function Pontaj() {
     pauza_masa: 60
   });
 
-  // Filtering and sorting
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const [activeFilterColumn, setActiveFilterColumn] = useState<string | null>(null);
 
-  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  // Fetch angajati for dropdown
   useEffect(() => {
     const fetchAngajati = async () => {
       try {
@@ -94,7 +90,6 @@ export default function Pontaj() {
     fetchAngajati();
   }, []);
 
-  // Fetch pontaje for selected date
   useEffect(() => {
     fetchPontaje();
   }, [selectedDate]);
@@ -118,16 +113,12 @@ export default function Pontaj() {
     }
   };
 
-  // Calculate total hours
   const calculateTotalHours = (oraStart: string, oraSfarsit: string, pauzaMasa: number): number => {
     if (!oraStart || !oraSfarsit) return 0;
-    
     const [startH, startM] = oraStart.split(":").map(Number);
     const [endH, endM] = oraSfarsit.split(":").map(Number);
-    
     const startMinutes = startH * 60 + startM;
     const endMinutes = endH * 60 + endM;
-    
     const totalMinutes = endMinutes - startMinutes - pauzaMasa;
     return Math.max(0, Math.round((totalMinutes / 60) * 100) / 100);
   };
@@ -136,11 +127,8 @@ export default function Pontaj() {
     return calculateTotalHours(formData.ora_start, formData.ora_sfarsit, formData.pauza_masa);
   }, [formData.ora_start, formData.ora_sfarsit, formData.pauza_masa]);
 
-  // Filtering and sorting logic
   const filteredAndSortedData = useMemo(() => {
     let result = [...pontaje];
-
-    // Apply filters
     Object.entries(filters).forEach(([column, filterValue]) => {
       if (filterValue) {
         result = result.filter((item) => {
@@ -149,30 +137,21 @@ export default function Pontaj() {
         });
       }
     });
-
-    // Apply sorting
     if (sortColumn && sortDirection) {
       result.sort((a, b) => {
         const aValue = a[sortColumn as keyof Pontaj];
         const bValue = b[sortColumn as keyof Pontaj];
-
         if (typeof aValue === "number" && typeof bValue === "number") {
           return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
         }
-
         const aStr = String(aValue).toLowerCase();
         const bStr = String(bValue).toLowerCase();
-        if (sortDirection === "asc") {
-          return aStr.localeCompare(bStr);
-        }
-        return bStr.localeCompare(aStr);
+        return sortDirection === "asc" ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr);
       });
     }
-
     return result;
   }, [pontaje, filters, sortColumn, sortDirection]);
 
-  // Pagination
   const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
   const paginatedData = filteredAndSortedData.slice(
     (currentPage - 1) * itemsPerPage,
@@ -181,12 +160,8 @@ export default function Pontaj() {
 
   const handleSort = (column: string) => {
     if (sortColumn === column) {
-      if (sortDirection === "asc") {
-        setSortDirection("desc");
-      } else if (sortDirection === "desc") {
-        setSortColumn(null);
-        setSortDirection(null);
-      }
+      if (sortDirection === "asc") setSortDirection("desc");
+      else { setSortColumn(null); setSortDirection(null); }
     } else {
       setSortColumn(column);
       setSortDirection("asc");
@@ -200,13 +175,7 @@ export default function Pontaj() {
   };
 
   const resetForm = () => {
-    setFormData({
-      angajat_id: "",
-      prezenta: "Prezent",
-      ora_start: "08:00",
-      ora_sfarsit: "17:00",
-      pauza_masa: 60
-    });
+    setFormData({ angajat_id: "", prezenta: "Prezent", ora_start: "08:00", ora_sfarsit: "17:00", pauza_masa: 60 });
   };
 
   const handleAdd = async () => {
@@ -214,7 +183,6 @@ export default function Pontaj() {
       toast({ title: "Eroare", description: "Selectați un angajat.", variant: "destructive" });
       return;
     }
-
     try {
       const payload = {
         data: format(selectedDate, "dd/MM/yyyy"),
@@ -225,13 +193,11 @@ export default function Pontaj() {
         pauza_masa: formData.pauza_masa,
         total_ore: totalOreCalculate
       };
-
       const response = await fetch(`${API_BASE_URL}/pontaj/adauga`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
-
       if (response.ok) {
         toast({ title: "Succes", description: "Pontaj adăugat cu succes." });
         setIsAddDialogOpen(false);
@@ -247,7 +213,6 @@ export default function Pontaj() {
 
   const handleEdit = async () => {
     if (!editingPontaj) return;
-
     try {
       const payload = {
         tabel: "pontaj",
@@ -261,13 +226,11 @@ export default function Pontaj() {
           total_ore: totalOreCalculate
         }
       };
-
       const response = await fetch(`${API_BASE_URL}/editeaza`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
-
       if (response.ok) {
         toast({ title: "Succes", description: "Pontaj actualizat cu succes." });
         setIsEditDialogOpen(false);
@@ -284,14 +247,12 @@ export default function Pontaj() {
 
   const handleDelete = async () => {
     if (!deletingId) return;
-
     try {
       const response = await fetch(`${API_BASE_URL}/sterge`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tabel: "pontaj", id: deletingId })
       });
-
       if (response.ok) {
         toast({ title: "Succes", description: "Pontaj șters cu succes." });
         setIsDeleteDialogOpen(false);
@@ -323,7 +284,6 @@ export default function Pontaj() {
       toast({ title: "Atenție", description: "Nu există date pentru export.", variant: "destructive" });
       return;
     }
-
     const exportColumns = [
       { key: "id" as const, label: "ID" },
       { key: "nume_angajat" as const, label: "Nume Angajat" },
@@ -333,7 +293,6 @@ export default function Pontaj() {
       { key: "pauza_masa" as const, label: "Pauză Masă (min)" },
       { key: "total_ore" as const, label: "Total Ore" }
     ];
-
     exportToCSV(filteredAndSortedData, `pontaj_${format(selectedDate, "dd-MM-yyyy")}`, exportColumns);
     toast({ title: "Succes", description: "Fișierul CSV a fost descărcat." });
   };
@@ -341,154 +300,155 @@ export default function Pontaj() {
   const angajatiOptions = angajati.map(a => ({ value: String(a.id), label: a.nume }));
 
   const columns = [
-    { key: "id", label: "ID" },
-    { key: "nume_angajat", label: "Nume Angajat" },
+    { key: "nume_angajat", label: "Angajat" },
     { key: "prezenta", label: "Prezență" },
-    { key: "ora_start", label: "Ora Start" },
-    { key: "ora_sfarsit", label: "Ora Sfârșit" },
-    { key: "pauza_masa", label: "Pauză (min)" },
+    { key: "ora_start", label: "Start" },
+    { key: "ora_sfarsit", label: "Sfârșit" },
+    { key: "pauza_masa", label: "Pauză" },
     { key: "total_ore", label: "Total Ore" }
   ];
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <CalendarClock className="h-6 w-6 text-primary" />
-          <h1 className="text-2xl font-bold text-foreground">Pontaj</h1>
-        </div>
-        <div className="flex items-center gap-2">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="justify-start text-left font-normal">
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {format(selectedDate, "dd MMMM yyyy", { locale: ro })}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="end">
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={(date) => date && setSelectedDate(date)}
-                initialFocus
-                className="pointer-events-auto"
-              />
-            </PopoverContent>
-          </Popover>
-          <Button variant="outline" size="sm" onClick={handleExport} disabled={filteredAndSortedData.length === 0}>
-            <Download className="w-4 h-4 mr-2" />
-            Export
-          </Button>
-          <Button size="sm" onClick={() => { resetForm(); setIsAddDialogOpen(true); }}>
-            <Plus className="w-4 h-4 mr-2" />
-            Adaugă
-          </Button>
-        </div>
+      <div className="flex items-center gap-3">
+        <CalendarClock className="h-6 w-6 text-primary" />
+        <h1 className="text-2xl font-bold text-foreground">Pontaj</h1>
       </div>
 
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg">
-            Evidența Pontajului - {format(selectedDate, "dd MMMM yyyy", { locale: ro })}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <p className="text-muted-foreground text-center py-8">Se încarcă...</p>
-          ) : (
-            <>
-              <div className="rounded-md border overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      {columns.map((col) => (
-                        <TableHead key={col.key}>
-                          <div className="flex items-center gap-1">
-                            <span>{col.label}</span>
-                            <Popover open={activeFilterColumn === col.key} onOpenChange={(open) => setActiveFilterColumn(open ? col.key : null)}>
-                              <PopoverTrigger asChild>
-                                <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-accent">
-                                  <Filter className="h-3 w-3" />
-                                </Button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-48 p-2" align="start">
-                                <div className="space-y-2">
-                                  <Input
-                                    placeholder="Filtrare..."
-                                    value={filters[col.key] || ""}
-                                    onChange={(e) => setFilters({ ...filters, [col.key]: e.target.value })}
-                                    className="h-8 text-sm"
-                                  />
-                                  <div className="flex gap-1">
-                                    <Button variant="outline" size="sm" className="h-7 text-xs flex-1" onClick={() => { handleSort(col.key); setActiveFilterColumn(null); }}>
+      <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-4">
+        {/* Left - Calendar Card */}
+        <Card className="h-fit">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">Selectează Data</CardTitle>
+            <CardDescription>Vizualizează pontajul</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={(date) => date && setSelectedDate(date)}
+              className="pointer-events-auto"
+              locale={ro}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Right - Table Card */}
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg">Evidența Pontajului</CardTitle>
+                <CardDescription>
+                  {format(selectedDate, "EEEE, d MMMM yyyy", { locale: ro })}
+                </CardDescription>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={handleExport} disabled={filteredAndSortedData.length === 0}>
+                  <Download className="w-4 h-4" />
+                </Button>
+                <Button size="sm" onClick={() => { resetForm(); setIsAddDialogOpen(true); }}>
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <p className="text-muted-foreground text-center py-8">Se încarcă...</p>
+            ) : (
+              <>
+                <div className="rounded-md border overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        {columns.map((col) => (
+                          <TableHead key={col.key} className="text-xs">
+                            <div className="flex items-center gap-1">
+                              <span>{col.label}</span>
+                              <Popover open={activeFilterColumn === col.key} onOpenChange={(open) => setActiveFilterColumn(open ? col.key : null)}>
+                                <PopoverTrigger asChild>
+                                  <Button variant="ghost" size="sm" className="h-5 w-5 p-0 hover:bg-accent">
+                                    <Filter className="h-3 w-3" />
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-48 p-2" align="start">
+                                  <div className="space-y-2">
+                                    <Input
+                                      placeholder="Filtrare..."
+                                      value={filters[col.key] || ""}
+                                      onChange={(e) => setFilters({ ...filters, [col.key]: e.target.value })}
+                                      className="h-8 text-sm"
+                                    />
+                                    <Button variant="outline" size="sm" className="h-7 text-xs w-full" onClick={() => { handleSort(col.key); setActiveFilterColumn(null); }}>
                                       {getSortIcon(col.key)}
                                       <span className="ml-1">Sort</span>
                                     </Button>
                                   </div>
-                                </div>
-                              </PopoverContent>
-                            </Popover>
-                          </div>
-                        </TableHead>
-                      ))}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {paginatedData.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={columns.length} className="text-center text-muted-foreground py-8">
-                          Nu există înregistrări pentru această dată.
-                        </TableCell>
+                                </PopoverContent>
+                              </Popover>
+                            </div>
+                          </TableHead>
+                        ))}
                       </TableRow>
-                    ) : (
-                      paginatedData.map((pontaj) => (
-                        <TableRow key={pontaj.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setViewingDetails(pontaj)}>
-                          <TableCell>{pontaj.id}</TableCell>
-                          <TableCell>{pontaj.nume_angajat}</TableCell>
-                          <TableCell>{pontaj.prezenta}</TableCell>
-                          <TableCell>{pontaj.ora_start}</TableCell>
-                          <TableCell>{pontaj.ora_sfarsit}</TableCell>
-                          <TableCell>{pontaj.pauza_masa}</TableCell>
-                          <TableCell>{pontaj.total_ore}</TableCell>
+                    </TableHeader>
+                    <TableBody>
+                      {paginatedData.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={columns.length} className="text-center text-muted-foreground py-8">
+                            Nu există înregistrări pentru această dată.
+                          </TableCell>
                         </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
+                      ) : (
+                        paginatedData.map((pontaj) => (
+                          <TableRow key={pontaj.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setViewingDetails(pontaj)}>
+                            <TableCell className="text-sm">{pontaj.nume_angajat}</TableCell>
+                            <TableCell className="text-sm">{pontaj.prezenta}</TableCell>
+                            <TableCell className="text-sm">{pontaj.ora_start}</TableCell>
+                            <TableCell className="text-sm">{pontaj.ora_sfarsit}</TableCell>
+                            <TableCell className="text-sm">{pontaj.pauza_masa} min</TableCell>
+                            <TableCell className="text-sm">{pontaj.total_ore}h</TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
 
-              {/* Pagination */}
-              <div className="flex items-center justify-between mt-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Afișează</span>
-                  <Select value={String(itemsPerPage)} onValueChange={(v) => { setItemsPerPage(Number(v)); setCurrentPage(1); }}>
-                    <SelectTrigger className="w-16 h-8">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[5, 10, 20, 50].map((n) => (
-                        <SelectItem key={n} value={String(n)}>{n}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <span className="text-sm text-muted-foreground">pe pagină</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>
-                    Anterior
-                  </Button>
-                  <span className="text-sm text-muted-foreground">
-                    Pagina {currentPage} din {Math.max(1, totalPages)}
-                  </span>
-                  <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage >= totalPages}>
-                    Următor
-                  </Button>
-                </div>
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+                {filteredAndSortedData.length > 0 && (
+                  <div className="flex items-center justify-between mt-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">Afișează</span>
+                      <Select value={String(itemsPerPage)} onValueChange={(v) => { setItemsPerPage(Number(v)); setCurrentPage(1); }}>
+                        <SelectTrigger className="w-16 h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[5, 10, 20, 50].map((n) => (
+                            <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <span className="text-sm text-muted-foreground">pe pagină</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                        Anterior
+                      </Button>
+                      <span className="text-sm text-muted-foreground">
+                        {currentPage} / {Math.max(1, totalPages)}
+                      </span>
+                      <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage >= totalPages}>
+                        Următor
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Add Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
