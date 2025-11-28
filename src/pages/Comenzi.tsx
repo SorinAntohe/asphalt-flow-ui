@@ -570,7 +570,7 @@ export default function Comenzi() {
 
   // Filters for Produs Finit
   const [filtersPF, setFiltersPF] = useState({
-    cod: "", data: "", client: "", produs: "", unitate_masura: "", cantitate: "", punct_descarcare: "", pret_fara_tva: "", pret_transport: "", observatii: ""
+    id: "", cod: "", data: "", client: "", produs: "", unitate_masura: "", cantitate: "", punct_descarcare: "", pret_fara_tva: "", pret_transport: "", observatii: ""
   });
 
   // Sort for Produs Finit
@@ -582,6 +582,7 @@ export default function Comenzi() {
   const filteredAndSortedPF = comenziProduseFinite
     .filter((item) => {
       return (
+        item.id.toString().includes(filtersPF.id) &&
         item.cod.toLowerCase().includes(filtersPF.cod.toLowerCase()) &&
         item.data.toLowerCase().includes(filtersPF.data.toLowerCase()) &&
         item.client.toLowerCase().includes(filtersPF.client.toLowerCase()) &&
@@ -984,6 +985,7 @@ export default function Comenzi() {
                     comenziProduseFinite,
                     'comenzi_produse_finite',
                     [
+                      { key: 'id', label: 'ID' },
                       { key: 'cod', label: 'Cod' },
                       { key: 'data', label: 'Data' },
                       { key: 'client', label: 'Client' },
@@ -1027,6 +1029,31 @@ export default function Comenzi() {
               <Table className="min-w-[1400px]">
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>ID</span>
+                              {sortPF.field === 'id' ? (sortPF.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută ID..." value={filtersPF.id} onChange={(e) => setFiltersPF({...filtersPF, id: e.target.value})} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortPF({ field: 'id', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortPF({ field: 'id', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
                         <Popover>
@@ -1282,7 +1309,7 @@ export default function Comenzi() {
                 <TableBody key={`pf-page-${currentPagePF}`} className="animate-fade-in">
                   {loadingPF ? (
                     <TableRow>
-                      <TableCell colSpan={10} className="h-24 text-center">
+                      <TableCell colSpan={11} className="h-24 text-center">
                         <div className="flex items-center justify-center">
                           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                         </div>
@@ -1290,7 +1317,7 @@ export default function Comenzi() {
                     </TableRow>
                   ) : paginatedDataPF.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={10} className="h-24 text-center text-muted-foreground">
+                      <TableCell colSpan={11} className="h-24 text-center text-muted-foreground">
                         Nu există comenzi disponibile
                       </TableCell>
                     </TableRow>
@@ -1301,6 +1328,7 @@ export default function Comenzi() {
                         className="h-10 cursor-pointer hover:bg-muted/50"
                         onClick={() => setViewingDetailsPF(comanda)}
                       >
+                        <TableCell className="py-1 text-xs">{comanda.id}</TableCell>
                         <TableCell className="font-medium py-1 text-xs">{comanda.cod}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.data}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.client}</TableCell>
