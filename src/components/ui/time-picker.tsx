@@ -100,7 +100,7 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
       </PopoverTrigger>
       <PopoverContent 
         className="w-auto p-4 pointer-events-auto animate-scale-in" 
-        align="start"
+        align="center"
       >
         <div className="flex flex-col items-center gap-4">
           {/* Time display with AM/PM */}

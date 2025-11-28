@@ -488,7 +488,16 @@ export default function Pontaj() {
               </div>
               <div className="space-y-2">
                 <Label>Ora Sfârșit</Label>
-                <TimePicker value={formData.ora_sfarsit} onChange={(v) => setFormData({ ...formData, ora_sfarsit: v })} />
+                <TimePicker 
+                  value={formData.ora_sfarsit} 
+                  onChange={(v) => {
+                    if (v >= formData.ora_start) {
+                      setFormData({ ...formData, ora_sfarsit: v });
+                    } else {
+                      toast({ title: "Atenție", description: "Ora de sfârșit nu poate fi mai mică decât ora de start.", variant: "destructive" });
+                    }
+                  }} 
+                />
               </div>
             </div>
             <div className="space-y-2">
@@ -544,7 +553,16 @@ export default function Pontaj() {
               </div>
               <div className="space-y-2">
                 <Label>Ora Sfârșit</Label>
-                <TimePicker value={formData.ora_sfarsit} onChange={(v) => setFormData({ ...formData, ora_sfarsit: v })} />
+                <TimePicker 
+                  value={formData.ora_sfarsit} 
+                  onChange={(v) => {
+                    if (v >= formData.ora_start) {
+                      setFormData({ ...formData, ora_sfarsit: v });
+                    } else {
+                      toast({ title: "Atenție", description: "Ora de sfârșit nu poate fi mai mică decât ora de start.", variant: "destructive" });
+                    }
+                  }} 
+                />
               </div>
             </div>
             <div className="space-y-2">
