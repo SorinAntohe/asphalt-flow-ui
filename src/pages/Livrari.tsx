@@ -279,16 +279,6 @@ const Livrari = () => {
 
   const handleSave = async () => {
     try {
-      if (editing) {
-        // TODO: Implement edit API call
-        toast({
-          title: "Eroare",
-          description: "Funcția de editare nu este implementată încă",
-          variant: "destructive"
-        });
-        return;
-      }
-      
       // Validate required fields
       if (!form.cod || !form.nr_inmatriculare || !form.nume_sofer) {
         toast({
@@ -299,38 +289,72 @@ const Livrari = () => {
         return;
       }
 
-      // Prepare payload for backend
-      const currentDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
-      
-      const payload = {
-        data: currentDate,
-        cod: form.cod,
-        material: form.produs,
-        nr_inmatriculare: form.nr_inmatriculare,
-        tip_masina: form.tip_masina,
-        nume_sofer: form.nume_sofer,
-        pret_material_total: form.pret_material_total.toString(),
-        pret_transport_total: form.pret_transport_total.toString(),
-        pret_total: form.pret_total
-      };
+      if (editing) {
+        // Edit existing livrare
+        const updatePayload = {
+          cod: form.cod,
+          produs: form.produs,
+          nr_inmatriculare: form.nr_inmatriculare,
+          tip_masina: form.tip_masina,
+          nume_sofer: form.nume_sofer,
+          pret_produs_total: form.pret_material_total.toString(),
+          pret_transport_total: form.pret_transport_total.toString(),
+          pret_total: form.pret_total
+        };
 
-      const response = await fetch(`${API_BASE_URL}/livrari/adauga/livrare`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+        const response = await fetch(`${API_BASE_URL}/editeaza`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tabel: "livrari_produs_finit",
+            id: editing.id,
+            update: updatePayload
+          })
+        });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to add livrare');
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to update livrare');
+        }
+
+        toast({
+          title: "Succes",
+          description: "Livrarea a fost actualizată cu succes"
+        });
+      } else {
+        // Add new livrare
+        const currentDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+        
+        const payload = {
+          data: currentDate,
+          cod: form.cod,
+          produs: form.produs,
+          nr_inmatriculare: form.nr_inmatriculare,
+          tip_masina: form.tip_masina,
+          nume_sofer: form.nume_sofer,
+          pret_produs_total: form.pret_material_total.toString(),
+          pret_transport_total: form.pret_transport_total.toString(),
+          pret_total: form.pret_total
+        };
+
+        const response = await fetch(`${API_BASE_URL}/livrari/adauga/livrare`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to add livrare');
+        }
+
+        const result = await response.json();
+        
+        toast({
+          title: "Succes",
+          description: result.message || "Livrarea a fost adăugată cu succes"
+        });
       }
-
-      const result = await response.json();
-      
-      toast({
-        title: "Succes",
-        description: result.message || "Livrarea a fost adăugată cu succes"
-      });
 
       setOpenAddEdit(false);
       // TODO: Refresh livrari list
@@ -346,8 +370,37 @@ const Livrari = () => {
 
   const handleDelete = async () => {
     if (!deleting) return;
-    // TODO: Implement delete API call
-    setDeleting(null);
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/sterge`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tabel: "livrari_produs_finit",
+          id: deleting.id
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to delete livrare');
+      }
+
+      toast({
+        title: "Succes",
+        description: "Livrarea a fost ștearsă cu succes"
+      });
+
+      setDeleting(null);
+      // TODO: Refresh livrari list
+    } catch (error) {
+      console.error("Error deleting livrare:", error);
+      toast({
+        title: "Eroare",
+        description: error instanceof Error ? error.message : "Nu s-a putut șterge livrarea",
+        variant: "destructive"
+      });
+    }
   };
 
   const FilterHeader = ({ field, label }: { field: keyof typeof filters; label: string }) => (
