@@ -319,15 +319,17 @@ const Liste = () => {
       </div>
 
       <Tabs defaultValue="autoturisme" className="w-full" onValueChange={setActiveTab}>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-          <TabsList className="grid w-full sm:w-auto grid-cols-3 sm:grid-cols-6 h-auto">
-            <TabsTrigger value="autoturisme" className="text-xs sm:text-sm">Autoturisme</TabsTrigger>
-            <TabsTrigger value="soferi" className="text-xs sm:text-sm">Șoferi</TabsTrigger>
-            <TabsTrigger value="materii" className="text-xs sm:text-sm">Materii</TabsTrigger>
-            <TabsTrigger value="produse" className="text-xs sm:text-sm">Produse</TabsTrigger>
-            <TabsTrigger value="clienti" className="text-xs sm:text-sm">Clienți</TabsTrigger>
-            <TabsTrigger value="furnizori" className="text-xs sm:text-sm">Furnizori</TabsTrigger>
-          </TabsList>
+        <div className="flex flex-col gap-3 mb-4">
+          <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
+            <TabsList className="inline-flex w-max sm:w-auto h-auto p-1 gap-1">
+              <TabsTrigger value="autoturisme" className="text-xs sm:text-sm px-3 py-1.5 whitespace-nowrap">Autoturisme</TabsTrigger>
+              <TabsTrigger value="soferi" className="text-xs sm:text-sm px-3 py-1.5 whitespace-nowrap">Șoferi</TabsTrigger>
+              <TabsTrigger value="materii" className="text-xs sm:text-sm px-3 py-1.5 whitespace-nowrap">Materii</TabsTrigger>
+              <TabsTrigger value="produse" className="text-xs sm:text-sm px-3 py-1.5 whitespace-nowrap">Produse</TabsTrigger>
+              <TabsTrigger value="clienti" className="text-xs sm:text-sm px-3 py-1.5 whitespace-nowrap">Clienți</TabsTrigger>
+              <TabsTrigger value="furnizori" className="text-xs sm:text-sm px-3 py-1.5 whitespace-nowrap">Furnizori</TabsTrigger>
+            </TabsList>
+          </div>
           <div className="flex gap-2">
             <Button 
               variant="outline" 
@@ -396,13 +398,13 @@ const Liste = () => {
 
         <TabsContent value="autoturisme">
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Lista Autoturisme</CardTitle>
+            <CardHeader className="p-3 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <CardTitle className="text-base sm:text-lg">Lista Autoturisme</CardTitle>
                 <div className="flex items-center gap-2">
-                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
                   <Select value={autoturismePerPage.toString()} onValueChange={(value) => { setAutoturismePerPage(Number(value)); setAutoturismePage(1); }}>
-                    <SelectTrigger className="w-[70px]">
+                    <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -862,13 +864,13 @@ const Liste = () => {
 
         <TabsContent value="soferi">
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Lista Șoferi</CardTitle>
+            <CardHeader className="p-3 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <CardTitle className="text-base sm:text-lg">Lista Șoferi</CardTitle>
                 <div className="flex items-center gap-2">
-                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
                   <Select value={soferiPerPage.toString()} onValueChange={(value) => { setSoferiPerPage(Number(value)); setSoferiPage(1); }}>
-                    <SelectTrigger className="w-[70px]">
+                    <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1186,13 +1188,13 @@ const Liste = () => {
 
          <TabsContent value="materii">
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Lista Materii Prime</CardTitle>
+            <CardHeader className="p-3 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <CardTitle className="text-base sm:text-lg">Lista Materii Prime</CardTitle>
                 <div className="flex items-center gap-2">
-                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
                   <Select value={materiiPrimePerPage.toString()} onValueChange={(value) => { setMateriiPrimePerPage(Number(value)); setMateriiPrimePage(1); }}>
-                    <SelectTrigger className="w-[70px]">
+                    <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1471,13 +1473,13 @@ const Liste = () => {
 
          <TabsContent value="produse">
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Lista Produse Finite</CardTitle>
+            <CardHeader className="p-3 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <CardTitle className="text-base sm:text-lg">Lista Produse Finite</CardTitle>
                 <div className="flex items-center gap-2">
-                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
                   <Select value={produseFinitePerPage.toString()} onValueChange={(value) => { setProduseFinitePerPage(Number(value)); setProduseFinitePage(1); }}>
-                    <SelectTrigger className="w-[70px]">
+                    <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1756,13 +1758,13 @@ const Liste = () => {
 
         <TabsContent value="clienti">
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Lista Clienți</CardTitle>
+            <CardHeader className="p-3 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <CardTitle className="text-base sm:text-lg">Lista Clienți</CardTitle>
                 <div className="flex items-center gap-2">
-                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
                   <Select value={clientiPerPage.toString()} onValueChange={(value) => { setClientiPerPage(Number(value)); setClientiPage(1); }}>
-                    <SelectTrigger className="w-[70px]">
+                    <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -2158,13 +2160,13 @@ const Liste = () => {
 
         <TabsContent value="furnizori">
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Lista Furnizori</CardTitle>
+            <CardHeader className="p-3 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <CardTitle className="text-base sm:text-lg">Lista Furnizori</CardTitle>
                 <div className="flex items-center gap-2">
-                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
                   <Select value={furnizoriPerPage.toString()} onValueChange={(value) => { setFurnizoriPerPage(Number(value)); setFurnizoriPage(1); }}>
-                    <SelectTrigger className="w-[70px]">
+                    <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

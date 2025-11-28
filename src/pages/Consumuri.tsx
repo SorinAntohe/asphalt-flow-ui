@@ -809,23 +809,25 @@ const Consumuri = () => {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Consumuri</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">Consumuri</h1>
+          <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base hidden sm:block">
             Monitorizare contoare și consumuri
           </p>
         </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-          <TabsList className="grid w-full sm:w-auto grid-cols-3">
-            <TabsTrigger value="contor-curent">Contor Curent</TabsTrigger>
-            <TabsTrigger value="contor-ctl">Contor CTL</TabsTrigger>
-            <TabsTrigger value="consumuri">Consumuri Materiale</TabsTrigger>
-          </TabsList>
+        <div className="flex flex-col gap-3 mb-4">
+          <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
+            <TabsList className="inline-flex w-max sm:w-auto h-auto p-1 gap-1">
+              <TabsTrigger value="contor-curent" className="text-xs sm:text-sm px-3 py-1.5 whitespace-nowrap">Contor Curent</TabsTrigger>
+              <TabsTrigger value="contor-ctl" className="text-xs sm:text-sm px-3 py-1.5 whitespace-nowrap">Contor CTL</TabsTrigger>
+              <TabsTrigger value="consumuri" className="text-xs sm:text-sm px-3 py-1.5 whitespace-nowrap">Consumuri Materiale</TabsTrigger>
+            </TabsList>
+          </div>
           <div className="flex gap-2">
             <Button 
               variant="outline" 
@@ -882,11 +884,11 @@ const Consumuri = () => {
         {/* Contor Curent Tab */}
         <TabsContent value="contor-curent">
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Contor Curent</CardTitle>
+            <CardHeader className="p-3 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <CardTitle className="text-base sm:text-lg">Contor Curent</CardTitle>
                 <div className="flex items-center gap-2">
-                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
                   <Select
                     value={contorCurentItemsPerPage.toString()}
                     onValueChange={(value) => {
@@ -894,7 +896,7 @@ const Consumuri = () => {
                       setContorCurentCurrentPage(1);
                     }}
                   >
-                    <SelectTrigger className="w-[70px] h-8">
+                    <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -907,7 +909,7 @@ const Consumuri = () => {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-3 sm:p-6">
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
@@ -1038,11 +1040,11 @@ const Consumuri = () => {
         {/* Contor CTL Tab */}
         <TabsContent value="contor-ctl">
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Contor CTL</CardTitle>
+            <CardHeader className="p-3 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <CardTitle className="text-base sm:text-lg">Contor CTL</CardTitle>
                 <div className="flex items-center gap-2">
-                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
                   <Select
                     value={contorCTLItemsPerPage.toString()}
                     onValueChange={(value) => {
@@ -1050,7 +1052,7 @@ const Consumuri = () => {
                       setContorCTLCurrentPage(1);
                     }}
                   >
-                    <SelectTrigger className="w-[70px] h-8">
+                    <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1063,7 +1065,7 @@ const Consumuri = () => {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-3 sm:p-6">
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
@@ -1214,11 +1216,11 @@ const Consumuri = () => {
         {/* Consumuri Tab */}
         <TabsContent value="consumuri">
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Consumuri Materiale</CardTitle>
+            <CardHeader className="p-3 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <CardTitle className="text-base sm:text-lg">Consumuri Materiale</CardTitle>
                 <div className="flex items-center gap-2">
-                  <Label className="text-sm">Înregistrări per pagină:</Label>
+                  <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
                   <Select
                     value={consumuriItemsPerPage.toString()}
                     onValueChange={(value) => {
@@ -1226,7 +1228,7 @@ const Consumuri = () => {
                       setConsumuriCurrentPage(1);
                     }}
                   >
-                    <SelectTrigger className="w-[70px] h-8">
+                    <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1239,7 +1241,7 @@ const Consumuri = () => {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-3 sm:p-6">
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>

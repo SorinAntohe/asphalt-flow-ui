@@ -131,11 +131,11 @@ export default function Stocuri() {
       </div>
 
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg sm:text-xl">Stocuri Materiale</CardTitle>
+        <CardHeader className="p-3 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <CardTitle className="text-base sm:text-lg">Stocuri Materiale</CardTitle>
             <div className="flex items-center gap-2">
-              <Label className="text-sm">Înregistrări per pagină:</Label>
+              <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
               <Select
                 value={itemsPerPage.toString()}
                 onValueChange={(value) => {
@@ -143,7 +143,7 @@ export default function Stocuri() {
                   setCurrentPage(1);
                 }}
               >
-                <SelectTrigger className="w-[70px]">
+                <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
