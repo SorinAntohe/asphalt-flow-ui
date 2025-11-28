@@ -648,16 +648,16 @@ const Livrari = () => {
       </div>
 
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
+        <CardHeader className="p-3 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <CardTitle>Istoric Livrări Produs Finit</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-base sm:text-lg">Istoric Livrări Produs Finit</CardTitle>
+              <CardDescription className="hidden sm:block">
                 Toate livrările de produse finite către clienți
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
-              <Label className="text-sm">Înregistrări per pagină:</Label>
+              <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
               <Select
                 value={itemsPerPage.toString()}
                 onValueChange={(value) => {
@@ -665,7 +665,7 @@ const Livrari = () => {
                   setCurrentPage(1);
                 }}
               >
-                <SelectTrigger className="w-[70px]">
+                <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -679,7 +679,7 @@ const Livrari = () => {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-3 sm:p-6">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>

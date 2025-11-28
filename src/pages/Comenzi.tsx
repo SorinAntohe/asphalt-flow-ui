@@ -698,10 +698,10 @@ export default function Comenzi() {
 
         <TabsContent value="materie-prima">
           <Card>
-            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
-              <CardTitle className="text-lg sm:text-xl">Comenzi Materie Primă</CardTitle>
+            <CardHeader className="p-3 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+              <CardTitle className="text-base sm:text-lg">Comenzi Materie Primă</CardTitle>
               <div className="flex items-center gap-2">
-                <Label className="text-sm">Înregistrări per pagină:</Label>
+                <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
                 <Select
                   value={itemsPerPageMP.toString()}
                   onValueChange={(value) => {
@@ -709,7 +709,7 @@ export default function Comenzi() {
                     setCurrentPageMP(1);
                   }}
                 >
-                  <SelectTrigger className="w-[70px]">
+                  <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -722,7 +722,7 @@ export default function Comenzi() {
                 </Select>
               </div>
             </CardHeader>
-            <CardContent className="overflow-x-auto">
+            <CardContent className="p-3 sm:p-6 overflow-x-auto">
               <Table className="min-w-[1200px]">
                 <TableHeader>
                   <TableRow>
@@ -982,10 +982,10 @@ export default function Comenzi() {
 
         <TabsContent value="produse-finite">
           <Card>
-            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
-              <CardTitle className="text-lg sm:text-xl">Comenzi Produse Finite</CardTitle>
+            <CardHeader className="p-3 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+              <CardTitle className="text-base sm:text-lg">Comenzi Produse Finite</CardTitle>
               <div className="flex items-center gap-2">
-                <Label className="text-sm">Înregistrări per pagină:</Label>
+                <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
                 <Select
                   value={itemsPerPagePF.toString()}
                   onValueChange={(value) => {
@@ -993,7 +993,7 @@ export default function Comenzi() {
                     setCurrentPagePF(1);
                   }}
                 >
-                  <SelectTrigger className="w-[70px]">
+                  <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -1006,7 +1006,7 @@ export default function Comenzi() {
                 </Select>
               </div>
             </CardHeader>
-            <CardContent className="overflow-x-auto">
+            <CardContent className="p-3 sm:p-6 overflow-x-auto">
               <Table className="min-w-[1400px]">
                 <TableHeader>
                   <TableRow>
