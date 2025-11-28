@@ -359,7 +359,7 @@ export default function Pontaj() {
             ) : (
               <>
                 <div className="rounded-md border overflow-x-auto">
-                  <Table>
+                  <Table className="[&_tr]:border-0 [&_th]:border-0 [&_td]:border-0">
                     <TableHeader>
                       <TableRow>
                         {columns.map((col) => (
