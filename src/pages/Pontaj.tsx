@@ -362,10 +362,10 @@ export default function Pontaj() {
               <p className="text-muted-foreground text-center py-8">Se încarcă...</p>
             ) : (
               <>
-                <div className="rounded-md border overflow-x-auto">
+                <div className="overflow-x-auto">
                   <Table>
-                    <TableHeader className="[&_tr]:border-0">
-                      <TableRow className="border-0">
+                    <TableHeader className="[&_tr]:border-0 bg-muted/30">
+                      <TableRow className="border-0 hover:bg-transparent">
                         {columns.map((col) => (
                           <TableHead key={col.key} className="text-xs">
                             <div className="flex items-center gap-1">
