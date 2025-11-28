@@ -100,7 +100,7 @@ const Livrari = () => {
 
       try {
         // Fetch nr_inmatriculare options
-        const nrInmatriculareResponse = await fetch(`${API_BASE_URL}/livrari/returneaza_numere_inmatriculare`);
+        const nrInmatriculareResponse = await fetch(`${API_BASE_URL}/livrari/returneaza_numere_inmatriculare/livrari`);
         if (nrInmatriculareResponse.ok) {
           const nrInmatriculareData = await nrInmatriculareResponse.json();
           setNrInmatriculareOptions(nrInmatriculareData.map((item: any) => ({ 
