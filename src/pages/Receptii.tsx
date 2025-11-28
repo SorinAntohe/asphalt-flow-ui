@@ -204,6 +204,12 @@ export default function Receptii() {
     setForm(prev => ({ ...prev, diferenta }));
   }, [form.cantitate_livrata, form.cantitate_receptionata]);
 
+  // Calculate masa_net when cantitate_receptionata or tara changes
+  useEffect(() => {
+    const masa_net = form.cantitate_receptionata - form.tara;
+    setForm(prev => ({ ...prev, masa_net }));
+  }, [form.cantitate_receptionata, form.tara]);
+
   // Fetch tip_masina based on selected nr_inmatriculare
   useEffect(() => {
     const fetchTipMasina = async () => {
@@ -903,14 +909,14 @@ export default function Receptii() {
             {/* Row 4 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <div className="grid gap-1">
-                <Label htmlFor="masa_net" className="text-xs">Masa Net *</Label>
+                <Label htmlFor="masa_net" className="text-xs">Masa Net</Label>
                 <Input
                   id="masa_net"
                   type="number"
                   step="0.01"
                   value={form.masa_net}
-                  onChange={(e) => setForm(prev => ({ ...prev, masa_net: parseFloat(e.target.value) || 0 }))}
-                  className={`h-8 text-xs ${formErrors.masa_net ? "border-destructive" : ""}`}
+                  disabled
+                  className="h-8 text-xs bg-muted"
                 />
               </div>
               <div className="grid gap-1">
