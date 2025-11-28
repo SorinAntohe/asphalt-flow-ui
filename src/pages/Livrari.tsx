@@ -31,6 +31,9 @@ interface Livrare {
   tip_masina: string | null;
   nume_sofer: string | null;
   temperatura: number | null;
+  masa_brut: number | null;
+  masa_net: number | null;
+  tara: number | null;
   pret_produs_total: number | null;
   pret_transport_total: number | null;
   pret_total: number | null;
@@ -54,6 +57,9 @@ const Livrari = () => {
     nume_sofer: "",
     produs: "",
     temperatura: 0,
+    masa_brut: 0,
+    masa_net: 0,
+    tara: 0,
     pret_produs_total: 0,
     pret_transport_total: 0,
     pret_total: 0
@@ -69,6 +75,9 @@ const Livrari = () => {
     tip_masina: "",
     nume_sofer: "",
     temperatura: "",
+    masa_brut: "",
+    masa_net: "",
+    tara: "",
     pret_produs_total: "",
     pret_transport_total: "",
     pret_total: ""
@@ -236,6 +245,9 @@ const Livrari = () => {
         (item.tip_masina || "").toLowerCase().includes(filters.tip_masina.toLowerCase()) &&
         (item.nume_sofer || "").toLowerCase().includes(filters.nume_sofer.toLowerCase()) &&
         (item.temperatura?.toString() || "").includes(filters.temperatura) &&
+        (item.masa_brut?.toString() || "").includes(filters.masa_brut) &&
+        (item.masa_net?.toString() || "").includes(filters.masa_net) &&
+        (item.tara?.toString() || "").includes(filters.tara) &&
         (item.pret_produs_total?.toString() || "").includes(filters.pret_produs_total) &&
         (item.pret_transport_total?.toString() || "").includes(filters.pret_transport_total) &&
         (item.pret_total?.toString() || "").includes(filters.pret_total)
@@ -284,6 +296,9 @@ const Livrari = () => {
       nume_sofer: "",
       produs: "",
       temperatura: 0,
+      masa_brut: 0,
+      masa_net: 0,
+      tara: 0,
       pret_produs_total: 0,
       pret_transport_total: 0,
       pret_total: 0
@@ -301,6 +316,9 @@ const Livrari = () => {
       nume_sofer: livrare.nume_sofer || "",
       produs: "",
       temperatura: livrare.temperatura || 0,
+      masa_brut: livrare.masa_brut || 0,
+      masa_net: livrare.masa_net || 0,
+      tara: livrare.tara || 0,
       pret_produs_total: livrare.pret_produs_total || 0,
       pret_transport_total: livrare.pret_transport_total || 0,
       pret_total: livrare.pret_total || 0
@@ -329,6 +347,9 @@ const Livrari = () => {
           tip_masina: form.tip_masina,
           nume_sofer: form.nume_sofer,
           temperatura: form.temperatura,
+          masa_brut: form.masa_brut,
+          masa_net: form.masa_net,
+          tara: form.tara,
           pret_produs_total: form.pret_produs_total.toString(),
           pret_transport_total: form.pret_transport_total.toString(),
           pret_total: form.pret_total
@@ -365,6 +386,9 @@ const Livrari = () => {
           tip_masina: form.tip_masina,
           nume_sofer: form.nume_sofer,
           temperatura: form.temperatura,
+          masa_brut: form.masa_brut,
+          masa_net: form.masa_net,
+          tara: form.tara,
           pret_produs_total: form.pret_produs_total.toString(),
           pret_transport_total: form.pret_transport_total.toString(),
           pret_total: form.pret_total
@@ -512,6 +536,9 @@ const Livrari = () => {
               { key: 'tip_masina', label: 'Tip Mașină' },
               { key: 'nume_sofer', label: 'Nume Șofer' },
               { key: 'temperatura', label: 'Temperatură' },
+              { key: 'masa_brut', label: 'Masa Brut' },
+              { key: 'masa_net', label: 'Masa Net' },
+              { key: 'tara', label: 'Tara' },
               { key: 'pret_produs_total', label: 'Preț Produs' },
               { key: 'pret_transport_total', label: 'Preț Transport' },
               { key: 'pret_total', label: 'Preț Total' }
@@ -612,6 +639,9 @@ const Livrari = () => {
                   <FilterHeader field="tip_masina" label="Tip Mașină" />
                   <FilterHeader field="nume_sofer" label="Nume Șofer" />
                   <FilterHeader field="temperatura" label="Temperatură" />
+                  <FilterHeader field="masa_brut" label="Masa Brut" />
+                  <FilterHeader field="masa_net" label="Masa Net" />
+                  <FilterHeader field="tara" label="Tara" />
                   <FilterHeader field="pret_produs_total" label="Preț Produs" />
                   <FilterHeader field="pret_transport_total" label="Preț Transport" />
                   <FilterHeader field="pret_total" label="Preț Total" />
@@ -620,7 +650,7 @@ const Livrari = () => {
               <TableBody key={`livrari-page-${currentPage}`} className="animate-fade-in">
                 {paginatedData.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={11} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={14} className="text-center py-8 text-muted-foreground">
                       Nu există livrări înregistrate
                     </TableCell>
                   </TableRow>
@@ -639,6 +669,9 @@ const Livrari = () => {
                       <TableCell className="py-1 text-xs">{livrare.tip_masina || "-"}</TableCell>
                       <TableCell className="py-1 text-xs">{livrare.nume_sofer || "-"}</TableCell>
                       <TableCell className="py-1 text-xs text-right">{livrare.temperatura || "-"}</TableCell>
+                      <TableCell className="py-1 text-xs text-right">{formatNumber(livrare.masa_brut)}</TableCell>
+                      <TableCell className="py-1 text-xs text-right">{formatNumber(livrare.masa_net)}</TableCell>
+                      <TableCell className="py-1 text-xs text-right">{formatNumber(livrare.tara)}</TableCell>
                       <TableCell className="py-1 text-xs text-right">{formatNumber(livrare.pret_produs_total)}</TableCell>
                       <TableCell className="py-1 text-xs text-right">{formatNumber(livrare.pret_transport_total)}</TableCell>
                       <TableCell className="py-1 text-xs text-right">{formatNumber(livrare.pret_total)}</TableCell>
@@ -759,6 +792,38 @@ const Livrari = () => {
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div className="grid gap-2">
+                <Label htmlFor="masa_brut">Masa Brut</Label>
+                <Input
+                  id="masa_brut"
+                  type="number"
+                  step="0.01"
+                  value={form.masa_brut}
+                  onChange={(e) => setForm({ ...form, masa_brut: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="masa_net">Masa Net</Label>
+                <Input
+                  id="masa_net"
+                  type="number"
+                  step="0.01"
+                  value={form.masa_net}
+                  onChange={(e) => setForm({ ...form, masa_net: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="tara">Tara</Label>
+                <Input
+                  id="tara"
+                  type="number"
+                  step="0.01"
+                  value={form.tara}
+                  onChange={(e) => setForm({ ...form, tara: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="grid gap-2">
                 <Label htmlFor="pret_produs_total">Preț Produs Total</Label>
                 <Input
                   id="pret_produs_total"
@@ -873,6 +938,20 @@ const Livrari = () => {
                 <div className="space-y-1">
                   <Label className="text-muted-foreground">Temperatură</Label>
                   <p className="font-medium">{viewingDetails.temperatura || "-"}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Masa Brut</Label>
+                  <p className="font-medium">{formatNumber(viewingDetails.masa_brut)}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Masa Net</Label>
+                  <p className="font-medium">{formatNumber(viewingDetails.masa_net)}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Tara</Label>
+                  <p className="font-medium">{formatNumber(viewingDetails.tara)}</p>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4">
