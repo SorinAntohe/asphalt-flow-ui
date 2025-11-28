@@ -43,7 +43,7 @@ import {
 } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { UserCheck, Plus, Filter, ArrowUp, ArrowDown, ChevronLeft, ChevronRight, Download, Pencil, Trash2 } from "lucide-react";
+import { UserCheck, Plus, ArrowUp, ArrowDown, ChevronLeft, ChevronRight, Download, Pencil, Trash2 } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api";
 import { exportToCSV } from "@/lib/exportUtils";
 
@@ -349,52 +349,64 @@ export default function Angajati() {
   }: {
     column: keyof Filters;
     label: string;
-  }) => (
-    <TableHead>
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 px-2 hover:bg-muted/50 font-medium text-muted-foreground"
-          >
-            {label}
-            <Filter className="ml-1 h-3 w-3" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-56 p-3" align="start">
-          <div className="space-y-3">
-            <Input
-              placeholder={`Filtrează ${label.toLowerCase()}...`}
-              value={filters[column].value}
-              onChange={(e) => handleFilterChange(column, e.target.value)}
-              className="h-8 text-sm"
-            />
-            <div className="flex gap-2">
-              <Button
-                variant={filters[column].sortDirection === "asc" ? "default" : "outline"}
-                size="sm"
-                className="flex-1 h-7 text-xs"
-                onClick={() => handleSortChange(column, "asc")}
-              >
-                <ArrowUp className="h-3 w-3 mr-1" />
-                Cresc.
-              </Button>
-              <Button
-                variant={filters[column].sortDirection === "desc" ? "default" : "outline"}
-                size="sm"
-                className="flex-1 h-7 text-xs"
-                onClick={() => handleSortChange(column, "desc")}
-              >
-                <ArrowDown className="h-3 w-3 mr-1" />
-                Descresc.
-              </Button>
+  }) => {
+    const sortDirection = filters[column].sortDirection;
+    return (
+      <TableHead>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-2 hover:bg-muted/50 font-medium text-muted-foreground gap-1"
+            >
+              {label}
+              {sortDirection === "asc" ? (
+                <ArrowUp className="h-3 w-3 text-primary" />
+              ) : sortDirection === "desc" ? (
+                <ArrowDown className="h-3 w-3 text-primary" />
+              ) : (
+                <div className="flex flex-col -space-y-1">
+                  <ArrowUp className="h-2.5 w-2.5 opacity-50" />
+                  <ArrowDown className="h-2.5 w-2.5 opacity-50" />
+                </div>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-56 p-3" align="start">
+            <div className="space-y-3">
+              <Input
+                placeholder={`Filtrează ${label.toLowerCase()}...`}
+                value={filters[column].value}
+                onChange={(e) => handleFilterChange(column, e.target.value)}
+                className="h-8 text-sm"
+              />
+              <div className="flex gap-2">
+                <Button
+                  variant={sortDirection === "asc" ? "default" : "outline"}
+                  size="sm"
+                  className="flex-1 h-7 text-xs"
+                  onClick={() => handleSortChange(column, "asc")}
+                >
+                  <ArrowUp className="h-3 w-3 mr-1" />
+                  Cresc.
+                </Button>
+                <Button
+                  variant={sortDirection === "desc" ? "default" : "outline"}
+                  size="sm"
+                  className="flex-1 h-7 text-xs"
+                  onClick={() => handleSortChange(column, "desc")}
+                >
+                  <ArrowDown className="h-3 w-3 mr-1" />
+                  Descresc.
+                </Button>
+              </div>
             </div>
-          </div>
-        </PopoverContent>
-      </Popover>
-    </TableHead>
-  );
+          </PopoverContent>
+        </Popover>
+      </TableHead>
+    );
+  };
 
   return (
     <div className="space-y-4">
