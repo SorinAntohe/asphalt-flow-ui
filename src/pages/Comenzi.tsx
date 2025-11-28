@@ -618,6 +618,52 @@ export default function Comenzi() {
     setCurrentPagePF(1);
   }, [filtersPF]);
 
+  const [activeTab, setActiveTab] = useState("materie-prima");
+
+  const handleExport = () => {
+    if (activeTab === "materie-prima") {
+      exportToCSV(filteredAndSortedMP, 'comenzi_materie_prima', [
+        { key: 'id', label: 'ID' },
+        { key: 'cod', label: 'Cod' },
+        { key: 'data', label: 'Data' },
+        { key: 'furnizor', label: 'Furnizor' },
+        { key: 'material', label: 'Material' },
+        { key: 'unitate_masura', label: 'UM' },
+        { key: 'cantitate', label: 'Cantitate' },
+        { key: 'punct_descarcare', label: 'Punct Descărcare' },
+        { key: 'pret_fara_tva', label: 'Preț fără TVA' },
+        { key: 'pret_transport', label: 'Preț Transport' },
+        { key: 'observatii', label: 'Observații' }
+      ]);
+    } else {
+      exportToCSV(filteredAndSortedPF, 'comenzi_produse_finite', [
+        { key: 'id', label: 'ID' },
+        { key: 'cod', label: 'Cod' },
+        { key: 'data', label: 'Data' },
+        { key: 'client', label: 'Client' },
+        { key: 'produs', label: 'Produs' },
+        { key: 'unitate_de_masura', label: 'UM' },
+        { key: 'cantitate', label: 'Cantitate' },
+        { key: 'punct_descarcare', label: 'Punct Descărcare' },
+        { key: 'pret_fara_tva', label: 'Preț fără TVA' },
+        { key: 'pret_transport', label: 'Preț Transport' },
+        { key: 'observatii', label: 'Observații' }
+      ]);
+    }
+  };
+
+  const handleAddNew = () => {
+    if (activeTab === "materie-prima") {
+      handleOpenAddMP();
+    } else {
+      handleOpenAddPF();
+    }
+  };
+
+  const isExportDisabled = activeTab === "materie-prima" 
+    ? filteredAndSortedMP.length === 0 
+    : filteredAndSortedPF.length === 0;
+
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
@@ -627,9 +673,24 @@ export default function Comenzi() {
             Gestionează comenzile de materii prime și produse finite
           </p>
         </div>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={handleExport}
+            disabled={isExportDisabled}
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Export
+          </Button>
+          <Button className="gap-2" onClick={handleAddNew}>
+            <Plus className="w-4 h-4" />
+            Comandă Nouă
+          </Button>
+        </div>
       </div>
 
-      <Tabs defaultValue="materie-prima" className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList>
           <TabsTrigger value="materie-prima">Materie Prima</TabsTrigger>
           <TabsTrigger value="produse-finite">Produs Finit</TabsTrigger>
@@ -640,50 +701,25 @@ export default function Comenzi() {
             <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
               <CardTitle className="text-lg sm:text-xl">Comenzi Materie Primă</CardTitle>
               <div className="flex items-center gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => exportToCSV(filteredAndSortedMP, 'comenzi_materie_prima', [
-                    { key: 'id', label: 'ID' },
-                    { key: 'cod', label: 'Cod' },
-                    { key: 'data', label: 'Data' },
-                    { key: 'furnizor', label: 'Furnizor' },
-                    { key: 'material', label: 'Material' },
-                    { key: 'unitate_masura', label: 'UM' },
-                    { key: 'cantitate', label: 'Cantitate' },
-                    { key: 'punct_descarcare', label: 'Punct Descărcare' },
-                    { key: 'pret_fara_tva', label: 'Preț fără TVA' },
-                    { key: 'pret_transport', label: 'Preț Transport' },
-                    { key: 'observatii', label: 'Observații' }
-                  ])}
-                  disabled={filteredAndSortedMP.length === 0}
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Export
-                </Button>
-                <Button className="gap-2" onClick={handleOpenAddMP}>
-                  <Plus className="w-4 h-4" />
-                  Comandă Nouă
-                </Button>
                 <Label className="text-sm">Înregistrări per pagină:</Label>
                 <Select
-                    value={itemsPerPageMP.toString()}
-                    onValueChange={(value) => {
-                      setItemsPerPageMP(Number(value));
-                      setCurrentPageMP(1);
-                    }}
-                  >
-                    <SelectTrigger className="w-[70px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  value={itemsPerPageMP.toString()}
+                  onValueChange={(value) => {
+                    setItemsPerPageMP(Number(value));
+                    setCurrentPageMP(1);
+                  }}
+                >
+                  <SelectTrigger className="w-[70px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </CardHeader>
             <CardContent className="overflow-x-auto">
@@ -949,31 +985,6 @@ export default function Comenzi() {
             <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
               <CardTitle className="text-lg sm:text-xl">Comenzi Produse Finite</CardTitle>
               <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => exportToCSV(filteredAndSortedPF, 'comenzi_produse_finite', [
-                    { key: 'id', label: 'ID' },
-                    { key: 'cod', label: 'Cod' },
-                    { key: 'data', label: 'Data' },
-                    { key: 'client', label: 'Client' },
-                    { key: 'produs', label: 'Produs' },
-                    { key: 'unitate_de_masura', label: 'UM' },
-                    { key: 'cantitate', label: 'Cantitate' },
-                    { key: 'punct_descarcare', label: 'Punct Descărcare' },
-                    { key: 'pret_fara_tva', label: 'Preț fără TVA' },
-                    { key: 'pret_transport', label: 'Preț Transport' },
-                    { key: 'observatii', label: 'Observații' }
-                  ])}
-                  disabled={filteredAndSortedPF.length === 0}
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Export
-                </Button>
-                <Button className="gap-2" onClick={handleOpenAddPF}>
-                  <Plus className="w-4 h-4" />
-                  Comandă Nouă
-                </Button>
                 <Label className="text-sm">Înregistrări per pagină:</Label>
                 <Select
                   value={itemsPerPagePF.toString()}
