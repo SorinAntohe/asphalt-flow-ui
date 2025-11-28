@@ -1,4 +1,4 @@
-import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog } from "lucide-react";
+import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog, Users, UserCheck, CalendarClock } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -30,6 +30,11 @@ const gestiuneItems = [
   { title: "Stocuri", url: "/stocuri", icon: Package },
 ];
 
+const resurseUmaneItems = [
+  { title: "Lista Angajați", url: "/angajati", icon: UserCheck },
+  { title: "Pontaj", url: "/pontaj", icon: CalendarClock },
+];
+
 export function AppSidebar() {
   const { state, isMobile } = useSidebar();
   const location = useLocation();
@@ -54,7 +59,9 @@ export function AppSidebar() {
 
   const isActive = (path: string) => currentPath === path;
   const isGestiuneActive = gestiuneItems.some((item) => isActive(item.url));
+  const isResurseUmaneActive = resurseUmaneItems.some((item) => isActive(item.url));
   const [gestiuneOpen, setGestiuneOpen] = useState(isGestiuneActive);
+  const [resurseUmaneOpen, setResurseUmaneOpen] = useState(isResurseUmaneActive);
 
   return (
     <Sidebar collapsible={isMobile ? "offcanvas" : "icon"} className="border-r border-sidebar-border">
@@ -149,6 +156,83 @@ export function AppSidebar() {
                 >
                   <SidebarMenu className={isOpen ? "space-y-0.5" : "space-y-1"} style={{ width: '100%' }}>
                     {gestiuneItems.map((item, index) => (
+                      <SidebarMenuItem 
+                        key={item.title}
+                        style={{
+                          transition: 'opacity 0.3s ease, transform 0.3s ease',
+                          transitionDelay: `${index * 50}ms`,
+                          width: '100%'
+                        }}
+                      >
+                        <SidebarMenuButton asChild isActive={isActive(item.url)} style={{ width: '100%' }}>
+                          <NavLink
+                            to={item.url}
+                            className={`flex items-center rounded-md transition-all duration-200 text-sidebar-foreground ${
+                              isOpen ? 'gap-3 px-3 py-2' : 'justify-center py-2.5 w-full'
+                            } ${
+                              isActive(item.url) 
+                                ? 'bg-sidebar-accent text-sidebar-accent-foreground font-semibold' 
+                                : 'hover:bg-sidebar-accent/40'
+                            }`}
+                            title={!isOpen ? item.title : undefined}
+                          >
+                            <item.icon className="w-5 h-5 flex-shrink-0" />
+                            {isOpen && <span className="text-sm">{item.title}</span>}
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Resurse Umane Dropdown */}
+              <Collapsible open={resurseUmaneOpen} onOpenChange={setResurseUmaneOpen}>
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton 
+                      className={`flex items-center rounded-lg transition-all duration-300 ease-in-out hover:bg-sidebar-accent text-sidebar-foreground ${
+                        isOpen ? 'gap-3 px-4 py-2.5' : 'justify-center py-2.5 w-full'
+                      }`}
+                      style={{
+                        background: resurseUmaneOpen ? 'hsl(var(--sidebar-accent))' : 'transparent',
+                      }}
+                      title={!isOpen ? 'Resurse Umane' : undefined}
+                    >
+                      <Users className="w-5 h-5 flex-shrink-0" />
+                      {isOpen && (
+                        <>
+                          <span className="flex-1">Resurse Umane</span>
+                          <ChevronDown 
+                            className="w-4 h-4 transition-transform duration-300" 
+                            style={{
+                              transform: resurseUmaneOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+                            }}
+                          />
+                        </>
+                      )}
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                </SidebarMenuItem>
+                <CollapsibleContent 
+                  className="overflow-hidden rounded-md"
+                  style={{
+                    transition: 'all 0.3s ease',
+                    opacity: resurseUmaneOpen ? 1 : 0,
+                    visibility: resurseUmaneOpen ? 'visible' : 'hidden',
+                    transform: resurseUmaneOpen ? 'translateY(0)' : 'translateY(-10px)',
+                    background: resurseUmaneOpen ? 'hsl(var(--sidebar-accent) / 0.5)' : 'transparent',
+                    padding: resurseUmaneOpen ? (isOpen ? '6px' : '4px 0') : '0',
+                    marginTop: resurseUmaneOpen ? '4px' : '0',
+                    marginLeft: '0',
+                    marginRight: '0',
+                    width: '100%',
+                    maxWidth: 'none',
+                    boxShadow: resurseUmaneOpen ? 'inset 0 2px 4px rgba(0, 0, 0, 0.1)' : 'none',
+                  }}
+                >
+                  <SidebarMenu className={isOpen ? "space-y-0.5" : "space-y-1"} style={{ width: '100%' }}>
+                    {resurseUmaneItems.map((item, index) => (
                       <SidebarMenuItem 
                         key={item.title}
                         style={{
