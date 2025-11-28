@@ -51,6 +51,7 @@ const Livrari = () => {
     nr_inmatriculare: "",
     tip_masina: "",
     nume_sofer: "",
+    produs: "",
     pret_material_total: 0,
     pret_transport_total: 0,
     pret_total: 0
@@ -152,7 +153,8 @@ const Livrari = () => {
   const handleCodChange = async (value: string) => {
     setForm({ 
       ...form, 
-      cod: value, 
+      cod: value,
+      produs: "",
       pret_material_total: 0, 
       pret_transport_total: 0, 
       pret_total: 0 
@@ -164,7 +166,8 @@ const Livrari = () => {
         if (response.ok) {
           const data = await response.json();
           setForm(prev => ({ 
-            ...prev, 
+            ...prev,
+            produs: data.produs || "",
             pret_material_total: data.pret_produs || 0,
             pret_transport_total: data.pret_transport_total || 0,
             pret_total: data.pret_total || 0
@@ -250,6 +253,7 @@ const Livrari = () => {
       nr_inmatriculare: "",
       tip_masina: "",
       nume_sofer: "",
+      produs: "",
       pret_material_total: 0,
       pret_transport_total: 0,
       pret_total: 0
@@ -265,6 +269,7 @@ const Livrari = () => {
       nr_inmatriculare: livrare.nr_inmatriculare || "",
       tip_masina: livrare.tip_masina || "",
       nume_sofer: livrare.nume_sofer || "",
+      produs: "",
       pret_material_total: livrare.pret_material_total || 0,
       pret_transport_total: livrare.pret_transport_total || 0,
       pret_total: livrare.pret_total || 0
@@ -300,7 +305,7 @@ const Livrari = () => {
       const payload = {
         data: currentDate,
         cod: form.cod,
-        material: "", // TODO: Clarify where this value comes from
+        material: form.produs,
         nr_inmatriculare: form.nr_inmatriculare,
         tip_masina: form.tip_masina,
         nume_sofer: form.nume_sofer,
