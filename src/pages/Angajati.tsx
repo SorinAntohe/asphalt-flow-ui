@@ -43,7 +43,7 @@ import {
 } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { UserCheck, Plus, ArrowUp, ArrowDown, ChevronLeft, ChevronRight, Download, Pencil, Trash2 } from "lucide-react";
+import { UserCheck, Plus, ArrowUp, ArrowDown, ArrowUpDown, ChevronLeft, ChevronRight, Download, Pencil, Trash2 } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api";
 import { exportToCSV } from "@/lib/exportUtils";
 
@@ -366,10 +366,7 @@ export default function Angajati() {
               ) : sortDirection === "desc" ? (
                 <ArrowDown className="h-3 w-3 text-primary" />
               ) : (
-                <div className="flex flex-col -space-y-1">
-                  <ArrowUp className="h-2.5 w-2.5 opacity-50" />
-                  <ArrowDown className="h-2.5 w-2.5 opacity-50" />
-                </div>
+                <ArrowUpDown className="h-3 w-3 opacity-50" />
               )}
             </Button>
           </PopoverTrigger>
