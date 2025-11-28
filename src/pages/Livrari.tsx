@@ -220,7 +220,7 @@ const Livrari = () => {
     const fetchPrices = async () => {
       if (form.cod && form.tara > 0) {
         try {
-          const response = await fetch(`${API_BASE_URL}/livrari/returneaza_preturi_dupa_cod_livrari/${form.cod}`);
+          const response = await fetch(`${API_BASE_URL}/livrari/returneaza_preturi_dupa_cod_livrari/livrari/${form.cod}`);
           if (response.ok) {
             const data = await response.json();
             setUnitPrices({
