@@ -382,14 +382,14 @@ const Livrari = () => {
         // Edit existing livrare
         const updatePayload = {
           cod: form.cod,
+          temperatura: form.temperatura,
+          tara: form.tara,
+          masa_brut: form.masa_brut,
+          masa_net: form.masa_net,
           produs: form.produs,
           nr_inmatriculare: form.nr_inmatriculare,
           tip_masina: form.tip_masina,
           nume_sofer: form.nume_sofer,
-          temperatura: form.temperatura,
-          masa_brut: form.masa_brut,
-          masa_net: form.masa_net,
-          tara: form.tara,
           pret_produs_total: form.pret_produs_total.toString(),
           pret_transport_total: form.pret_transport_total.toString(),
           pret_total: form.pret_total
@@ -421,14 +421,14 @@ const Livrari = () => {
         const payload = {
           data: currentDate,
           cod: form.cod,
+          temperatura: form.temperatura,
+          tara: form.tara,
+          masa_brut: form.masa_brut,
+          masa_net: form.masa_net,
           produs: form.produs,
           nr_inmatriculare: form.nr_inmatriculare,
           tip_masina: form.tip_masina,
           nume_sofer: form.nume_sofer,
-          temperatura: form.temperatura,
-          masa_brut: form.masa_brut,
-          masa_net: form.masa_net,
-          tara: form.tara,
           pret_produs_total: form.pret_produs_total.toString(),
           pret_transport_total: form.pret_transport_total.toString(),
           pret_total: form.pret_total
