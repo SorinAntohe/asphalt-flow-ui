@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -51,41 +50,41 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
             <div className="px-2 py-1 text-xs font-medium text-muted-foreground border-b text-center">
               Ore
             </div>
-            <ScrollArea className="h-24">
+            <div className="h-32 overflow-y-auto">
               <div className="flex flex-col p-0.5">
                 {hours.map((h) => (
                   <Button
                     key={h}
                     variant={h === hour ? "default" : "ghost"}
                     size="sm"
-                    className="w-9 h-5 text-xs justify-center px-1"
+                    className="w-9 h-6 text-xs justify-center px-1"
                     onClick={() => handleHourSelect(h)}
                   >
                     {h}
                   </Button>
                 ))}
               </div>
-            </ScrollArea>
+            </div>
           </div>
           <div className="flex flex-col border-l">
             <div className="px-2 py-1 text-xs font-medium text-muted-foreground border-b text-center">
               Min
             </div>
-            <ScrollArea className="h-24">
+            <div className="h-32 overflow-y-auto">
               <div className="flex flex-col p-0.5">
                 {minutes.map((m) => (
                   <Button
                     key={m}
                     variant={m === minute ? "default" : "ghost"}
                     size="sm"
-                    className="w-9 h-5 text-xs justify-center px-1"
+                    className="w-9 h-6 text-xs justify-center px-1"
                     onClick={() => handleMinuteSelect(m)}
                   >
                     {m}
                   </Button>
                 ))}
               </div>
-            </ScrollArea>
+            </div>
           </div>
         </div>
       </PopoverContent>
