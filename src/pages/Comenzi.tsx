@@ -537,10 +537,10 @@ export default function Comenzi() {
     .filter((item) => {
       return (
         item.id.toString().includes(filtersMP.id) &&
-        item.cod.toLowerCase().includes(filtersMP.cod.toLowerCase()) &&
-        item.data.toLowerCase().includes(filtersMP.data.toLowerCase()) &&
-        item.furnizor.toLowerCase().includes(filtersMP.furnizor.toLowerCase()) &&
-        item.material.toLowerCase().includes(filtersMP.material.toLowerCase()) &&
+        (item.cod || "").toLowerCase().includes(filtersMP.cod.toLowerCase()) &&
+        (item.data || "").toLowerCase().includes(filtersMP.data.toLowerCase()) &&
+        (item.furnizor || "").toLowerCase().includes(filtersMP.furnizor.toLowerCase()) &&
+        (item.material || "").toLowerCase().includes(filtersMP.material.toLowerCase()) &&
         item.cantitate.toString().includes(filtersMP.cantitate) &&
         item.pret_fara_tva.toString().includes(filtersMP.pret_fara_tva)
       );
@@ -583,16 +583,16 @@ export default function Comenzi() {
     .filter((item) => {
       return (
         item.id.toString().includes(filtersPF.id) &&
-        item.cod.toLowerCase().includes(filtersPF.cod.toLowerCase()) &&
-        item.data.toLowerCase().includes(filtersPF.data.toLowerCase()) &&
-        item.client.toLowerCase().includes(filtersPF.client.toLowerCase()) &&
-        item.produs.toLowerCase().includes(filtersPF.produs.toLowerCase()) &&
-        item.unitate_masura.toLowerCase().includes(filtersPF.unitate_masura.toLowerCase()) &&
+        (item.cod || "").toLowerCase().includes(filtersPF.cod.toLowerCase()) &&
+        (item.data || "").toLowerCase().includes(filtersPF.data.toLowerCase()) &&
+        (item.client || "").toLowerCase().includes(filtersPF.client.toLowerCase()) &&
+        (item.produs || "").toLowerCase().includes(filtersPF.produs.toLowerCase()) &&
+        (item.unitate_masura || "").toLowerCase().includes(filtersPF.unitate_masura.toLowerCase()) &&
         item.cantitate.toString().includes(filtersPF.cantitate) &&
         (item.punct_descarcare || "").toLowerCase().includes(filtersPF.punct_descarcare.toLowerCase()) &&
         item.pret_fara_tva.toString().includes(filtersPF.pret_fara_tva) &&
         (item.pret_transport?.toString() || "").includes(filtersPF.pret_transport) &&
-        item.observatii.toLowerCase().includes(filtersPF.observatii.toLowerCase())
+        (item.observatii || "").toLowerCase().includes(filtersPF.observatii.toLowerCase())
       );
     })
     .sort((a, b) => {
