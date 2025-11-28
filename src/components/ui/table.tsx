@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (
-    <div className="relative w-full overflow-auto rounded-lg">
+    <div className="relative w-full overflow-auto rounded-xl border border-border/40 bg-card/50 backdrop-blur-sm">
       <table ref={ref} className={cn("w-full caption-bottom text-sm", className)} {...props} />
     </div>
   ),
@@ -16,7 +16,7 @@ const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttribut
     <thead 
       ref={ref} 
       className={cn(
-        "[&_tr]:border-b bg-muted/30",
+        "[&_tr]:border-b bg-gradient-to-r from-muted/50 to-muted/30 backdrop-blur-sm",
         className
       )} 
       {...props} 
@@ -44,9 +44,12 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
     <tr
       ref={ref}
       className={cn(
-        "border-b border-border/50 transition-all duration-200 ease-out",
-        "data-[state=selected]:bg-primary/5",
-        "hover:bg-muted/50 cursor-pointer",
+        "border-b border-border/30 transition-all duration-300 ease-out group",
+        "data-[state=selected]:bg-primary/10 data-[state=selected]:border-primary/20",
+        "hover:bg-gradient-to-r hover:from-primary/5 hover:to-transparent hover:border-primary/20",
+        "cursor-pointer relative",
+        "after:absolute after:inset-y-0 after:left-0 after:w-0.5 after:bg-primary after:scale-y-0 after:transition-transform after:duration-300",
+        "hover:after:scale-y-100",
         className
       )}
       {...props}
@@ -60,7 +63,8 @@ const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<
     <th
       ref={ref}
       className={cn(
-        "h-11 px-4 text-left align-middle font-semibold text-foreground/70 text-xs uppercase tracking-wider",
+        "h-12 px-4 text-left align-middle font-semibold text-foreground/80 text-xs uppercase tracking-wider",
+        "bg-transparent transition-colors duration-200",
         "[&:has([role=checkbox])]:pr-0",
         className,
       )}
@@ -75,7 +79,8 @@ const TableCell = React.forwardRef<HTMLTableCellElement, React.TdHTMLAttributes<
     <td 
       ref={ref} 
       className={cn(
-        "p-4 align-middle text-sm",
+        "p-4 align-middle text-sm text-foreground/90",
+        "transition-colors duration-200 group-hover:text-foreground",
         "[&:has([role=checkbox])]:pr-0",
         className
       )} 
