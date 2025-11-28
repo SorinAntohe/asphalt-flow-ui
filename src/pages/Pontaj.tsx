@@ -364,8 +364,8 @@ export default function Pontaj() {
               <>
                 <div className="overflow-x-auto">
                   <Table>
-                    <TableHeader className="[&_tr]:border-0 bg-muted/30">
-                      <TableRow className="border-0 hover:bg-transparent">
+                    <TableHeader className="[&_tr]:border-b bg-muted/30">
+                      <TableRow className="border-b hover:bg-transparent">
                         {columns.map((col) => (
                           <TableHead key={col.key} className="text-xs">
                             <div className="flex items-center gap-1">
