@@ -48,17 +48,17 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
       <PopoverContent className="w-auto p-0" align="start">
         <div className="flex">
           <div className="flex flex-col">
-            <div className="px-2 py-1 text-xs font-medium text-muted-foreground border-b">
+            <div className="px-2 py-1 text-xs font-medium text-muted-foreground border-b text-center">
               Ore
             </div>
-            <ScrollArea className="h-32">
-              <div className="p-0.5">
+            <ScrollArea className="h-24">
+              <div className="flex flex-col p-0.5">
                 {hours.map((h) => (
                   <Button
                     key={h}
                     variant={h === hour ? "default" : "ghost"}
                     size="sm"
-                    className="w-10 h-6 text-xs justify-center"
+                    className="w-9 h-5 text-xs justify-center px-1"
                     onClick={() => handleHourSelect(h)}
                   >
                     {h}
@@ -68,17 +68,17 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
             </ScrollArea>
           </div>
           <div className="flex flex-col border-l">
-            <div className="px-2 py-1 text-xs font-medium text-muted-foreground border-b">
+            <div className="px-2 py-1 text-xs font-medium text-muted-foreground border-b text-center">
               Min
             </div>
-            <ScrollArea className="h-32">
-              <div className="p-0.5">
+            <ScrollArea className="h-24">
+              <div className="flex flex-col p-0.5">
                 {minutes.map((m) => (
                   <Button
                     key={m}
                     variant={m === minute ? "default" : "ghost"}
                     size="sm"
-                    className="w-10 h-6 text-xs justify-center"
+                    className="w-9 h-5 text-xs justify-center px-1"
                     onClick={() => handleMinuteSelect(m)}
                   >
                     {m}
