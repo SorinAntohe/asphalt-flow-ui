@@ -213,36 +213,7 @@ const Livrari = () => {
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "-";
-    
-    try {
-      // Check if date is in DD/MM/YYYY format (Romanian format)
-      if (dateString.includes('/')) {
-        const [day, month, year] = dateString.split('/');
-        const date = new Date(Number(year), Number(month) - 1, Number(day));
-        
-        if (isNaN(date.getTime())) return dateString; // Return original if invalid
-        
-        return date.toLocaleDateString("ro-RO", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric"
-        });
-      }
-      
-      // Otherwise try parsing as ISO format (YYYY-MM-DD)
-      const date = new Date(dateString);
-      
-      if (isNaN(date.getTime())) return dateString; // Return original if invalid
-      
-      return date.toLocaleDateString("ro-RO", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric"
-      });
-    } catch (error) {
-      console.error("Error formatting date:", error);
-      return dateString; // Return original string if parsing fails
-    }
+    return dateString; // Return as-is from backend (DD/MM/YYYY format)
   };
 
   const formatNumber = (value: number | null) => {
