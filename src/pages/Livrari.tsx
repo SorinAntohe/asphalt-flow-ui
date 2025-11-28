@@ -946,13 +946,32 @@ const Livrari = () => {
               <Button 
                 variant="secondary"
                 size="sm"
-                onClick={() => {
-                  if (viewingDetails) {
-                    toast({
-                      title: "Generare aviz",
-                      description: `Se generează avizul pentru livrarea ${viewingDetails.cod}...`,
-                    });
-                    // TODO: Implement notice generation logic
+                onClick={async () => {
+                  if (viewingDetails?.cod) {
+                    try {
+                      const response = await fetch(`${API_BASE_URL}/generare_tichet_livrare/${viewingDetails.cod}`, {
+                        method: 'GET',
+                      });
+                      
+                      if (response.ok) {
+                        toast({
+                          title: "Succes",
+                          description: `Avizul pentru livrarea ${viewingDetails.cod} a fost generat.`,
+                        });
+                      } else {
+                        toast({
+                          title: "Eroare",
+                          description: "Nu s-a putut genera avizul.",
+                          variant: "destructive"
+                        });
+                      }
+                    } catch (error) {
+                      toast({
+                        title: "Eroare",
+                        description: "Eroare la generarea avizului.",
+                        variant: "destructive"
+                      });
+                    }
                   }
                 }}
               >
