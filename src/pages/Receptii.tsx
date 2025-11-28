@@ -592,11 +592,11 @@ export default function Receptii() {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Recepții Materiale</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Recepții Materiale</h1>
+          <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
             Gestionare recepții materii prime
           </p>
         </div>
@@ -628,22 +628,22 @@ export default function Receptii() {
             ])}
             disabled={filteredAndSorted.length === 0}
           >
-            <Download className="w-4 h-4 mr-2" />
-            Export
+            <Download className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Export</span>
           </Button>
-          <Button onClick={handleOpenAdd} className="gap-2">
-            <Plus className="w-4 h-4" />
-            Recepție Nouă
+          <Button onClick={handleOpenAdd} size="sm">
+            <Plus className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Recepție Nouă</span>
           </Button>
         </div>
       </div>
 
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Lista Recepții</CardTitle>
+        <CardHeader className="pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <CardTitle className="text-lg sm:text-xl">Lista Recepții</CardTitle>
             <div className="flex items-center gap-2">
-              <Label className="text-sm">Înregistrări per pagină:</Label>
+              <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
               <Select
                 value={itemsPerPage.toString()}
                 onValueChange={(value) => {
@@ -651,7 +651,7 @@ export default function Receptii() {
                   setCurrentPage(1);
                 }}
               >
-                <SelectTrigger className="w-[70px]">
+                <SelectTrigger className="w-[70px] h-8">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -665,9 +665,9 @@ export default function Receptii() {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
+        <CardContent className="px-2 sm:px-6">
+          <div className="overflow-x-auto -mx-2 sm:mx-0">
+            <Table className="min-w-[1800px]">
               <TableHeader>
                 <TableRow>
                   <FilterHeader field="id" label="ID" />
@@ -750,33 +750,51 @@ export default function Receptii() {
             </div>
             
             {totalPages > 1 && (
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious 
-                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        onClick={() => setCurrentPage(page)}
-                        isActive={currentPage === page}
-                        className="cursor-pointer"
-                      >
-                        {page}
-                      </PaginationLink>
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
+                <span className="text-xs sm:text-sm text-muted-foreground order-2 sm:order-1">
+                  Afișare {startIndex + 1}-{Math.min(endIndex, filteredAndSorted.length)} din {filteredAndSorted.length}
+                </span>
+                <Pagination className="order-1 sm:order-2">
+                  <PaginationContent className="gap-1">
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                        className={`h-8 px-2 sm:px-3 ${currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}`}
+                      />
                     </PaginationItem>
-                  ))}
-                  <PaginationItem>
-                    <PaginationNext 
-                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      let page;
+                      if (totalPages <= 5) {
+                        page = i + 1;
+                      } else if (currentPage <= 3) {
+                        page = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        page = totalPages - 4 + i;
+                      } else {
+                        page = currentPage - 2 + i;
+                      }
+                      return (
+                        <PaginationItem key={page} className="hidden sm:block">
+                          <PaginationLink
+                            onClick={() => setCurrentPage(page)}
+                            isActive={currentPage === page}
+                            className="cursor-pointer h-8 w-8"
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      );
+                    })}
+                    <span className="sm:hidden text-xs px-2">{currentPage}/{totalPages}</span>
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                        className={`h-8 px-2 sm:px-3 ${currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}`}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
             )}
           </div>
         </CardContent>
