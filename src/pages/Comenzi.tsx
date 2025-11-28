@@ -630,33 +630,20 @@ export default function Comenzi() {
       </div>
 
       <Tabs defaultValue="materie-prima" className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <TabsList>
-            <TabsTrigger value="materie-prima">Materie Prima</TabsTrigger>
-            <TabsTrigger value="produse-finite">Produs Finit</TabsTrigger>
-          </TabsList>
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => {
-                const activeTab = document.querySelector('[data-state="active"][role="tab"]')?.getAttribute('value');
-                if (activeTab === 'produse-finite') {
-                  exportToCSV(filteredAndSortedPF, 'comenzi_produse_finite', [
-                    { key: 'id', label: 'ID' },
-                    { key: 'cod', label: 'Cod' },
-                    { key: 'data', label: 'Data' },
-                    { key: 'client', label: 'Client' },
-                    { key: 'produs', label: 'Produs' },
-                    { key: 'unitate_masura', label: 'UM' },
-                    { key: 'cantitate', label: 'Cantitate' },
-                    { key: 'punct_descarcare', label: 'Punct Descărcare' },
-                    { key: 'pret_fara_tva', label: 'Preț fără TVA' },
-                    { key: 'pret_transport', label: 'Preț Transport' },
-                    { key: 'observatii', label: 'Observații' }
-                  ]);
-                } else {
-                  exportToCSV(filteredAndSortedMP, 'comenzi_materie_prima', [
+        <TabsList>
+          <TabsTrigger value="materie-prima">Materie Prima</TabsTrigger>
+          <TabsTrigger value="produse-finite">Produs Finit</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="materie-prima">
+          <Card>
+            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+              <CardTitle className="text-lg sm:text-xl">Comenzi Materie Primă</CardTitle>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => exportToCSV(filteredAndSortedMP, 'comenzi_materie_prima', [
                     { key: 'id', label: 'ID' },
                     { key: 'cod', label: 'Cod' },
                     { key: 'data', label: 'Data' },
@@ -668,32 +655,16 @@ export default function Comenzi() {
                     { key: 'pret_fara_tva', label: 'Preț fără TVA' },
                     { key: 'pret_transport', label: 'Preț Transport' },
                     { key: 'observatii', label: 'Observații' }
-                  ]);
-                }
-              }}
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Export
-            </Button>
-            <Button className="gap-2" onClick={() => {
-              const activeTab = document.querySelector('[data-state="active"][role="tab"]')?.getAttribute('value');
-              if (activeTab === 'produse-finite') {
-                handleOpenAddPF();
-              } else {
-                handleOpenAddMP();
-              }
-            }}>
-              <Plus className="w-4 h-4" />
-              Comandă Nouă
-            </Button>
-          </div>
-        </div>
-
-        <TabsContent value="materie-prima">
-          <Card>
-            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
-              <CardTitle className="text-lg sm:text-xl">Comenzi Materie Primă</CardTitle>
-              <div className="flex items-center gap-2">
+                  ])}
+                  disabled={filteredAndSortedMP.length === 0}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Export
+                </Button>
+                <Button className="gap-2" onClick={handleOpenAddMP}>
+                  <Plus className="w-4 h-4" />
+                  Comandă Nouă
+                </Button>
                 <Label className="text-sm">Înregistrări per pagină:</Label>
                 <Select
                     value={itemsPerPageMP.toString()}
@@ -981,28 +952,27 @@ export default function Comenzi() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => exportToCSV(
-                    comenziProduseFinite,
-                    'comenzi_produse_finite',
-                    [
-                      { key: 'id', label: 'ID' },
-                      { key: 'cod', label: 'Cod' },
-                      { key: 'data', label: 'Data' },
-                      { key: 'client', label: 'Client' },
-                      { key: 'produs', label: 'Produs' },
-                      { key: 'unitate_masura', label: 'Unitate De Masura' },
-                      { key: 'cantitate', label: 'Cantitate' },
-                      { key: 'punct_descarcare', label: 'Punct De Descarcare' },
-                      { key: 'pret_fara_tva', label: 'Pret Fara TVA' },
-                      { key: 'pret_transport', label: 'Pret Transport' },
-                      { key: 'observatii', label: 'Observatii' }
-                    ]
-                  )}
-                  disabled={comenziProduseFinite.length === 0}
-                  className="h-9"
+                  onClick={() => exportToCSV(filteredAndSortedPF, 'comenzi_produse_finite', [
+                    { key: 'id', label: 'ID' },
+                    { key: 'cod', label: 'Cod' },
+                    { key: 'data', label: 'Data' },
+                    { key: 'client', label: 'Client' },
+                    { key: 'produs', label: 'Produs' },
+                    { key: 'unitate_masura', label: 'UM' },
+                    { key: 'cantitate', label: 'Cantitate' },
+                    { key: 'punct_descarcare', label: 'Punct Descărcare' },
+                    { key: 'pret_fara_tva', label: 'Preț fără TVA' },
+                    { key: 'pret_transport', label: 'Preț Transport' },
+                    { key: 'observatii', label: 'Observații' }
+                  ])}
+                  disabled={filteredAndSortedPF.length === 0}
                 >
-                  <Download className="h-4 w-4 mr-2" />
-                  Export CSV
+                  <Download className="w-4 h-4 mr-2" />
+                  Export
+                </Button>
+                <Button className="gap-2" onClick={handleOpenAddPF}>
+                  <Plus className="w-4 h-4" />
+                  Comandă Nouă
                 </Button>
                 <Label className="text-sm">Înregistrări per pagină:</Label>
                 <Select
