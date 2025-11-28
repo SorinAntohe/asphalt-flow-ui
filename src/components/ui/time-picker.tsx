@@ -18,16 +18,41 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
   const [hour, minute] = value ? value.split(":") : ["08", "30"];
   const hourNum = parseInt(hour);
   const minuteNum = parseInt(minute);
+  
+  // Determine AM/PM based on 24h hour
+  const isPM = hourNum >= 12;
+  const hour12 = hourNum === 0 ? 12 : hourNum > 12 ? hourNum - 12 : hourNum;
 
   const handleHourClick = (h: number) => {
-    const newHour = h.toString().padStart(2, "0");
+    // Convert 12h to 24h based on current AM/PM
+    let hour24 = h;
+    if (isPM) {
+      hour24 = h === 12 ? 12 : h + 12;
+    } else {
+      hour24 = h === 12 ? 0 : h;
+    }
+    const newHour = hour24.toString().padStart(2, "0");
     onChange(`${newHour}:${minute}`);
-    setTimeout(() => setSelecting("minute"), 150);
   };
 
   const handleMinuteClick = (m: number) => {
     const newMinute = m.toString().padStart(2, "0");
     onChange(`${hour}:${newMinute}`);
+  };
+
+  const handleAmPmToggle = (newIsPM: boolean) => {
+    let newHour24: number;
+    if (newIsPM && !isPM) {
+      // Switching to PM
+      newHour24 = hourNum === 0 ? 12 : hourNum + 12;
+    } else if (!newIsPM && isPM) {
+      // Switching to AM
+      newHour24 = hourNum === 12 ? 0 : hourNum - 12;
+    } else {
+      return;
+    }
+    const newHour = newHour24.toString().padStart(2, "0");
+    onChange(`${newHour}:${minute}`);
   };
 
   const handleOk = () => {
@@ -52,9 +77,8 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
   const hours = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
   const minutes = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
 
-  const currentHour12 = hourNum === 0 ? 12 : hourNum > 12 ? hourNum - 12 : hourNum;
   const selectedPos = selecting === "hour" 
-    ? getPosition(currentHour12, 12, 70)
+    ? getPosition(hour12, 12, 70)
     : getPosition(minuteNum, 60, 70);
 
   return (
@@ -79,31 +103,59 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
         align="start"
       >
         <div className="flex flex-col items-center gap-4">
-          {/* Time display */}
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setSelecting("hour")}
-              className={cn(
-                "text-4xl font-light px-3 py-2 rounded-lg transition-all duration-300 ease-out",
-                selecting === "hour" 
-                  ? "bg-primary/20 text-primary scale-105" 
-                  : "text-foreground hover:bg-muted scale-100"
-              )}
-            >
-              {hour}
-            </button>
-            <span className="text-4xl font-light text-foreground animate-pulse">:</span>
-            <button
-              onClick={() => setSelecting("minute")}
-              className={cn(
-                "text-4xl font-light px-3 py-2 rounded-lg transition-all duration-300 ease-out",
-                selecting === "minute" 
-                  ? "bg-primary/20 text-primary scale-105" 
-                  : "text-foreground hover:bg-muted scale-100"
-              )}
-            >
-              {minute}
-            </button>
+          {/* Time display with AM/PM */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setSelecting("hour")}
+                className={cn(
+                  "text-4xl font-light px-3 py-2 rounded-lg transition-all duration-300 ease-out",
+                  selecting === "hour" 
+                    ? "bg-primary/20 text-primary scale-105" 
+                    : "text-foreground hover:bg-muted scale-100"
+                )}
+              >
+                {hour12.toString().padStart(2, "0")}
+              </button>
+              <span className="text-4xl font-light text-foreground">:</span>
+              <button
+                onClick={() => setSelecting("minute")}
+                className={cn(
+                  "text-4xl font-light px-3 py-2 rounded-lg transition-all duration-300 ease-out",
+                  selecting === "minute" 
+                    ? "bg-primary/20 text-primary scale-105" 
+                    : "text-foreground hover:bg-muted scale-100"
+                )}
+              >
+                {minute}
+              </button>
+            </div>
+            
+            {/* AM/PM Toggle */}
+            <div className="flex flex-col gap-1 ml-2">
+              <button
+                onClick={() => handleAmPmToggle(false)}
+                className={cn(
+                  "px-2 py-1 text-xs font-medium rounded transition-all duration-200",
+                  !isPM 
+                    ? "bg-primary text-primary-foreground" 
+                    : "bg-muted text-muted-foreground hover:bg-muted/80"
+                )}
+              >
+                AM
+              </button>
+              <button
+                onClick={() => handleAmPmToggle(true)}
+                className={cn(
+                  "px-2 py-1 text-xs font-medium rounded transition-all duration-200",
+                  isPM 
+                    ? "bg-primary text-primary-foreground" 
+                    : "bg-muted text-muted-foreground hover:bg-muted/80"
+                )}
+              >
+                PM
+              </button>
+            </div>
           </div>
 
           {/* Clock face */}
@@ -134,7 +186,7 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
               />
             </svg>
 
-            {/* Hour numbers or minute numbers */}
+            {/* Hour numbers */}
             <div 
               className={cn(
                 "absolute inset-0 transition-all duration-300 ease-out",
@@ -143,11 +195,11 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
             >
               {hours.map((h, index) => {
                 const pos = getPosition(h, 12, 70);
-                const isSelected = currentHour12 === h;
+                const isSelected = hour12 === h;
                 return (
                   <button
                     key={h}
-                    onClick={() => handleHourClick(h === 12 ? 0 : h)}
+                    onClick={() => handleHourClick(h)}
                     className={cn(
                       "absolute w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium z-20",
                       "transition-all duration-200 ease-out hover:scale-110",
@@ -168,6 +220,7 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
               })}
             </div>
 
+            {/* Minute numbers */}
             <div 
               className={cn(
                 "absolute inset-0 transition-all duration-300 ease-out",
