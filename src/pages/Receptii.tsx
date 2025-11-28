@@ -964,16 +964,45 @@ export default function Receptii() {
           <DialogHeader className="pb-2">
             <div className="flex items-center justify-between">
               <DialogTitle className="text-base">Detalii Recepție - Cod: {viewingDetails?.cod}</DialogTitle>
-              <Button 
+              <Button
                 variant="secondary"
                 size="sm"
-                onClick={() => {
-                  if (viewingDetails) {
-                    toast({
-                      title: "Generare tichet",
-                      description: `Se generează tichetul pentru recepția ${viewingDetails.cod}...`,
-                    });
-                    // TODO: Implement ticket generation logic
+                onClick={async () => {
+                  if (viewingDetails?.cod) {
+                    try {
+                      const response = await fetch(`${API_BASE_URL}/generare_tichet_receptie/${viewingDetails.cod}`, {
+                        method: 'POST',
+                      });
+                      
+                      if (response.ok) {
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `tichet_${viewingDetails.cod}.xlsx`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                        
+                        toast({
+                          title: "Succes",
+                          description: `Tichetul pentru recepția ${viewingDetails.cod} a fost generat și descărcat.`,
+                        });
+                      } else {
+                        toast({
+                          title: "Eroare",
+                          description: "Nu s-a putut genera tichetul.",
+                          variant: "destructive"
+                        });
+                      }
+                    } catch (error) {
+                      toast({
+                        title: "Eroare",
+                        description: "Eroare la generarea tichetului.",
+                        variant: "destructive"
+                      });
+                    }
                   }
                 }}
               >
