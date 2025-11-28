@@ -48,7 +48,7 @@ const Auth = () => {
             <img 
               src={logo} 
               alt="Duotip Solutions" 
-              className="h-20 object-contain mx-auto animate-[pulse_2s_ease-in-out_infinite] hover:scale-110 transition-transform duration-300" 
+              className="h-20 object-contain mx-auto hover:scale-110 transition-transform duration-300" 
             />
           </div>
           <CardTitle className="text-2xl font-bold">Management Producție</CardTitle>
