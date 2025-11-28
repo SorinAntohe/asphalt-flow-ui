@@ -1,130 +1,70 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, TrendingUp, Package, Truck } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import TimeIntervalSelector from "./dashboard/components/TimeIntervalSelector";
+import KPICards from "./dashboard/components/KPICards";
+import LiveProductionSection from "./dashboard/components/LiveProductionSection";
+import LogisticsSection from "./dashboard/components/LogisticsSection";
+import QualitySection from "./dashboard/components/QualitySection";
+import AIForecastSection from "./dashboard/components/AIForecastSection";
+import FinancialSection from "./dashboard/components/FinancialSection";
 
 const Dashboard = () => {
-  const stats = [
-    {
-      title: "Producție Totală",
-      value: "2,450t",
-      change: "+12.5%",
-      icon: BarChart3,
-      trend: "up",
-    },
-    {
-      title: "Livrări Active",
-      value: "18",
-      change: "+3",
-      icon: Truck,
-      trend: "up",
-    },
-    {
-      title: "Stoc Disponibil",
-      value: "456t",
-      change: "-8.2%",
-      icon: Package,
-      trend: "down",
-    },
-    {
-      title: "Comenzi Noi",
-      value: "24",
-      change: "+15%",
-      icon: TrendingUp,
-      trend: "up",
-    },
-  ];
-
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
-          Vizualizare generală a operațiunilor de producție
-        </p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground mt-1 text-sm sm:text-base">
+            Vizualizare generală a operațiunilor de producție
+          </p>
+        </div>
+        <TimeIntervalSelector />
       </div>
 
-      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat, index) => (
-          <Card key={stat.title} className="transition-all duration-300 hover:shadow-lg hover:-translate-y-1" style={{ animationDelay: `${index * 100}ms` }}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {stat.title}
-              </CardTitle>
-              <stat.icon className="h-4 w-4 text-muted-foreground transition-transform duration-300 group-hover:scale-110" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-xl sm:text-2xl font-bold">{stat.value}</div>
-              <p className={`text-xs ${stat.trend === "up" ? "text-green-600" : "text-red-600"}`}>
-                {stat.change} față de luna trecută
-              </p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <Separator />
 
-      <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2">
-        <Card className="transition-all duration-300 hover:shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-lg sm:text-xl">Activitate Recentă</CardTitle>
-            <CardDescription className="text-sm">
-              Ultimele operațiuni înregistrate
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3 sm:space-y-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="flex items-center gap-3 sm:gap-4 p-2 sm:p-3 bg-muted/50 rounded-lg transition-all duration-200 hover:bg-muted/70 hover:translate-x-1 cursor-pointer">
-                  <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0 animate-pulse"></div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">Livrare #{1234 + i}</p>
-                    <p className="text-xs text-muted-foreground truncate">Asfalt tip A - 45t</p>
-                  </div>
-                  <span className="text-xs text-muted-foreground whitespace-nowrap">Acum {i}h</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+      {/* Main Content with Tabs */}
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:w-auto lg:inline-grid lg:grid-cols-4">
+          <TabsTrigger value="overview">Prezentare</TabsTrigger>
+          <TabsTrigger value="production">Producție</TabsTrigger>
+          <TabsTrigger value="quality">Calitate</TabsTrigger>
+          <TabsTrigger value="ai">AI & Prognoze</TabsTrigger>
+        </TabsList>
 
-        <Card className="transition-all duration-300 hover:shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-lg sm:text-xl">Producție pe Tipuri</CardTitle>
-            <CardDescription className="text-sm">
-              Distribuție producție ultimele 30 zile
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Asfalt tip A</span>
-                  <span className="font-medium">45%</span>
-                </div>
-                <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <div className="h-full bg-primary transition-all duration-1000 ease-out" style={{ width: "45%" }}></div>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Asfalt tip B</span>
-                  <span className="font-medium">30%</span>
-                </div>
-                <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <div className="h-full bg-chart-2 transition-all duration-1000 ease-out" style={{ width: "30%" }}></div>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Asfalt tip C</span>
-                  <span className="font-medium">25%</span>
-                </div>
-                <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <div className="h-full bg-chart-3 transition-all duration-1000 ease-out" style={{ width: "25%" }}></div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+        {/* Overview Tab - Shows everything */}
+        <TabsContent value="overview" className="space-y-8">
+          <KPICards />
+          <Separator />
+          <LiveProductionSection />
+          <Separator />
+          <LogisticsSection />
+          <Separator />
+          <FinancialSection />
+        </TabsContent>
+
+        {/* Production Tab */}
+        <TabsContent value="production" className="space-y-8">
+          <KPICards />
+          <Separator />
+          <LiveProductionSection />
+          <Separator />
+          <LogisticsSection />
+        </TabsContent>
+
+        {/* Quality Tab */}
+        <TabsContent value="quality" className="space-y-8">
+          <QualitySection />
+        </TabsContent>
+
+        {/* AI & Forecast Tab */}
+        <TabsContent value="ai" className="space-y-8">
+          <AIForecastSection />
+          <Separator />
+          <FinancialSection />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
