@@ -666,35 +666,35 @@ export default function Comenzi() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Comenzi</h1>
-          <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
-            Gestionează comenzile de materii prime și produse finite
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={handleExport}
-            disabled={isExportDisabled}
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Export
-          </Button>
-          <Button className="gap-2" onClick={handleAddNew}>
-            <Plus className="w-4 h-4" />
-            Comandă Nouă
-          </Button>
-        </div>
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Comenzi</h1>
+        <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
+          Gestionează comenzile de materii prime și produse finite
+        </p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="materie-prima">Materie Prima</TabsTrigger>
-          <TabsTrigger value="produse-finite">Produs Finit</TabsTrigger>
-        </TabsList>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+          <TabsList>
+            <TabsTrigger value="materie-prima">Materie Prima</TabsTrigger>
+            <TabsTrigger value="produse-finite">Produs Finit</TabsTrigger>
+          </TabsList>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleExport}
+              disabled={isExportDisabled}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Export CSV
+            </Button>
+            <Button size="sm" onClick={handleAddNew}>
+              <Plus className="w-4 h-4 mr-2" />
+              Adaugă
+            </Button>
+          </div>
+        </div>
 
         <TabsContent value="materie-prima">
           <Card>
