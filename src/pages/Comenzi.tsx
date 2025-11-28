@@ -570,7 +570,7 @@ export default function Comenzi() {
 
   // Filters for Produs Finit
   const [filtersPF, setFiltersPF] = useState({
-    id: "", cod: "", data: "", client: "", produs: "", cantitate: "", punct_descarcare: "", pret_fara_tva: ""
+    cod: "", data: "", client: "", produs: "", unitate_masura: "", cantitate: "", punct_descarcare: "", pret_fara_tva: "", pret_transport: "", observatii: ""
   });
 
   // Sort for Produs Finit
@@ -582,14 +582,16 @@ export default function Comenzi() {
   const filteredAndSortedPF = comenziProduseFinite
     .filter((item) => {
       return (
-        item.id.toString().includes(filtersPF.id) &&
         item.cod.toLowerCase().includes(filtersPF.cod.toLowerCase()) &&
         item.data.toLowerCase().includes(filtersPF.data.toLowerCase()) &&
         item.client.toLowerCase().includes(filtersPF.client.toLowerCase()) &&
         item.produs.toLowerCase().includes(filtersPF.produs.toLowerCase()) &&
+        item.unitate_masura.toLowerCase().includes(filtersPF.unitate_masura.toLowerCase()) &&
         item.cantitate.toString().includes(filtersPF.cantitate) &&
         (item.punct_descarcare || "").toLowerCase().includes(filtersPF.punct_descarcare.toLowerCase()) &&
-        item.pret_fara_tva.toString().includes(filtersPF.pret_fara_tva)
+        item.pret_fara_tva.toString().includes(filtersPF.pret_fara_tva) &&
+        (item.pret_transport?.toString() || "").includes(filtersPF.pret_transport) &&
+        item.observatii.toLowerCase().includes(filtersPF.observatii.toLowerCase())
       );
     })
     .sort((a, b) => {
@@ -975,6 +977,31 @@ export default function Comenzi() {
             <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
               <CardTitle className="text-lg sm:text-xl">Comenzi Produse Finite</CardTitle>
               <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => exportToCSV(
+                    comenziProduseFinite,
+                    'comenzi_produse_finite',
+                    [
+                      { key: 'cod', label: 'Cod' },
+                      { key: 'data', label: 'Data' },
+                      { key: 'client', label: 'Client' },
+                      { key: 'produs', label: 'Produs' },
+                      { key: 'unitate_masura', label: 'Unitate De Masura' },
+                      { key: 'cantitate', label: 'Cantitate' },
+                      { key: 'punct_descarcare', label: 'Punct De Descarcare' },
+                      { key: 'pret_fara_tva', label: 'Pret Fara TVA' },
+                      { key: 'pret_transport', label: 'Pret Transport' },
+                      { key: 'observatii', label: 'Observatii' }
+                    ]
+                  )}
+                  disabled={comenziProduseFinite.length === 0}
+                  className="h-9"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Export CSV
+                </Button>
                 <Label className="text-sm">Înregistrări per pagină:</Label>
                 <Select
                   value={itemsPerPagePF.toString()}
@@ -997,34 +1024,9 @@ export default function Comenzi() {
               </div>
             </CardHeader>
             <CardContent className="overflow-x-auto">
-              <Table className="min-w-[1200px]">
+              <Table className="min-w-[1400px]">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="h-10 text-xs">
-                      <div className="flex items-center gap-1">
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
-                              <span>ID</span>
-                              {sortPF.field === 'id' ? (sortPF.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-56 p-2">
-                            <div className="space-y-2">
-                              <Input placeholder="Caută ID..." value={filtersPF.id} onChange={(e) => setFiltersPF({...filtersPF, id: e.target.value})} className="h-7 text-xs" />
-                              <div className="flex gap-1">
-                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortPF({ field: 'id', direction: 'asc' })}>
-                                  <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
-                                </Button>
-                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortPF({ field: 'id', direction: 'desc' })}>
-                                  <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
-                                </Button>
-                              </div>
-                            </div>
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                    </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
                         <Popover>
@@ -1130,6 +1132,31 @@ export default function Comenzi() {
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Unitate De Măsură</span>
+                              {sortPF.field === 'unitate_masura' ? (sortPF.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută unitate..." value={filtersPF.unitate_masura} onChange={(e) => setFiltersPF({...filtersPF, unitate_masura: e.target.value})} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortPF({ field: 'unitate_masura', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortPF({ field: 'unitate_masura', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </TableHead>
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Cantitate</span>
                               {sortPF.field === 'cantitate' ? (sortPF.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
                             </Button>
@@ -1200,12 +1227,62 @@ export default function Comenzi() {
                         </Popover>
                       </div>
                     </TableHead>
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Preț Transport</span>
+                              {sortPF.field === 'pret_transport' ? (sortPF.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută preț transport..." value={filtersPF.pret_transport} onChange={(e) => setFiltersPF({...filtersPF, pret_transport: e.target.value})} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortPF({ field: 'pret_transport', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortPF({ field: 'pret_transport', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </TableHead>
+                    <TableHead className="h-10 text-xs">
+                      <div className="flex items-center gap-1">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Observații</span>
+                              {sortPF.field === 'observatii' ? (sortPF.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută observații..." value={filtersPF.observatii} onChange={(e) => setFiltersPF({...filtersPF, observatii: e.target.value})} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortPF({ field: 'observatii', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortPF({ field: 'observatii', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody key={`pf-page-${currentPagePF}`} className="animate-fade-in">
                   {loadingPF ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="h-24 text-center">
+                      <TableCell colSpan={10} className="h-24 text-center">
                         <div className="flex items-center justify-center">
                           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                         </div>
@@ -1213,7 +1290,7 @@ export default function Comenzi() {
                     </TableRow>
                   ) : paginatedDataPF.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
+                      <TableCell colSpan={10} className="h-24 text-center text-muted-foreground">
                         Nu există comenzi disponibile
                       </TableCell>
                     </TableRow>
@@ -1224,14 +1301,16 @@ export default function Comenzi() {
                         className="h-10 cursor-pointer hover:bg-muted/50"
                         onClick={() => setViewingDetailsPF(comanda)}
                       >
-                        <TableCell className="py-1 text-xs">{comanda.id}</TableCell>
                         <TableCell className="font-medium py-1 text-xs">{comanda.cod}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.data}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.client}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.produs}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.unitate_masura}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.cantitate}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.punct_descarcare || "-"}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.pret_fara_tva}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.pret_transport || "-"}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.observatii}</TableCell>
                       </TableRow>
                     ))
                   )}
