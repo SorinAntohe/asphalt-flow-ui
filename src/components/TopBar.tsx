@@ -56,9 +56,9 @@ export function TopBar() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full relative h-9 w-9 sm:h-10 sm:w-10 hover:bg-muted transition-colors">
+              <Button variant="ghost" size="icon" className="rounded-full relative h-9 w-9 sm:h-10 sm:w-10 hover:bg-muted transition-colors overflow-visible">
                 <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 sm:w-5 sm:h-5 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center text-[10px] sm:text-xs font-medium animate-pulse-soft">
+                <span className="absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 min-w-[18px] h-[18px] sm:min-w-[20px] sm:h-[20px] bg-destructive text-destructive-foreground rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold shadow-md border-2 border-background">
                   3
                 </span>
               </Button>
