@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2, ArrowUpDown, Ticket, Download, X } from "lucide-react";
+import { Plus, Pencil, Trash2, ArrowUpDown, Ticket, Download, X, Package, TrendingUp, Calendar } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
@@ -538,6 +538,18 @@ export default function Receptii() {
   const endIndex = startIndex + itemsPerPage;
   const paginatedData = filteredAndSorted.slice(startIndex, endIndex);
 
+  // Summary statistics
+  const summaryStats = useMemo(() => {
+    const today = new Date();
+    const todayStr = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
+    
+    const receptiiAstazi = receptii.filter(r => r.data === todayStr).length;
+    const valoareTotala = receptii.reduce((sum, r) => sum + (r.pret_total || 0), 0);
+    const totalReceptii = receptii.length;
+    
+    return { receptiiAstazi, valoareTotala, totalReceptii };
+  }, [receptii]);
+
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
@@ -636,6 +648,49 @@ export default function Receptii() {
             <span className="hidden sm:inline">Recepție Nouă</span>
           </Button>
         </div>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Recepții Astăzi</p>
+                <p className="text-2xl font-bold">{summaryStats.receptiiAstazi}</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-primary" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Valoare Totală</p>
+                <p className="text-2xl font-bold">{summaryStats.valoareTotala.toLocaleString('ro-RO')} lei</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
+                <TrendingUp className="h-6 w-6 text-green-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Recepții</p>
+                <p className="text-2xl font-bold">{summaryStats.totalReceptii}</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
+                <Package className="h-6 w-6 text-blue-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <Card>
