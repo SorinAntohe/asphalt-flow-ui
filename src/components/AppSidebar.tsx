@@ -83,7 +83,7 @@ export function AppSidebar() {
             <img 
               src={logoDWhite} 
               alt="D" 
-              className="h-5 w-5 object-contain"
+              className="w-5 h-5 flex-shrink-0 object-contain"
             />
           )}
         </div>
