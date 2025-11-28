@@ -22,7 +22,7 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
   const handleHourClick = (h: number) => {
     const newHour = h.toString().padStart(2, "0");
     onChange(`${newHour}:${minute}`);
-    setSelecting("minute");
+    setTimeout(() => setSelecting("minute"), 150);
   };
 
   const handleMinuteClick = (m: number) => {
@@ -65,7 +65,7 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
           disabled={disabled}
           size="sm"
           className={cn(
-            "w-full justify-start text-left font-normal h-9",
+            "w-full justify-start text-left font-normal h-9 transition-all duration-200 hover:scale-[1.02]",
             !value && "text-muted-foreground",
             className
           )}
@@ -74,29 +74,32 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
           <span className="text-sm">{value || "Selectează ora"}</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-4 pointer-events-auto" align="start">
+      <PopoverContent 
+        className="w-auto p-4 pointer-events-auto animate-scale-in" 
+        align="start"
+      >
         <div className="flex flex-col items-center gap-4">
           {/* Time display */}
           <div className="flex items-center gap-1">
             <button
               onClick={() => setSelecting("hour")}
               className={cn(
-                "text-4xl font-light px-3 py-2 rounded-lg transition-colors",
+                "text-4xl font-light px-3 py-2 rounded-lg transition-all duration-300 ease-out",
                 selecting === "hour" 
-                  ? "bg-primary/20 text-primary" 
-                  : "text-foreground hover:bg-muted"
+                  ? "bg-primary/20 text-primary scale-105" 
+                  : "text-foreground hover:bg-muted scale-100"
               )}
             >
               {hour}
             </button>
-            <span className="text-4xl font-light text-foreground">:</span>
+            <span className="text-4xl font-light text-foreground animate-pulse">:</span>
             <button
               onClick={() => setSelecting("minute")}
               className={cn(
-                "text-4xl font-light px-3 py-2 rounded-lg transition-colors",
+                "text-4xl font-light px-3 py-2 rounded-lg transition-all duration-300 ease-out",
                 selecting === "minute" 
-                  ? "bg-primary/20 text-primary" 
-                  : "text-foreground hover:bg-muted"
+                  ? "bg-primary/20 text-primary scale-105" 
+                  : "text-foreground hover:bg-muted scale-100"
               )}
             >
               {minute}
@@ -104,9 +107,9 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
           </div>
 
           {/* Clock face */}
-          <div className="relative w-48 h-48 rounded-full bg-muted flex items-center justify-center">
+          <div className="relative w-48 h-48 rounded-full bg-muted flex items-center justify-center transition-transform duration-300">
             {/* Center dot */}
-            <div className="absolute w-2 h-2 rounded-full bg-primary z-10" />
+            <div className="absolute w-2 h-2 rounded-full bg-primary z-10 transition-transform duration-300" />
             
             {/* Selection line and dot */}
             <svg className="absolute w-full h-full" viewBox="-96 -96 192 192">
@@ -117,18 +120,28 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
                 y2={selectedPos.y}
                 stroke="hsl(var(--primary))"
                 strokeWidth="2"
+                className="transition-all duration-300 ease-out"
+                style={{
+                  transformOrigin: '0 0',
+                }}
               />
               <circle
                 cx={selectedPos.x}
                 cy={selectedPos.y}
                 r="16"
                 fill="hsl(var(--primary))"
+                className="transition-all duration-300 ease-out"
               />
             </svg>
 
             {/* Hour numbers or minute numbers */}
-            {selecting === "hour" ? (
-              hours.map((h) => {
+            <div 
+              className={cn(
+                "absolute inset-0 transition-all duration-300 ease-out",
+                selecting === "hour" ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
+              )}
+            >
+              {hours.map((h, index) => {
                 const pos = getPosition(h, 12, 70);
                 const isSelected = currentHour12 === h;
                 return (
@@ -136,21 +149,32 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
                     key={h}
                     onClick={() => handleHourClick(h === 12 ? 0 : h)}
                     className={cn(
-                      "absolute w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors z-20",
+                      "absolute w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium z-20",
+                      "transition-all duration-200 ease-out hover:scale-110",
                       isSelected 
                         ? "text-primary-foreground" 
                         : "text-foreground hover:bg-primary/10"
                     )}
                     style={{
-                      transform: `translate(${pos.x}px, ${pos.y}px)`,
+                      left: '50%',
+                      top: '50%',
+                      transform: `translate(calc(-50% + ${pos.x}px), calc(-50% + ${pos.y}px))`,
+                      animationDelay: `${index * 30}ms`,
                     }}
                   >
                     {h}
                   </button>
                 );
-              })
-            ) : (
-              minutes.map((m) => {
+              })}
+            </div>
+
+            <div 
+              className={cn(
+                "absolute inset-0 transition-all duration-300 ease-out",
+                selecting === "minute" ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
+              )}
+            >
+              {minutes.map((m, index) => {
                 const pos = getPosition(m, 60, 70);
                 const isSelected = minuteNum === m;
                 return (
@@ -158,28 +182,41 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
                     key={m}
                     onClick={() => handleMinuteClick(m)}
                     className={cn(
-                      "absolute w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors z-20",
+                      "absolute w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium z-20",
+                      "transition-all duration-200 ease-out hover:scale-110",
                       isSelected 
                         ? "text-primary-foreground" 
                         : "text-foreground hover:bg-primary/10"
                     )}
                     style={{
-                      transform: `translate(${pos.x}px, ${pos.y}px)`,
+                      left: '50%',
+                      top: '50%',
+                      transform: `translate(calc(-50% + ${pos.x}px), calc(-50% + ${pos.y}px))`,
+                      animationDelay: `${index * 30}ms`,
                     }}
                   >
                     {m.toString().padStart(2, "0")}
                   </button>
                 );
-              })
-            )}
+              })}
+            </div>
           </div>
 
           {/* Action buttons */}
           <div className="flex justify-end gap-2 w-full">
-            <Button variant="ghost" size="sm" onClick={handleCancel}>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleCancel}
+              className="transition-all duration-200 hover:scale-105"
+            >
               Anulează
             </Button>
-            <Button size="sm" onClick={handleOk}>
+            <Button 
+              size="sm" 
+              onClick={handleOk}
+              className="transition-all duration-200 hover:scale-105"
+            >
               OK
             </Button>
           </div>
