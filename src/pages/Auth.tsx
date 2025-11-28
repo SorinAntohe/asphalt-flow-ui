@@ -42,7 +42,7 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background p-4">
-      <Card className="w-full max-w-md shadow-lg">
+      <Card className="w-full max-w-md shadow-2xl bg-card/80 backdrop-blur-xl border border-border/30">
         <CardHeader className="space-y-4 text-center">
           <div className="mx-auto animate-fade-in">
             <img 
