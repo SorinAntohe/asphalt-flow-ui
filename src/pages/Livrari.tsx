@@ -76,12 +76,44 @@ const Livrari = () => {
     field: '', direction: null 
   });
   
-  // Dropdown options
   const [codOptions, setCodOptions] = useState<Array<{ value: string; label: string }>>([]);
   const [nrInmatriculareOptions, setNrInmatriculareOptions] = useState<Array<{ value: string; label: string }>>([]);
   const [numeSoferOptions, setNumeSoferOptions] = useState<Array<{ value: string; label: string }>>([]);
   
-  const livrari: Livrare[] = [];
+  const [livrari, setLivrari] = useState<Livrare[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch livrari data
+  const fetchLivrari = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/livrari/returneaza/livrari`);
+      if (response.ok) {
+        const data = await response.json();
+        setLivrari(data);
+      } else {
+        toast({
+          title: "Eroare",
+          description: "Nu s-au putut încărca datele de livrări",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching livrari:", error);
+      toast({
+        title: "Eroare",
+        description: "Nu s-au putut încărca datele de livrări",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch livrari on mount
+  useEffect(() => {
+    fetchLivrari();
+  }, []);
 
   // Fetch dropdown options
   useEffect(() => {
@@ -357,7 +389,7 @@ const Livrari = () => {
       }
 
       setOpenAddEdit(false);
-      // TODO: Refresh livrari list
+      fetchLivrari(); // Refresh livrari list
     } catch (error) {
       console.error("Error saving livrare:", error);
       toast({
@@ -392,7 +424,7 @@ const Livrari = () => {
       });
 
       setDeleting(null);
-      // TODO: Refresh livrari list
+      fetchLivrari(); // Refresh livrari list
     } catch (error) {
       console.error("Error deleting livrare:", error);
       toast({
