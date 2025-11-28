@@ -30,21 +30,22 @@ const AlertDialogContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
 >(({ className, ...props }, ref) => (
   <AlertDialogPortal>
-    <AlertDialogOverlay />
-    <AlertDialogPrimitive.Content
-      ref={ref}
-      className={cn(
-        "fixed z-50 grid w-full max-w-lg gap-4",
-        "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
-        "border border-border/30 bg-background p-6 shadow-2xl rounded-2xl",
-        "duration-300 ease-out",
-        "data-[state=open]:animate-in data-[state=closed]:animate-out",
-        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-        "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
-        className,
-      )}
-      {...props}
-    />
+    <AlertDialogOverlay className="flex items-center justify-center" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+      <AlertDialogPrimitive.Content
+        ref={ref}
+        className={cn(
+          "pointer-events-auto z-50 grid w-full max-w-lg gap-4 mx-4",
+          "border border-border/30 bg-background p-6 shadow-2xl rounded-2xl",
+          "duration-300 ease-out",
+          "data-[state=open]:animate-in data-[state=closed]:animate-out",
+          "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+          "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+          className,
+        )}
+        {...props}
+      />
+    </div>
   </AlertDialogPortal>
 ));
 AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName;
