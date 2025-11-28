@@ -21,7 +21,7 @@ export function TopBar() {
     // Remove transitioning class after animation completes
     setTimeout(() => {
       document.documentElement.classList.remove("transitioning");
-    }, 350);
+    }, 200);
   };
 
   return (
