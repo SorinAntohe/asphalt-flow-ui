@@ -675,9 +675,9 @@ export default function Comenzi() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-          <TabsList>
-            <TabsTrigger value="materie-prima">Materie Prima</TabsTrigger>
-            <TabsTrigger value="produse-finite">Produs Finit</TabsTrigger>
+          <TabsList className="w-full sm:w-auto">
+            <TabsTrigger value="materie-prima" className="flex-1 sm:flex-none text-xs sm:text-sm">Materie Prima</TabsTrigger>
+            <TabsTrigger value="produse-finite" className="flex-1 sm:flex-none text-xs sm:text-sm">Produs Finit</TabsTrigger>
           </TabsList>
           <div className="flex gap-2">
             <Button 
@@ -686,12 +686,12 @@ export default function Comenzi() {
               onClick={handleExport}
               disabled={isExportDisabled}
             >
-              <Download className="w-4 h-4 mr-2" />
-              Export CSV
+              <Download className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Export CSV</span>
             </Button>
             <Button size="sm" onClick={handleAddNew}>
-              <Plus className="w-4 h-4 mr-2" />
-              Adaugă
+              <Plus className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Adaugă</span>
             </Button>
           </div>
         </div>
@@ -940,37 +940,37 @@ export default function Comenzi() {
             </CardContent>
             
             {/* Pagination Controls MP */}
-            <div className="flex items-center justify-between px-6 py-4">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">
-                  Afișare {startIndexMP + 1}-{Math.min(endIndexMP, filteredAndSortedMP.length)} din {filteredAndSortedMP.length}
-                </span>
-              </div>
+            <div className="flex flex-col sm:flex-row items-center justify-between px-4 sm:px-6 py-4 gap-3">
+              <span className="text-xs sm:text-sm text-muted-foreground order-2 sm:order-1">
+                Afișare {startIndexMP + 1}-{Math.min(endIndexMP, filteredAndSortedMP.length)} din {filteredAndSortedMP.length}
+              </span>
               
               {totalPagesMP > 1 && (
-                <Pagination>
-                  <PaginationContent>
+                <Pagination className="order-1 sm:order-2">
+                  <PaginationContent className="gap-1">
                     <PaginationItem>
                       <PaginationPrevious 
                         onClick={() => setCurrentPageMP(Math.max(1, currentPageMP - 1))}
-                        className={currentPageMP === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        className={`h-8 px-2 sm:px-3 ${currentPageMP === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}`}
                       />
                     </PaginationItem>
-                    {Array.from({ length: totalPagesMP }, (_, i) => i + 1).map((page) => (
-                      <PaginationItem key={page}>
-                        <PaginationLink
-                          onClick={() => setCurrentPageMP(page)}
-                          isActive={currentPageMP === page}
-                          className="cursor-pointer"
-                        >
-                          {page}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))}
+                    {Array.from({ length: Math.min(5, totalPagesMP) }, (_, i) => {
+                      let page;
+                      if (totalPagesMP <= 5) page = i + 1;
+                      else if (currentPageMP <= 3) page = i + 1;
+                      else if (currentPageMP >= totalPagesMP - 2) page = totalPagesMP - 4 + i;
+                      else page = currentPageMP - 2 + i;
+                      return (
+                        <PaginationItem key={page} className="hidden sm:block">
+                          <PaginationLink onClick={() => setCurrentPageMP(page)} isActive={currentPageMP === page} className="cursor-pointer h-8 w-8">{page}</PaginationLink>
+                        </PaginationItem>
+                      );
+                    })}
+                    <span className="sm:hidden text-xs px-2">{currentPageMP}/{totalPagesMP}</span>
                     <PaginationItem>
                       <PaginationNext 
                         onClick={() => setCurrentPageMP(Math.min(totalPagesMP, currentPageMP + 1))}
-                        className={currentPageMP === totalPagesMP ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        className={`h-8 px-2 sm:px-3 ${currentPageMP === totalPagesMP ? "pointer-events-none opacity-50" : "cursor-pointer"}`}
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -1328,37 +1328,37 @@ export default function Comenzi() {
             </CardContent>
             
             {/* Pagination Controls PF */}
-            <div className="flex items-center justify-between px-6 py-4">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">
-                  Afișare {startIndexPF + 1}-{Math.min(endIndexPF, filteredAndSortedPF.length)} din {filteredAndSortedPF.length}
-                </span>
-              </div>
+            <div className="flex flex-col sm:flex-row items-center justify-between px-4 sm:px-6 py-4 gap-3">
+              <span className="text-xs sm:text-sm text-muted-foreground order-2 sm:order-1">
+                Afișare {startIndexPF + 1}-{Math.min(endIndexPF, filteredAndSortedPF.length)} din {filteredAndSortedPF.length}
+              </span>
               
               {totalPagesPF > 1 && (
-                <Pagination>
-                  <PaginationContent>
+                <Pagination className="order-1 sm:order-2">
+                  <PaginationContent className="gap-1">
                     <PaginationItem>
                       <PaginationPrevious 
                         onClick={() => setCurrentPagePF(Math.max(1, currentPagePF - 1))}
-                        className={currentPagePF === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        className={`h-8 px-2 sm:px-3 ${currentPagePF === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}`}
                       />
                     </PaginationItem>
-                    {Array.from({ length: totalPagesPF }, (_, i) => i + 1).map((page) => (
-                      <PaginationItem key={page}>
-                        <PaginationLink
-                          onClick={() => setCurrentPagePF(page)}
-                          isActive={currentPagePF === page}
-                          className="cursor-pointer"
-                        >
-                          {page}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))}
+                    {Array.from({ length: Math.min(5, totalPagesPF) }, (_, i) => {
+                      let page;
+                      if (totalPagesPF <= 5) page = i + 1;
+                      else if (currentPagePF <= 3) page = i + 1;
+                      else if (currentPagePF >= totalPagesPF - 2) page = totalPagesPF - 4 + i;
+                      else page = currentPagePF - 2 + i;
+                      return (
+                        <PaginationItem key={page} className="hidden sm:block">
+                          <PaginationLink onClick={() => setCurrentPagePF(page)} isActive={currentPagePF === page} className="cursor-pointer h-8 w-8">{page}</PaginationLink>
+                        </PaginationItem>
+                      );
+                    })}
+                    <span className="sm:hidden text-xs px-2">{currentPagePF}/{totalPagesPF}</span>
                     <PaginationItem>
                       <PaginationNext 
                         onClick={() => setCurrentPagePF(Math.min(totalPagesPF, currentPagePF + 1))}
-                        className={currentPagePF === totalPagesPF ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        className={`h-8 px-2 sm:px-3 ${currentPagePF === totalPagesPF ? "pointer-events-none opacity-50" : "cursor-pointer"}`}
                       />
                     </PaginationItem>
                   </PaginationContent>
