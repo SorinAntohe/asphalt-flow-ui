@@ -25,24 +25,12 @@ const Dashboard = () => {
       <Separator />
 
       {/* Main Content with Tabs */}
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:w-auto lg:inline-grid lg:grid-cols-4">
-          <TabsTrigger value="overview">Prezentare</TabsTrigger>
+      <Tabs defaultValue="production" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid lg:grid-cols-3">
           <TabsTrigger value="production">Producție</TabsTrigger>
           <TabsTrigger value="quality">Calitate</TabsTrigger>
           <TabsTrigger value="ai">AI & Prognoze</TabsTrigger>
         </TabsList>
-
-        {/* Overview Tab - Shows everything */}
-        <TabsContent value="overview" className="space-y-8">
-          <KPICards />
-          <Separator />
-          <LiveProductionSection />
-          <Separator />
-          <LogisticsSection />
-          <Separator />
-          <FinancialSection />
-        </TabsContent>
 
         {/* Production Tab */}
         <TabsContent value="production" className="space-y-8">
