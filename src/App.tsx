@@ -12,6 +12,8 @@ import Livrari from "./pages/Livrari";
 import Consumuri from "./pages/Consumuri";
 import Comenzi from "./pages/Comenzi";
 import Stocuri from "./pages/Stocuri";
+import Angajati from "./pages/Angajati";
+import Pontaj from "./pages/Pontaj";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -77,6 +79,22 @@ const App = () => (
             element={
               <Layout>
                 <Stocuri />
+              </Layout>
+            }
+          />
+          <Route
+            path="/angajati"
+            element={
+              <Layout>
+                <Angajati />
+              </Layout>
+            }
+          />
+          <Route
+            path="/pontaj"
+            element={
+              <Layout>
+                <Pontaj />
               </Layout>
             }
           />
