@@ -64,6 +64,12 @@ const Livrari = () => {
     pret_transport_total: 0,
     pret_total: 0
   });
+
+  // Store unit prices from API
+  const [unitPrices, setUnitPrices] = useState({
+    pret_fara_tva: 0,
+    pret_transport: 0
+  });
   
   // Filters
   const [filters, setFilters] = useState({
@@ -206,15 +212,16 @@ const Livrari = () => {
     
     if (value) {
       try {
-        const response = await fetch(`${API_BASE_URL}/livrari/returneaza_preturi_dupa_cod_produs/livrari/${value}`);
+        const response = await fetch(`${API_BASE_URL}/livrari/returneaza_preturi_dupa_cod_livrari/${value}`);
         if (response.ok) {
           const data = await response.json();
+          setUnitPrices({
+            pret_fara_tva: data.pret_fara_tva || 0,
+            pret_transport: data.pret_transport || 0
+          });
           setForm(prev => ({ 
             ...prev,
-            produs: data.produs || "",
-            pret_produs_total: data.pret_produs || 0,
-            pret_transport_total: data.pret_transport_total || 0,
-            pret_total: data.pret_total || 0
+            produs: data.produs || ""
           }));
         }
       } catch (error) {
@@ -222,6 +229,22 @@ const Livrari = () => {
       }
     }
   };
+
+  // Calculate prices when masa_net changes
+  useEffect(() => {
+    if (form.masa_net > 0 && (unitPrices.pret_fara_tva > 0 || unitPrices.pret_transport > 0)) {
+      const pret_produs_total = unitPrices.pret_fara_tva * form.masa_net;
+      const pret_transport_total = unitPrices.pret_transport * form.masa_net;
+      const pret_total = pret_produs_total + pret_transport_total;
+      
+      setForm(prev => ({
+        ...prev,
+        pret_produs_total,
+        pret_transport_total,
+        pret_total
+      }));
+    }
+  }, [form.masa_net, unitPrices.pret_fara_tva, unitPrices.pret_transport]);
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "-";
