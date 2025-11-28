@@ -63,8 +63,8 @@ export default function Pontaj() {
   const [formData, setFormData] = useState({
     angajat_id: "",
     prezenta: "Prezent",
-    ora_start: "08:00",
-    ora_sfarsit: "17:00",
+    ora_start: "08:30",
+    ora_sfarsit: "17:30",
     pauza_masa: 60
   });
 
@@ -176,7 +176,7 @@ export default function Pontaj() {
   };
 
   const resetForm = () => {
-    setFormData({ angajat_id: "", prezenta: "Prezent", ora_start: "08:00", ora_sfarsit: "17:00", pauza_masa: 60 });
+    setFormData({ angajat_id: "", prezenta: "Prezent", ora_start: "08:30", ora_sfarsit: "17:30", pauza_masa: 60 });
   };
 
   const handleAdd = async () => {
