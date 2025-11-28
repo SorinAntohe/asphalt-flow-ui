@@ -250,8 +250,10 @@ const Livrari = () => {
   // Calculate prices when masa_net changes
   useEffect(() => {
     if (form.masa_net > 0 && (unitPrices.pret_fara_tva > 0 || unitPrices.pret_transport > 0)) {
-      const pret_produs_total = unitPrices.pret_fara_tva * form.masa_net;
-      const pret_transport_total = unitPrices.pret_transport * form.masa_net;
+      // Convert kg to tons for price calculation
+      const masa_net_tone = form.masa_net / 1000;
+      const pret_produs_total = unitPrices.pret_fara_tva * masa_net_tone;
+      const pret_transport_total = unitPrices.pret_transport * masa_net_tone;
       const pret_total = pret_produs_total + pret_transport_total;
       
       setForm(prev => ({
