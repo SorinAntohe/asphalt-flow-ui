@@ -148,6 +148,34 @@ const Livrari = () => {
     }
   };
 
+  // Fetch prices when cod changes
+  const handleCodChange = async (value: string) => {
+    setForm({ 
+      ...form, 
+      cod: value, 
+      pret_material_total: 0, 
+      pret_transport_total: 0, 
+      pret_total: 0 
+    });
+    
+    if (value) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/livrari/returneaza_preturi_dupa_cod_produs/livrari/${value}`);
+        if (response.ok) {
+          const data = await response.json();
+          setForm(prev => ({ 
+            ...prev, 
+            pret_material_total: data.pret_produs || 0,
+            pret_transport_total: data.pret_transport_total || 0,
+            pret_total: data.pret_total || 0
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching prices:", error);
+      }
+    }
+  };
+
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "-";
     const date = new Date(dateString);
@@ -509,7 +537,7 @@ const Livrari = () => {
                 <FilterableSelect
                   id="cod"
                   value={form.cod}
-                  onValueChange={(value) => setForm({ ...form, cod: value })}
+                  onValueChange={handleCodChange}
                   options={codOptions}
                   placeholder="Selectează cod..."
                   searchPlaceholder="Caută cod..."
@@ -568,7 +596,8 @@ const Livrari = () => {
                   type="number"
                   step="0.01"
                   value={form.pret_material_total}
-                  onChange={(e) => setForm({ ...form, pret_material_total: parseFloat(e.target.value) || 0 })}
+                  disabled
+                  className="bg-muted"
                 />
               </div>
               <div className="grid gap-2">
@@ -578,7 +607,8 @@ const Livrari = () => {
                   type="number"
                   step="0.01"
                   value={form.pret_transport_total}
-                  onChange={(e) => setForm({ ...form, pret_transport_total: parseFloat(e.target.value) || 0 })}
+                  disabled
+                  className="bg-muted"
                 />
               </div>
               <div className="grid gap-2">
@@ -588,7 +618,8 @@ const Livrari = () => {
                   type="number"
                   step="0.01"
                   value={form.pret_total}
-                  onChange={(e) => setForm({ ...form, pret_total: parseFloat(e.target.value) || 0 })}
+                  disabled
+                  className="bg-muted"
                 />
               </div>
             </div>
