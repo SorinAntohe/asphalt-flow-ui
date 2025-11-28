@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Plus, Truck, ArrowUpDown, Pencil, Trash2, FileText, Download, X } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
+import { FilterableSelect } from "@/components/ui/filterable-select";
+import { API_BASE_URL } from "@/lib/api";
 import {
   Table,
   TableBody,
@@ -73,7 +75,46 @@ const Livrari = () => {
     field: '', direction: null 
   });
   
+  // Dropdown options
+  const [codOptions, setCodOptions] = useState<Array<{ value: string; label: string }>>([]);
+  const [nrInmatriculareOptions, setNrInmatriculareOptions] = useState<Array<{ value: string; label: string }>>([]);
+  
   const livrari: Livrare[] = [];
+
+  // Fetch dropdown options
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        // Fetch cod options
+        const codResponse = await fetch(`${API_BASE_URL}/livrari/returneaza_coduri_comenzi_produs_finit/livrari`);
+        if (codResponse.ok) {
+          const codData = await codResponse.json();
+          setCodOptions(codData.map((item: any) => ({ 
+            value: item.cod || item, 
+            label: item.cod || item 
+          })));
+        }
+      } catch (error) {
+        console.error("Error fetching cod options:", error);
+      }
+
+      try {
+        // Fetch nr_inmatriculare options
+        const nrInmatriculareResponse = await fetch(`${API_BASE_URL}/livrari/returneaza_numere_inmatriculare`);
+        if (nrInmatriculareResponse.ok) {
+          const nrInmatriculareData = await nrInmatriculareResponse.json();
+          setNrInmatriculareOptions(nrInmatriculareData.map((item: any) => ({ 
+            value: item.nr_inmatriculare || item, 
+            label: item.nr_inmatriculare || item 
+          })));
+        }
+      } catch (error) {
+        console.error("Error fetching nr_inmatriculare options:", error);
+      }
+    };
+
+    fetchOptions();
+  }, []);
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "-";
@@ -433,10 +474,14 @@ const Livrari = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="cod">Cod</Label>
-                <Input
+                <FilterableSelect
                   id="cod"
                   value={form.cod}
-                  onChange={(e) => setForm({ ...form, cod: e.target.value })}
+                  onValueChange={(value) => setForm({ ...form, cod: value })}
+                  options={codOptions}
+                  placeholder="Selectează cod..."
+                  searchPlaceholder="Caută cod..."
+                  emptyText="Nu s-au găsit coduri."
                 />
               </div>
               <div className="grid gap-2">
@@ -451,10 +496,14 @@ const Livrari = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="nr_inmatriculare">Nr. Înmatriculare</Label>
-                <Input
+                <FilterableSelect
                   id="nr_inmatriculare"
                   value={form.nr_inmatriculare}
-                  onChange={(e) => setForm({ ...form, nr_inmatriculare: e.target.value })}
+                  onValueChange={(value) => setForm({ ...form, nr_inmatriculare: value })}
+                  options={nrInmatriculareOptions}
+                  placeholder="Selectează nr. înmatriculare..."
+                  searchPlaceholder="Caută nr. înmatriculare..."
+                  emptyText="Nu s-au găsit numere de înmatriculare."
                 />
               </div>
               <div className="grid gap-2">
