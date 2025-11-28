@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, X, Eye, Download } from "lucide-react";
+import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown, X, Eye, Download } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import {
   Table,
@@ -110,10 +110,7 @@ const FilterHeader = ({
           ) : sortDirection === 'desc' ? (
             <ArrowDown className="h-3 w-3 text-primary" />
           ) : (
-            <div className="flex flex-col -space-y-1">
-              <ArrowUp className="h-2.5 w-2.5 opacity-50" />
-              <ArrowDown className="h-2.5 w-2.5 opacity-50" />
-            </div>
+            <ArrowUpDown className="h-3 w-3 opacity-50" />
           )}
           {filterValue && <span className="ml-1 h-2 w-2 rounded-full bg-primary" />}
         </Button>

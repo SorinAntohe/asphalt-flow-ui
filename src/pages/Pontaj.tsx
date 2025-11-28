@@ -382,10 +382,7 @@ export default function Pontaj() {
                                   ) : sortColumn === col.key && sortDirection === "desc" ? (
                                     <ArrowDown className="h-3 w-3 text-primary" />
                                   ) : (
-                                    <div className="flex flex-col -space-y-1">
-                                      <ArrowUp className="h-2.5 w-2.5 opacity-50" />
-                                      <ArrowDown className="h-2.5 w-2.5 opacity-50" />
-                                    </div>
+                                    <ArrowUpDown className="h-3 w-3 opacity-50" />
                                   )}
                                 </Button>
                               </PopoverTrigger>
