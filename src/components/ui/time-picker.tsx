@@ -44,20 +44,23 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
           <span className="text-sm">{value || "Selectează ora"}</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
+      <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
         <div className="flex">
-          <div className="flex flex-col">
-            <div className="px-2 py-1 text-xs font-medium text-muted-foreground border-b text-center">
+          <div className="flex flex-col w-16">
+            <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground border-b text-center">
               Ore
             </div>
-            <div className="h-32 overflow-y-auto">
-              <div className="flex flex-col p-0.5">
+            <div 
+              className="h-40 overflow-y-scroll overscroll-contain"
+              style={{ scrollbarWidth: 'thin' }}
+            >
+              <div className="flex flex-col p-1">
                 {hours.map((h) => (
                   <Button
                     key={h}
                     variant={h === hour ? "default" : "ghost"}
                     size="sm"
-                    className="w-9 h-6 text-xs justify-center px-1"
+                    className="w-full h-7 text-sm justify-center"
                     onClick={() => handleHourSelect(h)}
                   >
                     {h}
@@ -66,18 +69,21 @@ export function TimePicker({ value, onChange, className, disabled }: TimePickerP
               </div>
             </div>
           </div>
-          <div className="flex flex-col border-l">
-            <div className="px-2 py-1 text-xs font-medium text-muted-foreground border-b text-center">
+          <div className="flex flex-col border-l w-16">
+            <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground border-b text-center">
               Min
             </div>
-            <div className="h-32 overflow-y-auto">
-              <div className="flex flex-col p-0.5">
+            <div 
+              className="h-40 overflow-y-scroll overscroll-contain"
+              style={{ scrollbarWidth: 'thin' }}
+            >
+              <div className="flex flex-col p-1">
                 {minutes.map((m) => (
                   <Button
                     key={m}
                     variant={m === minute ? "default" : "ghost"}
                     size="sm"
-                    className="w-9 h-6 text-xs justify-center px-1"
+                    className="w-full h-7 text-sm justify-center"
                     onClick={() => handleMinuteSelect(m)}
                   >
                     {m}
