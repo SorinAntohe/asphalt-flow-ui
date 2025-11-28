@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FilterableSelect } from "@/components/ui/filterable-select";
 import { TimePicker } from "@/components/ui/time-picker";
-import { CalendarClock, Plus, Download, Pencil, Trash2, ArrowUpDown, ArrowUp, ArrowDown, Filter } from "lucide-react";
+import { CalendarClock, Plus, Download, Pencil, Trash2, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/api";
 import { exportToCSV } from "@/lib/exportUtils";
@@ -373,30 +373,53 @@ export default function Pontaj() {
                       <TableRow className="border-b hover:bg-transparent">
                         {columns.map((col) => (
                           <TableHead key={col.key} className="text-[10px] sm:text-xs px-2 sm:px-4 whitespace-nowrap">
-                            <div className="flex items-center gap-1">
-                              <span>{col.label}</span>
-                              <Popover open={activeFilterColumn === col.key} onOpenChange={(open) => setActiveFilterColumn(open ? col.key : null)}>
-                                <PopoverTrigger asChild>
-                                  <Button variant="ghost" size="sm" className="h-5 w-5 p-0 hover:bg-accent">
-                                    <Filter className="h-3 w-3" />
-                                  </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-48 p-2" align="start">
-                                  <div className="space-y-2">
-                                    <Input
-                                      placeholder="Filtrare..."
-                                      value={filters[col.key] || ""}
-                                      onChange={(e) => setFilters({ ...filters, [col.key]: e.target.value })}
-                                      className="h-8 text-sm"
-                                    />
-                                    <Button variant="outline" size="sm" className="h-7 text-xs w-full" onClick={() => { handleSort(col.key); setActiveFilterColumn(null); }}>
-                                      {getSortIcon(col.key)}
-                                      <span className="ml-1">Sort</span>
+                            <Popover open={activeFilterColumn === col.key} onOpenChange={(open) => setActiveFilterColumn(open ? col.key : null)}>
+                              <PopoverTrigger asChild>
+                                <Button variant="ghost" size="sm" className="h-7 px-2 hover:bg-muted/50 font-medium text-muted-foreground gap-1">
+                                  {col.label}
+                                  {sortColumn === col.key && sortDirection === "asc" ? (
+                                    <ArrowUp className="h-3 w-3 text-primary" />
+                                  ) : sortColumn === col.key && sortDirection === "desc" ? (
+                                    <ArrowDown className="h-3 w-3 text-primary" />
+                                  ) : (
+                                    <div className="flex flex-col -space-y-1">
+                                      <ArrowUp className="h-2.5 w-2.5 opacity-50" />
+                                      <ArrowDown className="h-2.5 w-2.5 opacity-50" />
+                                    </div>
+                                  )}
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-48 p-2" align="start">
+                                <div className="space-y-2">
+                                  <Input
+                                    placeholder="Filtrare..."
+                                    value={filters[col.key] || ""}
+                                    onChange={(e) => setFilters({ ...filters, [col.key]: e.target.value })}
+                                    className="h-8 text-sm"
+                                  />
+                                  <div className="flex gap-2">
+                                    <Button 
+                                      variant={sortColumn === col.key && sortDirection === "asc" ? "default" : "outline"} 
+                                      size="sm" 
+                                      className="flex-1 h-7 text-xs" 
+                                      onClick={() => { setSortColumn(col.key); setSortDirection("asc"); setActiveFilterColumn(null); }}
+                                    >
+                                      <ArrowUp className="h-3 w-3 mr-1" />
+                                      Cresc.
+                                    </Button>
+                                    <Button 
+                                      variant={sortColumn === col.key && sortDirection === "desc" ? "default" : "outline"} 
+                                      size="sm" 
+                                      className="flex-1 h-7 text-xs" 
+                                      onClick={() => { setSortColumn(col.key); setSortDirection("desc"); setActiveFilterColumn(null); }}
+                                    >
+                                      <ArrowDown className="h-3 w-3 mr-1" />
+                                      Descresc.
                                     </Button>
                                   </div>
-                                </PopoverContent>
-                              </Popover>
-                            </div>
+                                </div>
+                              </PopoverContent>
+                            </Popover>
                           </TableHead>
                         ))}
                       </TableRow>

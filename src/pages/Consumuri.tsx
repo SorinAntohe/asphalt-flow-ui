@@ -103,10 +103,18 @@ const FilterHeader = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="ghost" className="h-8 p-0 hover:bg-transparent font-medium text-xs">
+        <Button variant="ghost" className="h-8 px-2 hover:bg-muted/50 font-medium text-xs gap-1">
           {label}
-          {sortDirection === 'asc' && <ArrowUp className="ml-1 h-3 w-3" />}
-          {sortDirection === 'desc' && <ArrowDown className="ml-1 h-3 w-3" />}
+          {sortDirection === 'asc' ? (
+            <ArrowUp className="h-3 w-3 text-primary" />
+          ) : sortDirection === 'desc' ? (
+            <ArrowDown className="h-3 w-3 text-primary" />
+          ) : (
+            <div className="flex flex-col -space-y-1">
+              <ArrowUp className="h-2.5 w-2.5 opacity-50" />
+              <ArrowDown className="h-2.5 w-2.5 opacity-50" />
+            </div>
+          )}
           {filterValue && <span className="ml-1 h-2 w-2 rounded-full bg-primary" />}
         </Button>
       </PopoverTrigger>
