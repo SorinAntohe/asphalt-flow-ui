@@ -412,7 +412,7 @@ const Livrari = () => {
               { key: 'nr_inmatriculare', label: 'Nr. Înmatr.' },
               { key: 'tip_masina', label: 'Tip Mașină' },
               { key: 'nume_sofer', label: 'Nume Șofer' },
-              { key: 'pret_material_total', label: 'Preț Material' },
+              { key: 'pret_material_total', label: 'Preț Produs' },
               { key: 'pret_transport_total', label: 'Preț Transport' },
               { key: 'pret_total', label: 'Preț Total' }
             ])}
@@ -511,7 +511,7 @@ const Livrari = () => {
                   <FilterHeader field="nr_inmatriculare" label="Nr. Înmatriculare" />
                   <FilterHeader field="tip_masina" label="Tip Mașină" />
                   <FilterHeader field="nume_sofer" label="Nume Șofer" />
-                  <FilterHeader field="pret_material_total" label="Preț Material" />
+                  <FilterHeader field="pret_material_total" label="Preț Produs" />
                   <FilterHeader field="pret_transport_total" label="Preț Transport" />
                   <FilterHeader field="pret_total" label="Preț Total" />
                 </TableRow>
@@ -647,7 +647,7 @@ const Livrari = () => {
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="pret_material_total">Preț Material Total</Label>
+                <Label htmlFor="pret_material_total">Preț Produs Total</Label>
                 <Input
                   id="pret_material_total"
                   type="number"
@@ -761,7 +761,7 @@ const Livrari = () => {
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-1">
-                  <Label className="text-muted-foreground">Preț Material Total</Label>
+                  <Label className="text-muted-foreground">Preț Produs Total</Label>
                   <p className="font-medium">{formatNumber(viewingDetails.pret_material_total)}</p>
                 </div>
                 <div className="space-y-1">
