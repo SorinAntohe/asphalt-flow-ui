@@ -10,6 +10,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FilterableSelect } from "@/components/ui/filterable-select";
+import { TimePicker } from "@/components/ui/time-picker";
 import { CalendarClock, Plus, Download, Pencil, Trash2, ArrowUpDown, ArrowUp, ArrowDown, Filter } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/api";
@@ -483,11 +484,11 @@ export default function Pontaj() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Ora Start</Label>
-                <Input type="time" value={formData.ora_start} onChange={(e) => setFormData({ ...formData, ora_start: e.target.value })} />
+                <TimePicker value={formData.ora_start} onChange={(v) => setFormData({ ...formData, ora_start: v })} />
               </div>
               <div className="space-y-2">
                 <Label>Ora Sfârșit</Label>
-                <Input type="time" value={formData.ora_sfarsit} onChange={(e) => setFormData({ ...formData, ora_sfarsit: e.target.value })} />
+                <TimePicker value={formData.ora_sfarsit} onChange={(v) => setFormData({ ...formData, ora_sfarsit: v })} />
               </div>
             </div>
             <div className="space-y-2">
@@ -539,11 +540,11 @@ export default function Pontaj() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Ora Start</Label>
-                <Input type="time" value={formData.ora_start} onChange={(e) => setFormData({ ...formData, ora_start: e.target.value })} />
+                <TimePicker value={formData.ora_start} onChange={(v) => setFormData({ ...formData, ora_start: v })} />
               </div>
               <div className="space-y-2">
                 <Label>Ora Sfârșit</Label>
-                <Input type="time" value={formData.ora_sfarsit} onChange={(e) => setFormData({ ...formData, ora_sfarsit: e.target.value })} />
+                <TimePicker value={formData.ora_sfarsit} onChange={(v) => setFormData({ ...formData, ora_sfarsit: v })} />
               </div>
             </div>
             <div className="space-y-2">
