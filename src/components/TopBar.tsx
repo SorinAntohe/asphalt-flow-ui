@@ -35,11 +35,11 @@ export function TopBar() {
           </Select>
 
           <div className="relative flex-1 max-w-md hidden md:block">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/60" />
             <Input 
               type="search" 
               placeholder="Căutare globală..." 
-              className="pl-10 bg-muted border border-border/50 hover:bg-muted/80 hover:border-border focus-visible:bg-background focus-visible:border-primary/50 transition-all" 
+              className="pl-10 bg-muted border-2 border-border placeholder:text-foreground/50 hover:border-primary/40 focus-visible:bg-background focus-visible:border-primary transition-all" 
             />
           </div>
         </div>
