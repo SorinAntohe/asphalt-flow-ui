@@ -950,7 +950,7 @@ const Livrari = () => {
                   if (viewingDetails?.cod) {
                     try {
                       const response = await fetch(`${API_BASE_URL}/generare_tichet_livrare/${viewingDetails.cod}`, {
-                        method: 'GET',
+                        method: 'POST',
                       });
                       
                       if (response.ok) {
