@@ -273,8 +273,70 @@ const Livrari = () => {
   };
 
   const handleSave = async () => {
-    // TODO: Implement save API call
-    setOpenAddEdit(false);
+    try {
+      if (editing) {
+        // TODO: Implement edit API call
+        toast({
+          title: "Eroare",
+          description: "Funcția de editare nu este implementată încă",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // Validate required fields
+      if (!form.cod || !form.nr_inmatriculare || !form.nume_sofer) {
+        toast({
+          title: "Eroare",
+          description: "Completează toate câmpurile obligatorii",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Prepare payload for backend
+      const currentDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+      
+      const payload = {
+        data: currentDate,
+        cod: form.cod,
+        material: "", // TODO: Clarify where this value comes from
+        nr_inmatriculare: form.nr_inmatriculare,
+        tip_masina: form.tip_masina,
+        nume_sofer: form.nume_sofer,
+        pret_material_total: form.pret_material_total.toString(),
+        pret_transport_total: form.pret_transport_total.toString(),
+        pret_total: form.pret_total
+      };
+
+      const response = await fetch(`${API_BASE_URL}/livrari/adauga/livrare`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to add livrare');
+      }
+
+      const result = await response.json();
+      
+      toast({
+        title: "Succes",
+        description: result.message || "Livrarea a fost adăugată cu succes"
+      });
+
+      setOpenAddEdit(false);
+      // TODO: Refresh livrari list
+    } catch (error) {
+      console.error("Error saving livrare:", error);
+      toast({
+        title: "Eroare",
+        description: error instanceof Error ? error.message : "Nu s-a putut salva livrarea",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleDelete = async () => {
