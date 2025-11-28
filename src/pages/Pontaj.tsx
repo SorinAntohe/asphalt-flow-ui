@@ -359,9 +359,9 @@ export default function Pontaj() {
             ) : (
               <>
                 <div className="rounded-md border overflow-x-auto">
-                  <Table className="[&_tr]:border-0 [&_th]:border-0 [&_td]:border-0">
-                    <TableHeader>
-                      <TableRow>
+                  <Table>
+                    <TableHeader className="[&_tr]:border-0">
+                      <TableRow className="border-0">
                         {columns.map((col) => (
                           <TableHead key={col.key} className="text-xs">
                             <div className="flex items-center gap-1">
@@ -394,14 +394,14 @@ export default function Pontaj() {
                     </TableHeader>
                     <TableBody>
                       {paginatedData.length === 0 ? (
-                        <TableRow>
+                      <TableRow className="border-0">
                           <TableCell colSpan={columns.length} className="text-center text-muted-foreground py-8">
                             Nu există înregistrări pentru această dată.
                           </TableCell>
                         </TableRow>
                       ) : (
                         paginatedData.map((pontaj) => (
-                          <TableRow key={pontaj.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setViewingDetails(pontaj)}>
+                          <TableRow key={pontaj.id} className="cursor-pointer hover:bg-muted/50 border-0" onClick={() => setViewingDetails(pontaj)}>
                             <TableCell className="text-sm">{pontaj.nume_angajat}</TableCell>
                             <TableCell className="text-sm">{pontaj.prezenta}</TableCell>
                             <TableCell className="text-sm">{pontaj.ora_start}</TableCell>
