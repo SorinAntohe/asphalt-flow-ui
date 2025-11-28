@@ -39,7 +39,7 @@ export function TopBar() {
             <Input 
               type="search" 
               placeholder="Căutare globală..." 
-              className="pl-10 bg-muted/50 border-0 hover:bg-muted focus-visible:bg-background transition-colors" 
+              className="pl-10 bg-muted border border-border/50 hover:bg-muted/80 hover:border-border focus-visible:bg-background focus-visible:border-primary/50 transition-all" 
             />
           </div>
         </div>
