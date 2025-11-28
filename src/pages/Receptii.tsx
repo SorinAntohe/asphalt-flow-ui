@@ -32,6 +32,8 @@ interface ReceptieMaterial {
   tip_masina: string;
   cantitate_livrata: number;
   cantitate_receptionata: number;
+  tara: number;
+  masa_net: number;
   diferenta: number;
   pret_material_total: number;
   pret_total: number;
@@ -53,6 +55,8 @@ const receptieSchema = z.object({
   tip_masina: z.string().trim().min(1, "Tipul mașinii este obligatoriu").max(20),
   cantitate_livrata: z.number().min(0, "Cantitatea livrată trebuie să fie pozitivă"),
   cantitate_receptionata: z.number().min(0, "Cantitatea recepționată trebuie să fie pozitivă"),
+  tara: z.number().min(0, "Tara trebuie să fie pozitivă"),
+  masa_net: z.number().min(0, "Masa netă trebuie să fie pozitivă"),
   diferenta: z.number(),
   pret_material_total: z.number().min(0, "Prețul material trebuie să fie pozitiv"),
   pret_total: z.number().min(0, "Prețul total trebuie să fie pozitiv"),
@@ -93,6 +97,8 @@ export default function Receptii() {
     tip_masina: "",
     cantitate_livrata: 0,
     cantitate_receptionata: 0,
+    tara: 0,
+    masa_net: 0,
     diferenta: 0,
     pret_material_total: 0,
     pret_total: 0,
@@ -117,6 +123,8 @@ export default function Receptii() {
     tip_masina: "",
     cantitate_livrata: "",
     cantitate_receptionata: "",
+    tara: "",
+    masa_net: "",
     diferenta: "",
     pret_material_total: "",
     pret_transport_total: "",
@@ -308,6 +316,8 @@ export default function Receptii() {
       tip_masina: "",
       cantitate_livrata: 0,
       cantitate_receptionata: 0,
+      tara: 0,
+      masa_net: 0,
       diferenta: 0,
       pret_material_total: 0,
       pret_total: 0,
@@ -335,6 +345,8 @@ export default function Receptii() {
       tip_masina: receptie.tip_masina,
       cantitate_livrata: receptie.cantitate_livrata,
       cantitate_receptionata: receptie.cantitate_receptionata,
+      tara: receptie.tara,
+      masa_net: receptie.masa_net,
       diferenta: receptie.diferenta,
       pret_material_total: receptie.pret_material_total,
       pret_total: receptie.pret_total,
@@ -392,6 +404,8 @@ export default function Receptii() {
           tip_masina: form.tip_masina,
           cantitate_livrata: form.cantitate_livrata,
           cantitate_receptionata: form.cantitate_receptionata,
+          tara: form.tara,
+          masa_net: form.masa_net,
           diferenta: form.diferenta,
           pret_material_total: form.pret_material_total,
           pret_total: form.pret_total,
@@ -488,6 +502,8 @@ export default function Receptii() {
         (item.tip_masina || "").toLowerCase().includes(filters.tip_masina.toLowerCase()) &&
         (item.cantitate_livrata?.toString() || "").includes(filters.cantitate_livrata) &&
         (item.cantitate_receptionata?.toString() || "").includes(filters.cantitate_receptionata) &&
+        (item.tara?.toString() || "").includes(filters.tara) &&
+        (item.masa_net?.toString() || "").includes(filters.masa_net) &&
         (item.diferenta?.toString() || "").includes(filters.diferenta) &&
         (item.pret_material_total?.toString() || "").includes(filters.pret_material_total) &&
         (item.pret_transport_total?.toString() || "").includes(filters.pret_transport_total) &&
@@ -596,6 +612,8 @@ export default function Receptii() {
               { key: 'tip_masina', label: 'Tip Mașină' },
               { key: 'cantitate_livrata', label: 'Cant. Livrată' },
               { key: 'cantitate_receptionata', label: 'Cant. Recepț.' },
+              { key: 'tara', label: 'Tara' },
+              { key: 'masa_net', label: 'Masa Net' },
               { key: 'diferenta', label: 'Diferență' },
               { key: 'pret_material_total', label: 'Preț Material' },
               { key: 'pret_transport_total', label: 'Preț Transport' },
@@ -658,6 +676,8 @@ export default function Receptii() {
                   <FilterHeader field="tip_masina" label="Tip Mașină" />
                   <FilterHeader field="cantitate_livrata" label="Cant. Livrată" />
                   <FilterHeader field="cantitate_receptionata" label="Cant. Recepționată" />
+                  <FilterHeader field="tara" label="Tara" />
+                  <FilterHeader field="masa_net" label="Masa Net" />
                   <FilterHeader field="diferenta" label="Diferență" />
                   <FilterHeader field="pret_material_total" label="Preț Material" />
                   <FilterHeader field="pret_transport_total" label="Preț Transport" />
@@ -670,13 +690,13 @@ export default function Receptii() {
               <TableBody key={`receptii-page-${currentPage}`} className="animate-fade-in">
                 {loading ? (
                   <TableRow className="h-10">
-                    <TableCell colSpan={19} className="text-center py-1 text-xs">
+                    <TableCell colSpan={21} className="text-center py-1 text-xs">
                       Se încarcă...
                     </TableCell>
                   </TableRow>
                 ) : paginatedData.length === 0 ? (
                   <TableRow className="h-10">
-                    <TableCell colSpan={19} className="text-center py-1 text-xs">
+                    <TableCell colSpan={21} className="text-center py-1 text-xs">
                       Nu există recepții înregistrate
                     </TableCell>
                   </TableRow>
@@ -699,6 +719,8 @@ export default function Receptii() {
                       <TableCell className="py-1 text-xs">{receptie.tip_masina}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.cantitate_livrata}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.cantitate_receptionata}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.tara}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.masa_net}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.diferenta}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.pret_material_total}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.pret_transport_total}</TableCell>
@@ -867,11 +889,36 @@ export default function Receptii() {
                 />
               </div>
               <div className="grid gap-1">
+                <Label htmlFor="tara" className="text-xs">Tara *</Label>
+                <Input
+                  id="tara"
+                  type="number"
+                  step="0.01"
+                  value={form.tara}
+                  onChange={(e) => setForm(prev => ({ ...prev, tara: parseFloat(e.target.value) || 0 }))}
+                  className={`h-8 text-xs ${formErrors.tara ? "border-destructive" : ""}`}
+                />
+              </div>
+            </div>
+            {/* Row 4 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="grid gap-1">
+                <Label htmlFor="masa_net" className="text-xs">Masa Net *</Label>
+                <Input
+                  id="masa_net"
+                  type="number"
+                  step="0.01"
+                  value={form.masa_net}
+                  onChange={(e) => setForm(prev => ({ ...prev, masa_net: parseFloat(e.target.value) || 0 }))}
+                  className={`h-8 text-xs ${formErrors.masa_net ? "border-destructive" : ""}`}
+                />
+              </div>
+              <div className="grid gap-1">
                 <Label htmlFor="diferenta" className="text-xs">Diferență</Label>
                 <Input id="diferenta" type="number" value={form.diferenta} disabled className="h-8 text-xs bg-muted" />
               </div>
             </div>
-            {/* Row 4: Prețuri */}
+            {/* Row 5: Prețuri */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="grid gap-1">
                 <Label htmlFor="pret_material_total" className="text-xs">Preț Material</Label>
@@ -886,7 +933,7 @@ export default function Receptii() {
                 <Input id="pret_total" type="number" value={form.pret_total} disabled className="h-8 text-xs bg-muted" />
               </div>
             </div>
-            {/* Row 5: Observații */}
+            {/* Row 6: Observații */}
             <div className="grid gap-1">
               <Label htmlFor="observatii" className="text-xs">Observații</Label>
               <Textarea
@@ -999,6 +1046,17 @@ export default function Receptii() {
                   <p className="text-sm font-medium">{viewingDetails.cantitate_receptionata}</p>
                 </div>
                 <div>
+                  <Label className="text-xs text-muted-foreground">Tara</Label>
+                  <p className="text-sm font-medium">{viewingDetails.tara}</p>
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Masa Net</Label>
+                  <p className="text-sm font-medium">{viewingDetails.masa_net}</p>
+                </div>
+              </div>
+              {/* Row 5 */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div>
                   <Label className="text-xs text-muted-foreground">Diferență</Label>
                   <p className="text-sm font-medium">{viewingDetails.diferenta}</p>
                 </div>
@@ -1007,7 +1065,7 @@ export default function Receptii() {
                   <p className="text-sm font-medium">{viewingDetails.pret_material_total}</p>
                 </div>
               </div>
-              {/* Row 5 */}
+              {/* Row 6 */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
                   <Label className="text-xs text-muted-foreground">Preț Transport</Label>
