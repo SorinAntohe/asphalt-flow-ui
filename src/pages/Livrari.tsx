@@ -230,6 +230,12 @@ const Livrari = () => {
     }
   };
 
+  // Calculate masa_net when masa_brut or tara changes
+  useEffect(() => {
+    const masa_net = form.masa_brut - form.tara;
+    setForm(prev => ({ ...prev, masa_net }));
+  }, [form.masa_brut, form.tara]);
+
   // Calculate prices when masa_net changes
   useEffect(() => {
     if (form.masa_net > 0 && (unitPrices.pret_fara_tva > 0 || unitPrices.pret_transport > 0)) {
@@ -831,7 +837,8 @@ const Livrari = () => {
                   type="number"
                   step="0.01"
                   value={form.masa_net}
-                  onChange={(e) => setForm({ ...form, masa_net: parseFloat(e.target.value) || 0 })}
+                  disabled
+                  className="bg-muted"
                 />
               </div>
               <div className="grid gap-2">
