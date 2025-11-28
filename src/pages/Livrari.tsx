@@ -428,6 +428,19 @@ const Livrari = () => {
     }
   };
 
+  // Calculate today's statistics
+  const getTodayDate = () => {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
+  const todayDate = getTodayDate();
+  const todayLivrari = livrari.filter(livrare => livrare.data === todayDate);
+  const todayTotalValue = todayLivrari.reduce((sum, livrare) => sum + (livrare.pret_total || 0), 0);
+
   const FilterHeader = ({ field, label }: { field: keyof typeof filters; label: string }) => (
     <TableHead className="h-10 text-xs">
       <Popover>
@@ -513,7 +526,7 @@ const Livrari = () => {
             <Truck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0</div>
+            <div className="text-2xl font-bold">{todayLivrari.length}</div>
             <p className="text-xs text-muted-foreground">
               Total livrări azi
             </p>
@@ -525,7 +538,7 @@ const Livrari = () => {
             <Truck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0 RON</div>
+            <div className="text-2xl font-bold">{formatNumber(todayTotalValue)} RON</div>
             <p className="text-xs text-muted-foreground">
               Valoare livrări azi
             </p>
