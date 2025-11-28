@@ -11,9 +11,17 @@ export function TopBar() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   
   const toggleTheme = () => {
+    // Add transitioning class for smooth color transitions
+    document.documentElement.classList.add("transitioning");
+    
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
     document.documentElement.classList.toggle("dark");
+    
+    // Remove transitioning class after animation completes
+    setTimeout(() => {
+      document.documentElement.classList.remove("transitioning");
+    }, 350);
   };
 
   return (
