@@ -943,7 +943,7 @@ const Livrari = () => {
                   Informații complete despre livrare
                 </DialogDescription>
               </div>
-              <Button 
+              <Button
                 variant="secondary"
                 size="sm"
                 onClick={async () => {
@@ -954,9 +954,19 @@ const Livrari = () => {
                       });
                       
                       if (response.ok) {
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `tichet_${viewingDetails.cod}.xlsx`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                        
                         toast({
                           title: "Succes",
-                          description: `Avizul pentru livrarea ${viewingDetails.cod} a fost generat.`,
+                          description: `Avizul pentru livrarea ${viewingDetails.cod} a fost generat și descărcat.`,
                         });
                       } else {
                         toast({
