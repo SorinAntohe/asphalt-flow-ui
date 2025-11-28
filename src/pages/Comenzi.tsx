@@ -62,7 +62,7 @@ interface ComandaProdusFinal {
   data: string;
   client: string;
   produs: string;
-  unitate_masura: string;
+  unitate_de_masura: string;
   cantitate: number;
   punct_descarcare: string | null;
   pret_fara_tva: number;
@@ -84,7 +84,7 @@ const comandaMPSchema = z.object({
 const comandaPFSchema = z.object({
   client: z.string().trim().min(1, "Clientul este obligatoriu").max(255),
   produs: z.string().trim().min(1, "Produsul este obligatoriu").max(255),
-  unitate_masura: z.string().trim().min(1, "Unitatea de măsură este obligatorie").max(50),
+  unitate_de_masura: z.string().trim().min(1, "Unitatea de măsură este obligatorie").max(50),
   cantitate: z.number().min(0, "Cantitatea trebuie să fie pozitivă"),
   punct_descarcare: z.string().trim().max(255).optional(),
   pret_fara_tva: z.number().min(0, "Prețul trebuie să fie pozitiv"),
@@ -142,7 +142,7 @@ export default function Comenzi() {
   const [formPF, setFormPF] = useState({
     client: "",
     produs: "",
-    unitate_masura: "",
+    unitate_de_masura: "",
     cantitate: 0,
     punct_descarcare: "",
     pret_fara_tva: 0,
@@ -386,7 +386,7 @@ export default function Comenzi() {
     setFormPF({
       client: "",
       produs: "",
-      unitate_masura: "",
+      unitate_de_masura: "",
       cantitate: 0,
       punct_descarcare: "",
       pret_fara_tva: 0,
@@ -402,7 +402,7 @@ export default function Comenzi() {
     setFormPF({
       client: comanda.client,
       produs: comanda.produs,
-      unitate_masura: comanda.unitate_masura,
+      unitate_de_masura: comanda.unitate_de_masura,
       cantitate: comanda.cantitate,
       punct_descarcare: comanda.punct_descarcare || "",
       pret_fara_tva: comanda.pret_fara_tva,
@@ -448,7 +448,7 @@ export default function Comenzi() {
         const comandaPayload = {
           client: validatedData.client,
           produs: validatedData.produs,
-          unitate_de_masura: validatedData.unitate_masura,
+          unitate_de_masura: validatedData.unitate_de_masura,
           cantitate: validatedData.cantitate,
           punct_descarcare: validatedData.punct_descarcare || "",
           pret_fara_tva: validatedData.pret_fara_tva,
@@ -570,7 +570,7 @@ export default function Comenzi() {
 
   // Filters for Produs Finit
   const [filtersPF, setFiltersPF] = useState({
-    id: "", cod: "", data: "", client: "", produs: "", unitate_masura: "", cantitate: "", punct_descarcare: "", pret_fara_tva: "", pret_transport: "", observatii: ""
+    id: "", cod: "", data: "", client: "", produs: "", unitate_de_masura: "", cantitate: "", punct_descarcare: "", pret_fara_tva: "", pret_transport: "", observatii: ""
   });
 
   // Sort for Produs Finit
@@ -587,7 +587,7 @@ export default function Comenzi() {
         (item.data || "").toLowerCase().includes(filtersPF.data.toLowerCase()) &&
         (item.client || "").toLowerCase().includes(filtersPF.client.toLowerCase()) &&
         (item.produs || "").toLowerCase().includes(filtersPF.produs.toLowerCase()) &&
-        (item.unitate_masura || "").toLowerCase().includes(filtersPF.unitate_masura.toLowerCase()) &&
+        (item.unitate_de_masura || "").toLowerCase().includes(filtersPF.unitate_de_masura.toLowerCase()) &&
         item.cantitate.toString().includes(filtersPF.cantitate) &&
         (item.punct_descarcare || "").toLowerCase().includes(filtersPF.punct_descarcare.toLowerCase()) &&
         item.pret_fara_tva.toString().includes(filtersPF.pret_fara_tva) &&
@@ -958,7 +958,7 @@ export default function Comenzi() {
                     { key: 'data', label: 'Data' },
                     { key: 'client', label: 'Client' },
                     { key: 'produs', label: 'Produs' },
-                    { key: 'unitate_masura', label: 'UM' },
+                    { key: 'unitate_de_masura', label: 'UM' },
                     { key: 'cantitate', label: 'Cantitate' },
                     { key: 'punct_descarcare', label: 'Punct Descărcare' },
                     { key: 'pret_fara_tva', label: 'Preț fără TVA' },
@@ -1135,12 +1135,12 @@ export default function Comenzi() {
                           </PopoverTrigger>
                           <PopoverContent className="w-56 p-2">
                             <div className="space-y-2">
-                              <Input placeholder="Caută unitate..." value={filtersPF.unitate_masura} onChange={(e) => setFiltersPF({...filtersPF, unitate_masura: e.target.value})} className="h-7 text-xs" />
+                              <Input placeholder="Caută unitate..." value={filtersPF.unitate_de_masura} onChange={(e) => setFiltersPF({...filtersPF, unitate_de_masura: e.target.value})} className="h-7 text-xs" />
                               <div className="flex gap-1">
-                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortPF({ field: 'unitate_masura', direction: 'asc' })}>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortPF({ field: 'unitate_de_masura', direction: 'asc' })}>
                                   <ArrowUp className="h-3 w-3 mr-1" /> A-Z
                                 </Button>
-                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortPF({ field: 'unitate_masura', direction: 'desc' })}>
+                                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortPF({ field: 'unitate_de_masura', direction: 'desc' })}>
                                   <ArrowDown className="h-3 w-3 mr-1" /> Z-A
                                 </Button>
                               </div>
@@ -1303,7 +1303,7 @@ export default function Comenzi() {
                         <TableCell className="py-1 text-xs">{comanda.data}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.client}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.produs}</TableCell>
-                        <TableCell className="py-1 text-xs">{comanda.unitate_masura}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.unitate_de_masura}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.cantitate}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.punct_descarcare || "-"}</TableCell>
                         <TableCell className="py-1 text-xs">{comanda.pret_fara_tva}</TableCell>
@@ -1638,11 +1638,11 @@ export default function Comenzi() {
                 <Label htmlFor="unitate_masura_pf">Unitate Măsură *</Label>
                 <Input
                   id="unitate_masura_pf"
-                  value={formPF.unitate_masura}
-                  onChange={(e) => setFormPF({ ...formPF, unitate_masura: e.target.value })}
-                  className={formErrorsPF.unitate_masura ? "border-destructive" : ""}
+                  value={formPF.unitate_de_masura}
+                  onChange={(e) => setFormPF({ ...formPF, unitate_de_masura: e.target.value })}
+                  className={formErrorsPF.unitate_de_masura ? "border-destructive" : ""}
                 />
-                {formErrorsPF.unitate_masura && <p className="text-sm text-destructive">{formErrorsPF.unitate_masura}</p>}
+                {formErrorsPF.unitate_de_masura && <p className="text-sm text-destructive">{formErrorsPF.unitate_de_masura}</p>}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="cantitate_pf">Cantitate *</Label>
@@ -1748,7 +1748,7 @@ export default function Comenzi() {
                 </div>
                 <div className="space-y-1">
                   <Label className="text-muted-foreground">Unitate Măsură</Label>
-                  <p className="font-medium">{viewingDetailsPF.unitate_masura}</p>
+                  <p className="font-medium">{viewingDetailsPF.unitate_de_masura}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
