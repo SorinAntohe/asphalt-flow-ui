@@ -30,6 +30,7 @@ interface Livrare {
   nr_inmatriculare: string | null;
   tip_masina: string | null;
   nume_sofer: string | null;
+  temperatura: number | null;
   pret_produs_total: number | null;
   pret_transport_total: number | null;
   pret_total: number | null;
@@ -52,6 +53,7 @@ const Livrari = () => {
     tip_masina: "",
     nume_sofer: "",
     produs: "",
+    temperatura: 0,
     pret_produs_total: 0,
     pret_transport_total: 0,
     pret_total: 0
@@ -66,6 +68,7 @@ const Livrari = () => {
     nr_inmatriculare: "",
     tip_masina: "",
     nume_sofer: "",
+    temperatura: "",
     pret_produs_total: "",
     pret_transport_total: "",
     pret_total: ""
@@ -232,6 +235,7 @@ const Livrari = () => {
         (item.nr_inmatriculare || "").toLowerCase().includes(filters.nr_inmatriculare.toLowerCase()) &&
         (item.tip_masina || "").toLowerCase().includes(filters.tip_masina.toLowerCase()) &&
         (item.nume_sofer || "").toLowerCase().includes(filters.nume_sofer.toLowerCase()) &&
+        (item.temperatura?.toString() || "").includes(filters.temperatura) &&
         (item.pret_produs_total?.toString() || "").includes(filters.pret_produs_total) &&
         (item.pret_transport_total?.toString() || "").includes(filters.pret_transport_total) &&
         (item.pret_total?.toString() || "").includes(filters.pret_total)
@@ -279,6 +283,7 @@ const Livrari = () => {
       tip_masina: "",
       nume_sofer: "",
       produs: "",
+      temperatura: 0,
       pret_produs_total: 0,
       pret_transport_total: 0,
       pret_total: 0
@@ -295,6 +300,7 @@ const Livrari = () => {
       tip_masina: livrare.tip_masina || "",
       nume_sofer: livrare.nume_sofer || "",
       produs: "",
+      temperatura: livrare.temperatura || 0,
       pret_produs_total: livrare.pret_produs_total || 0,
       pret_transport_total: livrare.pret_transport_total || 0,
       pret_total: livrare.pret_total || 0
@@ -322,6 +328,7 @@ const Livrari = () => {
           nr_inmatriculare: form.nr_inmatriculare,
           tip_masina: form.tip_masina,
           nume_sofer: form.nume_sofer,
+          temperatura: form.temperatura,
           pret_produs_total: form.pret_produs_total.toString(),
           pret_transport_total: form.pret_transport_total.toString(),
           pret_total: form.pret_total
@@ -357,6 +364,7 @@ const Livrari = () => {
           nr_inmatriculare: form.nr_inmatriculare,
           tip_masina: form.tip_masina,
           nume_sofer: form.nume_sofer,
+          temperatura: form.temperatura,
           pret_produs_total: form.pret_produs_total.toString(),
           pret_transport_total: form.pret_transport_total.toString(),
           pret_total: form.pret_total
@@ -503,6 +511,7 @@ const Livrari = () => {
               { key: 'nr_inmatriculare', label: 'Nr. Înmatr.' },
               { key: 'tip_masina', label: 'Tip Mașină' },
               { key: 'nume_sofer', label: 'Nume Șofer' },
+              { key: 'temperatura', label: 'Temperatură' },
               { key: 'pret_produs_total', label: 'Preț Produs' },
               { key: 'pret_transport_total', label: 'Preț Transport' },
               { key: 'pret_total', label: 'Preț Total' }
@@ -602,6 +611,7 @@ const Livrari = () => {
                   <FilterHeader field="nr_inmatriculare" label="Nr. Înmatriculare" />
                   <FilterHeader field="tip_masina" label="Tip Mașină" />
                   <FilterHeader field="nume_sofer" label="Nume Șofer" />
+                  <FilterHeader field="temperatura" label="Temperatură" />
                   <FilterHeader field="pret_produs_total" label="Preț Produs" />
                   <FilterHeader field="pret_transport_total" label="Preț Transport" />
                   <FilterHeader field="pret_total" label="Preț Total" />
@@ -610,7 +620,7 @@ const Livrari = () => {
               <TableBody key={`livrari-page-${currentPage}`} className="animate-fade-in">
                 {paginatedData.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={11} className="text-center py-8 text-muted-foreground">
                       Nu există livrări înregistrate
                     </TableCell>
                   </TableRow>
@@ -628,6 +638,7 @@ const Livrari = () => {
                       <TableCell className="py-1 text-xs">{livrare.nr_inmatriculare || "-"}</TableCell>
                       <TableCell className="py-1 text-xs">{livrare.tip_masina || "-"}</TableCell>
                       <TableCell className="py-1 text-xs">{livrare.nume_sofer || "-"}</TableCell>
+                      <TableCell className="py-1 text-xs text-right">{livrare.temperatura || "-"}</TableCell>
                       <TableCell className="py-1 text-xs text-right">{formatNumber(livrare.pret_produs_total)}</TableCell>
                       <TableCell className="py-1 text-xs text-right">{formatNumber(livrare.pret_transport_total)}</TableCell>
                       <TableCell className="py-1 text-xs text-right">{formatNumber(livrare.pret_total)}</TableCell>
@@ -734,6 +745,16 @@ const Livrari = () => {
                 placeholder="Selectează șofer..."
                 searchPlaceholder="Caută șofer..."
                 emptyText="Nu s-au găsit șoferi."
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="temperatura">Temperatură</Label>
+              <Input
+                id="temperatura"
+                type="number"
+                step="0.1"
+                value={form.temperatura}
+                onChange={(e) => setForm({ ...form, temperatura: parseFloat(e.target.value) || 0 })}
               />
             </div>
             <div className="grid grid-cols-3 gap-4">
@@ -848,6 +869,10 @@ const Livrari = () => {
                 <div className="space-y-1">
                   <Label className="text-muted-foreground">Nume Șofer</Label>
                   <p className="font-medium">{viewingDetails.nume_sofer || "-"}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Temperatură</Label>
+                  <p className="font-medium">{viewingDetails.temperatura || "-"}</p>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4">
