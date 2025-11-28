@@ -310,25 +310,31 @@ export default function Pontaj() {
   ];
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <CalendarClock className="h-6 w-6 text-primary" />
-        <h1 className="text-2xl font-bold text-foreground">Pontaj</h1>
+    <div className="space-y-4 sm:space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <CalendarClock className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">Pontaj</h1>
+            <p className="text-sm text-muted-foreground hidden sm:block">Gestionare prezență angajați</p>
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4">
         {/* Left - Calendar Card */}
         <Card className="h-fit">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Selectează Data</CardTitle>
-            <CardDescription>Vizualizează pontajul</CardDescription>
+          <CardHeader className="pb-2 px-3 sm:px-6">
+            <CardTitle className="text-base sm:text-lg">Selectează Data</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">Vizualizează pontajul</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-2 sm:px-6 pb-4">
             <Calendar
               mode="single"
               selected={selectedDate}
               onSelect={(date) => date && setSelectedDate(date)}
-              className="pointer-events-auto"
+              className="pointer-events-auto mx-auto"
               locale={ro}
             />
           </CardContent>
@@ -336,35 +342,37 @@ export default function Pontaj() {
 
         {/* Right - Table Card */}
         <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
+          <CardHeader className="pb-3 px-3 sm:px-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
-                <CardTitle className="text-lg">Evidența Pontajului</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-base sm:text-lg">Evidența Pontajului</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">
                   {format(selectedDate, "EEEE, d MMMM yyyy", { locale: ro })}
                 </CardDescription>
               </div>
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" onClick={handleExport} disabled={filteredAndSortedData.length === 0}>
                   <Download className="w-4 h-4" />
+                  <span className="hidden sm:inline ml-2">Export</span>
                 </Button>
                 <Button size="sm" onClick={() => { resetForm(); setIsAddDialogOpen(true); }}>
                   <Plus className="w-4 h-4" />
+                  <span className="hidden sm:inline ml-2">Adaugă</span>
                 </Button>
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-2 sm:px-6">
             {loading ? (
-              <p className="text-muted-foreground text-center py-8">Se încarcă...</p>
+              <p className="text-muted-foreground text-center py-8 text-sm">Se încarcă...</p>
             ) : (
               <>
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto -mx-2 sm:mx-0">
                   <Table>
                     <TableHeader className="[&_tr]:border-b bg-muted/30">
                       <TableRow className="border-b hover:bg-transparent">
                         {columns.map((col) => (
-                          <TableHead key={col.key} className="text-xs">
+                          <TableHead key={col.key} className="text-[10px] sm:text-xs px-2 sm:px-4 whitespace-nowrap">
                             <div className="flex items-center gap-1">
                               <span>{col.label}</span>
                               <Popover open={activeFilterColumn === col.key} onOpenChange={(open) => setActiveFilterColumn(open ? col.key : null)}>
@@ -396,19 +404,22 @@ export default function Pontaj() {
                     <TableBody>
                       {paginatedData.length === 0 ? (
                       <TableRow className="border-0">
-                          <TableCell colSpan={columns.length} className="text-center text-muted-foreground py-8">
+                          <TableCell colSpan={columns.length} className="text-center text-muted-foreground py-8 text-sm">
                             Nu există înregistrări pentru această dată.
                           </TableCell>
                         </TableRow>
                       ) : (
                         paginatedData.map((pontaj) => (
                           <TableRow key={pontaj.id} className="cursor-pointer hover:bg-muted/50 border-0" onClick={() => setViewingDetails(pontaj)}>
-                            <TableCell className="text-sm">{pontaj.nume_angajat}</TableCell>
-                            <TableCell className="text-sm">{pontaj.prezenta}</TableCell>
-                            <TableCell className="text-sm">{pontaj.ora_start}</TableCell>
-                            <TableCell className="text-sm">{pontaj.ora_sfarsit}</TableCell>
-                            <TableCell className="text-sm">{pontaj.pauza_masa} min</TableCell>
-                            <TableCell className="text-sm">{pontaj.total_ore}h</TableCell>
+                            <TableCell className="text-xs sm:text-sm px-2 sm:px-4">{pontaj.nume_angajat}</TableCell>
+                            <TableCell className="text-xs sm:text-sm px-2 sm:px-4">
+                              <span className="hidden sm:inline">{pontaj.prezenta}</span>
+                              <span className="sm:hidden">{pontaj.prezenta.substring(0, 3)}.</span>
+                            </TableCell>
+                            <TableCell className="text-xs sm:text-sm px-2 sm:px-4">{pontaj.ora_start}</TableCell>
+                            <TableCell className="text-xs sm:text-sm px-2 sm:px-4">{pontaj.ora_sfarsit}</TableCell>
+                            <TableCell className="text-xs sm:text-sm px-2 sm:px-4">{pontaj.pauza_masa}<span className="hidden sm:inline"> min</span></TableCell>
+                            <TableCell className="text-xs sm:text-sm px-2 sm:px-4">{pontaj.total_ore}h</TableCell>
                           </TableRow>
                         ))
                       )}
@@ -417,11 +428,11 @@ export default function Pontaj() {
                 </div>
 
                 {filteredAndSortedData.length > 0 && (
-                  <div className="flex items-center justify-between mt-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">Afișează</span>
+                  <div className="flex flex-col sm:flex-row items-center justify-between mt-4 gap-3">
+                    <div className="flex items-center gap-2 text-xs sm:text-sm">
+                      <span className="text-muted-foreground hidden sm:inline">Afișează</span>
                       <Select value={String(itemsPerPage)} onValueChange={(v) => { setItemsPerPage(Number(v)); setCurrentPage(1); }}>
-                        <SelectTrigger className="w-16 h-8">
+                        <SelectTrigger className="w-14 sm:w-16 h-8">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -430,17 +441,19 @@ export default function Pontaj() {
                           ))}
                         </SelectContent>
                       </Select>
-                      <span className="text-sm text-muted-foreground">pe pagină</span>
+                      <span className="text-muted-foreground">/pagină</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>
-                        Anterior
+                      <Button variant="outline" size="sm" className="h-8 px-2 sm:px-3" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                        <span className="hidden sm:inline">Anterior</span>
+                        <span className="sm:hidden">←</span>
                       </Button>
-                      <span className="text-sm text-muted-foreground">
+                      <span className="text-xs sm:text-sm text-muted-foreground min-w-[60px] text-center">
                         {currentPage} / {Math.max(1, totalPages)}
                       </span>
-                      <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage >= totalPages}>
-                        Următor
+                      <Button variant="outline" size="sm" className="h-8 px-2 sm:px-3" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage >= totalPages}>
+                        <span className="hidden sm:inline">Următor</span>
+                        <span className="sm:hidden">→</span>
                       </Button>
                     </div>
                   </div>
@@ -453,13 +466,13 @@ export default function Pontaj() {
 
       {/* Add Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[95vw] sm:max-w-md mx-auto">
           <DialogHeader>
-            <DialogTitle>Adaugă Pontaj</DialogTitle>
+            <DialogTitle className="text-lg">Adaugă Pontaj</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="space-y-2">
-              <Label>Angajat</Label>
+          <div className="grid gap-3 sm:gap-4 py-3 sm:py-4">
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label className="text-sm">Angajat</Label>
               <FilterableSelect
                 value={formData.angajat_id}
                 onValueChange={(v) => setFormData({ ...formData, angajat_id: v })}
@@ -468,8 +481,8 @@ export default function Pontaj() {
                 searchPlaceholder="Caută angajat..."
               />
             </div>
-            <div className="space-y-2">
-              <Label>Prezență</Label>
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label className="text-sm">Prezență</Label>
               <Select value={formData.prezenta} onValueChange={(v) => setFormData({ ...formData, prezenta: v })}>
                 <SelectTrigger>
                   <SelectValue />
@@ -481,13 +494,13 @@ export default function Pontaj() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Ora Start</Label>
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              <div className="space-y-1.5 sm:space-y-2">
+                <Label className="text-sm">Ora Start</Label>
                 <TimePicker value={formData.ora_start} onChange={(v) => setFormData({ ...formData, ora_start: v })} />
               </div>
-              <div className="space-y-2">
-                <Label>Ora Sfârșit</Label>
+              <div className="space-y-1.5 sm:space-y-2">
+                <Label className="text-sm">Ora Sfârșit</Label>
                 <TimePicker 
                   value={formData.ora_sfarsit} 
                   onChange={(v) => {
@@ -500,31 +513,31 @@ export default function Pontaj() {
                 />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label>Pauză Masă (minute)</Label>
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label className="text-sm">Pauză Masă (minute)</Label>
               <Input type="number" value={formData.pauza_masa} onChange={(e) => setFormData({ ...formData, pauza_masa: parseInt(e.target.value) || 0 })} />
             </div>
-            <div className="space-y-2">
-              <Label>Total Ore Lucrate</Label>
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label className="text-sm">Total Ore Lucrate</Label>
               <Input value={totalOreCalculate} disabled className="bg-muted" />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Anulează</Button>
-            <Button onClick={handleAdd}>Adaugă</Button>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)} className="w-full sm:w-auto">Anulează</Button>
+            <Button onClick={handleAdd} className="w-full sm:w-auto">Adaugă</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[95vw] sm:max-w-md mx-auto">
           <DialogHeader>
-            <DialogTitle>Editează Pontaj</DialogTitle>
+            <DialogTitle className="text-lg">Editează Pontaj</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="space-y-2">
-              <Label>Angajat</Label>
+          <div className="grid gap-3 sm:gap-4 py-3 sm:py-4">
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label className="text-sm">Angajat</Label>
               <FilterableSelect
                 value={formData.angajat_id}
                 onValueChange={(v) => setFormData({ ...formData, angajat_id: v })}
@@ -533,8 +546,8 @@ export default function Pontaj() {
                 searchPlaceholder="Caută angajat..."
               />
             </div>
-            <div className="space-y-2">
-              <Label>Prezență</Label>
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label className="text-sm">Prezență</Label>
               <Select value={formData.prezenta} onValueChange={(v) => setFormData({ ...formData, prezenta: v })}>
                 <SelectTrigger>
                   <SelectValue />
@@ -546,13 +559,13 @@ export default function Pontaj() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Ora Start</Label>
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              <div className="space-y-1.5 sm:space-y-2">
+                <Label className="text-sm">Ora Start</Label>
                 <TimePicker value={formData.ora_start} onChange={(v) => setFormData({ ...formData, ora_start: v })} />
               </div>
-              <div className="space-y-2">
-                <Label>Ora Sfârșit</Label>
+              <div className="space-y-1.5 sm:space-y-2">
+                <Label className="text-sm">Ora Sfârșit</Label>
                 <TimePicker 
                   value={formData.ora_sfarsit} 
                   onChange={(v) => {
@@ -565,70 +578,70 @@ export default function Pontaj() {
                 />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label>Pauză Masă (minute)</Label>
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label className="text-sm">Pauză Masă (minute)</Label>
               <Input type="number" value={formData.pauza_masa} onChange={(e) => setFormData({ ...formData, pauza_masa: parseInt(e.target.value) || 0 })} />
             </div>
-            <div className="space-y-2">
-              <Label>Total Ore Lucrate</Label>
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label className="text-sm">Total Ore Lucrate</Label>
               <Input value={totalOreCalculate} disabled className="bg-muted" />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Anulează</Button>
-            <Button onClick={handleEdit}>Salvează</Button>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)} className="w-full sm:w-auto">Anulează</Button>
+            <Button onClick={handleEdit} className="w-full sm:w-auto">Salvează</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Details Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[95vw] sm:max-w-md mx-auto">
           <DialogHeader>
-            <DialogTitle>Detalii Pontaj</DialogTitle>
+            <DialogTitle className="text-lg">Detalii Pontaj</DialogTitle>
           </DialogHeader>
           {viewingDetails && (
-            <div className="grid grid-cols-2 gap-4 py-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 py-3 sm:py-4">
               <div>
-                <Label className="text-muted-foreground text-xs">ID</Label>
-                <p className="font-medium">{viewingDetails.id}</p>
+                <Label className="text-muted-foreground text-[10px] sm:text-xs">ID</Label>
+                <p className="font-medium text-sm sm:text-base">{viewingDetails.id}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground text-xs">Angajat</Label>
-                <p className="font-medium">{viewingDetails.nume_angajat}</p>
+                <Label className="text-muted-foreground text-[10px] sm:text-xs">Angajat</Label>
+                <p className="font-medium text-sm sm:text-base truncate">{viewingDetails.nume_angajat}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground text-xs">Prezență</Label>
-                <p className="font-medium">{viewingDetails.prezenta}</p>
+                <Label className="text-muted-foreground text-[10px] sm:text-xs">Prezență</Label>
+                <p className="font-medium text-sm sm:text-base">{viewingDetails.prezenta}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground text-xs">Data</Label>
-                <p className="font-medium">{viewingDetails.data}</p>
+                <Label className="text-muted-foreground text-[10px] sm:text-xs">Data</Label>
+                <p className="font-medium text-sm sm:text-base">{viewingDetails.data}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground text-xs">Ora Start</Label>
-                <p className="font-medium">{viewingDetails.ora_start}</p>
+                <Label className="text-muted-foreground text-[10px] sm:text-xs">Ora Start</Label>
+                <p className="font-medium text-sm sm:text-base">{viewingDetails.ora_start}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground text-xs">Ora Sfârșit</Label>
-                <p className="font-medium">{viewingDetails.ora_sfarsit}</p>
+                <Label className="text-muted-foreground text-[10px] sm:text-xs">Ora Sfârșit</Label>
+                <p className="font-medium text-sm sm:text-base">{viewingDetails.ora_sfarsit}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground text-xs">Pauză Masă</Label>
-                <p className="font-medium">{viewingDetails.pauza_masa} min</p>
+                <Label className="text-muted-foreground text-[10px] sm:text-xs">Pauză Masă</Label>
+                <p className="font-medium text-sm sm:text-base">{viewingDetails.pauza_masa} min</p>
               </div>
               <div>
-                <Label className="text-muted-foreground text-xs">Total Ore</Label>
-                <p className="font-medium">{viewingDetails.total_ore} ore</p>
+                <Label className="text-muted-foreground text-[10px] sm:text-xs">Total Ore</Label>
+                <p className="font-medium text-sm sm:text-base">{viewingDetails.total_ore} ore</p>
               </div>
             </div>
           )}
-          <DialogFooter className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => { if (viewingDetails) openEditDialog(viewingDetails); setViewingDetails(null); }}>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => { if (viewingDetails) openEditDialog(viewingDetails); setViewingDetails(null); }} className="w-full sm:w-auto">
               <Pencil className="w-4 h-4 mr-2" />
               Editează
             </Button>
-            <Button variant="destructive" size="sm" onClick={() => { if (viewingDetails) { setDeletingId(viewingDetails.id); setIsDeleteDialogOpen(true); } }}>
+            <Button variant="destructive" size="sm" onClick={() => { if (viewingDetails) { setDeletingId(viewingDetails.id); setIsDeleteDialogOpen(true); } }} className="w-full sm:w-auto">
               <Trash2 className="w-4 h-4 mr-2" />
               Șterge
             </Button>
@@ -638,16 +651,16 @@ export default function Pontaj() {
 
       {/* Delete Confirmation */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-[95vw] sm:max-w-md mx-auto">
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmare ștergere</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-lg">Confirmare ștergere</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm">
               Sunteți sigur că doriți să ștergeți acest pontaj? Această acțiune nu poate fi anulată.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Anulează</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel className="w-full sm:w-auto">Anulează</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 w-full sm:w-auto">
               Șterge
             </AlertDialogAction>
           </AlertDialogFooter>
