@@ -531,27 +531,17 @@ const Livrari = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="cod">Cod</Label>
-                <FilterableSelect
-                  id="cod"
-                  value={form.cod}
-                  onValueChange={handleCodChange}
-                  options={codOptions}
-                  placeholder="Selectează cod..."
-                  searchPlaceholder="Caută cod..."
-                  emptyText="Nu s-au găsit coduri."
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="nr_aviz">Nr. Aviz</Label>
-                <Input
-                  id="nr_aviz"
-                  value={form.nr_aviz}
-                  onChange={(e) => setForm({ ...form, nr_aviz: e.target.value })}
-                />
-              </div>
+            <div className="grid gap-2">
+              <Label htmlFor="cod">Cod</Label>
+              <FilterableSelect
+                id="cod"
+                value={form.cod}
+                onValueChange={handleCodChange}
+                options={codOptions}
+                placeholder="Selectează cod..."
+                searchPlaceholder="Caută cod..."
+                emptyText="Nu s-au găsit coduri."
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
