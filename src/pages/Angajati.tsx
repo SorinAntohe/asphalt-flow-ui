@@ -410,12 +410,12 @@ export default function Angajati() {
             onClick={handleExport}
             disabled={filteredAndSortedData.length === 0}
           >
-            <Download className="w-4 h-4 mr-2" />
-            Export CSV
+            <Download className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Export CSV</span>
           </Button>
           <Button size="sm" onClick={() => setIsAddDialogOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            Adaugă
+            <Plus className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Adaugă</span>
           </Button>
         </div>
       </div>

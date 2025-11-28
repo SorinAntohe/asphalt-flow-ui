@@ -125,8 +125,8 @@ export default function Stocuri() {
           ])}
           disabled={filteredAndSortedStocuri.length === 0}
         >
-          <Download className="w-4 h-4 mr-2" />
-          Export
+          <Download className="w-4 h-4 sm:mr-2" />
+          <span className="hidden sm:inline">Export</span>
         </Button>
       </div>
 
