@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/hooks/useAuth";
 import { AlertCircle } from "lucide-react";
 import logo from "@/assets/logo-auth.png";
@@ -124,15 +124,15 @@ const Auth = () => {
                   required
                 />
               </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="rememberMe"
-                  checked={rememberMe}
-                  onCheckedChange={(checked) => setRememberMe(checked === true)}
-                />
-                <Label htmlFor="rememberMe" className="text-sm font-normal cursor-pointer">
+              <div className="flex items-center justify-between py-2">
+                <Label htmlFor="rememberMe" className="text-sm font-medium cursor-pointer text-foreground/80">
                   Ține-mă minte
                 </Label>
+                <Switch
+                  id="rememberMe"
+                  checked={rememberMe}
+                  onCheckedChange={setRememberMe}
+                />
               </div>
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Se autentifică..." : "Autentificare"}
