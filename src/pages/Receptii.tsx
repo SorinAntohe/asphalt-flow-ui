@@ -35,6 +35,7 @@ interface ReceptieMaterial {
   tara: number;
   masa_net: number;
   diferenta: number;
+  umiditate: number;
   pret_material_total: number;
   pret_total: number;
   pret_transport_total: number;
@@ -58,6 +59,7 @@ const receptieSchema = z.object({
   tara: z.number().min(0, "Tara trebuie să fie pozitivă"),
   masa_net: z.number().min(0, "Masa netă trebuie să fie pozitivă"),
   diferenta: z.number(),
+  umiditate: z.number().min(0, "Umiditatea trebuie să fie pozitivă").max(100, "Umiditatea nu poate depăși 100%"),
   pret_material_total: z.number().min(0, "Prețul material trebuie să fie pozitiv"),
   pret_total: z.number().min(0, "Prețul total trebuie să fie pozitiv"),
   pret_transport_total: z.number().min(0, "Prețul transport trebuie să fie pozitiv"),
@@ -100,6 +102,7 @@ export default function Receptii() {
     tara: 0,
     masa_net: 0,
     diferenta: 0,
+    umiditate: 0,
     pret_material_total: 0,
     pret_total: 0,
     pret_transport_total: 0,
@@ -126,6 +129,7 @@ export default function Receptii() {
     tara: "",
     masa_net: "",
     diferenta: "",
+    umiditate: "",
     pret_material_total: "",
     pret_transport_total: "",
     pret_total: "",
@@ -325,6 +329,7 @@ export default function Receptii() {
       tara: 0,
       masa_net: 0,
       diferenta: 0,
+      umiditate: 0,
       pret_material_total: 0,
       pret_total: 0,
       pret_transport_total: 0,
@@ -354,6 +359,7 @@ export default function Receptii() {
       tara: receptie.tara,
       masa_net: receptie.masa_net,
       diferenta: receptie.diferenta,
+      umiditate: receptie.umiditate || 0,
       pret_material_total: receptie.pret_material_total,
       pret_total: receptie.pret_total,
       pret_transport_total: receptie.pret_transport_total,
@@ -413,6 +419,7 @@ export default function Receptii() {
           tara: form.tara,
           masa_net: form.masa_net,
           diferenta: form.diferenta,
+          umiditate: form.umiditate,
           pret_material_total: form.pret_material_total,
           pret_total: form.pret_total,
           pret_transport_total: form.pret_transport_total,
@@ -511,6 +518,7 @@ export default function Receptii() {
         (item.tara?.toString() || "").includes(filters.tara) &&
         (item.masa_net?.toString() || "").includes(filters.masa_net) &&
         (item.diferenta?.toString() || "").includes(filters.diferenta) &&
+        (item.umiditate?.toString() || "").includes(filters.umiditate) &&
         (item.pret_material_total?.toString() || "").includes(filters.pret_material_total) &&
         (item.pret_transport_total?.toString() || "").includes(filters.pret_transport_total) &&
         (item.pret_total?.toString() || "").includes(filters.pret_total) &&
@@ -633,6 +641,7 @@ export default function Receptii() {
               { key: 'tara', label: 'Tara' },
               { key: 'masa_net', label: 'Masa Net' },
               { key: 'diferenta', label: 'Diferență' },
+              { key: 'umiditate', label: 'Umiditate (%)' },
               { key: 'pret_material_total', label: 'Preț Material' },
               { key: 'pret_transport_total', label: 'Preț Transport' },
               { key: 'pret_total', label: 'Preț Total' },
@@ -740,6 +749,7 @@ export default function Receptii() {
                   <FilterHeader field="tara" label="Tara" />
                   <FilterHeader field="masa_net" label="Masa Net" />
                   <FilterHeader field="diferenta" label="Diferență" />
+                  <FilterHeader field="umiditate" label="Umiditate (%)" />
                   <FilterHeader field="pret_material_total" label="Preț Material" />
                   <FilterHeader field="pret_transport_total" label="Preț Transport" />
                   <FilterHeader field="pret_total" label="Preț Total" />
@@ -783,6 +793,7 @@ export default function Receptii() {
                       <TableCell className="py-1 text-xs">{receptie.tara}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.masa_net}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.diferenta}</TableCell>
+                      <TableCell className="py-1 text-xs">{receptie.umiditate}%</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.pret_material_total}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.pret_transport_total}</TableCell>
                       <TableCell className="py-1 text-xs">{receptie.pret_total}</TableCell>
@@ -996,6 +1007,19 @@ export default function Receptii() {
                 <Label htmlFor="diferenta" className="text-xs">Diferență</Label>
                 <Input id="diferenta" type="number" value={form.diferenta} disabled className="h-8 text-xs bg-muted" />
               </div>
+              <div className="grid gap-1">
+                <Label htmlFor="umiditate" className="text-xs">Umiditate (%)</Label>
+                <Input
+                  id="umiditate"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max="100"
+                  value={form.umiditate}
+                  onChange={(e) => setForm(prev => ({ ...prev, umiditate: parseFloat(e.target.value) || 0 }))}
+                  className={`h-8 text-xs ${formErrors.umiditate ? "border-destructive" : ""}`}
+                />
+              </div>
             </div>
             {/* Row 5: Prețuri */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -1167,6 +1191,10 @@ export default function Receptii() {
                 <div>
                   <Label className="text-xs text-muted-foreground">Diferență</Label>
                   <p className="text-sm font-medium">{viewingDetails.diferenta}</p>
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Umiditate</Label>
+                  <p className="text-sm font-medium">{viewingDetails.umiditate}%</p>
                 </div>
                 <div>
                   <Label className="text-xs text-muted-foreground">Preț Material</Label>
