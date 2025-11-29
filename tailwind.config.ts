@@ -107,6 +107,10 @@ export default {
 			'shimmer': {
 				'0%': { backgroundPosition: '-200% 0' },
 				'100%': { backgroundPosition: '200% 0' }
+			},
+			'zoom-in': {
+				'0%': { transform: 'scale(1)' },
+				'100%': { transform: 'scale(1.15)' }
 			}
 		},
 		animation: {
@@ -122,7 +126,8 @@ export default {
 			'pulse-soft': 'pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
 			'shimmer': 'shimmer 2s linear infinite',
 			'enter': 'fade-in 0.3s cubic-bezier(0.32, 0.72, 0, 1) both',
-			'exit': 'fade-out 0.2s cubic-bezier(0.32, 0.72, 0, 1) both'
+			'exit': 'fade-out 0.2s cubic-bezier(0.32, 0.72, 0, 1) both',
+			'zoom-in': 'zoom-in 20s ease-out forwards'
 		},
   		fontFamily: {
   			sans: [

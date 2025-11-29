@@ -42,13 +42,13 @@ const Auth = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      {/* Video Background */}
+      {/* Video Background with zoom animation */}
       <video
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover animate-zoom-in"
       >
         <source src="/videos/login-background.mp4" type="video/mp4" />
       </video>
