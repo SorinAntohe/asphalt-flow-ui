@@ -48,7 +48,7 @@ const Auth = () => {
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover animate-zoom-in"
+        className="absolute inset-0 w-full h-full object-cover"
       >
         <source src="/videos/login-background.mp4" type="video/mp4" />
       </video>
