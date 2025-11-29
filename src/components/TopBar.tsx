@@ -40,7 +40,7 @@ export function TopBar() {
         
         <div className="flex-1 flex items-center gap-3 sm:gap-4">
           <Select defaultValue="asfalt-emulsie">
-            <SelectTrigger className="w-[140px] sm:w-[200px] text-xs sm:text-sm bg-muted/50 border-0 hover:bg-muted transition-colors">
+            <SelectTrigger className="w-[140px] sm:w-[200px] text-xs sm:text-sm bg-background border-2 border-foreground/20 hover:border-foreground/40 focus:border-primary transition-all shadow-sm">
               <SelectValue placeholder="Gestiune" />
             </SelectTrigger>
             <SelectContent>
