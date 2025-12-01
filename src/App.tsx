@@ -17,6 +17,12 @@ import Angajati from "./pages/Angajati";
 import Pontaj from "./pages/Pontaj";
 import NotFound from "./pages/NotFound";
 
+// Comercial module pages
+import OferteContracte from "./pages/comercial/OferteContracte";
+import ComenziClient from "./pages/comercial/ComenziClient";
+import PlanificareLivrari from "./pages/comercial/PlanificareLivrari";
+import Documente from "./pages/comercial/Documente";
+
 const queryClient = new QueryClient();
 
 // Protected Route wrapper
@@ -42,6 +48,11 @@ const AppRoutes = () => (
     <Route path="/stocuri" element={<ProtectedRoute><Stocuri /></ProtectedRoute>} />
     <Route path="/angajati" element={<ProtectedRoute><Angajati /></ProtectedRoute>} />
     <Route path="/pontaj" element={<ProtectedRoute><Pontaj /></ProtectedRoute>} />
+    {/* Comercial module routes */}
+    <Route path="/comercial/oferte-contracte" element={<ProtectedRoute><OferteContracte /></ProtectedRoute>} />
+    <Route path="/comercial/comenzi" element={<ProtectedRoute><ComenziClient /></ProtectedRoute>} />
+    <Route path="/comercial/planificare" element={<ProtectedRoute><PlanificareLivrari /></ProtectedRoute>} />
+    <Route path="/comercial/documente" element={<ProtectedRoute><Documente /></ProtectedRoute>} />
     <Route path="/" element={<Auth />} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<NotFound />} />

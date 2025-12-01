@@ -1,0 +1,26 @@
+import { FileBox } from "lucide-react";
+
+const Documente = () => {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <FileBox className="h-8 w-8 text-primary" />
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Documente</h1>
+          <p className="text-muted-foreground">Avize, Facturi și integrare RO e-Factura</p>
+        </div>
+      </div>
+      
+      <div className="rounded-lg border border-border bg-card p-12 text-center">
+        <FileBox className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
+        <h2 className="text-xl font-semibold text-foreground mb-2">Modul în dezvoltare</h2>
+        <p className="text-muted-foreground max-w-md mx-auto">
+          Această secțiune va include gestionarea avizelor, facturilor și integrarea 
+          cu sistemul RO e-Factura pentru transmitere electronică.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default Documente;
