@@ -72,7 +72,7 @@ const AppRoutes = () => (
     {/* Comercial module routes */}
     <Route path="/comercial/oferte-contracte" element={<ProtectedRoute><OferteContracte /></ProtectedRoute>} />
     <Route path="/comercial/comenzi" element={<ProtectedRoute><ComenziClient /></ProtectedRoute>} />
-    <Route path="/comercial/planificare" element={<ProtectedRoute><PlanificareLivrari /></ProtectedRoute>} />
+    <Route path="/comercial/planificare-livrari" element={<ProtectedRoute><PlanificareLivrari /></ProtectedRoute>} />
     <Route path="/comercial/documente" element={<ProtectedRoute><Documente /></ProtectedRoute>} />
     {/* Productie module routes */}
     <Route path="/productie/retete" element={<ProtectedRoute><Retete /></ProtectedRoute>} />
