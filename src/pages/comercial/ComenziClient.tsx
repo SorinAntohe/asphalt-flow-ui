@@ -1,24 +1,1029 @@
-import { ShoppingCart } from "lucide-react";
+import { useState, useMemo } from "react";
+import { 
+  ShoppingCart, Plus, Download, Calendar as CalendarIcon, List, Columns3, 
+  ArrowUpDown, ArrowUp, ArrowDown, Package, FileText, Clock, Paperclip,
+  ChevronLeft, ChevronRight, Pencil, Trash2, GripVertical
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { useToast } from "@/hooks/use-toast";
+import { exportToCSV } from "@/lib/exportUtils";
+import { format, addDays, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay, parseISO } from "date-fns";
+import { ro } from "date-fns/locale";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+
+// Types
+type OrderStatus = "Draft" | "Aprobat" | "Planificat" | "În producție" | "Livrat" | "Închis";
+type Priority = "Scăzută" | "Normală" | "Ridicată" | "Urgentă";
+
+interface ComandaClient {
+  id: number;
+  nr: string;
+  client: string;
+  produs: string;
+  cantitate: number;
+  unitateMasura: string;
+  planta: string;
+  dataOra: string;
+  status: OrderStatus;
+  prioritate: Priority;
+  avansPlata: string;
+  punctDescarcare: string;
+  observatii: string;
+  fereastraIncarcare: string;
+  atasamente: string[];
+  timeline: { data: string; eveniment: string; user: string }[];
+}
+
+// Mock data
+const initialComenzi: ComandaClient[] = [
+  { 
+    id: 1, nr: "CMD-2024-001", client: "Construcții Modern SRL", produs: "Asfalt BA16", 
+    cantitate: 500, unitateMasura: "tone", planta: "Asfalt + Emulsie", dataOra: "2024-12-02T08:00", 
+    status: "Aprobat", prioritate: "Ridicată", avansPlata: "30% achitat", punctDescarcare: "Autostrada A3 - km 45",
+    observatii: "Livrare urgentă", fereastraIncarcare: "08:00 - 12:00",
+    atasamente: ["comanda_client.pdf", "specificatii.docx"],
+    timeline: [
+      { data: "01/12/2024 14:30", eveniment: "Comandă creată", user: "Ion Popescu" },
+      { data: "01/12/2024 15:00", eveniment: "Comandă aprobată", user: "Maria Ionescu" }
+    ]
+  },
+  { 
+    id: 2, nr: "CMD-2024-002", client: "Drumuri Naționale SA", produs: "Asfalt MASF16", 
+    cantitate: 1200, unitateMasura: "tone", planta: "Asfalt + Emulsie", dataOra: "2024-12-03T06:00", 
+    status: "Planificat", prioritate: "Urgentă", avansPlata: "50% achitat", punctDescarcare: "DN1 - km 120",
+    observatii: "Contract cadru", fereastraIncarcare: "06:00 - 18:00",
+    atasamente: ["contract_cadru.pdf"],
+    timeline: [
+      { data: "28/11/2024 09:00", eveniment: "Comandă creată", user: "Andrei Vasile" },
+      { data: "28/11/2024 11:00", eveniment: "Comandă aprobată", user: "Director Comercial" },
+      { data: "29/11/2024 10:00", eveniment: "Planificat în producție", user: "Sistem" }
+    ]
+  },
+  { 
+    id: 3, nr: "CMD-2024-003", client: "Primăria Sector 3", produs: "Asfalt BA8", 
+    cantitate: 200, unitateMasura: "tone", planta: "Asfalt + Emulsie", dataOra: "2024-12-04T10:00", 
+    status: "Draft", prioritate: "Normală", avansPlata: "Neplătit", punctDescarcare: "Bd. Decebal nr. 15",
+    observatii: "Așteptare aprobare buget", fereastraIncarcare: "10:00 - 14:00",
+    atasamente: [],
+    timeline: [
+      { data: "30/11/2024 16:00", eveniment: "Comandă creată", user: "Elena Pop" }
+    ]
+  },
+  { 
+    id: 4, nr: "CMD-2024-004", client: "Beta Construct SRL", produs: "Emulsie cationică", 
+    cantitate: 50, unitateMasura: "tone", planta: "Asfalt + Emulsie", dataOra: "2024-12-02T14:00", 
+    status: "În producție", prioritate: "Normală", avansPlata: "100% achitat", punctDescarcare: "Depozit Beta",
+    observatii: "", fereastraIncarcare: "14:00 - 16:00",
+    atasamente: ["factura_proforma.pdf"],
+    timeline: [
+      { data: "25/11/2024 10:00", eveniment: "Comandă creată", user: "Ion Popescu" },
+      { data: "25/11/2024 14:00", eveniment: "Comandă aprobată", user: "Director" },
+      { data: "26/11/2024 08:00", eveniment: "Planificat", user: "Sistem" },
+      { data: "02/12/2024 06:00", eveniment: "Început producție", user: "Operator" }
+    ]
+  },
+  { 
+    id: 5, nr: "CMD-2024-005", client: "Alpha Roads SRL", produs: "Asfalt BA16", 
+    cantitate: 800, unitateMasura: "tone", planta: "Beton Stabilizat(BSC)", dataOra: "2024-12-05T07:00", 
+    status: "Aprobat", prioritate: "Scăzută", avansPlata: "20% achitat", punctDescarcare: "Centura Nord km 5",
+    observatii: "Poate aștepta", fereastraIncarcare: "07:00 - 17:00",
+    atasamente: [],
+    timeline: [
+      { data: "29/11/2024 11:00", eveniment: "Comandă creată", user: "Mihai Radu" },
+      { data: "30/11/2024 09:00", eveniment: "Comandă aprobată", user: "Maria Ionescu" }
+    ]
+  },
+  { 
+    id: 6, nr: "CMD-2024-006", client: "Infrastructură Plus SRL", produs: "Asfalt MASF16", 
+    cantitate: 300, unitateMasura: "tone", planta: "Asfalt + Emulsie", dataOra: "2024-11-28T08:00", 
+    status: "Livrat", prioritate: "Ridicată", avansPlata: "100% achitat", punctDescarcare: "Șantier Central",
+    observatii: "Finalizat cu succes", fereastraIncarcare: "08:00 - 12:00",
+    atasamente: ["aviz_livrare.pdf"],
+    timeline: [
+      { data: "20/11/2024 10:00", eveniment: "Comandă creată", user: "Ana Maria" },
+      { data: "20/11/2024 14:00", eveniment: "Comandă aprobată", user: "Director" },
+      { data: "25/11/2024 08:00", eveniment: "Planificat", user: "Sistem" },
+      { data: "27/11/2024 06:00", eveniment: "Început producție", user: "Operator" },
+      { data: "28/11/2024 12:00", eveniment: "Livrat", user: "Șofer Transport" }
+    ]
+  },
+  { 
+    id: 7, nr: "CMD-2024-007", client: "Construcții Modern SRL", produs: "Beton C25/30", 
+    cantitate: 150, unitateMasura: "mc", planta: "Betoane", dataOra: "2024-11-25T09:00", 
+    status: "Închis", prioritate: "Normală", avansPlata: "100% achitat", punctDescarcare: "Șantier Residence",
+    observatii: "Facturat și încasat", fereastraIncarcare: "09:00 - 15:00",
+    atasamente: ["factura_finala.pdf"],
+    timeline: [
+      { data: "15/11/2024 09:00", eveniment: "Comandă creată", user: "Ion Popescu" },
+      { data: "15/11/2024 11:00", eveniment: "Comandă aprobată", user: "Director" },
+      { data: "20/11/2024 08:00", eveniment: "Planificat", user: "Sistem" },
+      { data: "24/11/2024 06:00", eveniment: "Început producție", user: "Operator" },
+      { data: "25/11/2024 15:00", eveniment: "Livrat", user: "Șofer" },
+      { data: "28/11/2024 10:00", eveniment: "Închis", user: "Contabilitate" }
+    ]
+  },
+];
+
+const statusColors: Record<OrderStatus, string> = {
+  "Draft": "bg-muted text-muted-foreground",
+  "Aprobat": "bg-blue-500/20 text-blue-600 dark:text-blue-400",
+  "Planificat": "bg-purple-500/20 text-purple-600 dark:text-purple-400",
+  "În producție": "bg-orange-500/20 text-orange-600 dark:text-orange-400",
+  "Livrat": "bg-green-500/20 text-green-600 dark:text-green-400",
+  "Închis": "bg-gray-500/20 text-gray-600 dark:text-gray-400",
+};
+
+const priorityColors: Record<Priority, string> = {
+  "Scăzută": "bg-gray-500/20 text-gray-600 dark:text-gray-400",
+  "Normală": "bg-blue-500/20 text-blue-600 dark:text-blue-400",
+  "Ridicată": "bg-orange-500/20 text-orange-600 dark:text-orange-400",
+  "Urgentă": "bg-red-500/20 text-red-600 dark:text-red-400",
+};
+
+const kanbanStatuses: OrderStatus[] = ["Draft", "Aprobat", "Planificat", "În producție", "Livrat", "Închis"];
+
+type FilterState = {
+  nr: string;
+  client: string;
+  produs: string;
+  cantitate: string;
+  planta: string;
+  dataOra: string;
+  status: string;
+  prioritate: string;
+  avansPlata: string;
+  observatii: string;
+};
 
 const ComenziClient = () => {
+  const { toast } = useToast();
+  const [activeView, setActiveView] = useState<"lista" | "kanban" | "calendar">("lista");
+  
+  // Data state
+  const [comenzi, setComenzi] = useState<ComandaClient[]>(initialComenzi);
+  
+  // Pagination
+  const [page, setPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  
+  // Dialog states
+  const [viewingDetails, setViewingDetails] = useState<ComandaClient | null>(null);
+  const [deleting, setDeleting] = useState<ComandaClient | null>(null);
+  const [openAddEdit, setOpenAddEdit] = useState(false);
+  const [editing, setEditing] = useState<ComandaClient | null>(null);
+  const [openPlanificare, setOpenPlanificare] = useState(false);
+  
+  // Calendar state
+  const [calendarView, setCalendarView] = useState<"zi" | "saptamana">("saptamana");
+  const [currentDate, setCurrentDate] = useState(new Date());
+  
+  // Form state
+  const [form, setForm] = useState({
+    client: "",
+    produs: "",
+    cantitate: 0,
+    unitateMasura: "tone",
+    planta: "Asfalt + Emulsie",
+    dataOra: "",
+    prioritate: "Normală" as Priority,
+    avansPlata: "",
+    punctDescarcare: "",
+    observatii: "",
+    fereastraIncarcare: "",
+  });
+  
+  // Column filters
+  const [filters, setFilters] = useState<FilterState>({
+    nr: "", client: "", produs: "", cantitate: "", planta: "", dataOra: "", status: "", prioritate: "", avansPlata: "", observatii: ""
+  });
+  
+  // Global filters
+  const [globalFilters, setGlobalFilters] = useState({
+    dataStart: "",
+    dataEnd: "",
+    client: "",
+    planta: "",
+    status: "",
+    prioritate: "",
+    punctDescarcare: "",
+  });
+  
+  // Sorting
+  const [sort, setSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
+
+  // Get unique values for dropdowns
+  const clients = useMemo(() => [...new Set(comenzi.map(c => c.client))], [comenzi]);
+  const produse = useMemo(() => [...new Set(comenzi.map(c => c.produs))], [comenzi]);
+  const plante = useMemo(() => [...new Set(comenzi.map(c => c.planta))], [comenzi]);
+  const puncteDescarcare = useMemo(() => [...new Set(comenzi.map(c => c.punctDescarcare))], [comenzi]);
+
+  // Filter and sort comenzi
+  const filteredComenzi = useMemo(() => {
+    return comenzi
+      .filter(item => {
+        // Column filters
+        const matchesColumnFilters = (
+          item.nr.toLowerCase().includes(filters.nr.toLowerCase()) &&
+          item.client.toLowerCase().includes(filters.client.toLowerCase()) &&
+          item.produs.toLowerCase().includes(filters.produs.toLowerCase()) &&
+          item.cantitate.toString().includes(filters.cantitate) &&
+          item.planta.toLowerCase().includes(filters.planta.toLowerCase()) &&
+          item.dataOra.toLowerCase().includes(filters.dataOra.toLowerCase()) &&
+          (filters.status === "" || item.status === filters.status) &&
+          (filters.prioritate === "" || item.prioritate === filters.prioritate) &&
+          item.avansPlata.toLowerCase().includes(filters.avansPlata.toLowerCase()) &&
+          item.observatii.toLowerCase().includes(filters.observatii.toLowerCase())
+        );
+        
+        // Global filters
+        const matchesGlobalFilters = (
+          (globalFilters.client === "" || item.client === globalFilters.client) &&
+          (globalFilters.planta === "" || item.planta === globalFilters.planta) &&
+          (globalFilters.status === "" || item.status === globalFilters.status) &&
+          (globalFilters.prioritate === "" || item.prioritate === globalFilters.prioritate) &&
+          (globalFilters.punctDescarcare === "" || item.punctDescarcare === globalFilters.punctDescarcare)
+        );
+        
+        return matchesColumnFilters && matchesGlobalFilters;
+      })
+      .sort((a, b) => {
+        if (!sort.field || !sort.direction) return 0;
+        const aVal = a[sort.field as keyof ComandaClient];
+        const bVal = b[sort.field as keyof ComandaClient];
+        if (aVal < bVal) return sort.direction === 'asc' ? -1 : 1;
+        if (aVal > bVal) return sort.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+  }, [comenzi, filters, globalFilters, sort]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredComenzi.length / itemsPerPage);
+  const paginatedComenzi = filteredComenzi.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
+  // Calendar helpers
+  const getWeekDays = () => {
+    const start = startOfWeek(currentDate, { weekStartsOn: 1 });
+    const end = endOfWeek(currentDate, { weekStartsOn: 1 });
+    return eachDayOfInterval({ start, end });
+  };
+
+  const getComenziForDate = (date: Date) => {
+    return filteredComenzi.filter(c => {
+      const comandaDate = parseISO(c.dataOra);
+      return isSameDay(comandaDate, date);
+    });
+  };
+
+  const handleExport = () => {
+    const columns = [
+      { key: "nr" as const, label: "Nr." },
+      { key: "client" as const, label: "Client" },
+      { key: "produs" as const, label: "Produs" },
+      { key: "cantitate" as const, label: "Cantitate" },
+      { key: "planta" as const, label: "Plantă" },
+      { key: "dataOra" as const, label: "Dată/Ora" },
+      { key: "status" as const, label: "Status" },
+      { key: "prioritate" as const, label: "Prioritate" },
+      { key: "avansPlata" as const, label: "Avans/Plată" },
+      { key: "observatii" as const, label: "Observații" },
+    ];
+    exportToCSV(filteredComenzi, `comenzi_client_${new Date().toISOString().split('T')[0]}`, columns);
+    toast({ title: "Export realizat", description: "Fișierul CSV a fost descărcat." });
+  };
+
+  const handleOpenAdd = () => {
+    setEditing(null);
+    setForm({
+      client: "",
+      produs: "",
+      cantitate: 0,
+      unitateMasura: "tone",
+      planta: "Asfalt + Emulsie",
+      dataOra: "",
+      prioritate: "Normală",
+      avansPlata: "",
+      punctDescarcare: "",
+      observatii: "",
+      fereastraIncarcare: "",
+    });
+    setOpenAddEdit(true);
+  };
+
+  const handleOpenEdit = (item: ComandaClient) => {
+    setEditing(item);
+    setForm({
+      client: item.client,
+      produs: item.produs,
+      cantitate: item.cantitate,
+      unitateMasura: item.unitateMasura,
+      planta: item.planta,
+      dataOra: item.dataOra,
+      prioritate: item.prioritate,
+      avansPlata: item.avansPlata,
+      punctDescarcare: item.punctDescarcare,
+      observatii: item.observatii,
+      fereastraIncarcare: item.fereastraIncarcare,
+    });
+    setOpenAddEdit(true);
+  };
+
+  const handleSave = () => {
+    if (!form.client || !form.produs || !form.cantitate) {
+      toast({ title: "Eroare", description: "Completează câmpurile obligatorii.", variant: "destructive" });
+      return;
+    }
+
+    const currentDate = new Date().toLocaleDateString('ro-RO');
+
+    if (editing) {
+      setComenzi(prev => prev.map(item => 
+        item.id === editing.id 
+          ? { ...item, ...form, timeline: [...item.timeline, { data: `${currentDate} ${new Date().toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}`, eveniment: "Comandă editată", user: "Utilizator" }] }
+          : item
+      ));
+      toast({ title: "Succes", description: "Comanda a fost actualizată." });
+    } else {
+      const newComanda: ComandaClient = {
+        id: Math.max(...comenzi.map(c => c.id), 0) + 1,
+        nr: `CMD-2024-${String(comenzi.length + 1).padStart(3, '0')}`,
+        client: form.client,
+        produs: form.produs,
+        cantitate: form.cantitate,
+        unitateMasura: form.unitateMasura,
+        planta: form.planta,
+        dataOra: form.dataOra,
+        status: "Draft",
+        prioritate: form.prioritate,
+        avansPlata: form.avansPlata,
+        punctDescarcare: form.punctDescarcare,
+        observatii: form.observatii,
+        fereastraIncarcare: form.fereastraIncarcare,
+        atasamente: [],
+        timeline: [{ data: `${currentDate} ${new Date().toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}`, eveniment: "Comandă creată", user: "Utilizator" }]
+      };
+      setComenzi(prev => [...prev, newComanda]);
+      toast({ title: "Succes", description: "Comanda a fost adăugată." });
+    }
+    setOpenAddEdit(false);
+  };
+
+  const handleDelete = () => {
+    if (!deleting) return;
+    setComenzi(prev => prev.filter(item => item.id !== deleting.id));
+    toast({ title: "Succes", description: "Comanda a fost ștearsă." });
+    setDeleting(null);
+  };
+
+  const handleRezervaStoc = () => {
+    if (viewingDetails) {
+      toast({ title: "Stoc rezervat", description: `Stocul pentru comanda ${viewingDetails.nr} a fost rezervat.` });
+    }
+  };
+
+  const handleGenereazaAviz = () => {
+    if (viewingDetails) {
+      toast({ title: "Aviz generat", description: `Avizul pentru comanda ${viewingDetails.nr} a fost generat.` });
+    }
+  };
+
+  const handlePlanifica = () => {
+    if (viewingDetails) {
+      setOpenPlanificare(true);
+    }
+  };
+
+  const handleStatusChange = (comanda: ComandaClient, newStatus: OrderStatus) => {
+    setComenzi(prev => prev.map(item => 
+      item.id === comanda.id 
+        ? { 
+            ...item, 
+            status: newStatus,
+            timeline: [...item.timeline, { 
+              data: `${new Date().toLocaleDateString('ro-RO')} ${new Date().toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}`, 
+              eveniment: `Status schimbat în ${newStatus}`, 
+              user: "Utilizator" 
+            }]
+          }
+        : item
+    ));
+    toast({ title: "Status actualizat", description: `Comanda ${comanda.nr} este acum "${newStatus}".` });
+  };
+
+  // Column header component with filter and sort
+  const FilterHeader = ({ 
+    field, 
+    label, 
+    isNumeric = false 
+  }: { 
+    field: keyof FilterState; 
+    label: string; 
+    isNumeric?: boolean;
+  }) => (
+    <TableHead className="h-10 text-xs">
+      <div className="flex items-center gap-1">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+              <span>{label}</span>
+              {sort.field === field ? (
+                sort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
+              ) : (
+                <ArrowUpDown className="h-3 w-3 opacity-50" />
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-56 p-2">
+            <div className="space-y-2">
+              {field === "status" ? (
+                <Select value={filters.status} onValueChange={(v) => { setFilters({ ...filters, status: v === "all" ? "" : v }); setPage(1); }}>
+                  <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="Toate" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Toate</SelectItem>
+                    {kanbanStatuses.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              ) : field === "prioritate" ? (
+                <Select value={filters.prioritate} onValueChange={(v) => { setFilters({ ...filters, prioritate: v === "all" ? "" : v }); setPage(1); }}>
+                  <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="Toate" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Toate</SelectItem>
+                    {(["Scăzută", "Normală", "Ridicată", "Urgentă"] as Priority[]).map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Input 
+                  placeholder={`Caută ${label.toLowerCase()}...`} 
+                  value={filters[field] || ""} 
+                  onChange={(e) => { setFilters({ ...filters, [field]: e.target.value }); setPage(1); }} 
+                  className="h-7 text-xs" 
+                />
+              )}
+              <div className="flex gap-1">
+                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSort({ field, direction: 'asc' })}>
+                  <ArrowUp className="h-3 w-3 mr-1" /> {isNumeric ? "Cresc." : "A-Z"}
+                </Button>
+                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSort({ field, direction: 'desc' })}>
+                  <ArrowDown className="h-3 w-3 mr-1" /> {isNumeric ? "Descresc." : "Z-A"}
+                </Button>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+    </TableHead>
+  );
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <ShoppingCart className="h-8 w-8 text-primary" />
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Comenzi Client</h1>
-          <p className="text-muted-foreground">Gestionare și urmărire comenzi de la clienți</p>
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <ShoppingCart className="h-8 w-8 text-primary" />
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Comenzi Client</h1>
+            <p className="text-muted-foreground text-sm">Gestionare și urmărire comenzi</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Button variant="outline" size="sm" onClick={handleExport}>
+            <Download className="h-4 w-4 mr-2" />Export
+          </Button>
+          <Button size="sm" onClick={handleOpenAdd}>
+            <Plus className="h-4 w-4 mr-2" />Adaugă Comandă
+          </Button>
         </div>
       </div>
-      
-      <div className="rounded-lg border border-border bg-card p-12 text-center">
-        <ShoppingCart className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
-        <h2 className="text-xl font-semibold text-foreground mb-2">Modul în dezvoltare</h2>
-        <p className="text-muted-foreground max-w-md mx-auto">
-          Această secțiune va include vederi Listă, Kanban și Calendar pentru comenzi, 
-          cu filtre avansate și acțiuni de planificare.
-        </p>
-      </div>
+
+      {/* Global Filters */}
+      <Card>
+        <CardContent className="p-3">
+          <div className="flex flex-wrap gap-2 items-center">
+            <Input type="date" className="w-[130px] h-8 text-xs" placeholder="Data start" value={globalFilters.dataStart} onChange={(e) => setGlobalFilters({ ...globalFilters, dataStart: e.target.value })} />
+            <Input type="date" className="w-[130px] h-8 text-xs" placeholder="Data end" value={globalFilters.dataEnd} onChange={(e) => setGlobalFilters({ ...globalFilters, dataEnd: e.target.value })} />
+            <Select value={globalFilters.client || "all"} onValueChange={(v) => setGlobalFilters({ ...globalFilters, client: v === "all" ? "" : v })}>
+              <SelectTrigger className="w-[150px] h-8 text-xs"><SelectValue placeholder="Client" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toți clienții</SelectItem>
+                {clients.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={globalFilters.planta || "all"} onValueChange={(v) => setGlobalFilters({ ...globalFilters, planta: v === "all" ? "" : v })}>
+              <SelectTrigger className="w-[150px] h-8 text-xs"><SelectValue placeholder="Plantă" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toate plantele</SelectItem>
+                {plante.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={globalFilters.status || "all"} onValueChange={(v) => setGlobalFilters({ ...globalFilters, status: v === "all" ? "" : v })}>
+              <SelectTrigger className="w-[130px] h-8 text-xs"><SelectValue placeholder="Status" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toate</SelectItem>
+                {kanbanStatuses.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={globalFilters.prioritate || "all"} onValueChange={(v) => setGlobalFilters({ ...globalFilters, prioritate: v === "all" ? "" : v })}>
+              <SelectTrigger className="w-[120px] h-8 text-xs"><SelectValue placeholder="Prioritate" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toate</SelectItem>
+                {(["Scăzută", "Normală", "Ridicată", "Urgentă"] as Priority[]).map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Views Tabs */}
+      <Tabs value={activeView} onValueChange={(v) => setActiveView(v as "lista" | "kanban" | "calendar")}>
+        <TabsList>
+          <TabsTrigger value="lista"><List className="h-4 w-4 mr-2" />Listă</TabsTrigger>
+          <TabsTrigger value="kanban"><Columns3 className="h-4 w-4 mr-2" />Kanban</TabsTrigger>
+          <TabsTrigger value="calendar"><CalendarIcon className="h-4 w-4 mr-2" />Calendar</TabsTrigger>
+        </TabsList>
+
+        {/* List View */}
+        <TabsContent value="lista" className="mt-4">
+          <Card>
+            <CardHeader className="p-3 sm:p-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <CardTitle className="text-base">Lista Comenzi</CardTitle>
+                <div className="flex items-center gap-2">
+                  <Label className="text-xs whitespace-nowrap">Per pagină:</Label>
+                  <Select value={itemsPerPage.toString()} onValueChange={(v) => { setItemsPerPage(Number(v)); setPage(1); }}>
+                    <SelectTrigger className="w-[60px] h-8"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0 overflow-x-auto">
+              <Table className="min-w-[1100px]">
+                <TableHeader>
+                  <TableRow>
+                    <FilterHeader field="nr" label="Nr." />
+                    <FilterHeader field="client" label="Client" />
+                    <FilterHeader field="produs" label="Produs" />
+                    <FilterHeader field="cantitate" label="Cantitate" isNumeric />
+                    <FilterHeader field="planta" label="Plantă" />
+                    <FilterHeader field="dataOra" label="Dată/Ora" />
+                    <FilterHeader field="status" label="Status" />
+                    <FilterHeader field="prioritate" label="Prioritate" />
+                    <FilterHeader field="avansPlata" label="Avans/Plată" />
+                    <FilterHeader field="observatii" label="Observații" />
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {paginatedComenzi.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
+                        Nu există comenzi care să corespundă filtrelor.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    paginatedComenzi.map((comanda) => (
+                      <TableRow 
+                        key={comanda.id} 
+                        className="cursor-pointer hover:bg-muted/50 h-10"
+                        onClick={() => setViewingDetails(comanda)}
+                      >
+                        <TableCell className="py-1 text-xs font-medium">{comanda.nr}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.client}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.produs}</TableCell>
+                        <TableCell className="py-1 text-xs text-right">{comanda.cantitate} {comanda.unitateMasura}</TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.planta}</TableCell>
+                        <TableCell className="py-1 text-xs">{format(parseISO(comanda.dataOra), "dd/MM/yyyy HH:mm")}</TableCell>
+                        <TableCell className="py-1 text-xs"><Badge className={statusColors[comanda.status]}>{comanda.status}</Badge></TableCell>
+                        <TableCell className="py-1 text-xs"><Badge className={priorityColors[comanda.prioritate]}>{comanda.prioritate}</Badge></TableCell>
+                        <TableCell className="py-1 text-xs">{comanda.avansPlata}</TableCell>
+                        <TableCell className="py-1 text-xs max-w-[150px] truncate">{comanda.observatii}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+            {totalPages > 1 && (
+              <div className="p-3 border-t border-border">
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious onClick={() => setPage(Math.max(1, page - 1))} className={page === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"} />
+                    </PaginationItem>
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      const pageNum = i + 1;
+                      return (
+                        <PaginationItem key={pageNum}>
+                          <PaginationLink onClick={() => setPage(pageNum)} isActive={page === pageNum} className="cursor-pointer">{pageNum}</PaginationLink>
+                        </PaginationItem>
+                      );
+                    })}
+                    <PaginationItem>
+                      <PaginationNext onClick={() => setPage(Math.min(totalPages, page + 1))} className={page === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"} />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
+          </Card>
+        </TabsContent>
+
+        {/* Kanban View */}
+        <TabsContent value="kanban" className="mt-4">
+          <div className="flex gap-3 overflow-x-auto pb-4">
+            {kanbanStatuses.map((status) => {
+              const statusComenzi = filteredComenzi.filter(c => c.status === status);
+              return (
+                <div key={status} className="flex-shrink-0 w-[280px]">
+                  <Card className="h-full">
+                    <CardHeader className="p-3">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-sm font-medium flex items-center gap-2">
+                          <Badge className={statusColors[status]}>{status}</Badge>
+                          <span className="text-muted-foreground">({statusComenzi.length})</span>
+                        </CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-2">
+                      <ScrollArea className="h-[calc(100vh-350px)]">
+                        <div className="space-y-2 pr-2">
+                          {statusComenzi.map((comanda) => (
+                            <Card 
+                              key={comanda.id} 
+                              className="cursor-pointer hover:shadow-md transition-shadow"
+                              onClick={() => setViewingDetails(comanda)}
+                            >
+                              <CardContent className="p-3">
+                                <div className="flex items-start justify-between mb-2">
+                                  <span className="font-medium text-xs">{comanda.nr}</span>
+                                  <Badge className={priorityColors[comanda.prioritate]} variant="outline">{comanda.prioritate}</Badge>
+                                </div>
+                                <p className="text-sm font-medium mb-1">{comanda.client}</p>
+                                <p className="text-xs text-muted-foreground mb-2">{comanda.produs} - {comanda.cantitate} {comanda.unitateMasura}</p>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                  <CalendarIcon className="h-3 w-3" />
+                                  {format(parseISO(comanda.dataOra), "dd/MM HH:mm")}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                          {statusComenzi.length === 0 && (
+                            <p className="text-center text-xs text-muted-foreground py-4">Nicio comandă</p>
+                          )}
+                        </div>
+                      </ScrollArea>
+                    </CardContent>
+                  </Card>
+                </div>
+              );
+            })}
+          </div>
+        </TabsContent>
+
+        {/* Calendar View */}
+        <TabsContent value="calendar" className="mt-4">
+          <Card>
+            <CardHeader className="p-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentDate(d => addDays(d, calendarView === "zi" ? -1 : -7))}>
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <span className="font-medium text-sm">
+                    {calendarView === "zi" 
+                      ? format(currentDate, "EEEE, d MMMM yyyy", { locale: ro })
+                      : `${format(startOfWeek(currentDate, { weekStartsOn: 1 }), "d MMM", { locale: ro })} - ${format(endOfWeek(currentDate, { weekStartsOn: 1 }), "d MMM yyyy", { locale: ro })}`
+                    }
+                  </span>
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentDate(d => addDays(d, calendarView === "zi" ? 1 : 7))}>
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button variant={calendarView === "zi" ? "default" : "outline"} size="sm" onClick={() => setCalendarView("zi")}>Zi</Button>
+                  <Button variant={calendarView === "saptamana" ? "default" : "outline"} size="sm" onClick={() => setCalendarView("saptamana")}>Săptămână</Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-3">
+              {calendarView === "saptamana" ? (
+                <div className="grid grid-cols-7 gap-2">
+                  {getWeekDays().map((day) => {
+                    const dayComenzi = getComenziForDate(day);
+                    const isToday = isSameDay(day, new Date());
+                    return (
+                      <div key={day.toISOString()} className={`min-h-[200px] border rounded-lg p-2 ${isToday ? 'border-primary bg-primary/5' : 'border-border'}`}>
+                        <div className="text-center mb-2">
+                          <p className="text-xs text-muted-foreground">{format(day, "EEE", { locale: ro })}</p>
+                          <p className={`text-lg font-medium ${isToday ? 'text-primary' : ''}`}>{format(day, "d")}</p>
+                        </div>
+                        <div className="space-y-1">
+                          {dayComenzi.slice(0, 3).map((comanda) => (
+                            <div 
+                              key={comanda.id}
+                              className="text-xs p-1.5 rounded bg-primary/10 cursor-pointer hover:bg-primary/20"
+                              onClick={() => setViewingDetails(comanda)}
+                            >
+                              <p className="font-medium truncate">{comanda.client}</p>
+                              <p className="text-muted-foreground truncate">{comanda.produs}</p>
+                            </div>
+                          ))}
+                          {dayComenzi.length > 3 && (
+                            <p className="text-xs text-muted-foreground text-center">+{dayComenzi.length - 3} mai mult</p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {getComenziForDate(currentDate).length === 0 ? (
+                    <p className="text-center text-muted-foreground py-8">Nicio comandă pentru această zi.</p>
+                  ) : (
+                    getComenziForDate(currentDate).map((comanda) => (
+                      <Card key={comanda.id} className="cursor-pointer hover:shadow-md" onClick={() => setViewingDetails(comanda)}>
+                        <CardContent className="p-3 flex items-center gap-4">
+                          <div className="text-center">
+                            <p className="text-lg font-bold">{format(parseISO(comanda.dataOra), "HH:mm")}</p>
+                          </div>
+                          <Separator orientation="vertical" className="h-12" />
+                          <div className="flex-1">
+                            <p className="font-medium">{comanda.client}</p>
+                            <p className="text-sm text-muted-foreground">{comanda.produs} - {comanda.cantitate} {comanda.unitateMasura}</p>
+                          </div>
+                          <Badge className={statusColors[comanda.status]}>{comanda.status}</Badge>
+                          <Badge className={priorityColors[comanda.prioritate]}>{comanda.prioritate}</Badge>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Detail Dialog */}
+      <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle>Detalii Comandă - {viewingDetails?.nr}</DialogTitle>
+            <DialogDescription>Informații complete despre comandă</DialogDescription>
+          </DialogHeader>
+          
+          {viewingDetails && (
+            <div className="grid gap-4 py-4">
+              {/* Status Badge */}
+              <div className="flex justify-between items-center">
+                <Badge className={statusColors[viewingDetails.status]}>{viewingDetails.status}</Badge>
+                <Badge className={priorityColors[viewingDetails.prioritate]}>{viewingDetails.prioritate}</Badge>
+              </div>
+
+              {/* Summary Card */}
+              <Card>
+                <CardHeader className="p-3">
+                  <CardTitle className="text-sm flex items-center gap-2"><Package className="h-4 w-4" />Rezumat</CardTitle>
+                </CardHeader>
+                <CardContent className="p-3 pt-0">
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div><span className="text-muted-foreground">Client:</span> <span className="font-medium">{viewingDetails.client}</span></div>
+                    <div><span className="text-muted-foreground">Produs:</span> <span className="font-medium">{viewingDetails.produs}</span></div>
+                    <div><span className="text-muted-foreground">Cantitate:</span> <span className="font-medium">{viewingDetails.cantitate} {viewingDetails.unitateMasura}</span></div>
+                    <div><span className="text-muted-foreground">Plantă:</span> <span className="font-medium">{viewingDetails.planta}</span></div>
+                    <div><span className="text-muted-foreground">Dată/Ora:</span> <span className="font-medium">{format(parseISO(viewingDetails.dataOra), "dd/MM/yyyy HH:mm")}</span></div>
+                    <div><span className="text-muted-foreground">Fereastră încărcare:</span> <span className="font-medium">{viewingDetails.fereastraIncarcare}</span></div>
+                    <div><span className="text-muted-foreground">Punct descărcare:</span> <span className="font-medium">{viewingDetails.punctDescarcare}</span></div>
+                    <div><span className="text-muted-foreground">Avans/Plată:</span> <span className="font-medium">{viewingDetails.avansPlata}</span></div>
+                  </div>
+                  {viewingDetails.observatii && (
+                    <div className="mt-3 pt-3 border-t">
+                      <span className="text-muted-foreground text-sm">Observații:</span>
+                      <p className="text-sm mt-1">{viewingDetails.observatii}</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Attachments */}
+              <Card>
+                <CardHeader className="p-3">
+                  <CardTitle className="text-sm flex items-center gap-2"><Paperclip className="h-4 w-4" />Atașamente</CardTitle>
+                </CardHeader>
+                <CardContent className="p-3 pt-0">
+                  {viewingDetails.atasamente.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {viewingDetails.atasamente.map((file, idx) => (
+                        <Badge key={idx} variant="outline" className="cursor-pointer hover:bg-muted">
+                          <FileText className="h-3 w-3 mr-1" />{file}
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">Niciun atașament</p>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Timeline */}
+              <Card>
+                <CardHeader className="p-3">
+                  <CardTitle className="text-sm flex items-center gap-2"><Clock className="h-4 w-4" />Timeline</CardTitle>
+                </CardHeader>
+                <CardContent className="p-3 pt-0">
+                  <div className="space-y-3">
+                    {viewingDetails.timeline.map((event, idx) => (
+                      <div key={idx} className="flex gap-3 items-start">
+                        <div className="w-2 h-2 rounded-full bg-primary mt-1.5 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm font-medium">{event.eveniment}</p>
+                          <p className="text-xs text-muted-foreground">{event.data} - {event.user}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={handlePlanifica}>
+              <CalendarIcon className="w-4 h-4 mr-2" />Planifică
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleRezervaStoc}>
+              <Package className="w-4 h-4 mr-2" />Rezervă stoc
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleGenereazaAviz}>
+              <FileText className="w-4 h-4 mr-2" />Generează aviz
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => { if (viewingDetails) { handleOpenEdit(viewingDetails); setViewingDetails(null); } }}>
+              <Pencil className="w-4 h-4 mr-2" />Editează
+            </Button>
+            <Button variant="destructive" size="sm" onClick={() => { if (viewingDetails) { setDeleting(viewingDetails); setViewingDetails(null); } }}>
+              <Trash2 className="w-4 h-4 mr-2" />Șterge
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => setViewingDetails(null)}>Închide</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add/Edit Dialog */}
+      <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editing ? "Editează Comandă" : "Adaugă Comandă Nouă"}</DialogTitle>
+            <DialogDescription>Completează informațiile comenzii.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Client *</Label>
+                <Select value={form.client} onValueChange={(v) => setForm({ ...form, client: v })}>
+                  <SelectTrigger><SelectValue placeholder="Selectează client" /></SelectTrigger>
+                  <SelectContent>
+                    {clients.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Produs *</Label>
+                <Select value={form.produs} onValueChange={(v) => setForm({ ...form, produs: v })}>
+                  <SelectTrigger><SelectValue placeholder="Selectează produs" /></SelectTrigger>
+                  <SelectContent>
+                    {produse.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>Cantitate *</Label>
+                <Input type="number" value={form.cantitate} onChange={(e) => setForm({ ...form, cantitate: Number(e.target.value) })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Unitate măsură</Label>
+                <Select value={form.unitateMasura} onValueChange={(v) => setForm({ ...form, unitateMasura: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="tone">tone</SelectItem>
+                    <SelectItem value="mc">mc</SelectItem>
+                    <SelectItem value="kg">kg</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Plantă</Label>
+                <Select value={form.planta} onValueChange={(v) => setForm({ ...form, planta: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {plante.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Dată/Ora</Label>
+                <Input type="datetime-local" value={form.dataOra} onChange={(e) => setForm({ ...form, dataOra: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Fereastră încărcare</Label>
+                <Input placeholder="ex: 08:00 - 12:00" value={form.fereastraIncarcare} onChange={(e) => setForm({ ...form, fereastraIncarcare: e.target.value })} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Prioritate</Label>
+                <Select value={form.prioritate} onValueChange={(v) => setForm({ ...form, prioritate: v as Priority })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Scăzută">Scăzută</SelectItem>
+                    <SelectItem value="Normală">Normală</SelectItem>
+                    <SelectItem value="Ridicată">Ridicată</SelectItem>
+                    <SelectItem value="Urgentă">Urgentă</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Avans/Plată</Label>
+                <Input placeholder="ex: 30% achitat" value={form.avansPlata} onChange={(e) => setForm({ ...form, avansPlata: e.target.value })} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Punct descărcare</Label>
+              <Input placeholder="Adresa/locația de descărcare" value={form.punctDescarcare} onChange={(e) => setForm({ ...form, punctDescarcare: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Label>Observații</Label>
+              <Textarea placeholder="Observații suplimentare..." value={form.observatii} onChange={(e) => setForm({ ...form, observatii: e.target.value })} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenAddEdit(false)}>Anulează</Button>
+            <Button onClick={handleSave}>{editing ? "Salvează" : "Adaugă"}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={!!deleting} onOpenChange={() => setDeleting(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmare Ștergere</AlertDialogTitle>
+            <AlertDialogDescription>
+              Ești sigur că vrei să ștergi comanda {deleting?.nr}? Această acțiune nu poate fi anulată.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Anulează</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">Șterge</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Planificare Dialog */}
+      <Dialog open={openPlanificare} onOpenChange={setOpenPlanificare}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Planifică Comandă</DialogTitle>
+            <DialogDescription>Selectează data și ora pentru producție.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Dată și oră producție</Label>
+              <Input type="datetime-local" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenPlanificare(false)}>Anulează</Button>
+            <Button onClick={() => {
+              if (viewingDetails) {
+                handleStatusChange(viewingDetails, "Planificat");
+              }
+              setOpenPlanificare(false);
+              toast({ title: "Comandă planificată", description: "Comanda a fost adăugată în calendarul de producție." });
+            }}>Planifică</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
