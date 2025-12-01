@@ -196,16 +196,6 @@ const ComenziClient = () => {
     nr: "", client: "", produs: "", cantitate: "", planta: "", dataOra: "", status: "", prioritate: "", avansPlata: "", observatii: ""
   });
   
-  // Global filters
-  const [globalFilters, setGlobalFilters] = useState({
-    dataStart: "",
-    dataEnd: "",
-    client: "",
-    planta: "",
-    status: "",
-    prioritate: "",
-    punctDescarcare: "",
-  });
   
   // Sorting
   const [sort, setSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
@@ -231,7 +221,7 @@ const ComenziClient = () => {
   const filteredComenzi = useMemo(() => {
     return comenzi
       .filter(item => {
-        const matchesColumnFilters = (
+        return (
           item.nr.toLowerCase().includes(filters.nr.toLowerCase()) &&
           item.client.toLowerCase().includes(filters.client.toLowerCase()) &&
           item.produs.toLowerCase().includes(filters.produs.toLowerCase()) &&
@@ -243,15 +233,6 @@ const ComenziClient = () => {
           item.avansPlata.toLowerCase().includes(filters.avansPlata.toLowerCase()) &&
           item.observatii.toLowerCase().includes(filters.observatii.toLowerCase())
         );
-        
-        const matchesGlobalFilters = (
-          (globalFilters.client === "" || item.client === globalFilters.client) &&
-          (globalFilters.planta === "" || item.planta === globalFilters.planta) &&
-          (globalFilters.status === "" || item.status === globalFilters.status) &&
-          (globalFilters.prioritate === "" || item.prioritate === globalFilters.prioritate)
-        );
-        
-        return matchesColumnFilters && matchesGlobalFilters;
       })
       .sort((a, b) => {
         if (!sort) return 0;
@@ -261,7 +242,7 @@ const ComenziClient = () => {
         if (aVal > bVal) return sort.direction === 'asc' ? 1 : -1;
         return 0;
       });
-  }, [comenzi, filters, globalFilters, sort]);
+  }, [comenzi, filters, sort]);
 
   // Pagination
   const totalPages = Math.ceil(filteredComenzi.length / itemsPerPage);
@@ -475,43 +456,6 @@ const ComenziClient = () => {
         </Card>
       </div>
 
-      {/* Global Filters */}
-      <Card>
-        <CardContent className="p-3">
-          <div className="flex flex-wrap gap-2 items-center">
-            <Input type="date" className="w-[130px] h-8 text-xs" placeholder="Data start" value={globalFilters.dataStart} onChange={(e) => setGlobalFilters({ ...globalFilters, dataStart: e.target.value })} />
-            <Input type="date" className="w-[130px] h-8 text-xs" placeholder="Data end" value={globalFilters.dataEnd} onChange={(e) => setGlobalFilters({ ...globalFilters, dataEnd: e.target.value })} />
-            <Select value={globalFilters.client || "all"} onValueChange={(v) => setGlobalFilters({ ...globalFilters, client: v === "all" ? "" : v })}>
-              <SelectTrigger className="w-[150px] h-8 text-xs"><SelectValue placeholder="Client" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Toți clienții</SelectItem>
-                {clients.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-              </SelectContent>
-            </Select>
-            <Select value={globalFilters.planta || "all"} onValueChange={(v) => setGlobalFilters({ ...globalFilters, planta: v === "all" ? "" : v })}>
-              <SelectTrigger className="w-[150px] h-8 text-xs"><SelectValue placeholder="Gestiune" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Toate gestiunile</SelectItem>
-                {plante.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
-              </SelectContent>
-            </Select>
-            <Select value={globalFilters.status || "all"} onValueChange={(v) => setGlobalFilters({ ...globalFilters, status: v === "all" ? "" : v })}>
-              <SelectTrigger className="w-[130px] h-8 text-xs"><SelectValue placeholder="Status" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Toate</SelectItem>
-                {kanbanStatuses.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-              </SelectContent>
-            </Select>
-            <Select value={globalFilters.prioritate || "all"} onValueChange={(v) => setGlobalFilters({ ...globalFilters, prioritate: v === "all" ? "" : v })}>
-              <SelectTrigger className="w-[120px] h-8 text-xs"><SelectValue placeholder="Prioritate" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Toate</SelectItem>
-                {(["Scăzută", "Normală", "Ridicată", "Urgentă"] as Priority[]).map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Views Tabs */}
       <Tabs value={activeView} onValueChange={(v) => setActiveView(v as "lista" | "kanban" | "calendar")}>
