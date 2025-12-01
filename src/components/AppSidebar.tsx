@@ -1,4 +1,4 @@
-import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog, Users, UserCheck, CalendarClock, Briefcase, Factory, Wrench, FileText, FileCheck, ShoppingCart, CalendarDays, FileBox } from "lucide-react";
+import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog, Users, UserCheck, CalendarClock, Briefcase, Factory, Wrench, FileText, FileCheck, ShoppingCart, CalendarDays, FileBox, FlaskConical, ClipboardCheck, Layers, Calendar, GitBranch } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -43,8 +43,16 @@ const comercialItems = [
   { title: "Documente", url: "/comercial/documente", icon: FileBox },
 ];
 
+// Productie module items
+const productieItems = [
+  { title: "Rețete", url: "/productie/retete", icon: FlaskConical },
+  { title: "Ordine Producție", url: "/productie/ordine", icon: ClipboardCheck },
+  { title: "Loturi & Telemetrie", url: "/productie/loturi", icon: Layers },
+  { title: "Calendar Producție", url: "/productie/calendar", icon: Calendar },
+  { title: "Trasabilitate", url: "/productie/trasabilitate", icon: GitBranch },
+];
+
 // Placeholder items - will be populated later
-const productieItems: { title: string; url: string; icon: typeof LayoutDashboard }[] = [];
 const mentenantaItems: { title: string; url: string; icon: typeof LayoutDashboard }[] = [];
 const rapoarteItems: { title: string; url: string; icon: typeof LayoutDashboard }[] = [];
 
