@@ -1,15 +1,14 @@
 import { useState, useMemo } from "react";
-import { FileCheck, Plus, Download, Copy, Mail, FileText, Filter, X, Eye } from "lucide-react";
+import { FileCheck, Plus, Download, Copy, Mail, FileText, Filter, X, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -49,8 +48,10 @@ interface Contract {
   indexareCombustibil: string;
 }
 
+type Item = Oferta | Contract;
+
 // Mock data
-const mockOferte: Oferta[] = [
+const initialOferte: Oferta[] = [
   { id: 1, nr: "OF-2024-001", client: "Construcții Modern SRL", proiect: "Autostrada A3 - Lot 2", produs: "Asfalt BA16", pret: 450, valabilitate: "31/12/2024", termenPlata: "30 zile", status: "Acceptat", tip: "oferta", dataCreare: "15/11/2024", conditiiComerciale: "Preț franco șantier, inclusiv transport", observatii: "Client prioritar" },
   { id: 2, nr: "OF-2024-002", client: "Drumuri Naționale SA", proiect: "DN1 - Reparații km 45-60", produs: "Asfalt MASF16", pret: 520, valabilitate: "15/01/2025", termenPlata: "45 zile", status: "Trimis", tip: "oferta", dataCreare: "20/11/2024", conditiiComerciale: "Preț EXW, transport separat", observatii: "" },
   { id: 3, nr: "OF-2024-003", client: "Primăria Sector 3", proiect: "Reabilitare Bd. Decebal", produs: "Asfalt BA8", pret: 380, valabilitate: "01/12/2024", termenPlata: "60 zile", status: "Draft", tip: "oferta", dataCreare: "25/11/2024", conditiiComerciale: "Preț franco șantier", observatii: "Așteptare aprobare buget" },
@@ -58,7 +59,7 @@ const mockOferte: Oferta[] = [
   { id: 5, nr: "OF-2024-005", client: "Infrastructură Plus SRL", proiect: "Centura ocolitoare", produs: "Emulsie cationică", pret: 2800, valabilitate: "28/02/2025", termenPlata: "30 zile", status: "Trimis", tip: "oferta", dataCreare: "28/11/2024", conditiiComerciale: "Preț per tonă, livrare în cisternă", observatii: "Volum mare estimat" },
 ];
 
-const mockContracte: Contract[] = [
+const initialContracte: Contract[] = [
   { id: 1, nr: "CTR-2024-001", client: "Construcții Modern SRL", proiect: "Autostrada A3 - Lot 2", produs: "Asfalt BA16", pret: 445, valabilitate: "31/12/2025", termenPlata: "30 zile", status: "Acceptat", tip: "contract", dataCreare: "20/11/2024", conditiiComerciale: "Preț fix pe durata contractului, inclusiv transport", observatii: "Contract cadru anual", indexareCombustibil: "Ajustare trimestrială +/- 5%" },
   { id: 2, nr: "CTR-2024-002", client: "Drumuri Naționale SA", proiect: "Întreținere DN1 2024-2025", produs: "Multiple", pret: 0, valabilitate: "31/03/2025", termenPlata: "45 zile", status: "Acceptat", tip: "contract", dataCreare: "01/10/2024", conditiiComerciale: "Contract cadru cu comenzi lunare", observatii: "Include BA8, BA16, MASF16", indexareCombustibil: "Ajustare lunară conform indicele ANRE" },
   { id: 3, nr: "CTR-2024-003", client: "Alpha Roads SRL", proiect: "Dezvoltare zonă industrială", produs: "Asfalt BA16", pret: 460, valabilitate: "30/06/2025", termenPlata: "30 zile", status: "Draft", tip: "contract", dataCreare: "29/11/2024", conditiiComerciale: "În negociere", observatii: "Așteptare semnături", indexareCombustibil: "De stabilit" },
@@ -74,9 +75,29 @@ const statusColors: Record<string, string> = {
 const OferteContracte = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"oferte" | "contracte">("oferte");
-  const [selectedItem, setSelectedItem] = useState<Oferta | Contract | null>(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  
+  // Data state
+  const [oferte, setOferte] = useState<Oferta[]>(initialOferte);
+  const [contracte, setContracte] = useState<Contract[]>(initialContracte);
+  
+  // Dialog states
+  const [viewingDetails, setViewingDetails] = useState<Item | null>(null);
+  const [deleting, setDeleting] = useState<Item | null>(null);
+  const [openAddEdit, setOpenAddEdit] = useState(false);
+  const [editing, setEditing] = useState<Item | null>(null);
+  
+  // Form state
+  const [form, setForm] = useState({
+    client: "",
+    proiect: "",
+    produs: "",
+    pret: 0,
+    valabilitate: "",
+    termenPlata: "30 zile",
+    conditiiComerciale: "",
+    observatii: "",
+    indexareCombustibil: "",
+  });
   
   // Filters
   const [filterClient, setFilterClient] = useState("");
@@ -86,37 +107,36 @@ const OferteContracte = () => {
 
   // Get unique values for filters
   const clients = useMemo(() => {
-    const allClients = [...mockOferte, ...mockContracte].map(item => item.client);
+    const allClients = [...oferte, ...contracte].map(item => item.client);
     return [...new Set(allClients)];
-  }, []);
+  }, [oferte, contracte]);
 
   const produse = useMemo(() => {
-    const allProduse = [...mockOferte, ...mockContracte].map(item => item.produs);
+    const allProduse = [...oferte, ...contracte].map(item => item.produs);
     return [...new Set(allProduse)];
-  }, []);
+  }, [oferte, contracte]);
 
   // Filter data
   const filteredOferte = useMemo(() => {
-    return mockOferte.filter(item => {
+    return oferte.filter(item => {
       if (filterClient && !item.client.toLowerCase().includes(filterClient.toLowerCase())) return false;
       if (filterProdus && !item.produs.toLowerCase().includes(filterProdus.toLowerCase())) return false;
       if (filterStatus !== "all" && item.status !== filterStatus) return false;
       return true;
     });
-  }, [filterClient, filterProdus, filterStatus]);
+  }, [oferte, filterClient, filterProdus, filterStatus]);
 
   const filteredContracte = useMemo(() => {
-    return mockContracte.filter(item => {
+    return contracte.filter(item => {
       if (filterClient && !item.client.toLowerCase().includes(filterClient.toLowerCase())) return false;
       if (filterProdus && !item.produs.toLowerCase().includes(filterProdus.toLowerCase())) return false;
       if (filterStatus !== "all" && item.status !== filterStatus) return false;
       return true;
     });
-  }, [filterClient, filterProdus, filterStatus]);
+  }, [contracte, filterClient, filterProdus, filterStatus]);
 
-  const handleRowClick = (item: Oferta | Contract) => {
-    setSelectedItem(item);
-    setDrawerOpen(true);
+  const handleRowClick = (item: Item) => {
+    setViewingDetails(item);
   };
 
   const handleExport = () => {
@@ -139,23 +159,177 @@ const OferteContracte = () => {
     toast({ title: "Export realizat", description: `Fișierul ${activeTab}.csv a fost descărcat.` });
   };
 
-  const handleDuplicate = () => {
-    if (selectedItem) {
-      toast({ title: "Duplicat creat", description: `${selectedItem.tip === "oferta" ? "Oferta" : "Contractul"} ${selectedItem.nr} a fost duplicat.` });
-      setDrawerOpen(false);
+  const handleOpenAdd = () => {
+    setEditing(null);
+    setForm({
+      client: "",
+      proiect: "",
+      produs: "",
+      pret: 0,
+      valabilitate: "",
+      termenPlata: "30 zile",
+      conditiiComerciale: "",
+      observatii: "",
+      indexareCombustibil: "",
+    });
+    setOpenAddEdit(true);
+  };
+
+  const handleOpenEdit = (item: Item) => {
+    setEditing(item);
+    setForm({
+      client: item.client,
+      proiect: item.proiect,
+      produs: item.produs,
+      pret: item.pret,
+      valabilitate: item.valabilitate,
+      termenPlata: item.termenPlata,
+      conditiiComerciale: item.conditiiComerciale,
+      observatii: item.observatii,
+      indexareCombustibil: item.tip === "contract" ? (item as Contract).indexareCombustibil : "",
+    });
+    setOpenAddEdit(true);
+  };
+
+  const handleSave = () => {
+    if (!form.client || !form.produs) {
+      toast({ title: "Eroare", description: "Completează câmpurile obligatorii.", variant: "destructive" });
+      return;
     }
+
+    const currentDate = new Date().toLocaleDateString('ro-RO');
+
+    if (editing) {
+      // Edit existing
+      if (editing.tip === "oferta") {
+        setOferte(prev => prev.map(item => 
+          item.id === editing.id 
+            ? { ...item, ...form, valabilitate: form.valabilitate || item.valabilitate }
+            : item
+        ));
+      } else {
+        setContracte(prev => prev.map(item => 
+          item.id === editing.id 
+            ? { ...item, ...form, valabilitate: form.valabilitate || item.valabilitate, indexareCombustibil: form.indexareCombustibil }
+            : item
+        ));
+      }
+      toast({ title: "Succes", description: `${editing.tip === "oferta" ? "Oferta" : "Contractul"} a fost actualizat.` });
+    } else {
+      // Add new
+      if (activeTab === "oferte") {
+        const newOferta: Oferta = {
+          id: Math.max(...oferte.map(o => o.id), 0) + 1,
+          nr: `OF-2024-${String(oferte.length + 1).padStart(3, '0')}`,
+          client: form.client,
+          proiect: form.proiect,
+          produs: form.produs,
+          pret: form.pret,
+          valabilitate: form.valabilitate,
+          termenPlata: form.termenPlata,
+          status: "Draft",
+          tip: "oferta",
+          dataCreare: currentDate,
+          conditiiComerciale: form.conditiiComerciale,
+          observatii: form.observatii,
+        };
+        setOferte(prev => [...prev, newOferta]);
+        toast({ title: "Succes", description: "Oferta a fost adăugată." });
+      } else {
+        const newContract: Contract = {
+          id: Math.max(...contracte.map(c => c.id), 0) + 1,
+          nr: `CTR-2024-${String(contracte.length + 1).padStart(3, '0')}`,
+          client: form.client,
+          proiect: form.proiect,
+          produs: form.produs,
+          pret: form.pret,
+          valabilitate: form.valabilitate,
+          termenPlata: form.termenPlata,
+          status: "Draft",
+          tip: "contract",
+          dataCreare: currentDate,
+          conditiiComerciale: form.conditiiComerciale,
+          observatii: form.observatii,
+          indexareCombustibil: form.indexareCombustibil,
+        };
+        setContracte(prev => [...prev, newContract]);
+        toast({ title: "Succes", description: "Contractul a fost adăugat." });
+      }
+    }
+    setOpenAddEdit(false);
+  };
+
+  const handleDelete = () => {
+    if (!deleting) return;
+    
+    if (deleting.tip === "oferta") {
+      setOferte(prev => prev.filter(item => item.id !== deleting.id));
+    } else {
+      setContracte(prev => prev.filter(item => item.id !== deleting.id));
+    }
+    
+    toast({ title: "Succes", description: `${deleting.tip === "oferta" ? "Oferta" : "Contractul"} a fost șters.` });
+    setDeleting(null);
+  };
+
+  const handleDuplicate = () => {
+    if (!viewingDetails) return;
+    
+    const currentDate = new Date().toLocaleDateString('ro-RO');
+    
+    if (viewingDetails.tip === "oferta") {
+      const newOferta: Oferta = {
+        ...viewingDetails as Oferta,
+        id: Math.max(...oferte.map(o => o.id), 0) + 1,
+        nr: `OF-2024-${String(oferte.length + 1).padStart(3, '0')}`,
+        status: "Draft",
+        dataCreare: currentDate,
+      };
+      setOferte(prev => [...prev, newOferta]);
+    } else {
+      const newContract: Contract = {
+        ...viewingDetails as Contract,
+        id: Math.max(...contracte.map(c => c.id), 0) + 1,
+        nr: `CTR-2024-${String(contracte.length + 1).padStart(3, '0')}`,
+        status: "Draft",
+        dataCreare: currentDate,
+      };
+      setContracte(prev => [...prev, newContract]);
+    }
+    
+    toast({ title: "Duplicat creat", description: `${viewingDetails.tip === "oferta" ? "Oferta" : "Contractul"} ${viewingDetails.nr} a fost duplicat.` });
+    setViewingDetails(null);
   };
 
   const handleSendEmail = () => {
-    if (selectedItem) {
-      toast({ title: "Email trimis", description: `${selectedItem.tip === "oferta" ? "Oferta" : "Contractul"} ${selectedItem.nr} a fost trimis pe email.` });
+    if (viewingDetails) {
+      toast({ title: "Email trimis", description: `${viewingDetails.tip === "oferta" ? "Oferta" : "Contractul"} ${viewingDetails.nr} a fost trimis pe email.` });
     }
   };
 
   const handleGenerateContract = () => {
-    if (selectedItem && selectedItem.tip === "oferta") {
-      toast({ title: "Contract generat", description: `Contractul a fost generat din oferta ${selectedItem.nr}.` });
-      setDrawerOpen(false);
+    if (viewingDetails && viewingDetails.tip === "oferta") {
+      const oferta = viewingDetails as Oferta;
+      const newContract: Contract = {
+        id: Math.max(...contracte.map(c => c.id), 0) + 1,
+        nr: `CTR-2024-${String(contracte.length + 1).padStart(3, '0')}`,
+        client: oferta.client,
+        proiect: oferta.proiect,
+        produs: oferta.produs,
+        pret: oferta.pret,
+        valabilitate: oferta.valabilitate,
+        termenPlata: oferta.termenPlata,
+        status: "Draft",
+        tip: "contract",
+        dataCreare: new Date().toLocaleDateString('ro-RO'),
+        conditiiComerciale: oferta.conditiiComerciale,
+        observatii: `Generat din oferta ${oferta.nr}`,
+        indexareCombustibil: "",
+      };
+      setContracte(prev => [...prev, newContract]);
+      toast({ title: "Contract generat", description: `Contractul ${newContract.nr} a fost generat din oferta ${oferta.nr}.` });
+      setViewingDetails(null);
+      setActiveTab("contracte");
     }
   };
 
@@ -188,96 +362,10 @@ const OferteContracte = () => {
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
-          <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm">
-                <Plus className="h-4 w-4 mr-2" />
-                Adaugă {activeTab === "oferte" ? "Ofertă" : "Contract"}
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle>Adaugă {activeTab === "oferte" ? "Ofertă Nouă" : "Contract Nou"}</DialogTitle>
-                <DialogDescription>
-                  Completează datele pentru {activeTab === "oferte" ? "oferta nouă" : "contractul nou"}.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="client">Client</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selectează client" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {clients.map(client => (
-                          <SelectItem key={client} value={client}>{client}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="proiect">Proiect/Șantier</Label>
-                    <Input id="proiect" placeholder="Denumire proiect" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="produs">Produs</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selectează produs" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {produse.map(produs => (
-                          <SelectItem key={produs} value={produs}>{produs}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="pret">Preț (RON/tonă)</Label>
-                    <Input id="pret" type="number" placeholder="0.00" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="valabilitate">Valabilitate până la</Label>
-                    <Input id="valabilitate" type="date" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="termenPlata">Termen plată</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selectează" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="15">15 zile</SelectItem>
-                        <SelectItem value="30">30 zile</SelectItem>
-                        <SelectItem value="45">45 zile</SelectItem>
-                        <SelectItem value="60">60 zile</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="conditii">Condiții comerciale</Label>
-                  <Textarea id="conditii" placeholder="Introduceți condițiile comerciale..." />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="observatii">Observații</Label>
-                  <Textarea id="observatii" placeholder="Observații suplimentare..." />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setAddDialogOpen(false)}>Anulează</Button>
-                <Button onClick={() => { setAddDialogOpen(false); toast({ title: "Salvat", description: `${activeTab === "oferte" ? "Oferta" : "Contractul"} a fost adăugat.` }); }}>
-                  Salvează
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <Button size="sm" onClick={handleOpenAdd}>
+            <Plus className="h-4 w-4 mr-2" />
+            Adaugă {activeTab === "oferte" ? "Ofertă" : "Contract"}
+          </Button>
         </div>
       </div>
 
@@ -436,145 +524,278 @@ const OferteContracte = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Detail Sheet/Drawer */}
-      <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
-          {selectedItem && (
-            <>
-              <SheetHeader>
-                <SheetTitle className="flex items-center gap-2">
-                  <FileCheck className="h-5 w-5" />
-                  {selectedItem.nr}
-                </SheetTitle>
-                <SheetDescription>
-                  {selectedItem.tip === "oferta" ? "Detalii ofertă" : "Detalii contract"}
-                </SheetDescription>
-              </SheetHeader>
-              
-              <div className="mt-6 space-y-6">
-                {/* Status */}
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Status</span>
-                  <Badge className={statusColors[selectedItem.status]}>{selectedItem.status}</Badge>
+      {/* Add/Edit Dialog */}
+      <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {editing 
+                ? `Editează ${editing.tip === "oferta" ? "Oferta" : "Contractul"} ${editing.nr}` 
+                : `Adaugă ${activeTab === "oferte" ? "Ofertă Nouă" : "Contract Nou"}`
+              }
+            </DialogTitle>
+            <DialogDescription>
+              {editing ? "Modifică detaliile" : "Completează datele"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="client">Client *</Label>
+                <Select value={form.client} onValueChange={(v) => setForm({ ...form, client: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selectează client" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {clients.map(client => (
+                      <SelectItem key={client} value={client}>{client}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="proiect">Proiect/Șantier</Label>
+                <Input 
+                  id="proiect" 
+                  placeholder="Denumire proiect" 
+                  value={form.proiect}
+                  onChange={(e) => setForm({ ...form, proiect: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="produs">Produs *</Label>
+                <Select value={form.produs} onValueChange={(v) => setForm({ ...form, produs: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selectează produs" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {produse.map(produs => (
+                      <SelectItem key={produs} value={produs}>{produs}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="pret">Preț (RON/tonă)</Label>
+                <Input 
+                  id="pret" 
+                  type="number" 
+                  placeholder="0.00" 
+                  value={form.pret || ""}
+                  onChange={(e) => setForm({ ...form, pret: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="valabilitate">Valabilitate până la</Label>
+                <Input 
+                  id="valabilitate" 
+                  type="date" 
+                  value={form.valabilitate}
+                  onChange={(e) => setForm({ ...form, valabilitate: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="termenPlata">Termen plată</Label>
+                <Select value={form.termenPlata} onValueChange={(v) => setForm({ ...form, termenPlata: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selectează" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="15 zile">15 zile</SelectItem>
+                    <SelectItem value="30 zile">30 zile</SelectItem>
+                    <SelectItem value="45 zile">45 zile</SelectItem>
+                    <SelectItem value="60 zile">60 zile</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="conditii">Condiții comerciale</Label>
+              <Textarea 
+                id="conditii" 
+                placeholder="Introduceți condițiile comerciale..." 
+                value={form.conditiiComerciale}
+                onChange={(e) => setForm({ ...form, conditiiComerciale: e.target.value })}
+              />
+            </div>
+            {(activeTab === "contracte" || (editing && editing.tip === "contract")) && (
+              <div className="space-y-2">
+                <Label htmlFor="indexare">Indexare combustibil</Label>
+                <Input 
+                  id="indexare" 
+                  placeholder="Ex: Ajustare trimestrială +/- 5%" 
+                  value={form.indexareCombustibil}
+                  onChange={(e) => setForm({ ...form, indexareCombustibil: e.target.value })}
+                />
+              </div>
+            )}
+            <div className="space-y-2">
+              <Label htmlFor="observatii">Observații</Label>
+              <Textarea 
+                id="observatii" 
+                placeholder="Observații suplimentare..." 
+                value={form.observatii}
+                onChange={(e) => setForm({ ...form, observatii: e.target.value })}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenAddEdit(false)}>Anulează</Button>
+            <Button onClick={handleSave}>
+              {editing ? "Salvează Modificările" : "Adaugă"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Details View Dialog (like Livrari) */}
+      <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <DialogTitle>
+                  Detalii {viewingDetails?.tip === "oferta" ? "Ofertă" : "Contract"} - {viewingDetails?.nr}
+                </DialogTitle>
+                <DialogDescription>
+                  Informații complete
+                </DialogDescription>
+              </div>
+              <Badge className={viewingDetails ? statusColors[viewingDetails.status] : ""}>
+                {viewingDetails?.status}
+              </Badge>
+            </div>
+          </DialogHeader>
+          
+          {viewingDetails && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Client</Label>
+                  <p className="font-medium">{viewingDetails.client}</p>
                 </div>
-
-                <Separator />
-
-                {/* Info cards */}
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-1">Client</h4>
-                    <p className="text-foreground">{selectedItem.client}</p>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-1">Proiect/Șantier</h4>
-                    <p className="text-foreground">{selectedItem.proiect}</p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-1">Produs</h4>
-                      <p className="text-foreground">{selectedItem.produs}</p>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-1">Preț</h4>
-                      <p className="text-foreground font-semibold">
-                        {selectedItem.pret > 0 ? `${selectedItem.pret.toLocaleString()} RON/t` : "Variabil"}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-1">Valabilitate</h4>
-                      <p className="text-foreground">{selectedItem.valabilitate}</p>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-1">Termen plată</h4>
-                      <p className="text-foreground">{selectedItem.termenPlata}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Conditii comerciale */}
-                <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-2">Condiții comerciale</h4>
-                  <Card>
-                    <CardContent className="p-3">
-                      <p className="text-sm">{selectedItem.conditiiComerciale || "Nespecificat"}</p>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Indexare combustibil (doar pentru contracte) */}
-                {selectedItem.tip === "contract" && "indexareCombustibil" in selectedItem && (
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Indexare combustibil</h4>
-                    <Card>
-                      <CardContent className="p-3">
-                        <p className="text-sm">{selectedItem.indexareCombustibil || "Nespecificat"}</p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-
-                {/* Observatii */}
-                {selectedItem.observatii && (
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Observații</h4>
-                    <Card>
-                      <CardContent className="p-3">
-                        <p className="text-sm">{selectedItem.observatii}</p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-
-                {/* Istoric (placeholder) */}
-                <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-2">Istoric negocieri</h4>
-                  <Card>
-                    <CardContent className="p-3">
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">{selectedItem.dataCreare}</span>
-                          <span>Creat</span>
-                        </div>
-                        {selectedItem.status !== "Draft" && (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Data trimitere</span>
-                            <span>Trimis la client</span>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                <Separator />
-
-                {/* Actions */}
-                <div className="space-y-2">
-                  <Button variant="outline" className="w-full justify-start" onClick={handleDuplicate}>
-                    <Copy className="h-4 w-4 mr-2" />
-                    Duplichează
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start" onClick={handleSendEmail}>
-                    <Mail className="h-4 w-4 mr-2" />
-                    Trimite pe email
-                  </Button>
-                  {selectedItem.tip === "oferta" && selectedItem.status === "Acceptat" && (
-                    <Button variant="default" className="w-full justify-start" onClick={handleGenerateContract}>
-                      <FileText className="h-4 w-4 mr-2" />
-                      Generează contract
-                    </Button>
-                  )}
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Proiect/Șantier</Label>
+                  <p className="font-medium">{viewingDetails.proiect}</p>
                 </div>
               </div>
-            </>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Produs</Label>
+                  <p className="font-medium">{viewingDetails.produs}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Preț</Label>
+                  <p className="font-medium">
+                    {viewingDetails.pret > 0 ? `${viewingDetails.pret.toLocaleString()} RON/t` : "Variabil"}
+                  </p>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Valabilitate</Label>
+                  <p className="font-medium">{viewingDetails.valabilitate}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Termen Plată</Label>
+                  <p className="font-medium">{viewingDetails.termenPlata}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Data Creare</Label>
+                  <p className="font-medium">{viewingDetails.dataCreare}</p>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-muted-foreground">Condiții Comerciale</Label>
+                <p className="font-medium">{viewingDetails.conditiiComerciale || "-"}</p>
+              </div>
+              {viewingDetails.tip === "contract" && (
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Indexare Combustibil</Label>
+                  <p className="font-medium">{(viewingDetails as Contract).indexareCombustibil || "-"}</p>
+                </div>
+              )}
+              <div className="space-y-1">
+                <Label className="text-muted-foreground">Observații</Label>
+                <p className="font-medium">{viewingDetails.observatii || "-"}</p>
+              </div>
+            </div>
           )}
-        </SheetContent>
-      </Sheet>
+          
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <div className="flex gap-2 flex-wrap">
+              <Button variant="outline" size="sm" onClick={handleDuplicate}>
+                <Copy className="w-4 h-4 mr-2" />
+                Duplichează
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleSendEmail}>
+                <Mail className="w-4 h-4 mr-2" />
+                Trimite Email
+              </Button>
+              {viewingDetails?.tip === "oferta" && viewingDetails.status === "Acceptat" && (
+                <Button variant="secondary" size="sm" onClick={handleGenerateContract}>
+                  <FileText className="w-4 h-4 mr-2" />
+                  Generează Contract
+                </Button>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  if (viewingDetails) {
+                    handleOpenEdit(viewingDetails);
+                    setViewingDetails(null);
+                  }
+                }}
+              >
+                <Pencil className="w-4 h-4 mr-2" />
+                Editează
+              </Button>
+              <Button 
+                variant="destructive"
+                size="sm"
+                onClick={() => {
+                  if (viewingDetails) {
+                    setDeleting(viewingDetails);
+                    setViewingDetails(null);
+                  }
+                }}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Șterge
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setViewingDetails(null)}>
+                <X className="w-4 h-4 mr-2" />
+                Închide
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleting} onOpenChange={() => setDeleting(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmare Ștergere</AlertDialogTitle>
+            <AlertDialogDescription>
+              Ești sigur că vrei să ștergi {deleting?.tip === "oferta" ? "oferta" : "contractul"} {deleting?.nr}? Această acțiune nu poate fi anulată.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Anulează</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
+              Șterge
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
