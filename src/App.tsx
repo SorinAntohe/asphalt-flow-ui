@@ -23,6 +23,13 @@ import ComenziClient from "./pages/comercial/ComenziClient";
 import PlanificareLivrari from "./pages/comercial/PlanificareLivrari";
 import Documente from "./pages/comercial/Documente";
 
+// Productie module pages
+import Retete from "./pages/productie/Retete";
+import OrdineProductie from "./pages/productie/OrdineProductie";
+import Loturi from "./pages/productie/Loturi";
+import CalendarProductie from "./pages/productie/CalendarProductie";
+import Trasabilitate from "./pages/productie/Trasabilitate";
+
 const queryClient = new QueryClient();
 
 // Protected Route wrapper
@@ -53,6 +60,12 @@ const AppRoutes = () => (
     <Route path="/comercial/comenzi" element={<ProtectedRoute><ComenziClient /></ProtectedRoute>} />
     <Route path="/comercial/planificare" element={<ProtectedRoute><PlanificareLivrari /></ProtectedRoute>} />
     <Route path="/comercial/documente" element={<ProtectedRoute><Documente /></ProtectedRoute>} />
+    {/* Productie module routes */}
+    <Route path="/productie/retete" element={<ProtectedRoute><Retete /></ProtectedRoute>} />
+    <Route path="/productie/ordine" element={<ProtectedRoute><OrdineProductie /></ProtectedRoute>} />
+    <Route path="/productie/loturi" element={<ProtectedRoute><Loturi /></ProtectedRoute>} />
+    <Route path="/productie/calendar" element={<ProtectedRoute><CalendarProductie /></ProtectedRoute>} />
+    <Route path="/productie/trasabilitate" element={<ProtectedRoute><Trasabilitate /></ProtectedRoute>} />
     <Route path="/" element={<Auth />} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<NotFound />} />
