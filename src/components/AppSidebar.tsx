@@ -1,4 +1,4 @@
-import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog, Users, UserCheck, CalendarClock, Briefcase, Factory, Wrench, FileText, FileCheck, ShoppingCart, CalendarDays, FileBox, FlaskConical, ClipboardCheck, Layers, Calendar, GitBranch } from "lucide-react";
+import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog, Users, UserCheck, CalendarClock, Briefcase, Factory, Wrench, FileText, FileCheck, ShoppingCart, CalendarDays, FileBox, FlaskConical, ClipboardCheck, Layers, Calendar, GitBranch, Settings, CalendarRange, HardHat } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -52,8 +52,14 @@ const productieItems = [
   { title: "Trasabilitate", url: "/productie/trasabilitate", icon: GitBranch },
 ];
 
+// Mentenanta module items
+const mentenantaItems = [
+  { title: "Echipamente & Flotă", url: "/mentenanta/echipamente", icon: Settings },
+  { title: "Plan Mentenanță", url: "/mentenanta/plan", icon: CalendarRange },
+  { title: "Ordine de Lucru", url: "/mentenanta/interventii", icon: HardHat },
+];
+
 // Placeholder items - will be populated later
-const mentenantaItems: { title: string; url: string; icon: typeof LayoutDashboard }[] = [];
 const rapoarteItems: { title: string; url: string; icon: typeof LayoutDashboard }[] = [];
 
 export function AppSidebar() {
