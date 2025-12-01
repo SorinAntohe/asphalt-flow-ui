@@ -30,6 +30,11 @@ import Loturi from "./pages/productie/Loturi";
 import CalendarProductie from "./pages/productie/CalendarProductie";
 import Trasabilitate from "./pages/productie/Trasabilitate";
 
+// Mentenanta module pages
+import Echipamente from "./pages/mentenanta/Echipamente";
+import PlanMentenanta from "./pages/mentenanta/PlanMentenanta";
+import OrdineLucru from "./pages/mentenanta/OrdineLucru";
+
 const queryClient = new QueryClient();
 
 // Protected Route wrapper
@@ -66,6 +71,10 @@ const AppRoutes = () => (
     <Route path="/productie/loturi" element={<ProtectedRoute><Loturi /></ProtectedRoute>} />
     <Route path="/productie/calendar" element={<ProtectedRoute><CalendarProductie /></ProtectedRoute>} />
     <Route path="/productie/trasabilitate" element={<ProtectedRoute><Trasabilitate /></ProtectedRoute>} />
+    {/* Mentenanta module routes */}
+    <Route path="/mentenanta/echipamente" element={<ProtectedRoute><Echipamente /></ProtectedRoute>} />
+    <Route path="/mentenanta/plan" element={<ProtectedRoute><PlanMentenanta /></ProtectedRoute>} />
+    <Route path="/mentenanta/interventii" element={<ProtectedRoute><OrdineLucru /></ProtectedRoute>} />
     <Route path="/" element={<Auth />} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<NotFound />} />
