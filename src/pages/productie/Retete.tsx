@@ -5,7 +5,6 @@ import {
   Copy,
   Printer,
   Droplets,
-  Search,
   Pencil,
   History,
   CheckCircle2,
@@ -27,7 +26,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -382,44 +381,6 @@ const Retete = () => {
         </Card>
       </div>
 
-      {/* Filters */}
-      <Card>
-        <CardContent className="pt-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Caută după cod sau denumire..."
-                className="pl-10"
-                value={filters.cod}
-                onChange={(e) => { setFilters(f => ({ ...f, cod: e.target.value })); setPage(1); }}
-              />
-            </div>
-            <Select value={filters.tip} onValueChange={(v) => { setFilters(f => ({ ...f, tip: v })); setPage(1); }}>
-              <SelectTrigger className="w-full sm:w-[150px]">
-                <SelectValue placeholder="Tip produs" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Toate tipurile</SelectItem>
-                <SelectItem value="Asfalt">Asfalt</SelectItem>
-                <SelectItem value="Beton">Beton</SelectItem>
-                <SelectItem value="Balast">Balast</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={filters.status} onValueChange={(v) => { setFilters(f => ({ ...f, status: v })); setPage(1); }}>
-              <SelectTrigger className="w-full sm:w-[150px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Toate</SelectItem>
-                <SelectItem value="Activ">Active</SelectItem>
-                <SelectItem value="Arhivat">Arhivate</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Table */}
       <Card>
         <CardHeader>
@@ -527,19 +488,19 @@ const Retete = () => {
         </CardContent>
       </Card>
 
-      {/* Peek Drawer */}
-      <Sheet open={!!peekDrawer} onOpenChange={() => setPeekDrawer(null)}>
-        <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle className="flex items-center gap-2">
+      {/* Detail Dialog */}
+      <Dialog open={!!peekDrawer} onOpenChange={() => setPeekDrawer(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
               <FlaskConical className="h-5 w-5" />
               {peekDrawer?.cod}
-            </SheetTitle>
-            <SheetDescription>{peekDrawer?.denumire}</SheetDescription>
-          </SheetHeader>
+            </DialogTitle>
+            <DialogDescription>{peekDrawer?.denumire}</DialogDescription>
+          </DialogHeader>
           
           {peekDrawer && (
-            <div className="mt-6 space-y-6">
+            <div className="space-y-6">
               {/* Quick Info */}
               <div className="flex flex-wrap gap-2">
                 {getTipBadge(peekDrawer.tip)}
@@ -602,7 +563,7 @@ const Retete = () => {
                   <ListChecks className="h-4 w-4" />
                   Componente ({getTotalPercent(peekDrawer.componente)}%)
                 </h4>
-                <div className="space-y-2">
+                <div className="space-y-2 max-h-[150px] overflow-y-auto">
                   {peekDrawer.componente.map((comp) => (
                     <div key={comp.id} className="flex items-center justify-between p-2 rounded bg-muted/30">
                       <span className="text-sm">{comp.material}</span>
@@ -623,7 +584,7 @@ const Retete = () => {
                   <History className="h-4 w-4" />
                   Istoric Versiuni
                 </h4>
-                <div className="space-y-2">
+                <div className="space-y-2 max-h-[120px] overflow-y-auto">
                   {peekDrawer.versiuni.slice(0, 3).map((v) => (
                     <div key={v.id} className="flex items-center justify-between p-2 rounded bg-muted/30">
                       <div>
@@ -638,26 +599,26 @@ const Retete = () => {
                   ))}
                 </div>
               </div>
-
-              {/* Actions */}
-              <div className="flex flex-wrap gap-2 pt-4">
-                <Button onClick={() => { setPeekDrawer(null); setEditorDialog({ reteta: peekDrawer, isNew: false }); }}>
-                  <Pencil className="h-4 w-4 mr-2" />
-                  Editează
-                </Button>
-                <Button variant="outline" onClick={() => handleDuplicate(peekDrawer)}>
-                  <Copy className="h-4 w-4 mr-2" />
-                  Duplică
-                </Button>
-                <Button variant="outline" onClick={() => handlePrint(peekDrawer)}>
-                  <Printer className="h-4 w-4 mr-2" />
-                  Imprimă
-                </Button>
-              </div>
             </div>
           )}
-        </SheetContent>
-      </Sheet>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => handleDuplicate(peekDrawer!)}>
+              <Copy className="h-4 w-4 mr-2" />
+              Duplică
+            </Button>
+            <Button variant="outline" onClick={() => handlePrint(peekDrawer!)}>
+              <Printer className="h-4 w-4 mr-2" />
+              Imprimă
+            </Button>
+            <Button onClick={() => { setPeekDrawer(null); setEditorDialog({ reteta: peekDrawer!, isNew: false }); }}>
+              <Pencil className="h-4 w-4 mr-2" />
+              Editează
+            </Button>
+            <Button variant="outline" onClick={() => setPeekDrawer(null)}>Închide</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Editor Dialog */}
       <Dialog open={!!editorDialog} onOpenChange={() => setEditorDialog(null)}>
