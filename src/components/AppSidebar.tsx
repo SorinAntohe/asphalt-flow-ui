@@ -1,4 +1,4 @@
-import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog, Users, UserCheck, CalendarClock, Briefcase, Factory, Wrench, FileText, FileCheck, ShoppingCart, CalendarDays, FileBox, FlaskConical, ClipboardCheck, Layers, Calendar, GitBranch, Settings, CalendarRange, HardHat } from "lucide-react";
+import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog, Users, UserCheck, CalendarClock, Briefcase, Factory, Wrench, FileText, FileCheck, ShoppingCart, CalendarDays, FileBox, FlaskConical, ClipboardCheck, Layers, Calendar, GitBranch, Settings, CalendarRange, HardHat, PieChart, LineChart } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -59,8 +59,15 @@ const mentenantaItems = [
   { title: "Ordine de Lucru", url: "/mentenanta/interventii", icon: HardHat },
 ];
 
-// Placeholder items - will be populated later
-const rapoarteItems: { title: string; url: string; icon: typeof LayoutDashboard }[] = [];
+// Rapoarte module items
+const rapoarteItems = [
+  { title: "Galerie Rapoarte", url: "/rapoarte", icon: PieChart },
+  { title: "Rapoarte Producție", url: "/rapoarte/productie", icon: LineChart },
+  { title: "Rapoarte Comercial", url: "/rapoarte/comercial", icon: LineChart },
+  { title: "Rapoarte Stocuri", url: "/rapoarte/stocuri", icon: LineChart },
+  { title: "Rapoarte Calitate", url: "/rapoarte/calitate", icon: LineChart },
+  { title: "Rapoarte Mentenanță", url: "/rapoarte/mentenanta", icon: LineChart },
+];
 
 export function AppSidebar() {
   const { state, isMobile } = useSidebar();
