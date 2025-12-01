@@ -1,16 +1,18 @@
 import { useState, useMemo } from "react";
-import { FileCheck, Plus, Download, Copy, Mail, FileText, Filter, X, Pencil, Trash2 } from "lucide-react";
+import { FileCheck, Plus, Download, Copy, Mail, FileText, X, Pencil, Trash2, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { useToast } from "@/hooks/use-toast";
 import { exportToCSV } from "@/lib/exportUtils";
 
@@ -72,6 +74,17 @@ const statusColors: Record<string, string> = {
   Expirat: "bg-red-500/20 text-red-600 dark:text-red-400",
 };
 
+type FilterState = {
+  nr: string;
+  client: string;
+  proiect: string;
+  produs: string;
+  pret: string;
+  valabilitate: string;
+  termenPlata: string;
+  status: string;
+};
+
 const OferteContracte = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"oferte" | "contracte">("oferte");
@@ -79,6 +92,11 @@ const OferteContracte = () => {
   // Data state
   const [oferte, setOferte] = useState<Oferta[]>(initialOferte);
   const [contracte, setContracte] = useState<Contract[]>(initialContracte);
+  
+  // Pagination
+  const [ofertePage, setOfertePage] = useState(1);
+  const [contractePage, setContractePage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   
   // Dialog states
   const [viewingDetails, setViewingDetails] = useState<Item | null>(null);
@@ -99,13 +117,19 @@ const OferteContracte = () => {
     indexareCombustibil: "",
   });
   
-  // Filters
-  const [filterClient, setFilterClient] = useState("");
-  const [filterProdus, setFilterProdus] = useState("");
-  const [filterStatus, setFilterStatus] = useState<string>("all");
-  const [showFilters, setShowFilters] = useState(false);
+  // Column filters
+  const [oferteFilters, setOferteFilters] = useState<FilterState>({
+    nr: "", client: "", proiect: "", produs: "", pret: "", valabilitate: "", termenPlata: "", status: ""
+  });
+  const [contracteFilters, setContracteFilters] = useState<FilterState>({
+    nr: "", client: "", proiect: "", produs: "", pret: "", valabilitate: "", termenPlata: "", status: ""
+  });
+  
+  // Sorting
+  const [oferteSort, setOferteSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
+  const [contracteSort, setContracteSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
 
-  // Get unique values for filters
+  // Get unique values for dropdowns
   const clients = useMemo(() => {
     const allClients = [...oferte, ...contracte].map(item => item.client);
     return [...new Set(allClients)];
@@ -116,24 +140,61 @@ const OferteContracte = () => {
     return [...new Set(allProduse)];
   }, [oferte, contracte]);
 
-  // Filter data
+  // Filter and sort oferte
   const filteredOferte = useMemo(() => {
-    return oferte.filter(item => {
-      if (filterClient && !item.client.toLowerCase().includes(filterClient.toLowerCase())) return false;
-      if (filterProdus && !item.produs.toLowerCase().includes(filterProdus.toLowerCase())) return false;
-      if (filterStatus !== "all" && item.status !== filterStatus) return false;
-      return true;
-    });
-  }, [oferte, filterClient, filterProdus, filterStatus]);
+    return oferte
+      .filter(item => {
+        return (
+          item.nr.toLowerCase().includes(oferteFilters.nr.toLowerCase()) &&
+          item.client.toLowerCase().includes(oferteFilters.client.toLowerCase()) &&
+          item.proiect.toLowerCase().includes(oferteFilters.proiect.toLowerCase()) &&
+          item.produs.toLowerCase().includes(oferteFilters.produs.toLowerCase()) &&
+          item.pret.toString().includes(oferteFilters.pret) &&
+          item.valabilitate.toLowerCase().includes(oferteFilters.valabilitate.toLowerCase()) &&
+          item.termenPlata.toLowerCase().includes(oferteFilters.termenPlata.toLowerCase()) &&
+          (oferteFilters.status === "" || item.status === oferteFilters.status)
+        );
+      })
+      .sort((a, b) => {
+        if (!oferteSort.field || !oferteSort.direction) return 0;
+        const aVal = a[oferteSort.field as keyof Oferta];
+        const bVal = b[oferteSort.field as keyof Oferta];
+        if (aVal < bVal) return oferteSort.direction === 'asc' ? -1 : 1;
+        if (aVal > bVal) return oferteSort.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+  }, [oferte, oferteFilters, oferteSort]);
 
+  // Filter and sort contracte
   const filteredContracte = useMemo(() => {
-    return contracte.filter(item => {
-      if (filterClient && !item.client.toLowerCase().includes(filterClient.toLowerCase())) return false;
-      if (filterProdus && !item.produs.toLowerCase().includes(filterProdus.toLowerCase())) return false;
-      if (filterStatus !== "all" && item.status !== filterStatus) return false;
-      return true;
-    });
-  }, [contracte, filterClient, filterProdus, filterStatus]);
+    return contracte
+      .filter(item => {
+        return (
+          item.nr.toLowerCase().includes(contracteFilters.nr.toLowerCase()) &&
+          item.client.toLowerCase().includes(contracteFilters.client.toLowerCase()) &&
+          item.proiect.toLowerCase().includes(contracteFilters.proiect.toLowerCase()) &&
+          item.produs.toLowerCase().includes(contracteFilters.produs.toLowerCase()) &&
+          item.pret.toString().includes(contracteFilters.pret) &&
+          item.valabilitate.toLowerCase().includes(contracteFilters.valabilitate.toLowerCase()) &&
+          item.termenPlata.toLowerCase().includes(contracteFilters.termenPlata.toLowerCase()) &&
+          (contracteFilters.status === "" || item.status === contracteFilters.status)
+        );
+      })
+      .sort((a, b) => {
+        if (!contracteSort.field || !contracteSort.direction) return 0;
+        const aVal = a[contracteSort.field as keyof Contract];
+        const bVal = b[contracteSort.field as keyof Contract];
+        if (aVal < bVal) return contracteSort.direction === 'asc' ? -1 : 1;
+        if (aVal > bVal) return contracteSort.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+  }, [contracte, contracteFilters, contracteSort]);
+
+  // Pagination
+  const oferteTotalPages = Math.ceil(filteredOferte.length / itemsPerPage);
+  const contracteTotalPages = Math.ceil(filteredContracte.length / itemsPerPage);
+  const paginatedOferte = filteredOferte.slice((ofertePage - 1) * itemsPerPage, ofertePage * itemsPerPage);
+  const paginatedContracte = filteredContracte.slice((contractePage - 1) * itemsPerPage, contractePage * itemsPerPage);
 
   const handleRowClick = (item: Item) => {
     setViewingDetails(item);
@@ -200,7 +261,6 @@ const OferteContracte = () => {
     const currentDate = new Date().toLocaleDateString('ro-RO');
 
     if (editing) {
-      // Edit existing
       if (editing.tip === "oferta") {
         setOferte(prev => prev.map(item => 
           item.id === editing.id 
@@ -216,7 +276,6 @@ const OferteContracte = () => {
       }
       toast({ title: "Succes", description: `${editing.tip === "oferta" ? "Oferta" : "Contractul"} a fost actualizat.` });
     } else {
-      // Add new
       if (activeTab === "oferte") {
         const newOferta: Oferta = {
           id: Math.max(...oferte.map(o => o.id), 0) + 1,
@@ -333,13 +392,74 @@ const OferteContracte = () => {
     }
   };
 
-  const clearFilters = () => {
-    setFilterClient("");
-    setFilterProdus("");
-    setFilterStatus("all");
-  };
-
-  const hasActiveFilters = filterClient || filterProdus || filterStatus !== "all";
+  // Column header component with filter and sort
+  const FilterHeader = ({ 
+    field, 
+    label, 
+    filters, 
+    setFilters, 
+    sort, 
+    setSort,
+    setPage,
+    isNumeric = false 
+  }: { 
+    field: keyof FilterState; 
+    label: string; 
+    filters: FilterState; 
+    setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
+    sort: { field: string; direction: 'asc' | 'desc' | null };
+    setSort: (s: { field: string; direction: 'asc' | 'desc' | null }) => void;
+    setPage: (p: number) => void;
+    isNumeric?: boolean;
+  }) => (
+    <TableHead className="h-10 text-xs">
+      <div className="flex items-center gap-1">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+              <span>{label}</span>
+              {sort.field === field ? (
+                sort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
+              ) : (
+                <ArrowUpDown className="h-3 w-3 opacity-50" />
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-56 p-2">
+            <div className="space-y-2">
+              <Input 
+                placeholder={`Caută ${label.toLowerCase()}...`} 
+                value={filters[field] || ""} 
+                onChange={(e) => { 
+                  setFilters({ ...filters, [field]: e.target.value }); 
+                  setPage(1); 
+                }} 
+                className="h-7 text-xs" 
+              />
+              <div className="flex gap-1">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1 h-7 text-xs" 
+                  onClick={() => setSort({ field, direction: 'asc' })}
+                >
+                  <ArrowUp className="h-3 w-3 mr-1" /> {isNumeric ? "Cresc." : "A-Z"}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1 h-7 text-xs" 
+                  onClick={() => setSort({ field, direction: 'desc' })}
+                >
+                  <ArrowDown className="h-3 w-3 mr-1" /> {isNumeric ? "Descresc." : "Z-A"}
+                </Button>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+    </TableHead>
+  );
 
   return (
     <div className="space-y-6">
@@ -353,11 +473,6 @@ const OferteContracte = () => {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => setShowFilters(!showFilters)}>
-            <Filter className="h-4 w-4 mr-2" />
-            Filtre
-            {hasActiveFilters && <Badge variant="secondary" className="ml-2">Activ</Badge>}
-          </Button>
           <Button variant="outline" size="sm" onClick={handleExport}>
             <Download className="h-4 w-4 mr-2" />
             Export
@@ -369,53 +484,6 @@ const OferteContracte = () => {
         </div>
       </div>
 
-      {/* Filters */}
-      {showFilters && (
-        <Card>
-          <CardContent className="pt-4">
-            <div className="flex flex-wrap gap-4 items-end">
-              <div className="space-y-1 flex-1 min-w-[200px]">
-                <Label className="text-xs">Client</Label>
-                <Input 
-                  placeholder="Caută client..." 
-                  value={filterClient}
-                  onChange={(e) => setFilterClient(e.target.value)}
-                />
-              </div>
-              <div className="space-y-1 flex-1 min-w-[200px]">
-                <Label className="text-xs">Produs</Label>
-                <Input 
-                  placeholder="Caută produs..." 
-                  value={filterProdus}
-                  onChange={(e) => setFilterProdus(e.target.value)}
-                />
-              </div>
-              <div className="space-y-1 min-w-[150px]">
-                <Label className="text-xs">Status</Label>
-                <Select value={filterStatus} onValueChange={setFilterStatus}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Toate</SelectItem>
-                    <SelectItem value="Draft">Draft</SelectItem>
-                    <SelectItem value="Trimis">Trimis</SelectItem>
-                    <SelectItem value="Acceptat">Acceptat</SelectItem>
-                    <SelectItem value="Expirat">Expirat</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              {hasActiveFilters && (
-                <Button variant="ghost" size="sm" onClick={clearFilters}>
-                  <X className="h-4 w-4 mr-1" />
-                  Resetează
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "oferte" | "contracte")}>
         <TabsList>
@@ -425,42 +493,61 @@ const OferteContracte = () => {
 
         <TabsContent value="oferte" className="mt-4">
           <Card>
-            <CardContent className="p-0">
-              <Table>
+            <CardHeader className="p-3 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <CardTitle className="text-base sm:text-lg">Lista Oferte</CardTitle>
+                <div className="flex items-center gap-2">
+                  <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
+                  <Select value={itemsPerPage.toString()} onValueChange={(v) => { setItemsPerPage(Number(v)); setOfertePage(1); }}>
+                    <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0 overflow-x-auto">
+              <Table className="min-w-[900px]">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nr.</TableHead>
-                    <TableHead>Client</TableHead>
-                    <TableHead className="hidden md:table-cell">Proiect/Șantier</TableHead>
-                    <TableHead>Produs</TableHead>
-                    <TableHead className="text-right">Preț</TableHead>
-                    <TableHead className="hidden lg:table-cell">Valabilitate</TableHead>
-                    <TableHead className="hidden lg:table-cell">Termen</TableHead>
-                    <TableHead>Status</TableHead>
+                    <FilterHeader field="nr" label="Nr." filters={oferteFilters} setFilters={setOferteFilters} sort={oferteSort} setSort={setOferteSort} setPage={setOfertePage} />
+                    <FilterHeader field="client" label="Client" filters={oferteFilters} setFilters={setOferteFilters} sort={oferteSort} setSort={setOferteSort} setPage={setOfertePage} />
+                    <FilterHeader field="proiect" label="Proiect/Șantier" filters={oferteFilters} setFilters={setOferteFilters} sort={oferteSort} setSort={setOferteSort} setPage={setOfertePage} />
+                    <FilterHeader field="produs" label="Produs" filters={oferteFilters} setFilters={setOferteFilters} sort={oferteSort} setSort={setOferteSort} setPage={setOfertePage} />
+                    <FilterHeader field="pret" label="Preț" filters={oferteFilters} setFilters={setOferteFilters} sort={oferteSort} setSort={setOferteSort} setPage={setOfertePage} isNumeric />
+                    <FilterHeader field="valabilitate" label="Valabilitate" filters={oferteFilters} setFilters={setOferteFilters} sort={oferteSort} setSort={setOferteSort} setPage={setOfertePage} />
+                    <FilterHeader field="termenPlata" label="Termen" filters={oferteFilters} setFilters={setOferteFilters} sort={oferteSort} setSort={setOferteSort} setPage={setOfertePage} />
+                    <FilterHeader field="status" label="Status" filters={oferteFilters} setFilters={setOferteFilters} sort={oferteSort} setSort={setOferteSort} setPage={setOfertePage} />
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredOferte.length === 0 ? (
+                  {paginatedOferte.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                         Nu există oferte care să corespundă filtrelor.
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredOferte.map((oferta) => (
+                    paginatedOferte.map((oferta) => (
                       <TableRow 
                         key={oferta.id} 
-                        className="cursor-pointer hover:bg-muted/50"
+                        className="cursor-pointer hover:bg-muted/50 h-10"
                         onClick={() => handleRowClick(oferta)}
                       >
-                        <TableCell className="font-medium">{oferta.nr}</TableCell>
-                        <TableCell>{oferta.client}</TableCell>
-                        <TableCell className="hidden md:table-cell">{oferta.proiect}</TableCell>
-                        <TableCell>{oferta.produs}</TableCell>
-                        <TableCell className="text-right">{oferta.pret.toLocaleString()} RON</TableCell>
-                        <TableCell className="hidden lg:table-cell">{oferta.valabilitate}</TableCell>
-                        <TableCell className="hidden lg:table-cell">{oferta.termenPlata}</TableCell>
-                        <TableCell>
+                        <TableCell className="py-1 text-xs font-medium">{oferta.nr}</TableCell>
+                        <TableCell className="py-1 text-xs">{oferta.client}</TableCell>
+                        <TableCell className="py-1 text-xs">{oferta.proiect}</TableCell>
+                        <TableCell className="py-1 text-xs">{oferta.produs}</TableCell>
+                        <TableCell className="py-1 text-xs text-right">{oferta.pret.toLocaleString()} RON</TableCell>
+                        <TableCell className="py-1 text-xs">{oferta.valabilitate}</TableCell>
+                        <TableCell className="py-1 text-xs">{oferta.termenPlata}</TableCell>
+                        <TableCell className="py-1 text-xs">
                           <Badge className={statusColors[oferta.status]}>{oferta.status}</Badge>
                         </TableCell>
                       </TableRow>
@@ -469,49 +556,106 @@ const OferteContracte = () => {
                 </TableBody>
               </Table>
             </CardContent>
+            {/* Pagination */}
+            {oferteTotalPages > 1 && (
+              <div className="flex items-center justify-between px-4 py-3 border-t">
+                <span className="text-sm text-muted-foreground">
+                  {(ofertePage - 1) * itemsPerPage + 1}-{Math.min(ofertePage * itemsPerPage, filteredOferte.length)} din {filteredOferte.length}
+                </span>
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setOfertePage(Math.max(1, ofertePage - 1))}
+                        className={ofertePage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                    {Array.from({ length: oferteTotalPages }, (_, i) => i + 1).slice(
+                      Math.max(0, ofertePage - 2),
+                      Math.min(oferteTotalPages, ofertePage + 1)
+                    ).map((page) => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => setOfertePage(page)}
+                          isActive={ofertePage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setOfertePage(Math.min(oferteTotalPages, ofertePage + 1))}
+                        className={ofertePage === oferteTotalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
           </Card>
         </TabsContent>
 
         <TabsContent value="contracte" className="mt-4">
           <Card>
-            <CardContent className="p-0">
-              <Table>
+            <CardHeader className="p-3 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <CardTitle className="text-base sm:text-lg">Lista Contracte</CardTitle>
+                <div className="flex items-center gap-2">
+                  <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
+                  <Select value={itemsPerPage.toString()} onValueChange={(v) => { setItemsPerPage(Number(v)); setContractePage(1); }}>
+                    <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0 overflow-x-auto">
+              <Table className="min-w-[900px]">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nr.</TableHead>
-                    <TableHead>Client</TableHead>
-                    <TableHead className="hidden md:table-cell">Proiect/Șantier</TableHead>
-                    <TableHead>Produs</TableHead>
-                    <TableHead className="text-right">Preț</TableHead>
-                    <TableHead className="hidden lg:table-cell">Valabilitate</TableHead>
-                    <TableHead className="hidden lg:table-cell">Termen</TableHead>
-                    <TableHead>Status</TableHead>
+                    <FilterHeader field="nr" label="Nr." filters={contracteFilters} setFilters={setContracteFilters} sort={contracteSort} setSort={setContracteSort} setPage={setContractePage} />
+                    <FilterHeader field="client" label="Client" filters={contracteFilters} setFilters={setContracteFilters} sort={contracteSort} setSort={setContracteSort} setPage={setContractePage} />
+                    <FilterHeader field="proiect" label="Proiect/Șantier" filters={contracteFilters} setFilters={setContracteFilters} sort={contracteSort} setSort={setContracteSort} setPage={setContractePage} />
+                    <FilterHeader field="produs" label="Produs" filters={contracteFilters} setFilters={setContracteFilters} sort={contracteSort} setSort={setContracteSort} setPage={setContractePage} />
+                    <FilterHeader field="pret" label="Preț" filters={contracteFilters} setFilters={setContracteFilters} sort={contracteSort} setSort={setContracteSort} setPage={setContractePage} isNumeric />
+                    <FilterHeader field="valabilitate" label="Valabilitate" filters={contracteFilters} setFilters={setContracteFilters} sort={contracteSort} setSort={setContracteSort} setPage={setContractePage} />
+                    <FilterHeader field="termenPlata" label="Termen" filters={contracteFilters} setFilters={setContracteFilters} sort={contracteSort} setSort={setContracteSort} setPage={setContractePage} />
+                    <FilterHeader field="status" label="Status" filters={contracteFilters} setFilters={setContracteFilters} sort={contracteSort} setSort={setContracteSort} setPage={setContractePage} />
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredContracte.length === 0 ? (
+                  {paginatedContracte.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                         Nu există contracte care să corespundă filtrelor.
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredContracte.map((contract) => (
+                    paginatedContracte.map((contract) => (
                       <TableRow 
                         key={contract.id} 
-                        className="cursor-pointer hover:bg-muted/50"
+                        className="cursor-pointer hover:bg-muted/50 h-10"
                         onClick={() => handleRowClick(contract)}
                       >
-                        <TableCell className="font-medium">{contract.nr}</TableCell>
-                        <TableCell>{contract.client}</TableCell>
-                        <TableCell className="hidden md:table-cell">{contract.proiect}</TableCell>
-                        <TableCell>{contract.produs}</TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="py-1 text-xs font-medium">{contract.nr}</TableCell>
+                        <TableCell className="py-1 text-xs">{contract.client}</TableCell>
+                        <TableCell className="py-1 text-xs">{contract.proiect}</TableCell>
+                        <TableCell className="py-1 text-xs">{contract.produs}</TableCell>
+                        <TableCell className="py-1 text-xs text-right">
                           {contract.pret > 0 ? `${contract.pret.toLocaleString()} RON` : "Variabil"}
                         </TableCell>
-                        <TableCell className="hidden lg:table-cell">{contract.valabilitate}</TableCell>
-                        <TableCell className="hidden lg:table-cell">{contract.termenPlata}</TableCell>
-                        <TableCell>
+                        <TableCell className="py-1 text-xs">{contract.valabilitate}</TableCell>
+                        <TableCell className="py-1 text-xs">{contract.termenPlata}</TableCell>
+                        <TableCell className="py-1 text-xs">
                           <Badge className={statusColors[contract.status]}>{contract.status}</Badge>
                         </TableCell>
                       </TableRow>
@@ -520,6 +664,44 @@ const OferteContracte = () => {
                 </TableBody>
               </Table>
             </CardContent>
+            {/* Pagination */}
+            {contracteTotalPages > 1 && (
+              <div className="flex items-center justify-between px-4 py-3 border-t">
+                <span className="text-sm text-muted-foreground">
+                  {(contractePage - 1) * itemsPerPage + 1}-{Math.min(contractePage * itemsPerPage, filteredContracte.length)} din {filteredContracte.length}
+                </span>
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setContractePage(Math.max(1, contractePage - 1))}
+                        className={contractePage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                    {Array.from({ length: contracteTotalPages }, (_, i) => i + 1).slice(
+                      Math.max(0, contractePage - 2),
+                      Math.min(contracteTotalPages, contractePage + 1)
+                    ).map((page) => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => setContractePage(page)}
+                          isActive={contractePage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setContractePage(Math.min(contracteTotalPages, contractePage + 1))}
+                        className={contractePage === contracteTotalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
           </Card>
         </TabsContent>
       </Tabs>
@@ -652,27 +834,23 @@ const OferteContracte = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Details View Dialog (like Livrari) */}
+      {/* Details View Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto" hideCloseButton>
           <DialogHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <DialogTitle>
-                  Detalii {viewingDetails?.tip === "oferta" ? "Ofertă" : "Contract"} - {viewingDetails?.nr}
-                </DialogTitle>
-                <DialogDescription>
-                  Informații complete
-                </DialogDescription>
-              </div>
-              <Badge className={viewingDetails ? statusColors[viewingDetails.status] : ""}>
-                {viewingDetails?.status}
-              </Badge>
-            </div>
+            <DialogTitle>
+              Detalii {viewingDetails?.tip === "oferta" ? "Ofertă" : "Contract"} - {viewingDetails?.nr}
+            </DialogTitle>
+            <DialogDescription>
+              Informații complete
+            </DialogDescription>
           </DialogHeader>
           
           {viewingDetails && (
             <div className="grid gap-4 py-4">
+              <div className="flex justify-end">
+                <Badge className={statusColors[viewingDetails.status]}>{viewingDetails.status}</Badge>
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <Label className="text-muted-foreground">Client</Label>
@@ -771,7 +949,6 @@ const OferteContracte = () => {
                 Șterge
               </Button>
               <Button variant="outline" size="sm" onClick={() => setViewingDetails(null)}>
-                <X className="w-4 h-4 mr-2" />
                 Închide
               </Button>
             </div>
