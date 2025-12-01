@@ -1,20 +1,19 @@
 import { useState, useMemo } from "react";
-import { FileCheck, Plus, Download, Copy, Mail, FileText, X, Pencil, Trash2, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { FileCheck, Plus, Download, Copy, Mail, FileText, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { useToast } from "@/hooks/use-toast";
 import { exportToCSV } from "@/lib/exportUtils";
+import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
 
 // Types
 interface Oferta {
@@ -74,17 +73,6 @@ const statusColors: Record<string, string> = {
   Expirat: "bg-red-500/20 text-red-600 dark:text-red-400",
 };
 
-type FilterState = {
-  nr: string;
-  client: string;
-  proiect: string;
-  produs: string;
-  pret: string;
-  valabilitate: string;
-  termenPlata: string;
-  status: string;
-};
-
 const OferteContracte = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"oferte" | "contracte">("oferte");
@@ -118,16 +106,16 @@ const OferteContracte = () => {
   });
   
   // Column filters
-  const [oferteFilters, setOferteFilters] = useState<FilterState>({
+  const [oferteFilters, setOferteFilters] = useState<Record<string, string>>({
     nr: "", client: "", proiect: "", produs: "", pret: "", valabilitate: "", termenPlata: "", status: ""
   });
-  const [contracteFilters, setContracteFilters] = useState<FilterState>({
+  const [contracteFilters, setContracteFilters] = useState<Record<string, string>>({
     nr: "", client: "", proiect: "", produs: "", pret: "", valabilitate: "", termenPlata: "", status: ""
   });
   
   // Sorting
-  const [oferteSort, setOferteSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
-  const [contracteSort, setContracteSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
+  const [oferteSort, setOferteSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
+  const [contracteSort, setContracteSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
 
   // Get unique values for dropdowns
   const clients = useMemo(() => {
@@ -156,9 +144,9 @@ const OferteContracte = () => {
         );
       })
       .sort((a, b) => {
-        if (!oferteSort.field || !oferteSort.direction) return 0;
-        const aVal = a[oferteSort.field as keyof Oferta];
-        const bVal = b[oferteSort.field as keyof Oferta];
+        if (!oferteSort) return 0;
+        const aVal = a[oferteSort.key as keyof Oferta];
+        const bVal = b[oferteSort.key as keyof Oferta];
         if (aVal < bVal) return oferteSort.direction === 'asc' ? -1 : 1;
         if (aVal > bVal) return oferteSort.direction === 'asc' ? 1 : -1;
         return 0;
@@ -181,24 +169,20 @@ const OferteContracte = () => {
         );
       })
       .sort((a, b) => {
-        if (!contracteSort.field || !contracteSort.direction) return 0;
-        const aVal = a[contracteSort.field as keyof Contract];
-        const bVal = b[contracteSort.field as keyof Contract];
+        if (!contracteSort) return 0;
+        const aVal = a[contracteSort.key as keyof Contract];
+        const bVal = b[contracteSort.key as keyof Contract];
         if (aVal < bVal) return contracteSort.direction === 'asc' ? -1 : 1;
         if (aVal > bVal) return contracteSort.direction === 'asc' ? 1 : -1;
         return 0;
       });
   }, [contracte, contracteFilters, contracteSort]);
 
-  // Pagination
+  // Pagination calculations
   const oferteTotalPages = Math.ceil(filteredOferte.length / itemsPerPage);
   const contracteTotalPages = Math.ceil(filteredContracte.length / itemsPerPage);
   const paginatedOferte = filteredOferte.slice((ofertePage - 1) * itemsPerPage, ofertePage * itemsPerPage);
   const paginatedContracte = filteredContracte.slice((contractePage - 1) * itemsPerPage, contractePage * itemsPerPage);
-
-  const handleRowClick = (item: Item) => {
-    setViewingDetails(item);
-  };
 
   const handleExport = () => {
     const columns = [
@@ -392,94 +376,176 @@ const OferteContracte = () => {
     }
   };
 
-  // Column header component with filter and sort
-  const FilterHeader = ({ 
-    field, 
-    label, 
-    filters, 
-    setFilters, 
-    sort, 
-    setSort,
-    setPage,
-    isNumeric = false 
-  }: { 
-    field: keyof FilterState; 
-    label: string; 
-    filters: FilterState; 
-    setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
-    sort: { field: string; direction: 'asc' | 'desc' | null };
-    setSort: (s: { field: string; direction: 'asc' | 'desc' | null }) => void;
-    setPage: (p: number) => void;
-    isNumeric?: boolean;
-  }) => (
-    <TableHead className="h-10 text-xs">
-      <div className="flex items-center gap-1">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
-              <span>{label}</span>
-              {sort.field === field ? (
-                sort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
-              ) : (
-                <ArrowUpDown className="h-3 w-3 opacity-50" />
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-56 p-2">
-            <div className="space-y-2">
-              <Input 
-                placeholder={`Caută ${label.toLowerCase()}...`} 
-                value={filters[field] || ""} 
-                onChange={(e) => { 
-                  setFilters({ ...filters, [field]: e.target.value }); 
-                  setPage(1); 
-                }} 
-                className="h-7 text-xs" 
-              />
-              <div className="flex gap-1">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="flex-1 h-7 text-xs" 
-                  onClick={() => setSort({ field, direction: 'asc' })}
+  // Render table with unified components
+  const renderTable = (
+    data: Item[],
+    filters: Record<string, string>,
+    setFilters: React.Dispatch<React.SetStateAction<Record<string, string>>>,
+    sort: { key: string; direction: "asc" | "desc" } | null,
+    setSort: React.Dispatch<React.SetStateAction<{ key: string; direction: "asc" | "desc" } | null>>,
+    page: number,
+    setPage: React.Dispatch<React.SetStateAction<number>>,
+    totalItems: number,
+    totalPages: number
+  ) => (
+    <>
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="h-10">
+                <DataTableColumnHeader
+                  title="Nr."
+                  sortKey="nr"
+                  currentSort={sort}
+                  onSort={(key, dir) => setSort({ key, direction: dir })}
+                  filterValue={filters.nr}
+                  onFilterChange={(val) => { setFilters(f => ({ ...f, nr: val })); setPage(1); }}
+                  filterPlaceholder="Caută nr..."
+                />
+              </TableHead>
+              <TableHead className="h-10">
+                <DataTableColumnHeader
+                  title="Client"
+                  sortKey="client"
+                  currentSort={sort}
+                  onSort={(key, dir) => setSort({ key, direction: dir })}
+                  filterValue={filters.client}
+                  onFilterChange={(val) => { setFilters(f => ({ ...f, client: val })); setPage(1); }}
+                  filterPlaceholder="Caută client..."
+                />
+              </TableHead>
+              <TableHead className="h-10">
+                <DataTableColumnHeader
+                  title="Proiect/Șantier"
+                  sortKey="proiect"
+                  currentSort={sort}
+                  onSort={(key, dir) => setSort({ key, direction: dir })}
+                  filterValue={filters.proiect}
+                  onFilterChange={(val) => { setFilters(f => ({ ...f, proiect: val })); setPage(1); }}
+                  filterPlaceholder="Caută proiect..."
+                />
+              </TableHead>
+              <TableHead className="h-10">
+                <DataTableColumnHeader
+                  title="Produs"
+                  sortKey="produs"
+                  currentSort={sort}
+                  onSort={(key, dir) => setSort({ key, direction: dir })}
+                  filterValue={filters.produs}
+                  onFilterChange={(val) => { setFilters(f => ({ ...f, produs: val })); setPage(1); }}
+                  filterPlaceholder="Caută produs..."
+                />
+              </TableHead>
+              <TableHead className="h-10">
+                <DataTableColumnHeader
+                  title="Preț"
+                  sortKey="pret"
+                  currentSort={sort}
+                  onSort={(key, dir) => setSort({ key, direction: dir })}
+                  filterValue={filters.pret}
+                  onFilterChange={(val) => { setFilters(f => ({ ...f, pret: val })); setPage(1); }}
+                  filterPlaceholder="Caută preț..."
+                  sortAscLabel="Cresc."
+                  sortDescLabel="Descresc."
+                />
+              </TableHead>
+              <TableHead className="h-10">
+                <DataTableColumnHeader
+                  title="Valabilitate"
+                  sortKey="valabilitate"
+                  currentSort={sort}
+                  onSort={(key, dir) => setSort({ key, direction: dir })}
+                  filterValue={filters.valabilitate}
+                  onFilterChange={(val) => { setFilters(f => ({ ...f, valabilitate: val })); setPage(1); }}
+                  filterPlaceholder="Caută dată..."
+                />
+              </TableHead>
+              <TableHead className="h-10">
+                <DataTableColumnHeader
+                  title="Termen"
+                  sortKey="termenPlata"
+                  currentSort={sort}
+                  onSort={(key, dir) => setSort({ key, direction: dir })}
+                  filterValue={filters.termenPlata}
+                  onFilterChange={(val) => { setFilters(f => ({ ...f, termenPlata: val })); setPage(1); }}
+                  filterPlaceholder="Caută termen..."
+                />
+              </TableHead>
+              <TableHead className="h-10">
+                <DataTableColumnHeader
+                  title="Status"
+                  sortKey="status"
+                  currentSort={sort}
+                  onSort={(key, dir) => setSort({ key, direction: dir })}
+                  filterValue={filters.status}
+                  onFilterChange={(val) => { setFilters(f => ({ ...f, status: val })); setPage(1); }}
+                  filterPlaceholder="Caută status..."
+                />
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="animate-fade-in">
+            {data.length === 0 ? (
+              <DataTableEmpty colSpan={8} message="Nu există înregistrări care să corespundă filtrelor." />
+            ) : (
+              data.map((item) => (
+                <TableRow 
+                  key={item.id} 
+                  className="cursor-pointer hover:bg-muted/50 h-10"
+                  onClick={() => setViewingDetails(item)}
                 >
-                  <ArrowUp className="h-3 w-3 mr-1" /> {isNumeric ? "Cresc." : "A-Z"}
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="flex-1 h-7 text-xs" 
-                  onClick={() => setSort({ field, direction: 'desc' })}
-                >
-                  <ArrowDown className="h-3 w-3 mr-1" /> {isNumeric ? "Descresc." : "Z-A"}
-                </Button>
-              </div>
-            </div>
-          </PopoverContent>
-        </Popover>
+                  <TableCell className="py-1 text-xs font-medium">{item.nr}</TableCell>
+                  <TableCell className="py-1 text-xs">{item.client}</TableCell>
+                  <TableCell className="py-1 text-xs">{item.proiect}</TableCell>
+                  <TableCell className="py-1 text-xs">{item.produs}</TableCell>
+                  <TableCell className="py-1 text-xs text-right">{item.pret > 0 ? `${item.pret.toLocaleString()} RON` : "-"}</TableCell>
+                  <TableCell className="py-1 text-xs">{item.valabilitate}</TableCell>
+                  <TableCell className="py-1 text-xs">{item.termenPlata}</TableCell>
+                  <TableCell className="py-1 text-xs">
+                    <Badge className={statusColors[item.status]}>{item.status}</Badge>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </div>
-    </TableHead>
+      
+      <DataTablePagination
+        currentPage={page}
+        totalPages={totalPages}
+        totalItems={totalItems}
+        itemsPerPage={itemsPerPage}
+        onPageChange={setPage}
+        onItemsPerPageChange={(val) => { setItemsPerPage(val); setPage(1); }}
+      />
+    </>
   );
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <FileCheck className="h-8 w-8 text-primary" />
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Oferte & Contracte</h1>
-            <p className="text-muted-foreground">Gestionare oferte și contracte comerciale</p>
-          </div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Oferte & Contracte</h1>
+          <p className="text-muted-foreground mt-2">
+            Gestionare oferte comerciale și contracte cu clienți
+          </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handleExport}>
-            <Download className="h-4 w-4 mr-2" />
-            Export
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={handleExport}
+            disabled={(activeTab === "oferte" ? filteredOferte : filteredContracte).length === 0}
+          >
+            <Download className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Export</span>
           </Button>
-          <Button size="sm" onClick={handleOpenAdd}>
-            <Plus className="h-4 w-4 mr-2" />
-            Adaugă {activeTab === "oferte" ? "Ofertă" : "Contract"}
+          <Button onClick={handleOpenAdd} size="sm">
+            <Plus className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">{activeTab === "oferte" ? "Ofertă Nouă" : "Contract Nou"}</span>
           </Button>
         </div>
       </div>
@@ -495,105 +561,27 @@ const OferteContracte = () => {
           <Card>
             <CardHeader className="p-3 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <CardTitle className="text-base sm:text-lg">Lista Oferte</CardTitle>
-                <div className="flex items-center gap-2">
-                  <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
-                  <Select value={itemsPerPage.toString()} onValueChange={(v) => { setItemsPerPage(Number(v)); setOfertePage(1); }}>
-                    <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div>
+                  <CardTitle className="text-base sm:text-lg">Lista Oferte</CardTitle>
+                  <CardDescription className="hidden sm:block">
+                    Toate ofertele comerciale trimise clienților
+                  </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-0 overflow-x-auto">
-              <Table className="min-w-[900px]">
-                <TableHeader>
-                  <TableRow>
-                    <FilterHeader field="nr" label="Nr." filters={oferteFilters} setFilters={setOferteFilters} sort={oferteSort} setSort={setOferteSort} setPage={setOfertePage} />
-                    <FilterHeader field="client" label="Client" filters={oferteFilters} setFilters={setOferteFilters} sort={oferteSort} setSort={setOferteSort} setPage={setOfertePage} />
-                    <FilterHeader field="proiect" label="Proiect/Șantier" filters={oferteFilters} setFilters={setOferteFilters} sort={oferteSort} setSort={setOferteSort} setPage={setOfertePage} />
-                    <FilterHeader field="produs" label="Produs" filters={oferteFilters} setFilters={setOferteFilters} sort={oferteSort} setSort={setOferteSort} setPage={setOfertePage} />
-                    <FilterHeader field="pret" label="Preț" filters={oferteFilters} setFilters={setOferteFilters} sort={oferteSort} setSort={setOferteSort} setPage={setOfertePage} isNumeric />
-                    <FilterHeader field="valabilitate" label="Valabilitate" filters={oferteFilters} setFilters={setOferteFilters} sort={oferteSort} setSort={setOferteSort} setPage={setOfertePage} />
-                    <FilterHeader field="termenPlata" label="Termen" filters={oferteFilters} setFilters={setOferteFilters} sort={oferteSort} setSort={setOferteSort} setPage={setOfertePage} />
-                    <FilterHeader field="status" label="Status" filters={oferteFilters} setFilters={setOferteFilters} sort={oferteSort} setSort={setOferteSort} setPage={setOfertePage} />
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginatedOferte.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                        Nu există oferte care să corespundă filtrelor.
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    paginatedOferte.map((oferta) => (
-                      <TableRow 
-                        key={oferta.id} 
-                        className="cursor-pointer hover:bg-muted/50 h-10"
-                        onClick={() => handleRowClick(oferta)}
-                      >
-                        <TableCell className="py-1 text-xs font-medium">{oferta.nr}</TableCell>
-                        <TableCell className="py-1 text-xs">{oferta.client}</TableCell>
-                        <TableCell className="py-1 text-xs">{oferta.proiect}</TableCell>
-                        <TableCell className="py-1 text-xs">{oferta.produs}</TableCell>
-                        <TableCell className="py-1 text-xs text-right">{oferta.pret.toLocaleString()} RON</TableCell>
-                        <TableCell className="py-1 text-xs">{oferta.valabilitate}</TableCell>
-                        <TableCell className="py-1 text-xs">{oferta.termenPlata}</TableCell>
-                        <TableCell className="py-1 text-xs">
-                          <Badge className={statusColors[oferta.status]}>{oferta.status}</Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
+            <CardContent className="p-3 sm:p-6 pt-0">
+              {renderTable(
+                paginatedOferte,
+                oferteFilters,
+                setOferteFilters,
+                oferteSort,
+                setOferteSort,
+                ofertePage,
+                setOfertePage,
+                filteredOferte.length,
+                oferteTotalPages
+              )}
             </CardContent>
-            {/* Pagination */}
-            {oferteTotalPages > 1 && (
-              <div className="flex items-center justify-between px-4 py-3 border-t">
-                <span className="text-sm text-muted-foreground">
-                  {(ofertePage - 1) * itemsPerPage + 1}-{Math.min(ofertePage * itemsPerPage, filteredOferte.length)} din {filteredOferte.length}
-                </span>
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious 
-                        onClick={() => setOfertePage(Math.max(1, ofertePage - 1))}
-                        className={ofertePage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                      />
-                    </PaginationItem>
-                    {Array.from({ length: oferteTotalPages }, (_, i) => i + 1).slice(
-                      Math.max(0, ofertePage - 2),
-                      Math.min(oferteTotalPages, ofertePage + 1)
-                    ).map((page) => (
-                      <PaginationItem key={page}>
-                        <PaginationLink
-                          onClick={() => setOfertePage(page)}
-                          isActive={ofertePage === page}
-                          className="cursor-pointer"
-                        >
-                          {page}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))}
-                    <PaginationItem>
-                      <PaginationNext 
-                        onClick={() => setOfertePage(Math.min(oferteTotalPages, ofertePage + 1))}
-                        className={ofertePage === oferteTotalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              </div>
-            )}
           </Card>
         </TabsContent>
 
@@ -601,242 +589,34 @@ const OferteContracte = () => {
           <Card>
             <CardHeader className="p-3 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <CardTitle className="text-base sm:text-lg">Lista Contracte</CardTitle>
-                <div className="flex items-center gap-2">
-                  <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
-                  <Select value={itemsPerPage.toString()} onValueChange={(v) => { setItemsPerPage(Number(v)); setContractePage(1); }}>
-                    <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div>
+                  <CardTitle className="text-base sm:text-lg">Lista Contracte</CardTitle>
+                  <CardDescription className="hidden sm:block">
+                    Toate contractele active și arhivate
+                  </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-0 overflow-x-auto">
-              <Table className="min-w-[900px]">
-                <TableHeader>
-                  <TableRow>
-                    <FilterHeader field="nr" label="Nr." filters={contracteFilters} setFilters={setContracteFilters} sort={contracteSort} setSort={setContracteSort} setPage={setContractePage} />
-                    <FilterHeader field="client" label="Client" filters={contracteFilters} setFilters={setContracteFilters} sort={contracteSort} setSort={setContracteSort} setPage={setContractePage} />
-                    <FilterHeader field="proiect" label="Proiect/Șantier" filters={contracteFilters} setFilters={setContracteFilters} sort={contracteSort} setSort={setContracteSort} setPage={setContractePage} />
-                    <FilterHeader field="produs" label="Produs" filters={contracteFilters} setFilters={setContracteFilters} sort={contracteSort} setSort={setContracteSort} setPage={setContractePage} />
-                    <FilterHeader field="pret" label="Preț" filters={contracteFilters} setFilters={setContracteFilters} sort={contracteSort} setSort={setContracteSort} setPage={setContractePage} isNumeric />
-                    <FilterHeader field="valabilitate" label="Valabilitate" filters={contracteFilters} setFilters={setContracteFilters} sort={contracteSort} setSort={setContracteSort} setPage={setContractePage} />
-                    <FilterHeader field="termenPlata" label="Termen" filters={contracteFilters} setFilters={setContracteFilters} sort={contracteSort} setSort={setContracteSort} setPage={setContractePage} />
-                    <FilterHeader field="status" label="Status" filters={contracteFilters} setFilters={setContracteFilters} sort={contracteSort} setSort={setContracteSort} setPage={setContractePage} />
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginatedContracte.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                        Nu există contracte care să corespundă filtrelor.
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    paginatedContracte.map((contract) => (
-                      <TableRow 
-                        key={contract.id} 
-                        className="cursor-pointer hover:bg-muted/50 h-10"
-                        onClick={() => handleRowClick(contract)}
-                      >
-                        <TableCell className="py-1 text-xs font-medium">{contract.nr}</TableCell>
-                        <TableCell className="py-1 text-xs">{contract.client}</TableCell>
-                        <TableCell className="py-1 text-xs">{contract.proiect}</TableCell>
-                        <TableCell className="py-1 text-xs">{contract.produs}</TableCell>
-                        <TableCell className="py-1 text-xs text-right">
-                          {contract.pret > 0 ? `${contract.pret.toLocaleString()} RON` : "Variabil"}
-                        </TableCell>
-                        <TableCell className="py-1 text-xs">{contract.valabilitate}</TableCell>
-                        <TableCell className="py-1 text-xs">{contract.termenPlata}</TableCell>
-                        <TableCell className="py-1 text-xs">
-                          <Badge className={statusColors[contract.status]}>{contract.status}</Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
+            <CardContent className="p-3 sm:p-6 pt-0">
+              {renderTable(
+                paginatedContracte,
+                contracteFilters,
+                setContracteFilters,
+                contracteSort,
+                setContracteSort,
+                contractePage,
+                setContractePage,
+                filteredContracte.length,
+                contracteTotalPages
+              )}
             </CardContent>
-            {/* Pagination */}
-            {contracteTotalPages > 1 && (
-              <div className="flex items-center justify-between px-4 py-3 border-t">
-                <span className="text-sm text-muted-foreground">
-                  {(contractePage - 1) * itemsPerPage + 1}-{Math.min(contractePage * itemsPerPage, filteredContracte.length)} din {filteredContracte.length}
-                </span>
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious 
-                        onClick={() => setContractePage(Math.max(1, contractePage - 1))}
-                        className={contractePage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                      />
-                    </PaginationItem>
-                    {Array.from({ length: contracteTotalPages }, (_, i) => i + 1).slice(
-                      Math.max(0, contractePage - 2),
-                      Math.min(contracteTotalPages, contractePage + 1)
-                    ).map((page) => (
-                      <PaginationItem key={page}>
-                        <PaginationLink
-                          onClick={() => setContractePage(page)}
-                          isActive={contractePage === page}
-                          className="cursor-pointer"
-                        >
-                          {page}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))}
-                    <PaginationItem>
-                      <PaginationNext 
-                        onClick={() => setContractePage(Math.min(contracteTotalPages, contractePage + 1))}
-                        className={contractePage === contracteTotalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              </div>
-            )}
           </Card>
         </TabsContent>
       </Tabs>
 
-      {/* Add/Edit Dialog */}
-      <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              {editing 
-                ? `Editează ${editing.tip === "oferta" ? "Oferta" : "Contractul"} ${editing.nr}` 
-                : `Adaugă ${activeTab === "oferte" ? "Ofertă Nouă" : "Contract Nou"}`
-              }
-            </DialogTitle>
-            <DialogDescription>
-              {editing ? "Modifică detaliile" : "Completează datele"}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="client">Client *</Label>
-                <Select value={form.client} onValueChange={(v) => setForm({ ...form, client: v })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectează client" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {clients.map(client => (
-                      <SelectItem key={client} value={client}>{client}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="proiect">Proiect/Șantier</Label>
-                <Input 
-                  id="proiect" 
-                  placeholder="Denumire proiect" 
-                  value={form.proiect}
-                  onChange={(e) => setForm({ ...form, proiect: e.target.value })}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="produs">Produs *</Label>
-                <Select value={form.produs} onValueChange={(v) => setForm({ ...form, produs: v })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectează produs" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {produse.map(produs => (
-                      <SelectItem key={produs} value={produs}>{produs}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="pret">Preț (RON/tonă)</Label>
-                <Input 
-                  id="pret" 
-                  type="number" 
-                  placeholder="0.00" 
-                  value={form.pret || ""}
-                  onChange={(e) => setForm({ ...form, pret: parseFloat(e.target.value) || 0 })}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="valabilitate">Valabilitate până la</Label>
-                <Input 
-                  id="valabilitate" 
-                  type="date" 
-                  value={form.valabilitate}
-                  onChange={(e) => setForm({ ...form, valabilitate: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="termenPlata">Termen plată</Label>
-                <Select value={form.termenPlata} onValueChange={(v) => setForm({ ...form, termenPlata: v })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectează" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="15 zile">15 zile</SelectItem>
-                    <SelectItem value="30 zile">30 zile</SelectItem>
-                    <SelectItem value="45 zile">45 zile</SelectItem>
-                    <SelectItem value="60 zile">60 zile</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="conditii">Condiții comerciale</Label>
-              <Textarea 
-                id="conditii" 
-                placeholder="Introduceți condițiile comerciale..." 
-                value={form.conditiiComerciale}
-                onChange={(e) => setForm({ ...form, conditiiComerciale: e.target.value })}
-              />
-            </div>
-            {(activeTab === "contracte" || (editing && editing.tip === "contract")) && (
-              <div className="space-y-2">
-                <Label htmlFor="indexare">Indexare combustibil</Label>
-                <Input 
-                  id="indexare" 
-                  placeholder="Ex: Ajustare trimestrială +/- 5%" 
-                  value={form.indexareCombustibil}
-                  onChange={(e) => setForm({ ...form, indexareCombustibil: e.target.value })}
-                />
-              </div>
-            )}
-            <div className="space-y-2">
-              <Label htmlFor="observatii">Observații</Label>
-              <Textarea 
-                id="observatii" 
-                placeholder="Observații suplimentare..." 
-                value={form.observatii}
-                onChange={(e) => setForm({ ...form, observatii: e.target.value })}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenAddEdit(false)}>Anulează</Button>
-            <Button onClick={handleSave}>
-              {editing ? "Salvează Modificările" : "Adaugă"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Details View Dialog */}
+      {/* Detail Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto" hideCloseButton>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" hideCloseButton>
           <DialogHeader>
             <DialogTitle>
               Detalii {viewingDetails?.tip === "oferta" ? "Ofertă" : "Contract"} - {viewingDetails?.nr}
@@ -851,112 +631,141 @@ const OferteContracte = () => {
               <div className="flex justify-end">
                 <Badge className={statusColors[viewingDetails.status]}>{viewingDetails.status}</Badge>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Client</Label>
-                  <p className="font-medium">{viewingDetails.client}</p>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Proiect/Șantier</Label>
-                  <p className="font-medium">{viewingDetails.proiect}</p>
-                </div>
+              
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div><span className="text-muted-foreground">Client:</span> <span className="font-medium">{viewingDetails.client}</span></div>
+                <div><span className="text-muted-foreground">Proiect:</span> <span className="font-medium">{viewingDetails.proiect}</span></div>
+                <div><span className="text-muted-foreground">Produs:</span> <span className="font-medium">{viewingDetails.produs}</span></div>
+                <div><span className="text-muted-foreground">Preț:</span> <span className="font-medium">{viewingDetails.pret > 0 ? `${viewingDetails.pret.toLocaleString()} RON` : "-"}</span></div>
+                <div><span className="text-muted-foreground">Valabilitate:</span> <span className="font-medium">{viewingDetails.valabilitate}</span></div>
+                <div><span className="text-muted-foreground">Termen plată:</span> <span className="font-medium">{viewingDetails.termenPlata}</span></div>
+                <div><span className="text-muted-foreground">Data creare:</span> <span className="font-medium">{viewingDetails.dataCreare}</span></div>
+                {viewingDetails.tip === "contract" && (
+                  <div><span className="text-muted-foreground">Indexare:</span> <span className="font-medium">{(viewingDetails as Contract).indexareCombustibil || "-"}</span></div>
+                )}
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Produs</Label>
-                  <p className="font-medium">{viewingDetails.produs}</p>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Preț</Label>
-                  <p className="font-medium">
-                    {viewingDetails.pret > 0 ? `${viewingDetails.pret.toLocaleString()} RON/t` : "Variabil"}
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Valabilitate</Label>
-                  <p className="font-medium">{viewingDetails.valabilitate}</p>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Termen Plată</Label>
-                  <p className="font-medium">{viewingDetails.termenPlata}</p>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Data Creare</Label>
-                  <p className="font-medium">{viewingDetails.dataCreare}</p>
-                </div>
-              </div>
-              <div className="space-y-1">
-                <Label className="text-muted-foreground">Condiții Comerciale</Label>
-                <p className="font-medium">{viewingDetails.conditiiComerciale || "-"}</p>
-              </div>
-              {viewingDetails.tip === "contract" && (
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Indexare Combustibil</Label>
-                  <p className="font-medium">{(viewingDetails as Contract).indexareCombustibil || "-"}</p>
+              
+              {viewingDetails.conditiiComerciale && (
+                <div className="border-t pt-4">
+                  <p className="text-sm text-muted-foreground mb-1">Condiții comerciale:</p>
+                  <p className="text-sm">{viewingDetails.conditiiComerciale}</p>
                 </div>
               )}
-              <div className="space-y-1">
-                <Label className="text-muted-foreground">Observații</Label>
-                <p className="font-medium">{viewingDetails.observatii || "-"}</p>
-              </div>
+              
+              {viewingDetails.observatii && (
+                <div className="border-t pt-4">
+                  <p className="text-sm text-muted-foreground mb-1">Observații:</p>
+                  <p className="text-sm">{viewingDetails.observatii}</p>
+                </div>
+              )}
             </div>
           )}
-          
+
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <div className="flex gap-2 flex-wrap">
-              <Button variant="outline" size="sm" onClick={handleDuplicate}>
-                <Copy className="w-4 h-4 mr-2" />
-                Duplichează
+            <Button variant="outline" size="sm" onClick={handleDuplicate}>
+              <Copy className="w-4 h-4 mr-2" />Duplichează
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleSendEmail}>
+              <Mail className="w-4 h-4 mr-2" />Trimite pe email
+            </Button>
+            {viewingDetails?.tip === "oferta" && viewingDetails?.status === "Acceptat" && (
+              <Button variant="outline" size="sm" onClick={handleGenerateContract}>
+                <FileText className="w-4 h-4 mr-2" />Generează contract
               </Button>
-              <Button variant="outline" size="sm" onClick={handleSendEmail}>
-                <Mail className="w-4 h-4 mr-2" />
-                Trimite Email
-              </Button>
-              {viewingDetails?.tip === "oferta" && viewingDetails.status === "Acceptat" && (
-                <Button variant="secondary" size="sm" onClick={handleGenerateContract}>
-                  <FileText className="w-4 h-4 mr-2" />
-                  Generează Contract
-                </Button>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <Button 
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  if (viewingDetails) {
-                    handleOpenEdit(viewingDetails);
-                    setViewingDetails(null);
-                  }
-                }}
-              >
-                <Pencil className="w-4 h-4 mr-2" />
-                Editează
-              </Button>
-              <Button 
-                variant="destructive"
-                size="sm"
-                onClick={() => {
-                  if (viewingDetails) {
-                    setDeleting(viewingDetails);
-                    setViewingDetails(null);
-                  }
-                }}
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Șterge
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => setViewingDetails(null)}>
-                Închide
-              </Button>
-            </div>
+            )}
+            <Button variant="outline" size="sm" onClick={() => { if (viewingDetails) { handleOpenEdit(viewingDetails); setViewingDetails(null); } }}>
+              <Pencil className="w-4 h-4 mr-2" />Editează
+            </Button>
+            <Button variant="destructive" size="sm" onClick={() => { if (viewingDetails) { setDeleting(viewingDetails); setViewingDetails(null); } }}>
+              <Trash2 className="w-4 h-4 mr-2" />Șterge
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => setViewingDetails(null)}>Închide</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Add/Edit Dialog */}
+      <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {editing 
+                ? `Editează ${editing.tip === "oferta" ? "Ofertă" : "Contract"}` 
+                : `Adaugă ${activeTab === "oferte" ? "Ofertă" : "Contract"} ${activeTab === "oferte" ? "Nouă" : "Nou"}`
+              }
+            </DialogTitle>
+            <DialogDescription>Completează informațiile necesare.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Client *</Label>
+                <Select value={form.client} onValueChange={(v) => setForm({ ...form, client: v })}>
+                  <SelectTrigger><SelectValue placeholder="Selectează client" /></SelectTrigger>
+                  <SelectContent>
+                    {clients.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Produs *</Label>
+                <Select value={form.produs} onValueChange={(v) => setForm({ ...form, produs: v })}>
+                  <SelectTrigger><SelectValue placeholder="Selectează produs" /></SelectTrigger>
+                  <SelectContent>
+                    {produse.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Proiect/Șantier</Label>
+              <Input placeholder="Denumire proiect" value={form.proiect} onChange={(e) => setForm({ ...form, proiect: e.target.value })} />
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>Preț (RON)</Label>
+                <Input type="number" value={form.pret} onChange={(e) => setForm({ ...form, pret: Number(e.target.value) })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Valabilitate</Label>
+                <Input placeholder="DD/MM/YYYY" value={form.valabilitate} onChange={(e) => setForm({ ...form, valabilitate: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Termen plată</Label>
+                <Select value={form.termenPlata} onValueChange={(v) => setForm({ ...form, termenPlata: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="15 zile">15 zile</SelectItem>
+                    <SelectItem value="30 zile">30 zile</SelectItem>
+                    <SelectItem value="45 zile">45 zile</SelectItem>
+                    <SelectItem value="60 zile">60 zile</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Condiții comerciale</Label>
+              <Textarea placeholder="Condiții de livrare, plată, etc." value={form.conditiiComerciale} onChange={(e) => setForm({ ...form, conditiiComerciale: e.target.value })} />
+            </div>
+            {(activeTab === "contracte" || editing?.tip === "contract") && (
+              <div className="space-y-2">
+                <Label>Indexare combustibil</Label>
+                <Input placeholder="ex: Ajustare trimestrială +/- 5%" value={form.indexareCombustibil} onChange={(e) => setForm({ ...form, indexareCombustibil: e.target.value })} />
+              </div>
+            )}
+            <div className="space-y-2">
+              <Label>Observații</Label>
+              <Textarea placeholder="Observații suplimentare..." value={form.observatii} onChange={(e) => setForm({ ...form, observatii: e.target.value })} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenAddEdit(false)}>Anulează</Button>
+            <Button onClick={handleSave}>{editing ? "Salvează" : "Adaugă"}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation */}
       <AlertDialog open={!!deleting} onOpenChange={() => setDeleting(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -967,9 +776,7 @@ const OferteContracte = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Anulează</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
-              Șterge
-            </AlertDialogAction>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">Șterge</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

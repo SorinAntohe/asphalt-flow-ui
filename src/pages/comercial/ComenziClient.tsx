@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
 import { 
   ShoppingCart, Plus, Download, Calendar as CalendarIcon, List, Columns3, 
-  ArrowUpDown, ArrowUp, ArrowDown, Package, FileText, Clock, Paperclip,
-  ChevronLeft, ChevronRight, Pencil, Trash2, GripVertical
+  Package, FileText, Clock, Paperclip,
+  ChevronLeft, ChevronRight, Pencil, Trash2, TrendingUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,19 +10,18 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { useToast } from "@/hooks/use-toast";
 import { exportToCSV } from "@/lib/exportUtils";
 import { format, addDays, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay, parseISO } from "date-fns";
 import { ro } from "date-fns/locale";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
 
 // Types
 type OrderStatus = "Draft" | "Aprobat" | "Planificat" | "În producție" | "Livrat" | "Închis";
@@ -155,19 +154,6 @@ const priorityColors: Record<Priority, string> = {
 
 const kanbanStatuses: OrderStatus[] = ["Draft", "Aprobat", "Planificat", "În producție", "Livrat", "Închis"];
 
-type FilterState = {
-  nr: string;
-  client: string;
-  produs: string;
-  cantitate: string;
-  planta: string;
-  dataOra: string;
-  status: string;
-  prioritate: string;
-  avansPlata: string;
-  observatii: string;
-};
-
 const ComenziClient = () => {
   const { toast } = useToast();
   const [activeView, setActiveView] = useState<"lista" | "kanban" | "calendar">("lista");
@@ -206,7 +192,7 @@ const ComenziClient = () => {
   });
   
   // Column filters
-  const [filters, setFilters] = useState<FilterState>({
+  const [filters, setFilters] = useState<Record<string, string>>({
     nr: "", client: "", produs: "", cantitate: "", planta: "", dataOra: "", status: "", prioritate: "", avansPlata: "", observatii: ""
   });
   
@@ -222,19 +208,29 @@ const ComenziClient = () => {
   });
   
   // Sorting
-  const [sort, setSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
+  const [sort, setSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
 
   // Get unique values for dropdowns
   const clients = useMemo(() => [...new Set(comenzi.map(c => c.client))], [comenzi]);
   const produse = useMemo(() => [...new Set(comenzi.map(c => c.produs))], [comenzi]);
   const plante = useMemo(() => [...new Set(comenzi.map(c => c.planta))], [comenzi]);
-  const puncteDescarcare = useMemo(() => [...new Set(comenzi.map(c => c.punctDescarcare))], [comenzi]);
+
+  // Summary stats
+  const summaryStats = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0];
+    const comenziAstazi = comenzi.filter(c => c.dataOra.startsWith(today)).length;
+    const cantitateTotal = comenzi.reduce((sum, c) => sum + c.cantitate, 0);
+    return {
+      comenziAstazi,
+      cantitateTotal,
+      totalComenzi: comenzi.length
+    };
+  }, [comenzi]);
 
   // Filter and sort comenzi
   const filteredComenzi = useMemo(() => {
     return comenzi
       .filter(item => {
-        // Column filters
         const matchesColumnFilters = (
           item.nr.toLowerCase().includes(filters.nr.toLowerCase()) &&
           item.client.toLowerCase().includes(filters.client.toLowerCase()) &&
@@ -248,21 +244,19 @@ const ComenziClient = () => {
           item.observatii.toLowerCase().includes(filters.observatii.toLowerCase())
         );
         
-        // Global filters
         const matchesGlobalFilters = (
           (globalFilters.client === "" || item.client === globalFilters.client) &&
           (globalFilters.planta === "" || item.planta === globalFilters.planta) &&
           (globalFilters.status === "" || item.status === globalFilters.status) &&
-          (globalFilters.prioritate === "" || item.prioritate === globalFilters.prioritate) &&
-          (globalFilters.punctDescarcare === "" || item.punctDescarcare === globalFilters.punctDescarcare)
+          (globalFilters.prioritate === "" || item.prioritate === globalFilters.prioritate)
         );
         
         return matchesColumnFilters && matchesGlobalFilters;
       })
       .sort((a, b) => {
-        if (!sort.field || !sort.direction) return 0;
-        const aVal = a[sort.field as keyof ComandaClient];
-        const bVal = b[sort.field as keyof ComandaClient];
+        if (!sort) return 0;
+        const aVal = a[sort.key as keyof ComandaClient];
+        const bVal = b[sort.key as keyof ComandaClient];
         if (aVal < bVal) return sort.direction === 'asc' ? -1 : 1;
         if (aVal > bVal) return sort.direction === 'asc' ? 1 : -1;
         return 0;
@@ -346,12 +340,12 @@ const ComenziClient = () => {
       return;
     }
 
-    const currentDate = new Date().toLocaleDateString('ro-RO');
+    const currentDateStr = new Date().toLocaleDateString('ro-RO');
 
     if (editing) {
       setComenzi(prev => prev.map(item => 
         item.id === editing.id 
-          ? { ...item, ...form, timeline: [...item.timeline, { data: `${currentDate} ${new Date().toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}`, eveniment: "Comandă editată", user: "Utilizator" }] }
+          ? { ...item, ...form, timeline: [...item.timeline, { data: `${currentDateStr} ${new Date().toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}`, eveniment: "Comandă editată", user: "Utilizator" }] }
           : item
       ));
       toast({ title: "Succes", description: "Comanda a fost actualizată." });
@@ -372,7 +366,7 @@ const ComenziClient = () => {
         observatii: form.observatii,
         fereastraIncarcare: form.fereastraIncarcare,
         atasamente: [],
-        timeline: [{ data: `${currentDate} ${new Date().toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}`, eveniment: "Comandă creată", user: "Utilizator" }]
+        timeline: [{ data: `${currentDateStr} ${new Date().toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}`, eveniment: "Comandă creată", user: "Utilizator" }]
       };
       setComenzi(prev => [...prev, newComanda]);
       toast({ title: "Succes", description: "Comanda a fost adăugată." });
@@ -399,12 +393,6 @@ const ComenziClient = () => {
     }
   };
 
-  const handlePlanifica = () => {
-    if (viewingDetails) {
-      setOpenPlanificare(true);
-    }
-  };
-
   const handleStatusChange = (comanda: ComandaClient, newStatus: OrderStatus) => {
     setComenzi(prev => prev.map(item => 
       item.id === comanda.id 
@@ -422,89 +410,69 @@ const ComenziClient = () => {
     toast({ title: "Status actualizat", description: `Comanda ${comanda.nr} este acum "${newStatus}".` });
   };
 
-  // Column header component with filter and sort
-  const FilterHeader = ({ 
-    field, 
-    label, 
-    isNumeric = false 
-  }: { 
-    field: keyof FilterState; 
-    label: string; 
-    isNumeric?: boolean;
-  }) => (
-    <TableHead className="h-10 text-xs">
-      <div className="flex items-center gap-1">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
-              <span>{label}</span>
-              {sort.field === field ? (
-                sort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
-              ) : (
-                <ArrowUpDown className="h-3 w-3 opacity-50" />
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-56 p-2">
-            <div className="space-y-2">
-              {field === "status" ? (
-                <Select value={filters.status} onValueChange={(v) => { setFilters({ ...filters, status: v === "all" ? "" : v }); setPage(1); }}>
-                  <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="Toate" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Toate</SelectItem>
-                    {kanbanStatuses.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              ) : field === "prioritate" ? (
-                <Select value={filters.prioritate} onValueChange={(v) => { setFilters({ ...filters, prioritate: v === "all" ? "" : v }); setPage(1); }}>
-                  <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="Toate" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Toate</SelectItem>
-                    {(["Scăzută", "Normală", "Ridicată", "Urgentă"] as Priority[]).map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <Input 
-                  placeholder={`Caută ${label.toLowerCase()}...`} 
-                  value={filters[field] || ""} 
-                  onChange={(e) => { setFilters({ ...filters, [field]: e.target.value }); setPage(1); }} 
-                  className="h-7 text-xs" 
-                />
-              )}
-              <div className="flex gap-1">
-                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSort({ field, direction: 'asc' })}>
-                  <ArrowUp className="h-3 w-3 mr-1" /> {isNumeric ? "Cresc." : "A-Z"}
-                </Button>
-                <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSort({ field, direction: 'desc' })}>
-                  <ArrowDown className="h-3 w-3 mr-1" /> {isNumeric ? "Descresc." : "Z-A"}
-                </Button>
-              </div>
-            </div>
-          </PopoverContent>
-        </Popover>
-      </div>
-    </TableHead>
-  );
-
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <ShoppingCart className="h-8 w-8 text-primary" />
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Comenzi Client</h1>
-            <p className="text-muted-foreground text-sm">Gestionare și urmărire comenzi</p>
-          </div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Comenzi Client</h1>
+          <p className="text-muted-foreground mt-2">
+            Gestionare și urmărire comenzi de la clienți
+          </p>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <Button variant="outline" size="sm" onClick={handleExport}>
-            <Download className="h-4 w-4 mr-2" />Export
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={filteredComenzi.length === 0}>
+            <Download className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Export</span>
           </Button>
           <Button size="sm" onClick={handleOpenAdd}>
-            <Plus className="h-4 w-4 mr-2" />Adaugă Comandă
+            <Plus className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Comandă Nouă</span>
           </Button>
         </div>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Comenzi Astăzi</p>
+                <p className="text-2xl font-bold">{summaryStats.comenziAstazi}</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <CalendarIcon className="h-6 w-6 text-primary" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Cantitate Totală</p>
+                <p className="text-2xl font-bold">{summaryStats.cantitateTotal.toLocaleString('ro-RO')}</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
+                <TrendingUp className="h-6 w-6 text-green-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Comenzi</p>
+                <p className="text-2xl font-bold">{summaryStats.totalComenzi}</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
+                <ShoppingCart className="h-6 w-6 text-blue-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Global Filters */}
@@ -523,7 +491,7 @@ const ComenziClient = () => {
             <Select value={globalFilters.planta || "all"} onValueChange={(v) => setGlobalFilters({ ...globalFilters, planta: v === "all" ? "" : v })}>
               <SelectTrigger className="w-[150px] h-8 text-xs"><SelectValue placeholder="Gestiune" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Toate plantele</SelectItem>
+                <SelectItem value="all">Toate gestiunile</SelectItem>
                 {plante.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
               </SelectContent>
             </Select>
@@ -556,91 +524,85 @@ const ComenziClient = () => {
         {/* List View */}
         <TabsContent value="lista" className="mt-4">
           <Card>
-            <CardHeader className="p-3 sm:p-4">
+            <CardHeader className="p-3 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <CardTitle className="text-base">Lista Comenzi</CardTitle>
-                <div className="flex items-center gap-2">
-                  <Label className="text-xs whitespace-nowrap">Per pagină:</Label>
-                  <Select value={itemsPerPage.toString()} onValueChange={(v) => { setItemsPerPage(Number(v)); setPage(1); }}>
-                    <SelectTrigger className="w-[60px] h-8"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div>
+                  <CardTitle className="text-base sm:text-lg">Lista Comenzi</CardTitle>
+                  <CardDescription className="hidden sm:block">
+                    Toate comenzile de la clienți
+                  </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-0 overflow-x-auto">
-              <Table className="min-w-[1100px]">
-                <TableHeader>
-                  <TableRow>
-                    <FilterHeader field="nr" label="Nr." />
-                    <FilterHeader field="client" label="Client" />
-                    <FilterHeader field="produs" label="Produs" />
-                    <FilterHeader field="cantitate" label="Cantitate" isNumeric />
-                    <FilterHeader field="planta" label="Gestiune" />
-                    <FilterHeader field="dataOra" label="Dată/Ora" />
-                    <FilterHeader field="status" label="Status" />
-                    <FilterHeader field="prioritate" label="Prioritate" />
-                    <FilterHeader field="avansPlata" label="Avans/Plată" />
-                    <FilterHeader field="observatii" label="Observații" />
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginatedComenzi.length === 0 ? (
+            <CardContent className="p-3 sm:p-6 pt-0">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
                     <TableRow>
-                      <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
-                        Nu există comenzi care să corespundă filtrelor.
-                      </TableCell>
+                      <TableHead className="h-10">
+                        <DataTableColumnHeader title="Nr." sortKey="nr" currentSort={sort} onSort={(k, d) => setSort({ key: k, direction: d })} filterValue={filters.nr} onFilterChange={(v) => { setFilters(f => ({ ...f, nr: v })); setPage(1); }} filterPlaceholder="Caută nr..." />
+                      </TableHead>
+                      <TableHead className="h-10">
+                        <DataTableColumnHeader title="Client" sortKey="client" currentSort={sort} onSort={(k, d) => setSort({ key: k, direction: d })} filterValue={filters.client} onFilterChange={(v) => { setFilters(f => ({ ...f, client: v })); setPage(1); }} filterPlaceholder="Caută client..." />
+                      </TableHead>
+                      <TableHead className="h-10">
+                        <DataTableColumnHeader title="Produs" sortKey="produs" currentSort={sort} onSort={(k, d) => setSort({ key: k, direction: d })} filterValue={filters.produs} onFilterChange={(v) => { setFilters(f => ({ ...f, produs: v })); setPage(1); }} filterPlaceholder="Caută produs..." />
+                      </TableHead>
+                      <TableHead className="h-10">
+                        <DataTableColumnHeader title="Cantitate" sortKey="cantitate" currentSort={sort} onSort={(k, d) => setSort({ key: k, direction: d })} filterValue={filters.cantitate} onFilterChange={(v) => { setFilters(f => ({ ...f, cantitate: v })); setPage(1); }} filterPlaceholder="Caută..." sortAscLabel="Cresc." sortDescLabel="Descresc." />
+                      </TableHead>
+                      <TableHead className="h-10">
+                        <DataTableColumnHeader title="Gestiune" sortKey="planta" currentSort={sort} onSort={(k, d) => setSort({ key: k, direction: d })} filterValue={filters.planta} onFilterChange={(v) => { setFilters(f => ({ ...f, planta: v })); setPage(1); }} filterPlaceholder="Caută..." />
+                      </TableHead>
+                      <TableHead className="h-10">
+                        <DataTableColumnHeader title="Dată/Ora" sortKey="dataOra" currentSort={sort} onSort={(k, d) => setSort({ key: k, direction: d })} filterValue={filters.dataOra} onFilterChange={(v) => { setFilters(f => ({ ...f, dataOra: v })); setPage(1); }} filterPlaceholder="Caută..." />
+                      </TableHead>
+                      <TableHead className="h-10">
+                        <DataTableColumnHeader title="Status" sortKey="status" currentSort={sort} onSort={(k, d) => setSort({ key: k, direction: d })} filterValue={filters.status} onFilterChange={(v) => { setFilters(f => ({ ...f, status: v })); setPage(1); }} filterPlaceholder="Caută..." />
+                      </TableHead>
+                      <TableHead className="h-10">
+                        <DataTableColumnHeader title="Prioritate" sortKey="prioritate" currentSort={sort} onSort={(k, d) => setSort({ key: k, direction: d })} filterValue={filters.prioritate} onFilterChange={(v) => { setFilters(f => ({ ...f, prioritate: v })); setPage(1); }} filterPlaceholder="Caută..." />
+                      </TableHead>
+                      <TableHead className="h-10">
+                        <DataTableColumnHeader title="Avans/Plată" sortKey="avansPlata" currentSort={sort} onSort={(k, d) => setSort({ key: k, direction: d })} filterValue={filters.avansPlata} onFilterChange={(v) => { setFilters(f => ({ ...f, avansPlata: v })); setPage(1); }} filterPlaceholder="Caută..." />
+                      </TableHead>
+                      <TableHead className="h-10">
+                        <DataTableColumnHeader title="Observații" sortKey="observatii" currentSort={sort} onSort={(k, d) => setSort({ key: k, direction: d })} filterValue={filters.observatii} onFilterChange={(v) => { setFilters(f => ({ ...f, observatii: v })); setPage(1); }} filterPlaceholder="Caută..." />
+                      </TableHead>
                     </TableRow>
-                  ) : (
-                    paginatedComenzi.map((comanda) => (
-                      <TableRow 
-                        key={comanda.id} 
-                        className="cursor-pointer hover:bg-muted/50 h-10"
-                        onClick={() => setViewingDetails(comanda)}
-                      >
-                        <TableCell className="py-1 text-xs font-medium">{comanda.nr}</TableCell>
-                        <TableCell className="py-1 text-xs">{comanda.client}</TableCell>
-                        <TableCell className="py-1 text-xs">{comanda.produs}</TableCell>
-                        <TableCell className="py-1 text-xs text-right">{comanda.cantitate} {comanda.unitateMasura}</TableCell>
-                        <TableCell className="py-1 text-xs">{comanda.planta}</TableCell>
-                        <TableCell className="py-1 text-xs">{format(parseISO(comanda.dataOra), "dd/MM/yyyy HH:mm")}</TableCell>
-                        <TableCell className="py-1 text-xs"><Badge className={statusColors[comanda.status]}>{comanda.status}</Badge></TableCell>
-                        <TableCell className="py-1 text-xs"><Badge className={priorityColors[comanda.prioritate]}>{comanda.prioritate}</Badge></TableCell>
-                        <TableCell className="py-1 text-xs">{comanda.avansPlata}</TableCell>
-                        <TableCell className="py-1 text-xs max-w-[150px] truncate">{comanda.observatii}</TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-            {totalPages > 1 && (
-              <div className="p-3 border-t border-border">
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious onClick={() => setPage(Math.max(1, page - 1))} className={page === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"} />
-                    </PaginationItem>
-                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                      const pageNum = i + 1;
-                      return (
-                        <PaginationItem key={pageNum}>
-                          <PaginationLink onClick={() => setPage(pageNum)} isActive={page === pageNum} className="cursor-pointer">{pageNum}</PaginationLink>
-                        </PaginationItem>
-                      );
-                    })}
-                    <PaginationItem>
-                      <PaginationNext onClick={() => setPage(Math.min(totalPages, page + 1))} className={page === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"} />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
+                  </TableHeader>
+                  <TableBody className="animate-fade-in">
+                    {paginatedComenzi.length === 0 ? (
+                      <DataTableEmpty colSpan={10} message="Nu există comenzi care să corespundă filtrelor." />
+                    ) : (
+                      paginatedComenzi.map((comanda) => (
+                        <TableRow key={comanda.id} className="cursor-pointer hover:bg-muted/50 h-10" onClick={() => setViewingDetails(comanda)}>
+                          <TableCell className="py-1 text-xs font-medium">{comanda.nr}</TableCell>
+                          <TableCell className="py-1 text-xs">{comanda.client}</TableCell>
+                          <TableCell className="py-1 text-xs">{comanda.produs}</TableCell>
+                          <TableCell className="py-1 text-xs text-right">{comanda.cantitate} {comanda.unitateMasura}</TableCell>
+                          <TableCell className="py-1 text-xs">{comanda.planta}</TableCell>
+                          <TableCell className="py-1 text-xs">{format(parseISO(comanda.dataOra), "dd/MM/yyyy HH:mm")}</TableCell>
+                          <TableCell className="py-1 text-xs"><Badge className={statusColors[comanda.status]}>{comanda.status}</Badge></TableCell>
+                          <TableCell className="py-1 text-xs"><Badge className={priorityColors[comanda.prioritate]}>{comanda.prioritate}</Badge></TableCell>
+                          <TableCell className="py-1 text-xs">{comanda.avansPlata}</TableCell>
+                          <TableCell className="py-1 text-xs max-w-[150px] truncate">{comanda.observatii}</TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
               </div>
-            )}
+              
+              <DataTablePagination
+                currentPage={page}
+                totalPages={totalPages}
+                totalItems={filteredComenzi.length}
+                itemsPerPage={itemsPerPage}
+                onPageChange={setPage}
+                onItemsPerPageChange={(val) => { setItemsPerPage(val); setPage(1); }}
+              />
+            </CardContent>
           </Card>
         </TabsContent>
 
@@ -661,14 +623,10 @@ const ComenziClient = () => {
                       </div>
                     </CardHeader>
                     <CardContent className="p-2">
-                      <ScrollArea className="h-[calc(100vh-350px)]">
+                      <ScrollArea className="h-[calc(100vh-400px)]">
                         <div className="space-y-2 pr-2">
                           {statusComenzi.map((comanda) => (
-                            <Card 
-                              key={comanda.id} 
-                              className="cursor-pointer hover:shadow-md transition-shadow"
-                              onClick={() => setViewingDetails(comanda)}
-                            >
+                            <Card key={comanda.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setViewingDetails(comanda)}>
                               <CardContent className="p-3">
                                 <div className="flex items-start justify-between mb-2">
                                   <span className="font-medium text-xs">{comanda.nr}</span>
@@ -735,11 +693,7 @@ const ComenziClient = () => {
                         </div>
                         <div className="space-y-1">
                           {dayComenzi.slice(0, 3).map((comanda) => (
-                            <div 
-                              key={comanda.id}
-                              className="text-xs p-1.5 rounded bg-primary/10 cursor-pointer hover:bg-primary/20"
-                              onClick={() => setViewingDetails(comanda)}
-                            >
+                            <div key={comanda.id} className="text-xs p-1.5 rounded bg-primary/10 cursor-pointer hover:bg-primary/20" onClick={() => setViewingDetails(comanda)}>
                               <p className="font-medium truncate">{comanda.client}</p>
                               <p className="text-muted-foreground truncate">{comanda.produs}</p>
                             </div>
@@ -783,7 +737,7 @@ const ComenziClient = () => {
 
       {/* Detail Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto" hideCloseButton>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" hideCloseButton>
           <DialogHeader>
             <DialogTitle>Detalii Comandă - {viewingDetails?.nr}</DialogTitle>
             <DialogDescription>Informații complete despre comandă</DialogDescription>
@@ -791,13 +745,11 @@ const ComenziClient = () => {
           
           {viewingDetails && (
             <div className="grid gap-4 py-4">
-              {/* Status Badge */}
               <div className="flex justify-between items-center">
                 <Badge className={statusColors[viewingDetails.status]}>{viewingDetails.status}</Badge>
                 <Badge className={priorityColors[viewingDetails.prioritate]}>{viewingDetails.prioritate}</Badge>
               </div>
 
-              {/* Summary Card */}
               <Card>
                 <CardHeader className="p-3">
                   <CardTitle className="text-sm flex items-center gap-2"><Package className="h-4 w-4" />Rezumat</CardTitle>
@@ -822,7 +774,6 @@ const ComenziClient = () => {
                 </CardContent>
               </Card>
 
-              {/* Attachments */}
               <Card>
                 <CardHeader className="p-3">
                   <CardTitle className="text-sm flex items-center gap-2"><Paperclip className="h-4 w-4" />Atașamente</CardTitle>
@@ -842,7 +793,6 @@ const ComenziClient = () => {
                 </CardContent>
               </Card>
 
-              {/* Timeline */}
               <Card>
                 <CardHeader className="p-3">
                   <CardTitle className="text-sm flex items-center gap-2"><Clock className="h-4 w-4" />Timeline</CardTitle>
@@ -865,7 +815,7 @@ const ComenziClient = () => {
           )}
 
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="outline" size="sm" onClick={handlePlanifica}>
+            <Button variant="outline" size="sm" onClick={() => { if (viewingDetails) { handleStatusChange(viewingDetails, "Planificat"); setViewingDetails(null); } }}>
               <CalendarIcon className="w-4 h-4 mr-2" />Planifică
             </Button>
             <Button variant="outline" size="sm" onClick={handleRezervaStoc}>
@@ -998,32 +948,6 @@ const ComenziClient = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      {/* Planificare Dialog */}
-      <Dialog open={openPlanificare} onOpenChange={setOpenPlanificare}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Planifică Comandă</DialogTitle>
-            <DialogDescription>Selectează data și ora pentru producție.</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>Dată și oră producție</Label>
-              <Input type="datetime-local" />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenPlanificare(false)}>Anulează</Button>
-            <Button onClick={() => {
-              if (viewingDetails) {
-                handleStatusChange(viewingDetails, "Planificat");
-              }
-              setOpenPlanificare(false);
-              toast({ title: "Comandă planificată", description: "Comanda a fost adăugată în calendarul de producție." });
-            }}>Planifică</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
