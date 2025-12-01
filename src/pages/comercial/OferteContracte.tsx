@@ -487,8 +487,8 @@ const OferteContracte = () => {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "oferte" | "contracte")}>
         <TabsList>
-          <TabsTrigger value="oferte">Oferte ({filteredOferte.length})</TabsTrigger>
-          <TabsTrigger value="contracte">Contracte ({filteredContracte.length})</TabsTrigger>
+          <TabsTrigger value="oferte">Oferte</TabsTrigger>
+          <TabsTrigger value="contracte">Contracte</TabsTrigger>
         </TabsList>
 
         <TabsContent value="oferte" className="mt-4">
