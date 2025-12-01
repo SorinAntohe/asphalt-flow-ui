@@ -293,7 +293,7 @@ const ComenziClient = () => {
       { key: "client" as const, label: "Client" },
       { key: "produs" as const, label: "Produs" },
       { key: "cantitate" as const, label: "Cantitate" },
-      { key: "planta" as const, label: "Plantă" },
+      { key: "planta" as const, label: "Gestiune" },
       { key: "dataOra" as const, label: "Dată/Ora" },
       { key: "status" as const, label: "Status" },
       { key: "prioritate" as const, label: "Prioritate" },
@@ -521,7 +521,7 @@ const ComenziClient = () => {
               </SelectContent>
             </Select>
             <Select value={globalFilters.planta || "all"} onValueChange={(v) => setGlobalFilters({ ...globalFilters, planta: v === "all" ? "" : v })}>
-              <SelectTrigger className="w-[150px] h-8 text-xs"><SelectValue placeholder="Plantă" /></SelectTrigger>
+              <SelectTrigger className="w-[150px] h-8 text-xs"><SelectValue placeholder="Gestiune" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toate plantele</SelectItem>
                 {plante.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
@@ -581,7 +581,7 @@ const ComenziClient = () => {
                     <FilterHeader field="client" label="Client" />
                     <FilterHeader field="produs" label="Produs" />
                     <FilterHeader field="cantitate" label="Cantitate" isNumeric />
-                    <FilterHeader field="planta" label="Plantă" />
+                    <FilterHeader field="planta" label="Gestiune" />
                     <FilterHeader field="dataOra" label="Dată/Ora" />
                     <FilterHeader field="status" label="Status" />
                     <FilterHeader field="prioritate" label="Prioritate" />
@@ -807,7 +807,7 @@ const ComenziClient = () => {
                     <div><span className="text-muted-foreground">Client:</span> <span className="font-medium">{viewingDetails.client}</span></div>
                     <div><span className="text-muted-foreground">Produs:</span> <span className="font-medium">{viewingDetails.produs}</span></div>
                     <div><span className="text-muted-foreground">Cantitate:</span> <span className="font-medium">{viewingDetails.cantitate} {viewingDetails.unitateMasura}</span></div>
-                    <div><span className="text-muted-foreground">Plantă:</span> <span className="font-medium">{viewingDetails.planta}</span></div>
+                    <div><span className="text-muted-foreground">Gestiune:</span> <span className="font-medium">{viewingDetails.planta}</span></div>
                     <div><span className="text-muted-foreground">Dată/Ora:</span> <span className="font-medium">{format(parseISO(viewingDetails.dataOra), "dd/MM/yyyy HH:mm")}</span></div>
                     <div><span className="text-muted-foreground">Fereastră încărcare:</span> <span className="font-medium">{viewingDetails.fereastraIncarcare}</span></div>
                     <div><span className="text-muted-foreground">Punct descărcare:</span> <span className="font-medium">{viewingDetails.punctDescarcare}</span></div>
@@ -930,7 +930,7 @@ const ComenziClient = () => {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Plantă</Label>
+                <Label>Gestiune</Label>
                 <Select value={form.planta} onValueChange={(v) => setForm({ ...form, planta: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
