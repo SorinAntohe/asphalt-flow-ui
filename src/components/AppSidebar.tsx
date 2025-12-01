@@ -1,4 +1,4 @@
-import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog, Users, UserCheck, CalendarClock, Briefcase, Factory, Wrench, FileText } from "lucide-react";
+import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog, Users, UserCheck, CalendarClock, Briefcase, Factory, Wrench, FileText, FileCheck, ShoppingCart, CalendarDays, FileBox } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -35,8 +35,15 @@ const resurseUmaneItems = [
   { title: "Pontaj", url: "/pontaj", icon: CalendarClock },
 ];
 
+// Comercial module items
+const comercialItems = [
+  { title: "Oferte & Contracte", url: "/comercial/oferte-contracte", icon: FileCheck },
+  { title: "Comenzi Client", url: "/comercial/comenzi", icon: ShoppingCart },
+  { title: "Planificare Livrări", url: "/comercial/planificare", icon: CalendarDays },
+  { title: "Documente", url: "/comercial/documente", icon: FileBox },
+];
+
 // Placeholder items - will be populated later
-const comercialItems: { title: string; url: string; icon: typeof LayoutDashboard }[] = [];
 const productieItems: { title: string; url: string; icon: typeof LayoutDashboard }[] = [];
 const mentenantaItems: { title: string; url: string; icon: typeof LayoutDashboard }[] = [];
 const rapoarteItems: { title: string; url: string; icon: typeof LayoutDashboard }[] = [];
