@@ -254,8 +254,8 @@ export default function PontareAngajat() {
 
       {/* Add Time Sheet */}
       <Sheet open={isAddTimeOpen} onOpenChange={setIsAddTimeOpen}>
-        <SheetContent side="bottom" className="h-auto max-h-[90vh] rounded-t-3xl">
-          <div className="bg-primary h-16 -mx-6 -mt-6 mb-6 rounded-t-3xl" />
+        <SheetContent side="left" className="w-full sm:max-w-md overflow-y-auto">
+          <div className="bg-primary h-16 -mx-6 -mt-6 mb-6" />
           <SheetHeader className="sr-only">
             <SheetTitle>Adaugă timp</SheetTitle>
           </SheetHeader>
@@ -326,8 +326,8 @@ export default function PontareAngajat() {
 
       {/* Add Leave Sheet */}
       <Sheet open={isAddLeaveOpen} onOpenChange={setIsAddLeaveOpen}>
-        <SheetContent side="bottom" className="h-auto max-h-[90vh] rounded-t-3xl">
-          <div className="bg-primary h-16 -mx-6 -mt-6 mb-6 rounded-t-3xl" />
+        <SheetContent side="left" className="w-full sm:max-w-md overflow-y-auto">
+          <div className="bg-primary h-16 -mx-6 -mt-6 mb-6" />
           <SheetHeader className="sr-only">
             <SheetTitle>Cerere concediu</SheetTitle>
           </SheetHeader>
