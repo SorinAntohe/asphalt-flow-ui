@@ -162,11 +162,6 @@ export default function PontareAngajat() {
                 </button>
               )}
 
-              {/* Hint Text */}
-              <div className="text-center space-y-1">
-                <span className="text-2xl text-muted-foreground">^</span>
-                <p className="text-sm text-muted-foreground">Glisează pentru detalii</p>
-              </div>
             </div>
           </TabsContent>
 
