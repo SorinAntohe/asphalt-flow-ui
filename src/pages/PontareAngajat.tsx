@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Clock, LogIn, LogOut, User, CheckCircle2, XCircle } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Clock, LogIn, LogOut, User, CheckCircle2, XCircle, Calendar, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
 import { API_BASE_URL } from "@/lib/api";
 
@@ -198,7 +199,7 @@ export default function PontareAngajat() {
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="max-w-md mx-auto space-y-6">
+      <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
           <h1 className="text-2xl font-bold text-foreground">Pontare Angajat</h1>
@@ -207,117 +208,176 @@ export default function PontareAngajat() {
           </p>
         </div>
 
-        {/* Current Time Card */}
-        <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-          <CardContent className="pt-6">
-            <div className="text-center space-y-2">
-              <div className="text-5xl font-mono font-bold text-primary">
-                {formatTime(currentTime)}
-              </div>
-              <div className="text-sm text-muted-foreground capitalize">
-                {formatDate(currentTime)}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Tabs */}
+        <Tabs defaultValue="pontaj" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="pontaj" className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              <span className="hidden sm:inline">Pontaj</span>
+            </TabsTrigger>
+            <TabsTrigger value="concedii" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              <span className="hidden sm:inline">Concedii</span>
+            </TabsTrigger>
+            <TabsTrigger value="dashboard" className="flex items-center gap-2">
+              <LayoutDashboard className="h-4 w-4" />
+              <span className="hidden sm:inline">Dashboard Program</span>
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Employee Selection */}
-        <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <User className="h-4 w-4" />
-              Selectează Angajat
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Select value={selectedAngajat} onValueChange={setSelectedAngajat}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Alege angajatul..." />
-              </SelectTrigger>
-              <SelectContent>
-                {angajati.map((angajat) => (
-                  <SelectItem key={angajat.id} value={angajat.id.toString()}>
-                    {angajat.nume} - {angajat.functie}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          {/* Pontaj Tab */}
+          <TabsContent value="pontaj" className="space-y-6">
+            {/* Current Time Card */}
+            <Card className="bg-card/80 backdrop-blur-sm border-border/50">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-2">
+                  <div className="text-5xl font-mono font-bold text-primary">
+                    {formatTime(currentTime)}
+                  </div>
+                  <div className="text-sm text-muted-foreground capitalize">
+                    {formatDate(currentTime)}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-            {selectedAngajatData && (
-              <div className="mt-4 p-3 rounded-lg bg-muted/50">
-                <p className="font-medium">{selectedAngajatData.nume}</p>
-                <p className="text-sm text-muted-foreground">{selectedAngajatData.functie}</p>
+            {/* Employee Selection */}
+            <Card className="bg-card/80 backdrop-blur-sm border-border/50">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Selectează Angajat
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Select value={selectedAngajat} onValueChange={setSelectedAngajat}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Alege angajatul..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {angajati.map((angajat) => (
+                      <SelectItem key={angajat.id} value={angajat.id.toString()}>
+                        {angajat.nume} - {angajat.functie}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {selectedAngajatData && (
+                  <div className="mt-4 p-3 rounded-lg bg-muted/50">
+                    <p className="font-medium">{selectedAngajatData.nume}</p>
+                    <p className="text-sm text-muted-foreground">{selectedAngajatData.functie}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Pontaj Status */}
+            {selectedAngajat && (
+              <Card className="bg-card/80 backdrop-blur-sm border-border/50">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    Status Pontaj Azi
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {todayPontaj ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Intrare:</span>
+                        <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
+                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                          {todayPontaj.ora_start}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Ieșire:</span>
+                        {todayPontaj.ora_sfarsit ? (
+                          <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
+                            <CheckCircle2 className="h-3 w-3 mr-1" />
+                            {todayPontaj.ora_sfarsit}
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600 border-yellow-500/30">
+                            <XCircle className="h-3 w-3 mr-1" />
+                            În așteptare
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-4 text-muted-foreground">
+                      Nu există pontaj pentru astăzi
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Action Buttons */}
+            {selectedAngajat && (
+              <div className="grid grid-cols-2 gap-4">
+                <Button
+                  size="lg"
+                  className="h-20 text-lg bg-green-600 hover:bg-green-700 disabled:opacity-50"
+                  onClick={handlePontareIntrare}
+                  disabled={isLoading || isPontajActiv || (todayPontaj?.ora_sfarsit ? true : false)}
+                >
+                  <LogIn className="h-6 w-6 mr-2" />
+                  Intrare
+                </Button>
+                <Button
+                  size="lg"
+                  className="h-20 text-lg bg-red-600 hover:bg-red-700 disabled:opacity-50"
+                  onClick={handlePontareIesire}
+                  disabled={isLoading || !isPontajActiv}
+                >
+                  <LogOut className="h-6 w-6 mr-2" />
+                  Ieșire
+                </Button>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </TabsContent>
 
-        {/* Pontaj Status */}
-        {selectedAngajat && (
-          <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Clock className="h-4 w-4" />
-                Status Pontaj Azi
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {todayPontaj ? (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Intrare:</span>
-                    <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
-                      <CheckCircle2 className="h-3 w-3 mr-1" />
-                      {todayPontaj.ora_start}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Ieșire:</span>
-                    {todayPontaj.ora_sfarsit ? (
-                      <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
-                        <CheckCircle2 className="h-3 w-3 mr-1" />
-                        {todayPontaj.ora_sfarsit}
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600 border-yellow-500/30">
-                        <XCircle className="h-3 w-3 mr-1" />
-                        În așteptare
-                      </Badge>
-                    )}
-                  </div>
+          {/* Concedii Tab */}
+          <TabsContent value="concedii" className="space-y-6">
+            <Card className="bg-card/80 backdrop-blur-sm border-border/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5" />
+                  Concedii
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12 text-muted-foreground">
+                  <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>Funcționalitate în dezvoltare</p>
+                  <p className="text-sm">Cereri concediu, zile libere, absențe</p>
                 </div>
-              ) : (
-                <div className="text-center py-4 text-muted-foreground">
-                  Nu există pontaj pentru astăzi
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Action Buttons */}
-        {selectedAngajat && (
-          <div className="grid grid-cols-2 gap-4">
-            <Button
-              size="lg"
-              className="h-20 text-lg bg-green-600 hover:bg-green-700 disabled:opacity-50"
-              onClick={handlePontareIntrare}
-              disabled={isLoading || isPontajActiv || (todayPontaj?.ora_sfarsit ? true : false)}
-            >
-              <LogIn className="h-6 w-6 mr-2" />
-              Intrare
-            </Button>
-            <Button
-              size="lg"
-              className="h-20 text-lg bg-red-600 hover:bg-red-700 disabled:opacity-50"
-              onClick={handlePontareIesire}
-              disabled={isLoading || !isPontajActiv}
-            >
-              <LogOut className="h-6 w-6 mr-2" />
-              Ieșire
-            </Button>
-          </div>
-        )}
+          {/* Dashboard Program Tab */}
+          <TabsContent value="dashboard" className="space-y-6">
+            <Card className="bg-card/80 backdrop-blur-sm border-border/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <LayoutDashboard className="h-5 w-5" />
+                  Dashboard Program
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12 text-muted-foreground">
+                  <LayoutDashboard className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>Funcționalitate în dezvoltare</p>
+                  <p className="text-sm">Vizualizare program, statistici prezență</p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
