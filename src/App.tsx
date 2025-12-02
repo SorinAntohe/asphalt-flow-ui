@@ -15,6 +15,7 @@ import Comenzi from "./pages/Comenzi";
 import Stocuri from "./pages/Stocuri";
 import Angajati from "./pages/Angajati";
 import Pontaj from "./pages/Pontaj";
+import PontareAngajat from "./pages/PontareAngajat";
 import NotFound from "./pages/NotFound";
 
 // Comercial module pages
@@ -69,6 +70,7 @@ const AppRoutes = () => (
     <Route path="/stocuri" element={<ProtectedRoute><Stocuri /></ProtectedRoute>} />
     <Route path="/angajati" element={<ProtectedRoute><Angajati /></ProtectedRoute>} />
     <Route path="/pontaj" element={<ProtectedRoute><Pontaj /></ProtectedRoute>} />
+    <Route path="/pontare" element={<ProtectedRoute><PontareAngajat /></ProtectedRoute>} />
     {/* Comercial module routes */}
     <Route path="/comercial/oferte-contracte" element={<ProtectedRoute><OferteContracte /></ProtectedRoute>} />
     <Route path="/comercial/comenzi" element={<ProtectedRoute><ComenziClient /></ProtectedRoute>} />
