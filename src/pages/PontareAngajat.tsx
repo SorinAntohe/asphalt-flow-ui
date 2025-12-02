@@ -215,13 +215,13 @@ export default function PontareAngajat() {
               <Clock className="h-4 w-4" />
               <span className="hidden sm:inline">Pontaj</span>
             </TabsTrigger>
-            <TabsTrigger value="concedii" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              <span className="hidden sm:inline">Concedii</span>
-            </TabsTrigger>
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" />
               <span className="hidden sm:inline">Dashboard Program</span>
+            </TabsTrigger>
+            <TabsTrigger value="concedii" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              <span className="hidden sm:inline">Concedii</span>
             </TabsTrigger>
           </TabsList>
 
@@ -267,6 +267,33 @@ export default function PontareAngajat() {
             </Card>
           </TabsContent>
 
+          {/* Dashboard Program Tab */}
+          <TabsContent value="dashboard" className="space-y-6">
+            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6">
+              {/* Current Time Display */}
+              <div className="text-center space-y-2">
+                <div className="text-6xl font-mono font-bold text-primary">
+                  {formatTime(currentTime)}
+                </div>
+                <div className="text-sm text-muted-foreground capitalize">
+                  {formatDate(currentTime)}
+                </div>
+              </div>
+
+              <div className="text-center space-y-2">
+                <h2 className="text-3xl font-bold text-foreground">Salutări</h2>
+                <p className="text-muted-foreground">Începe sesiunea de lucru</p>
+              </div>
+              <Button
+                size="lg"
+                className="h-24 w-64 text-xl font-semibold"
+              >
+                <LogIn className="h-8 w-8 mr-3" />
+                Pontează
+              </Button>
+            </div>
+          </TabsContent>
+
           {/* Concedii Tab */}
           <TabsContent value="concedii" className="space-y-6">
             {/* Zile disponibile card */}
@@ -307,33 +334,6 @@ export default function PontareAngajat() {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-
-          {/* Dashboard Program Tab */}
-          <TabsContent value="dashboard" className="space-y-6">
-            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6">
-              {/* Current Time Display */}
-              <div className="text-center space-y-2">
-                <div className="text-6xl font-mono font-bold text-primary">
-                  {formatTime(currentTime)}
-                </div>
-                <div className="text-sm text-muted-foreground capitalize">
-                  {formatDate(currentTime)}
-                </div>
-              </div>
-
-              <div className="text-center space-y-2">
-                <h2 className="text-3xl font-bold text-foreground">Salutări</h2>
-                <p className="text-muted-foreground">Începe sesiunea de lucru</p>
-              </div>
-              <Button
-                size="lg"
-                className="h-24 w-64 text-xl font-semibold"
-              >
-                <LogIn className="h-8 w-8 mr-3" />
-                Pontează
-              </Button>
-            </div>
           </TabsContent>
         </Tabs>
       </div>
