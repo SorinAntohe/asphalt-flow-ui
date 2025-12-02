@@ -361,21 +361,19 @@ export default function PontareAngajat() {
 
           {/* Dashboard Program Tab */}
           <TabsContent value="dashboard" className="space-y-6">
-            <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <LayoutDashboard className="h-5 w-5" />
-                  Dashboard Program
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12 text-muted-foreground">
-                  <LayoutDashboard className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Funcționalitate în dezvoltare</p>
-                  <p className="text-sm">Vizualizare program, statistici prezență</p>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6">
+              <div className="text-center space-y-2">
+                <h2 className="text-3xl font-bold text-foreground">Salutări</h2>
+                <p className="text-muted-foreground">Începe sesiunea de lucru</p>
+              </div>
+              <Button
+                size="lg"
+                className="h-24 w-64 text-xl font-semibold"
+              >
+                <LogIn className="h-8 w-8 mr-3" />
+                Pontează
+              </Button>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
