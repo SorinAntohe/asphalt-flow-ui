@@ -1,4 +1,4 @@
-import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog, Users, UserCheck, CalendarClock, Briefcase, Factory, Wrench, FileText, FileCheck, ShoppingCart, CalendarDays, FileBox, FlaskConical, ClipboardCheck, Layers, Calendar, GitBranch, Settings, CalendarRange, HardHat, PieChart } from "lucide-react";
+import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog, Users, UserCheck, CalendarClock, Briefcase, Factory, Wrench, FileText, FileCheck, ShoppingCart, CalendarDays, FileBox, FlaskConical, ClipboardCheck, Layers, Calendar, GitBranch, Settings, CalendarRange, HardHat, PieChart, Clock } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -33,6 +33,7 @@ const gestiuneItems = [
 const resurseUmaneItems = [
   { title: "Lista Angajați", url: "/angajati", icon: UserCheck },
   { title: "Pontaj", url: "/pontaj", icon: CalendarClock },
+  { title: "Pontare Angajat", url: "/pontare", icon: Clock },
 ];
 
 // Comercial module items
