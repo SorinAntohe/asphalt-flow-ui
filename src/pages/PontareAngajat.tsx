@@ -317,24 +317,33 @@ export default function PontareAngajat() {
 
             {/* Action Buttons */}
             {selectedAngajat && (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <Button
+                    size="lg"
+                    className="h-20 text-lg bg-green-600 hover:bg-green-700 disabled:opacity-50"
+                    onClick={handlePontareIntrare}
+                    disabled={isLoading || isPontajActiv || (todayPontaj?.ora_sfarsit ? true : false)}
+                  >
+                    <LogIn className="h-6 w-6 mr-2" />
+                    Intrare
+                  </Button>
+                  <Button
+                    size="lg"
+                    className="h-20 text-lg bg-red-600 hover:bg-red-700 disabled:opacity-50"
+                    onClick={handlePontareIesire}
+                    disabled={isLoading || !isPontajActiv}
+                  >
+                    <LogOut className="h-6 w-6 mr-2" />
+                    Ieșire
+                  </Button>
+                </div>
                 <Button
-                  size="lg"
-                  className="h-20 text-lg bg-green-600 hover:bg-green-700 disabled:opacity-50"
-                  onClick={handlePontareIntrare}
-                  disabled={isLoading || isPontajActiv || (todayPontaj?.ora_sfarsit ? true : false)}
+                  variant="outline"
+                  className="w-full h-12"
                 >
-                  <LogIn className="h-6 w-6 mr-2" />
-                  Intrare
-                </Button>
-                <Button
-                  size="lg"
-                  className="h-20 text-lg bg-red-600 hover:bg-red-700 disabled:opacity-50"
-                  onClick={handlePontareIesire}
-                  disabled={isLoading || !isPontajActiv}
-                >
-                  <LogOut className="h-6 w-6 mr-2" />
-                  Ieșire
+                  <Clock className="h-5 w-5 mr-2" />
+                  Cerere Adăugare Timp
                 </Button>
               </div>
             )}
