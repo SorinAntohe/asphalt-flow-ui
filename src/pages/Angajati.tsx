@@ -190,7 +190,7 @@ export default function Angajati() {
 
   const handleAdd = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/liste/adauga/client`, {
+      const response = await fetch(`${API_BASE_URL}/resurse_umane/adauga/angajat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
