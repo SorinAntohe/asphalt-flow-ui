@@ -349,47 +349,6 @@ const Echipamente = () => {
         </Card>
       </div>
 
-      {/* Filters */}
-      <Card>
-        <CardContent className="pt-4">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">Filtre:</span>
-            </div>
-            <Select value={filterTip} onValueChange={setFilterTip}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Tip utilaj" />
-              </SelectTrigger>
-              <SelectContent>
-                {tipuriUtilaj.map(tip => (
-                  <SelectItem key={tip} value={tip}>{tip}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={filterPlanta} onValueChange={setFilterPlanta}>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Plantă" />
-              </SelectTrigger>
-              <SelectContent>
-                {plante.map(p => (
-                  <SelectItem key={p} value={p}>{p}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={filterStatus} onValueChange={(v) => setFilterStatus(v as typeof filterStatus)}>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                {statusuri.map(s => (
-                  <SelectItem key={s} value={s}>{s}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Table */}
       <Card>

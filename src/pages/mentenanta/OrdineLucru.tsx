@@ -379,58 +379,6 @@ const OrdineLucru = () => {
         </Card>
       </div>
 
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <div className="flex flex-wrap gap-4">
-            <div className="flex-1 min-w-[200px]">
-              <Label className="text-sm mb-2 block">Status</Label>
-              <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Toate</SelectItem>
-                  <SelectItem value="deschis">Deschis</SelectItem>
-                  <SelectItem value="alocat">Alocat</SelectItem>
-                  <SelectItem value="in_lucru">În lucru</SelectItem>
-                  <SelectItem value="inchis">Închis</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex-1 min-w-[200px]">
-              <Label className="text-sm mb-2 block">Prioritate</Label>
-              <Select value={filterPriority} onValueChange={setFilterPriority}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Toate</SelectItem>
-                  <SelectItem value="scazuta">Scăzută</SelectItem>
-                  <SelectItem value="medie">Medie</SelectItem>
-                  <SelectItem value="ridicata">Ridicată</SelectItem>
-                  <SelectItem value="critica">Critică</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex-1 min-w-[200px]">
-              <Label className="text-sm mb-2 block">Tip Intervenție</Label>
-              <Select value={filterType} onValueChange={setFilterType}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Toate</SelectItem>
-                  <SelectItem value="preventiva">Preventivă</SelectItem>
-                  <SelectItem value="corectiva">Corectivă</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardHeader>
-      </Card>
 
       {/* Table */}
       <Card>
