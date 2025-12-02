@@ -227,79 +227,44 @@ export default function PontareAngajat() {
 
           {/* Pontaj Tab */}
           <TabsContent value="pontaj" className="space-y-6">
-
-            {/* Pontaj Status */}
-            {selectedAngajat && (
-              <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    Status Pontaj Azi
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {todayPontaj ? (
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Intrare:</span>
-                        <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
-                          <CheckCircle2 className="h-3 w-3 mr-1" />
-                          {todayPontaj.ora_start}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Ieșire:</span>
-                        {todayPontaj.ora_sfarsit ? (
-                          <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
-                            <CheckCircle2 className="h-3 w-3 mr-1" />
-                            {todayPontaj.ora_sfarsit}
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600 border-yellow-500/30">
-                            <XCircle className="h-3 w-3 mr-1" />
-                            În așteptare
-                          </Badge>
-                        )}
-                      </div>
+            {/* Ore lucrate card */}
+            <Card className="bg-card/80 backdrop-blur-sm border-border/50">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 rounded-full bg-primary/10">
+                      <Clock className="h-6 w-6 text-primary" />
                     </div>
-                  ) : (
-                    <div className="text-center py-4 text-muted-foreground">
-                      Nu există pontaj pentru astăzi
+                    <div>
+                      <p className="text-sm text-muted-foreground">Ore lucrate luna aceasta</p>
+                      <p className="text-3xl font-bold text-foreground">168</p>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Action Buttons */}
-            {selectedAngajat && (
-              <div className="grid grid-cols-2 gap-4">
-                <Button
-                  size="lg"
-                  className="h-20 text-lg bg-green-600 hover:bg-green-700 disabled:opacity-50"
-                  onClick={handlePontareIntrare}
-                  disabled={isLoading || isPontajActiv || (todayPontaj?.ora_sfarsit ? true : false)}
-                >
-                  <LogIn className="h-6 w-6 mr-2" />
-                  Intrare
-                </Button>
-                <Button
-                  size="lg"
-                  className="h-20 text-lg bg-red-600 hover:bg-red-700 disabled:opacity-50"
-                  onClick={handlePontareIesire}
-                  disabled={isLoading || !isPontajActiv}
-                >
-                  <LogOut className="h-6 w-6 mr-2" />
-                  Ieșire
-                </Button>
-              </div>
-            )}
+                  </div>
+                  <div className="text-right text-sm text-muted-foreground">
+                    <p>Norma: 176 ore</p>
+                    <p>Rămase: 8 ore</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Cerere Adăugare Timp Button */}
             <Button className="w-full h-14 text-lg font-semibold">
               <Clock className="h-5 w-5 mr-2" />
               Cerere Adăugare Timp
             </Button>
+
+            {/* Istoric cereri placeholder */}
+            <Card className="bg-card/80 backdrop-blur-sm border-border/50">
+              <CardHeader>
+                <CardTitle className="text-base">Istoric Cereri</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8 text-muted-foreground">
+                  <p className="text-sm">Nu există cereri de adăugare timp</p>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Concedii Tab */}
