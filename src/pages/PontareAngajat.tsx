@@ -2,26 +2,41 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Clock, LogIn, Calendar, LayoutDashboard, Plus, Filter, Square } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Clock, LogIn, Calendar, LayoutDashboard, Plus, Filter, Square, CalendarIcon, ArrowRight, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import { API_BASE_URL } from "@/lib/api";
-
-interface Angajat {
-  id: number;
-  nume: string;
-  functie: string;
-}
-
-interface PontajEntry {
-  data: string;
-  ora_start: string;
-  ora_sfarsit: string;
-}
+import { format } from "date-fns";
 
 export default function PontareAngajat() {
   const [isPontajActiv, setIsPontajActiv] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [sessionStart, setSessionStart] = useState<Date | null>(null);
+  
+  // Sheet states
+  const [isAddTimeOpen, setIsAddTimeOpen] = useState(false);
+  const [isAddLeaveOpen, setIsAddLeaveOpen] = useState(false);
+  
+  // Add Time form state
+  const [timeFormData, setTimeFormData] = useState({
+    data: format(new Date(), 'dd.MM.yyyy'),
+    oraIntrare: '',
+    oraIesire: '',
+    motiv: ''
+  });
+  
+  // Add Leave form state
+  const [leaveFormData, setLeaveFormData] = useState({
+    tipConcediu: 'concediu',
+    dataStart: format(new Date(), 'dd.MM.yyyy'),
+    dataEnd: format(new Date(), 'dd.MM.yyyy'),
+    motiv: '',
+    excludeWeekend: true
+  });
 
   // Update current time every second
   useEffect(() => {
@@ -60,6 +75,33 @@ export default function PontareAngajat() {
     toast.success("Sesiune de lucru finalizată");
   };
 
+  const handleSubmitTimeRequest = () => {
+    if (!timeFormData.oraIntrare || !timeFormData.oraIesire) {
+      toast.error("Completează orele de intrare și ieșire");
+      return;
+    }
+    toast.success("Cererea de adăugare timp a fost trimisă");
+    setIsAddTimeOpen(false);
+    setTimeFormData({
+      data: format(new Date(), 'dd.MM.yyyy'),
+      oraIntrare: '',
+      oraIesire: '',
+      motiv: ''
+    });
+  };
+
+  const handleSubmitLeaveRequest = () => {
+    toast.success("Cererea de concediu a fost trimisă");
+    setIsAddLeaveOpen(false);
+    setLeaveFormData({
+      tipConcediu: 'concediu',
+      dataStart: format(new Date(), 'dd.MM.yyyy'),
+      dataEnd: format(new Date(), 'dd.MM.yyyy'),
+      motiv: '',
+      excludeWeekend: true
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-lg mx-auto">
@@ -92,19 +134,18 @@ export default function PontareAngajat() {
           {/* Pontaj Tab */}
           <TabsContent value="pontaj" className="p-4 space-y-4 mt-0">
             {/* Primary Action Card */}
-            <Card className="bg-primary text-primary-foreground border-0 overflow-hidden">
+            <Card 
+              className="bg-primary text-primary-foreground border-0 overflow-hidden cursor-pointer hover:opacity-95 transition-opacity"
+              onClick={() => setIsAddTimeOpen(true)}
+            >
               <CardContent className="p-4 flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90">Cerere de pontaj</p>
                   <p className="text-xl font-semibold">Adaugă timp</p>
                 </div>
-                <Button 
-                  size="icon" 
-                  variant="ghost" 
-                  className="h-12 w-12 rounded-full border-2 border-primary-foreground/30 hover:bg-primary-foreground/10"
-                >
+                <div className="h-12 w-12 rounded-full border-2 border-primary-foreground/30 flex items-center justify-center">
                   <Plus className="h-6 w-6" />
-                </Button>
+                </div>
               </CardContent>
             </Card>
 
@@ -168,19 +209,18 @@ export default function PontareAngajat() {
           {/* Concedii Tab */}
           <TabsContent value="concedii" className="p-4 space-y-4 mt-0">
             {/* Primary Action Card */}
-            <Card className="bg-primary text-primary-foreground border-0 overflow-hidden">
+            <Card 
+              className="bg-primary text-primary-foreground border-0 overflow-hidden cursor-pointer hover:opacity-95 transition-opacity"
+              onClick={() => setIsAddLeaveOpen(true)}
+            >
               <CardContent className="p-4 flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90">Depune cerere de concediu</p>
                   <p className="text-xl font-semibold">Cerere nouă</p>
                 </div>
-                <Button 
-                  size="icon" 
-                  variant="ghost" 
-                  className="h-12 w-12 rounded-full border-2 border-primary-foreground/30 hover:bg-primary-foreground/10"
-                >
+                <div className="h-12 w-12 rounded-full border-2 border-primary-foreground/30 flex items-center justify-center">
                   <Plus className="h-6 w-6" />
-                </Button>
+                </div>
               </CardContent>
             </Card>
 
@@ -211,6 +251,166 @@ export default function PontareAngajat() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Add Time Sheet */}
+      <Sheet open={isAddTimeOpen} onOpenChange={setIsAddTimeOpen}>
+        <SheetContent side="bottom" className="h-auto max-h-[90vh] rounded-t-3xl">
+          <div className="bg-primary h-16 -mx-6 -mt-6 mb-6 rounded-t-3xl" />
+          <SheetHeader className="sr-only">
+            <SheetTitle>Adaugă timp</SheetTitle>
+          </SheetHeader>
+          
+          <div className="space-y-4 px-2">
+            {/* Data */}
+            <div className="space-y-2">
+              <Label className="text-xs text-muted-foreground">Data</Label>
+              <div className="relative">
+                <Input
+                  value={timeFormData.data}
+                  onChange={(e) => setTimeFormData({ ...timeFormData, data: e.target.value })}
+                  className="pr-10 h-14 text-lg border-border/50 rounded-xl"
+                />
+                <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
+              </div>
+            </div>
+
+            {/* Ora de intrare */}
+            <div className="space-y-2">
+              <Label className="text-xs text-muted-foreground">Ora de intrare</Label>
+              <div className="relative">
+                <Input
+                  type="time"
+                  value={timeFormData.oraIntrare}
+                  onChange={(e) => setTimeFormData({ ...timeFormData, oraIntrare: e.target.value })}
+                  className="pr-10 h-14 text-lg border-border/50 rounded-xl"
+                />
+                <ArrowRight className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
+              </div>
+            </div>
+
+            {/* Ora de ieșire */}
+            <div className="space-y-2">
+              <Label className="text-xs text-muted-foreground">Ora de ieșire</Label>
+              <div className="relative">
+                <Input
+                  type="time"
+                  value={timeFormData.oraIesire}
+                  onChange={(e) => setTimeFormData({ ...timeFormData, oraIesire: e.target.value })}
+                  className="pr-10 h-14 text-lg border-border/50 rounded-xl"
+                />
+                <ArrowLeft className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
+              </div>
+            </div>
+
+            {/* Motiv */}
+            <div className="space-y-2">
+              <Label className="text-xs text-muted-foreground">Motiv</Label>
+              <Textarea
+                value={timeFormData.motiv}
+                onChange={(e) => setTimeFormData({ ...timeFormData, motiv: e.target.value })}
+                placeholder="Motiv"
+                className="min-h-[100px] border-border/50 rounded-xl resize-none"
+              />
+            </div>
+
+            {/* Submit Button */}
+            <Button 
+              onClick={handleSubmitTimeRequest}
+              className="w-full h-14 text-lg font-semibold rounded-xl mt-4"
+            >
+              Trimite cererea
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Add Leave Sheet */}
+      <Sheet open={isAddLeaveOpen} onOpenChange={setIsAddLeaveOpen}>
+        <SheetContent side="bottom" className="h-auto max-h-[90vh] rounded-t-3xl">
+          <div className="bg-primary h-16 -mx-6 -mt-6 mb-6 rounded-t-3xl" />
+          <SheetHeader className="sr-only">
+            <SheetTitle>Cerere concediu</SheetTitle>
+          </SheetHeader>
+          
+          <div className="space-y-4 px-2">
+            {/* Tip de concediu */}
+            <div className="space-y-2">
+              <Label className="text-xs text-muted-foreground">Tip de concediu</Label>
+              <Select 
+                value={leaveFormData.tipConcediu} 
+                onValueChange={(value) => setLeaveFormData({ ...leaveFormData, tipConcediu: value })}
+              >
+                <SelectTrigger className="h-14 text-lg border-border/50 rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="concediu">Concedii</SelectItem>
+                  <SelectItem value="medical">Concediu medical</SelectItem>
+                  <SelectItem value="fara_plata">Fără plată</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* De la data de */}
+            <div className="space-y-2">
+              <Label className="text-xs text-muted-foreground">De la data de</Label>
+              <div className="relative">
+                <Input
+                  value={leaveFormData.dataStart}
+                  onChange={(e) => setLeaveFormData({ ...leaveFormData, dataStart: e.target.value })}
+                  className="pr-10 h-14 text-lg border-border/50 rounded-xl"
+                />
+                <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
+              </div>
+            </div>
+
+            {/* Până în data de */}
+            <div className="space-y-2">
+              <Label className="text-xs text-muted-foreground">Până în data de</Label>
+              <div className="relative">
+                <Input
+                  value={leaveFormData.dataEnd}
+                  onChange={(e) => setLeaveFormData({ ...leaveFormData, dataEnd: e.target.value })}
+                  className="pr-10 h-14 text-lg border-border/50 rounded-xl"
+                />
+                <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
+              </div>
+            </div>
+
+            {/* Motiv */}
+            <div className="space-y-2">
+              <Label className="text-xs text-muted-foreground">Motiv (Opțional)</Label>
+              <Textarea
+                value={leaveFormData.motiv}
+                onChange={(e) => setLeaveFormData({ ...leaveFormData, motiv: e.target.value })}
+                placeholder="Motiv (Opțional)"
+                className="min-h-[100px] border-border/50 rounded-xl resize-none"
+              />
+            </div>
+
+            {/* Exclude weekend checkbox */}
+            <div className="flex items-center gap-3 py-2">
+              <Checkbox
+                id="excludeWeekend"
+                checked={leaveFormData.excludeWeekend}
+                onCheckedChange={(checked) => setLeaveFormData({ ...leaveFormData, excludeWeekend: checked as boolean })}
+                className="h-6 w-6 rounded-full border-primary data-[state=checked]:bg-primary"
+              />
+              <Label htmlFor="excludeWeekend" className="text-sm cursor-pointer">
+                Concediul va exclude zilele de weekend
+              </Label>
+            </div>
+
+            {/* Submit Button */}
+            <Button 
+              onClick={handleSubmitLeaveRequest}
+              className="w-full h-14 text-lg font-semibold rounded-xl mt-4"
+            >
+              Trimite cererea
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
