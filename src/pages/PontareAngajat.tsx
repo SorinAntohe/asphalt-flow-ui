@@ -342,18 +342,41 @@ export default function PontareAngajat() {
 
           {/* Concedii Tab */}
           <TabsContent value="concedii" className="space-y-6">
+            {/* Zile disponibile card */}
+            <Card className="bg-card/80 backdrop-blur-sm border-border/50">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 rounded-full bg-primary/10">
+                      <Calendar className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Zile concediu disponibile</p>
+                      <p className="text-3xl font-bold text-foreground">21</p>
+                    </div>
+                  </div>
+                  <div className="text-right text-sm text-muted-foreground">
+                    <p>Total anual: 21 zile</p>
+                    <p>Utilizate: 0 zile</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Cerere nouă button */}
+            <Button className="w-full h-14 text-lg font-semibold">
+              <Calendar className="h-5 w-5 mr-2" />
+              Cerere Nouă
+            </Button>
+
+            {/* Istoric cereri placeholder */}
             <Card className="bg-card/80 backdrop-blur-sm border-border/50">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5" />
-                  Concedii
-                </CardTitle>
+                <CardTitle className="text-base">Istoric Cereri</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12 text-muted-foreground">
-                  <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Funcționalitate în dezvoltare</p>
-                  <p className="text-sm">Cereri concediu, zile libere, absențe</p>
+                <div className="text-center py-8 text-muted-foreground">
+                  <p className="text-sm">Nu există cereri de concediu</p>
                 </div>
               </CardContent>
             </Card>
