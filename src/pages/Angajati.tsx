@@ -51,7 +51,6 @@ interface Angajat {
   id: number;
   nume: string;
   functie: string;
-  departament: string;
   data_angajarii: string;
   salariu: number;
 }
@@ -67,7 +66,6 @@ interface Filters {
   id: ColumnFilter;
   nume: ColumnFilter;
   functie: ColumnFilter;
-  departament: ColumnFilter;
   data_angajarii: ColumnFilter;
   salariu: ColumnFilter;
 }
@@ -76,7 +74,6 @@ const initialFilters: Filters = {
   id: { value: "", sortDirection: null },
   nume: { value: "", sortDirection: null },
   functie: { value: "", sortDirection: null },
-  departament: { value: "", sortDirection: null },
   data_angajarii: { value: "", sortDirection: null },
   salariu: { value: "", sortDirection: null },
 };
@@ -95,7 +92,6 @@ export default function Angajati() {
   const [formData, setFormData] = useState({
     nume: "",
     functie: "",
-    departament: "",
     data_angajarii: "",
     salariu: "",
   });
@@ -200,7 +196,6 @@ export default function Angajati() {
         body: JSON.stringify({
           nume: formData.nume,
           functie: formData.functie,
-          departament: formData.departament,
           data_angajarii: formData.data_angajarii,
           salariu: parseFloat(formData.salariu),
         }),
@@ -240,7 +235,6 @@ export default function Angajati() {
           update: {
             nume: formData.nume,
             functie: formData.functie,
-            departament: formData.departament,
             data_angajarii: formData.data_angajarii,
             salariu: parseFloat(formData.salariu),
           },
@@ -307,7 +301,6 @@ export default function Angajati() {
     setFormData({
       nume: "",
       functie: "",
-      departament: "",
       data_angajarii: "",
       salariu: "",
     });
@@ -319,7 +312,6 @@ export default function Angajati() {
     setFormData({
       nume: angajat.nume,
       functie: angajat.functie,
-      departament: angajat.departament,
       data_angajarii: angajat.data_angajarii,
       salariu: String(angajat.salariu),
     });
@@ -337,7 +329,6 @@ export default function Angajati() {
       { key: "id", label: "ID" },
       { key: "nume", label: "Nume" },
       { key: "functie", label: "Funcție" },
-      { key: "departament", label: "Departament" },
       { key: "data_angajarii", label: "Data Angajării" },
       { key: "salariu", label: "Salariu" },
     ]);
@@ -449,7 +440,6 @@ export default function Angajati() {
                       <FilterHeader column="id" label="ID" />
                       <FilterHeader column="nume" label="Nume" />
                       <FilterHeader column="functie" label="Funcție" />
-                      <FilterHeader column="departament" label="Departament" />
                       <FilterHeader column="data_angajarii" label="Data Angajării" />
                       <FilterHeader column="salariu" label="Salariu" />
                     </TableRow>
@@ -457,7 +447,7 @@ export default function Angajati() {
                   <TableBody>
                     {paginatedData.length === 0 ? (
                       <TableRow className="border-0 hover:bg-transparent">
-                        <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                        <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
                           Nu există angajați.
                         </TableCell>
                       </TableRow>
@@ -471,7 +461,6 @@ export default function Angajati() {
                           <TableCell className="font-medium">{angajat.id}</TableCell>
                           <TableCell>{angajat.nume}</TableCell>
                           <TableCell>{angajat.functie}</TableCell>
-                          <TableCell>{angajat.departament}</TableCell>
                           <TableCell>{angajat.data_angajarii}</TableCell>
                           <TableCell>{angajat.salariu?.toLocaleString("ro-RO")} RON</TableCell>
                         </TableRow>
@@ -557,14 +546,6 @@ export default function Angajati() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="departament">Departament</Label>
-              <Input
-                id="departament"
-                value={formData.departament}
-                onChange={(e) => setFormData({ ...formData, departament: e.target.value })}
-              />
-            </div>
-            <div className="grid gap-2">
               <Label htmlFor="data_angajarii">Data Angajării</Label>
               <Input
                 id="data_angajarii"
@@ -617,14 +598,6 @@ export default function Angajati() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-departament">Departament</Label>
-              <Input
-                id="edit-departament"
-                value={formData.departament}
-                onChange={(e) => setFormData({ ...formData, departament: e.target.value })}
-              />
-            </div>
-            <div className="grid gap-2">
               <Label htmlFor="edit-data_angajarii">Data Angajării</Label>
               <Input
                 id="edit-data_angajarii"
@@ -671,10 +644,6 @@ export default function Angajati() {
               <div>
                 <Label className="text-muted-foreground text-xs">Funcție</Label>
                 <p className="font-medium">{selectedAngajat.functie}</p>
-              </div>
-              <div>
-                <Label className="text-muted-foreground text-xs">Departament</Label>
-                <p className="font-medium">{selectedAngajat.departament}</p>
               </div>
               <div>
                 <Label className="text-muted-foreground text-xs">Data Angajării</Label>
