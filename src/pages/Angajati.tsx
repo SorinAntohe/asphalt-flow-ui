@@ -230,7 +230,7 @@ export default function Angajati() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          tabel: "lista_anagajati",
+          tabel: "lista_angajati",
           id: selectedAngajat.id,
           update: {
             nume: formData.nume,
@@ -270,7 +270,7 @@ export default function Angajati() {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          tabel: "lista_anagajati",
+          tabel: "lista_angajati",
           id: selectedAngajat.id,
         }),
       });
