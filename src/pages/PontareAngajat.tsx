@@ -241,36 +241,6 @@ export default function PontareAngajat() {
               </CardContent>
             </Card>
 
-            {/* Employee Selection */}
-            <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Selectează Angajat
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Select value={selectedAngajat} onValueChange={setSelectedAngajat}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Alege angajatul..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {angajati.map((angajat) => (
-                      <SelectItem key={angajat.id} value={angajat.id.toString()}>
-                        {angajat.nume} - {angajat.functie}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                {selectedAngajatData && (
-                  <div className="mt-4 p-3 rounded-lg bg-muted/50">
-                    <p className="font-medium">{selectedAngajatData.nume}</p>
-                    <p className="text-sm text-muted-foreground">{selectedAngajatData.functie}</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
 
             {/* Pontaj Status */}
             {selectedAngajat && (
@@ -339,11 +309,8 @@ export default function PontareAngajat() {
               </div>
             )}
 
-            {/* Cerere Adăugare Timp Button - always visible */}
-            <Button
-              variant="outline"
-              className="w-full h-12"
-            >
+            {/* Cerere Adăugare Timp Button */}
+            <Button className="w-full h-14 text-lg font-semibold">
               <Clock className="h-5 w-5 mr-2" />
               Cerere Adăugare Timp
             </Button>
