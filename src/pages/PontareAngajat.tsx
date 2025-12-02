@@ -227,20 +227,6 @@ export default function PontareAngajat() {
 
           {/* Pontaj Tab */}
           <TabsContent value="pontaj" className="space-y-6">
-            {/* Current Time Card */}
-            <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-              <CardContent className="pt-6">
-                <div className="text-center space-y-2">
-                  <div className="text-5xl font-mono font-bold text-primary">
-                    {formatTime(currentTime)}
-                  </div>
-                  <div className="text-sm text-muted-foreground capitalize">
-                    {formatDate(currentTime)}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
 
             {/* Pontaj Status */}
             {selectedAngajat && (
@@ -361,6 +347,16 @@ export default function PontareAngajat() {
           {/* Dashboard Program Tab */}
           <TabsContent value="dashboard" className="space-y-6">
             <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6">
+              {/* Current Time Display */}
+              <div className="text-center space-y-2">
+                <div className="text-6xl font-mono font-bold text-primary">
+                  {formatTime(currentTime)}
+                </div>
+                <div className="text-sm text-muted-foreground capitalize">
+                  {formatDate(currentTime)}
+                </div>
+              </div>
+
               <div className="text-center space-y-2">
                 <h2 className="text-3xl font-bold text-foreground">Salutări</h2>
                 <p className="text-muted-foreground">Începe sesiunea de lucru</p>
