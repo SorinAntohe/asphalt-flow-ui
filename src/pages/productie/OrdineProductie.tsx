@@ -763,7 +763,7 @@ const OrdineProductie = () => {
 
       {/* Detail Dialog */}
       <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
-        <DialogContent className="max-w-3xl" hideCloseButton>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto" hideCloseButton>
           {selectedOrdin && (
             <>
               <DialogHeader>
