@@ -268,7 +268,6 @@ const ComenziClient = () => {
       { key: "client" as const, label: "Client" },
       { key: "produs" as const, label: "Produs" },
       { key: "cantitate" as const, label: "Cantitate" },
-      { key: "planta" as const, label: "Gestiune" },
       { key: "dataOra" as const, label: "Dată/Ora" },
       { key: "status" as const, label: "Status" },
       { key: "prioritate" as const, label: "Prioritate" },
@@ -496,9 +495,6 @@ const ComenziClient = () => {
                         <DataTableColumnHeader title="Cantitate" sortKey="cantitate" currentSort={sort} onSort={(k, d) => setSort({ key: k, direction: d })} filterValue={filters.cantitate} onFilterChange={(v) => { setFilters(f => ({ ...f, cantitate: v })); setPage(1); }} filterPlaceholder="Caută..." sortAscLabel="Cresc." sortDescLabel="Descresc." />
                       </TableHead>
                       <TableHead className="h-10">
-                        <DataTableColumnHeader title="Gestiune" sortKey="planta" currentSort={sort} onSort={(k, d) => setSort({ key: k, direction: d })} filterValue={filters.planta} onFilterChange={(v) => { setFilters(f => ({ ...f, planta: v })); setPage(1); }} filterPlaceholder="Caută..." />
-                      </TableHead>
-                      <TableHead className="h-10">
                         <DataTableColumnHeader title="Dată/Ora" sortKey="dataOra" currentSort={sort} onSort={(k, d) => setSort({ key: k, direction: d })} filterValue={filters.dataOra} onFilterChange={(v) => { setFilters(f => ({ ...f, dataOra: v })); setPage(1); }} filterPlaceholder="Caută..." />
                       </TableHead>
                       <TableHead className="h-10">
@@ -517,7 +513,7 @@ const ComenziClient = () => {
                   </TableHeader>
                   <TableBody className="animate-fade-in">
                     {paginatedComenzi.length === 0 ? (
-                      <DataTableEmpty colSpan={10} message="Nu există comenzi care să corespundă filtrelor." />
+                      <DataTableEmpty colSpan={9} message="Nu există comenzi care să corespundă filtrelor." />
                     ) : (
                       paginatedComenzi.map((comanda) => (
                         <TableRow key={comanda.id} className="cursor-pointer hover:bg-muted/50 h-10" onClick={() => setViewingDetails(comanda)}>
@@ -525,7 +521,6 @@ const ComenziClient = () => {
                           <TableCell className="py-1 text-xs">{comanda.client}</TableCell>
                           <TableCell className="py-1 text-xs">{comanda.produs}</TableCell>
                           <TableCell className="py-1 text-xs text-right">{comanda.cantitate} {comanda.unitateMasura}</TableCell>
-                          <TableCell className="py-1 text-xs">{comanda.planta}</TableCell>
                           <TableCell className="py-1 text-xs">{format(parseISO(comanda.dataOra), "dd/MM/yyyy HH:mm")}</TableCell>
                           <TableCell className="py-1 text-xs"><Badge className={statusColors[comanda.status]}>{comanda.status}</Badge></TableCell>
                           <TableCell className="py-1 text-xs"><Badge className={priorityColors[comanda.prioritate]}>{comanda.prioritate}</Badge></TableCell>
@@ -704,7 +699,6 @@ const ComenziClient = () => {
                 <div><span className="text-muted-foreground">Client:</span> <span className="font-medium">{viewingDetails.client}</span></div>
                 <div><span className="text-muted-foreground">Produs:</span> <span className="font-medium">{viewingDetails.produs}</span></div>
                 <div><span className="text-muted-foreground">Cantitate:</span> <span className="font-medium">{viewingDetails.cantitate} {viewingDetails.unitateMasura}</span></div>
-                <div><span className="text-muted-foreground">Gestiune:</span> <span className="font-medium">{viewingDetails.planta}</span></div>
                 <div><span className="text-muted-foreground">Dată/Ora:</span> <span className="font-medium">{format(parseISO(viewingDetails.dataOra), "dd/MM/yyyy HH:mm")}</span></div>
                 <div><span className="text-muted-foreground">Fereastră:</span> <span className="font-medium">{viewingDetails.fereastraIncarcare}</span></div>
                 <div><span className="text-muted-foreground">Punct descărcare:</span> <span className="font-medium">{viewingDetails.punctDescarcare}</span></div>
@@ -813,15 +807,6 @@ const ComenziClient = () => {
                     <SelectItem value="tone">tone</SelectItem>
                     <SelectItem value="mc">mc</SelectItem>
                     <SelectItem value="kg">kg</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Gestiune</Label>
-                <Select value={form.planta} onValueChange={(v) => setForm({ ...form, planta: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {plante.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
