@@ -682,97 +682,90 @@ const ComenziClient = () => {
       {/* Detail Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
         <DialogContent className="max-w-2xl" hideCloseButton>
-          <DialogHeader>
-            <DialogTitle>Detalii Comandă - {viewingDetails?.nr}</DialogTitle>
-            <DialogDescription>Informații complete despre comandă</DialogDescription>
+          <DialogHeader className="pb-2">
+            <div className="flex justify-between items-start">
+              <div>
+                <DialogTitle>Detalii Comandă - {viewingDetails?.nr}</DialogTitle>
+                <DialogDescription>Informații complete despre comandă</DialogDescription>
+              </div>
+              {viewingDetails && (
+                <div className="flex gap-2">
+                  <Badge className={statusColors[viewingDetails.status]}>{viewingDetails.status}</Badge>
+                  <Badge className={priorityColors[viewingDetails.prioritate]}>{viewingDetails.prioritate}</Badge>
+                </div>
+              )}
+            </div>
           </DialogHeader>
           
           {viewingDetails && (
-            <div className="grid gap-4 py-4">
-              <div className="flex justify-between items-center">
-                <Badge className={statusColors[viewingDetails.status]}>{viewingDetails.status}</Badge>
-                <Badge className={priorityColors[viewingDetails.prioritate]}>{viewingDetails.prioritate}</Badge>
+            <div className="grid gap-3">
+              {/* Rezumat - compact grid */}
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm border rounded-lg p-3 bg-muted/30">
+                <div><span className="text-muted-foreground">Client:</span> <span className="font-medium">{viewingDetails.client}</span></div>
+                <div><span className="text-muted-foreground">Produs:</span> <span className="font-medium">{viewingDetails.produs}</span></div>
+                <div><span className="text-muted-foreground">Cantitate:</span> <span className="font-medium">{viewingDetails.cantitate} {viewingDetails.unitateMasura}</span></div>
+                <div><span className="text-muted-foreground">Gestiune:</span> <span className="font-medium">{viewingDetails.planta}</span></div>
+                <div><span className="text-muted-foreground">Dată/Ora:</span> <span className="font-medium">{format(parseISO(viewingDetails.dataOra), "dd/MM/yyyy HH:mm")}</span></div>
+                <div><span className="text-muted-foreground">Fereastră:</span> <span className="font-medium">{viewingDetails.fereastraIncarcare}</span></div>
+                <div><span className="text-muted-foreground">Punct descărcare:</span> <span className="font-medium">{viewingDetails.punctDescarcare}</span></div>
+                <div><span className="text-muted-foreground">Avans/Plată:</span> <span className="font-medium">{viewingDetails.avansPlata}</span></div>
+                {viewingDetails.observatii && (
+                  <div className="col-span-2 pt-2 border-t mt-1">
+                    <span className="text-muted-foreground">Observații:</span> <span className="font-medium">{viewingDetails.observatii}</span>
+                  </div>
+                )}
               </div>
 
-              <Card>
-                <CardHeader className="p-3">
-                  <CardTitle className="text-sm flex items-center gap-2"><Package className="h-4 w-4" />Rezumat</CardTitle>
-                </CardHeader>
-                <CardContent className="p-3 pt-0">
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div><span className="text-muted-foreground">Client:</span> <span className="font-medium">{viewingDetails.client}</span></div>
-                    <div><span className="text-muted-foreground">Produs:</span> <span className="font-medium">{viewingDetails.produs}</span></div>
-                    <div><span className="text-muted-foreground">Cantitate:</span> <span className="font-medium">{viewingDetails.cantitate} {viewingDetails.unitateMasura}</span></div>
-                    <div><span className="text-muted-foreground">Gestiune:</span> <span className="font-medium">{viewingDetails.planta}</span></div>
-                    <div><span className="text-muted-foreground">Dată/Ora:</span> <span className="font-medium">{format(parseISO(viewingDetails.dataOra), "dd/MM/yyyy HH:mm")}</span></div>
-                    <div><span className="text-muted-foreground">Fereastră încărcare:</span> <span className="font-medium">{viewingDetails.fereastraIncarcare}</span></div>
-                    <div><span className="text-muted-foreground">Punct descărcare:</span> <span className="font-medium">{viewingDetails.punctDescarcare}</span></div>
-                    <div><span className="text-muted-foreground">Avans/Plată:</span> <span className="font-medium">{viewingDetails.avansPlata}</span></div>
-                  </div>
-                  {viewingDetails.observatii && (
-                    <div className="mt-3 pt-3 border-t">
-                      <span className="text-muted-foreground text-sm">Observații:</span>
-                      <p className="text-sm mt-1">{viewingDetails.observatii}</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="p-3">
-                  <CardTitle className="text-sm flex items-center gap-2"><Paperclip className="h-4 w-4" />Atașamente</CardTitle>
-                </CardHeader>
-                <CardContent className="p-3 pt-0">
+              {/* Atașamente și Timeline - side by side */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="border rounded-lg p-3">
+                  <p className="text-sm font-medium flex items-center gap-2 mb-2"><Paperclip className="h-4 w-4" />Atașamente</p>
                   {viewingDetails.atasamente.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1">
                       {viewingDetails.atasamente.map((file, idx) => (
-                        <Badge key={idx} variant="outline" className="cursor-pointer hover:bg-muted">
+                        <Badge key={idx} variant="outline" className="cursor-pointer hover:bg-muted text-xs">
                           <FileText className="h-3 w-3 mr-1" />{file}
                         </Badge>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-muted-foreground">Niciun atașament</p>
+                    <p className="text-xs text-muted-foreground">Niciun atașament</p>
                   )}
-                </CardContent>
-              </Card>
+                </div>
 
-              <Card>
-                <CardHeader className="p-3">
-                  <CardTitle className="text-sm flex items-center gap-2"><Clock className="h-4 w-4" />Timeline</CardTitle>
-                </CardHeader>
-                <CardContent className="p-3 pt-0">
-                  <div className="space-y-3">
-                    {viewingDetails.timeline.map((event, idx) => (
-                      <div key={idx} className="flex gap-3 items-start">
-                        <div className="w-2 h-2 rounded-full bg-primary mt-1.5 flex-shrink-0" />
+                <div className="border rounded-lg p-3">
+                  <p className="text-sm font-medium flex items-center gap-2 mb-2"><Clock className="h-4 w-4" />Timeline</p>
+                  <div className="space-y-1">
+                    {viewingDetails.timeline.slice(0, 3).map((event, idx) => (
+                      <div key={idx} className="flex gap-2 items-start">
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
                         <div>
-                          <p className="text-sm font-medium">{event.eveniment}</p>
-                          <p className="text-xs text-muted-foreground">{event.data} - {event.user}</p>
+                          <p className="text-xs font-medium">{event.eveniment}</p>
+                          <p className="text-xs text-muted-foreground">{event.data}</p>
                         </div>
                       </div>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
           )}
 
-          <DialogFooter className="flex-col sm:flex-row gap-2">
+          <DialogFooter className="flex-wrap gap-1 pt-2">
             <Button variant="outline" size="sm" onClick={() => { if (viewingDetails) { handleStatusChange(viewingDetails, "Planificat"); setViewingDetails(null); } }}>
-              <CalendarIcon className="w-4 h-4 mr-2" />Planifică
+              <CalendarIcon className="w-4 h-4 mr-1" />Planifică
             </Button>
             <Button variant="outline" size="sm" onClick={handleRezervaStoc}>
-              <Package className="w-4 h-4 mr-2" />Rezervă stoc
+              <Package className="w-4 h-4 mr-1" />Rezervă stoc
             </Button>
             <Button variant="outline" size="sm" onClick={handleGenereazaAviz}>
-              <FileText className="w-4 h-4 mr-2" />Generează aviz
+              <FileText className="w-4 h-4 mr-1" />Generează aviz
             </Button>
             <Button variant="outline" size="sm" onClick={() => { if (viewingDetails) { handleOpenEdit(viewingDetails); setViewingDetails(null); } }}>
-              <Pencil className="w-4 h-4 mr-2" />Editează
+              <Pencil className="w-4 h-4 mr-1" />Editează
             </Button>
             <Button variant="destructive" size="sm" onClick={() => { if (viewingDetails) { setDeleting(viewingDetails); setViewingDetails(null); } }}>
-              <Trash2 className="w-4 h-4 mr-2" />Șterge
+              <Trash2 className="w-4 h-4 mr-1" />Șterge
             </Button>
             <Button variant="secondary" size="sm" onClick={() => setViewingDetails(null)}>Închide</Button>
           </DialogFooter>
