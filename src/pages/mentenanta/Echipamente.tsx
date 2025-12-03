@@ -294,55 +294,55 @@ const Echipamente = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card>
-          <CardContent className="pt-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <Settings className="h-5 w-5 text-primary" />
+          <CardContent className="p-3 sm:pt-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+              <div className="p-2 rounded-lg bg-primary/10 w-fit">
+                <Settings className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               </div>
-              <div>
-                <p className="text-2xl font-bold">{stats.total}</p>
-                <p className="text-sm text-muted-foreground">Total Echipamente</p>
+              <div className="min-w-0">
+                <p className="text-xl sm:text-2xl font-bold">{stats.total}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">Total Echipamente</p>
               </div>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-emerald-500/10">
-                <CheckCircle className="h-5 w-5 text-emerald-500" />
+          <CardContent className="p-3 sm:pt-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+              <div className="p-2 rounded-lg bg-emerald-500/10 w-fit">
+                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-500" />
               </div>
-              <div>
-                <p className="text-2xl font-bold">{stats.disponibile}</p>
-                <p className="text-sm text-muted-foreground">Disponibile</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-amber-500/10">
-                <Wrench className="h-5 w-5 text-amber-500" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{stats.inRevizie}</p>
-                <p className="text-sm text-muted-foreground">În Revizie</p>
+              <div className="min-w-0">
+                <p className="text-xl sm:text-2xl font-bold">{stats.disponibile}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Disponibile</p>
               </div>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-red-500/10">
-                <XCircle className="h-5 w-5 text-red-500" />
+          <CardContent className="p-3 sm:pt-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+              <div className="p-2 rounded-lg bg-amber-500/10 w-fit">
+                <Wrench className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500" />
               </div>
-              <div>
-                <p className="text-2xl font-bold">{stats.defecte}</p>
-                <p className="text-sm text-muted-foreground">Defecte</p>
+              <div className="min-w-0">
+                <p className="text-xl sm:text-2xl font-bold">{stats.inRevizie}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">În Revizie</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-3 sm:pt-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+              <div className="p-2 rounded-lg bg-red-500/10 w-fit">
+                <XCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xl sm:text-2xl font-bold">{stats.defecte}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Defecte</p>
               </div>
             </div>
           </CardContent>
