@@ -1,8 +1,7 @@
 import { useState, useMemo } from "react";
 import { 
-  Truck, Plus, Download, Calendar, AlertTriangle, Filter,
-  Wrench, FileText, Clock, CheckCircle, XCircle, Settings,
-  ChevronRight, Paperclip, History
+  Truck, Plus, Download, Calendar, AlertTriangle,
+  Wrench, FileText, CheckCircle, XCircle, Settings, History
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,12 +21,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -35,8 +28,6 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { DataTablePagination } from "@/components/ui/data-table";
 import { toast } from "sonner";
 import { exportToCSV } from "@/lib/exportUtils";
@@ -410,125 +401,99 @@ const Echipamente = () => {
         </CardContent>
       </Card>
 
-      {/* Peek Drawer */}
-      <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-        <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
+      {/* Detail Dialog */}
+      <Dialog open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" hideCloseButton>
           {selectedEchipament && (
             <>
-              <SheetHeader>
-                <SheetTitle className="flex items-center gap-2">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
                   <Settings className="h-5 w-5" />
                   {selectedEchipament.cod} - {selectedEchipament.tip}
-                </SheetTitle>
-              </SheetHeader>
+                </DialogTitle>
+              </DialogHeader>
               
-              <div className="mt-6 space-y-6">
-                {/* Actions */}
-                <div className="flex flex-wrap gap-2">
-                  <Button size="sm" onClick={handlePlanRevizie} className="gap-2">
-                    <Calendar className="h-4 w-4" />
-                    Plan Revizie
-                  </Button>
-                  <Button size="sm" variant="destructive" onClick={handleRaportareDefect} className="gap-2">
-                    <AlertTriangle className="h-4 w-4" />
-                    Raportează Defecțiune
-                  </Button>
-                </div>
-
+              <div className="space-y-4 py-4">
                 <Tabs defaultValue="fisa">
                   <TabsList className="w-full">
                     <TabsTrigger value="fisa" className="flex-1">Fișă Tehnică</TabsTrigger>
                     <TabsTrigger value="istoric" className="flex-1">Istoric</TabsTrigger>
                     <TabsTrigger value="piese" className="flex-1">Piese Critice</TabsTrigger>
-                    <TabsTrigger value="documente" className="flex-1">Documente</TabsTrigger>
+                    {selectedEchipament.documenteVehicul && (
+                      <TabsTrigger value="documente" className="flex-1">Documente</TabsTrigger>
+                    )}
                   </TabsList>
 
                   {/* Fișă Tehnică */}
                   <TabsContent value="fisa" className="space-y-4">
-                    <Card>
-                      <CardContent className="pt-4 space-y-3">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <p className="text-sm text-muted-foreground">Cod</p>
-                            <p className="font-medium">{selectedEchipament.cod}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Tip</p>
-                            <p className="font-medium">{selectedEchipament.tip}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Serie</p>
-                            <p className="font-medium">{selectedEchipament.serie}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Plantă</p>
-                            <p className="font-medium">{selectedEchipament.planta}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Producător</p>
-                            <p className="font-medium">{selectedEchipament.producator || "N/A"}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">An Fabricație</p>
-                            <p className="font-medium">{selectedEchipament.anFabricatie || "N/A"}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Ore Funcționare</p>
-                            <p className="font-medium">{selectedEchipament.oreFunctionare.toLocaleString()} h</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Status</p>
-                            <Badge variant="outline" className={statusConfig[selectedEchipament.status].color}>
-                              {selectedEchipament.status}
-                            </Badge>
-                          </div>
-                        </div>
-                        <Separator />
-                        <div>
-                          <p className="text-sm text-muted-foreground">Descriere</p>
-                          <p className="font-medium">{selectedEchipament.descriere || "N/A"}</p>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Cod</p>
+                        <p className="font-medium">{selectedEchipament.cod}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Tip</p>
+                        <p className="font-medium">{selectedEchipament.tip}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Serie</p>
+                        <p className="font-medium">{selectedEchipament.serie}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Plantă</p>
+                        <p className="font-medium">{selectedEchipament.planta}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Producător</p>
+                        <p className="font-medium">{selectedEchipament.producator || "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">An Fabricație</p>
+                        <p className="font-medium">{selectedEchipament.anFabricatie || "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Ore Funcționare</p>
+                        <p className="font-medium">{selectedEchipament.oreFunctionare.toLocaleString()} h</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Status</p>
+                        <Badge variant="outline" className={statusConfig[selectedEchipament.status].color}>
+                          {selectedEchipament.status}
+                        </Badge>
+                      </div>
+                    </div>
+                    {selectedEchipament.descriere && (
+                      <div className="pt-2 border-t">
+                        <p className="text-sm text-muted-foreground">Descriere</p>
+                        <p className="font-medium">{selectedEchipament.descriere}</p>
+                      </div>
+                    )}
                   </TabsContent>
 
                   {/* Istoric Intervenții */}
-                  <TabsContent value="istoric" className="space-y-4">
-                    <ScrollArea className="h-[400px]">
-                      {(mockInterventii[selectedEchipament.id] || []).length > 0 ? (
-                        <div className="space-y-3">
-                          {mockInterventii[selectedEchipament.id]?.map(interventie => (
-                            <Card key={interventie.id}>
-                              <CardContent className="pt-4">
-                                <div className="flex items-start justify-between">
-                                  <div className="flex items-center gap-2">
-                                    <History className="h-4 w-4 text-muted-foreground" />
-                                    <span className="font-medium">{interventie.data}</span>
-                                  </div>
-                                  <Badge variant="outline">{interventie.tip}</Badge>
-                                </div>
-                                <p className="mt-2 text-sm">{interventie.descriere}</p>
-                                {interventie.piese.length > 0 && (
-                                  <div className="mt-2 flex flex-wrap gap-1">
-                                    {interventie.piese.map((p, i) => (
-                                      <Badge key={i} variant="secondary" className="text-xs">{p}</Badge>
-                                    ))}
-                                  </div>
-                                )}
-                                <div className="mt-2 flex justify-between text-sm text-muted-foreground">
-                                  <span>Tehnician: {interventie.tehnician}</span>
-                                  <span>Cost: {interventie.cost.toLocaleString()} RON</span>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          ))}
+                  <TabsContent value="istoric" className="space-y-3 max-h-[300px] overflow-y-auto">
+                    {(mockInterventii[selectedEchipament.id] || []).length > 0 ? (
+                      mockInterventii[selectedEchipament.id]?.map(interventie => (
+                        <div key={interventie.id} className="p-3 border rounded-lg">
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-2">
+                              <History className="h-4 w-4 text-muted-foreground" />
+                              <span className="font-medium text-sm">{interventie.data}</span>
+                            </div>
+                            <Badge variant="outline" className="text-xs">{interventie.tip}</Badge>
+                          </div>
+                          <p className="mt-2 text-sm">{interventie.descriere}</p>
+                          <div className="mt-2 flex justify-between text-xs text-muted-foreground">
+                            <span>Tehnician: {interventie.tehnician}</span>
+                            <span>Cost: {interventie.cost.toLocaleString()} RON</span>
+                          </div>
                         </div>
-                      ) : (
-                        <div className="text-center py-8 text-muted-foreground">
-                          Nicio intervenție înregistrată
-                        </div>
-                      )}
-                    </ScrollArea>
+                      ))
+                    ) : (
+                      <div className="text-center py-8 text-muted-foreground">
+                        Nicio intervenție înregistrată
+                      </div>
+                    )}
                   </TabsContent>
 
                   {/* Piese Critice */}
@@ -566,49 +531,52 @@ const Echipamente = () => {
                   </TabsContent>
 
                   {/* Documente Vehicul */}
-                  <TabsContent value="documente" className="space-y-4">
-                    {selectedEchipament.documenteVehicul ? (
-                      <Card>
-                        <CardContent className="pt-4 space-y-4">
-                          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                            <div className="flex items-center gap-3">
-                              <FileText className="h-5 w-5 text-primary" />
-                              <div>
-                                <p className="font-medium">RCA</p>
-                                <p className="text-sm text-muted-foreground">
-                                  Expiră: {selectedEchipament.documenteVehicul.rcaExpira}
-                                </p>
-                              </div>
-                            </div>
-                            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  {selectedEchipament.documenteVehicul && (
+                    <TabsContent value="documente" className="space-y-3">
+                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                        <div className="flex items-center gap-3">
+                          <FileText className="h-5 w-5 text-primary" />
+                          <div>
+                            <p className="font-medium">RCA</p>
+                            <p className="text-sm text-muted-foreground">
+                              Expiră: {selectedEchipament.documenteVehicul.rcaExpira}
+                            </p>
                           </div>
-                          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                            <div className="flex items-center gap-3">
-                              <FileText className="h-5 w-5 text-primary" />
-                              <div>
-                                <p className="font-medium">ITP</p>
-                                <p className="text-sm text-muted-foreground">
-                                  Expiră: {selectedEchipament.documenteVehicul.itpExpira}
-                                </p>
-                              </div>
-                            </div>
-                            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ) : (
-                      <div className="text-center py-8 text-muted-foreground">
-                        <Paperclip className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                        <p>Nu sunt documente vehicul (nu este vehicul)</p>
+                        </div>
                       </div>
-                    )}
-                  </TabsContent>
+                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                        <div className="flex items-center gap-3">
+                          <FileText className="h-5 w-5 text-primary" />
+                          <div>
+                            <p className="font-medium">ITP</p>
+                            <p className="text-sm text-muted-foreground">
+                              Expiră: {selectedEchipament.documenteVehicul.itpExpira}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </TabsContent>
+                  )}
                 </Tabs>
               </div>
+
+              <DialogFooter className="flex-col sm:flex-row gap-2">
+                <Button size="sm" onClick={handlePlanRevizie}>
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Plan Revizie
+                </Button>
+                <Button size="sm" variant="destructive" onClick={handleRaportareDefect}>
+                  <AlertTriangle className="w-4 h-4 mr-2" />
+                  Raportează Defecțiune
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => setIsDrawerOpen(false)}>
+                  Închide
+                </Button>
+              </DialogFooter>
             </>
           )}
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
 
       {/* Add Equipment Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
