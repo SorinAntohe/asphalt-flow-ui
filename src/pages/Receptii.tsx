@@ -868,7 +868,7 @@ export default function Receptii() {
 
       {/* Add/Edit Dialog */}
       <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
-        <DialogContent className="w-[95vw] max-w-4xl">
+        <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader className="pb-2">
             <DialogTitle className="text-base">{editing ? "Editează Recepția" : "Adaugă Recepție Nouă"}</DialogTitle>
           </DialogHeader>
