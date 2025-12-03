@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -362,15 +362,14 @@ export default function PontareAngajat() {
         </Tabs>
       </div>
 
-      {/* Add Time Sheet */}
-      <Sheet open={isAddTimeOpen} onOpenChange={setIsAddTimeOpen}>
-        <SheetContent side="left" className="w-full sm:max-w-md overflow-y-auto">
-          <div className="bg-primary h-16 -mx-6 -mt-6 mb-6" />
-          <SheetHeader className="sr-only">
-            <SheetTitle>Adaugă timp</SheetTitle>
-          </SheetHeader>
+      {/* Add Time Dialog */}
+      <Dialog open={isAddTimeOpen} onOpenChange={setIsAddTimeOpen}>
+        <DialogContent className="w-[95vw] max-w-md max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Adaugă timp</DialogTitle>
+          </DialogHeader>
           
-          <div className="space-y-4 px-2">
+          <div className="space-y-4">
             {/* Data */}
             <div className="space-y-2">
               <Label className="text-xs text-muted-foreground">Data</Label>
@@ -378,7 +377,7 @@ export default function PontareAngajat() {
                 <Input
                   value={timeFormData.data}
                   onChange={(e) => setTimeFormData({ ...timeFormData, data: e.target.value })}
-                  className="pr-10 h-14 text-lg border-border/50 rounded-xl"
+                  className="pr-10 h-12 border-border/50 rounded-xl"
                 />
                 <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
               </div>
@@ -392,7 +391,7 @@ export default function PontareAngajat() {
                   type="time"
                   value={timeFormData.oraIntrare}
                   onChange={(e) => setTimeFormData({ ...timeFormData, oraIntrare: e.target.value })}
-                  className="pr-10 h-14 text-lg border-border/50 rounded-xl"
+                  className="pr-10 h-12 border-border/50 rounded-xl"
                 />
                 <ArrowRight className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
               </div>
@@ -406,7 +405,7 @@ export default function PontareAngajat() {
                   type="time"
                   value={timeFormData.oraIesire}
                   onChange={(e) => setTimeFormData({ ...timeFormData, oraIesire: e.target.value })}
-                  className="pr-10 h-14 text-lg border-border/50 rounded-xl"
+                  className="pr-10 h-12 border-border/50 rounded-xl"
                 />
                 <ArrowLeft className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
               </div>
@@ -419,30 +418,29 @@ export default function PontareAngajat() {
                 value={timeFormData.motiv}
                 onChange={(e) => setTimeFormData({ ...timeFormData, motiv: e.target.value })}
                 placeholder="Motiv"
-                className="min-h-[100px] border-border/50 rounded-xl resize-none"
+                className="min-h-[80px] border-border/50 rounded-xl resize-none"
               />
             </div>
 
             {/* Submit Button */}
             <Button 
               onClick={handleSubmitTimeRequest}
-              className="w-full h-14 text-lg font-semibold rounded-xl mt-4"
+              className="w-full h-12 font-semibold rounded-xl"
             >
               Trimite cererea
             </Button>
           </div>
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
 
-      {/* Add Leave Sheet */}
-      <Sheet open={isAddLeaveOpen} onOpenChange={setIsAddLeaveOpen}>
-        <SheetContent side="left" className="w-full sm:max-w-md overflow-y-auto">
-          <div className="bg-primary h-16 -mx-6 -mt-6 mb-6" />
-          <SheetHeader className="sr-only">
-            <SheetTitle>Cerere concediu</SheetTitle>
-          </SheetHeader>
+      {/* Add Leave Dialog */}
+      <Dialog open={isAddLeaveOpen} onOpenChange={setIsAddLeaveOpen}>
+        <DialogContent className="w-[95vw] max-w-md max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Cerere concediu</DialogTitle>
+          </DialogHeader>
           
-          <div className="space-y-4 px-2">
+          <div className="space-y-4">
             {/* Tip de concediu */}
             <div className="space-y-2">
               <Label className="text-xs text-muted-foreground">Tip de concediu</Label>
@@ -450,7 +448,7 @@ export default function PontareAngajat() {
                 value={leaveFormData.tipConcediu} 
                 onValueChange={(value) => setLeaveFormData({ ...leaveFormData, tipConcediu: value })}
               >
-                <SelectTrigger className="h-14 text-lg border-border/50 rounded-xl">
+                <SelectTrigger className="h-12 border-border/50 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -468,7 +466,7 @@ export default function PontareAngajat() {
                 <Input
                   value={leaveFormData.dataStart}
                   onChange={(e) => setLeaveFormData({ ...leaveFormData, dataStart: e.target.value })}
-                  className="pr-10 h-14 text-lg border-border/50 rounded-xl"
+                  className="pr-10 h-12 border-border/50 rounded-xl"
                 />
                 <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
               </div>
@@ -481,7 +479,7 @@ export default function PontareAngajat() {
                 <Input
                   value={leaveFormData.dataEnd}
                   onChange={(e) => setLeaveFormData({ ...leaveFormData, dataEnd: e.target.value })}
-                  className="pr-10 h-14 text-lg border-border/50 rounded-xl"
+                  className="pr-10 h-12 border-border/50 rounded-xl"
                 />
                 <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
               </div>
@@ -494,7 +492,7 @@ export default function PontareAngajat() {
                 value={leaveFormData.motiv}
                 onChange={(e) => setLeaveFormData({ ...leaveFormData, motiv: e.target.value })}
                 placeholder="Motiv (Opțional)"
-                className="min-h-[100px] border-border/50 rounded-xl resize-none"
+                className="min-h-[80px] border-border/50 rounded-xl resize-none"
               />
             </div>
 
@@ -504,7 +502,7 @@ export default function PontareAngajat() {
                 id="excludeWeekend"
                 checked={leaveFormData.excludeWeekend}
                 onCheckedChange={(checked) => setLeaveFormData({ ...leaveFormData, excludeWeekend: checked as boolean })}
-                className="h-6 w-6 rounded-full border-primary data-[state=checked]:bg-primary"
+                className="h-5 w-5 rounded border-primary data-[state=checked]:bg-primary"
               />
               <Label htmlFor="excludeWeekend" className="text-sm cursor-pointer">
                 Concediul va exclude zilele de weekend
@@ -514,13 +512,13 @@ export default function PontareAngajat() {
             {/* Submit Button */}
             <Button 
               onClick={handleSubmitLeaveRequest}
-              className="w-full h-14 text-lg font-semibold rounded-xl mt-4"
+              className="w-full h-12 font-semibold rounded-xl"
             >
               Trimite cererea
             </Button>
           </div>
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
