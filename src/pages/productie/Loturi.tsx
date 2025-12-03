@@ -599,10 +599,10 @@ const Loturi = () => {
 
       {/* Detail Dialog */}
       <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
-        <DialogContent className="max-w-4xl" hideCloseButton>
+        <DialogContent className="max-w-4xl max-h-[85vh] flex flex-col" hideCloseButton>
           {selectedLot && (
             <>
-              <DialogHeader>
+              <DialogHeader className="flex-shrink-0">
                 <DialogTitle className="flex items-center gap-2">
                   {selectedLot.codLot}
                   <Badge variant={verdictConfig[selectedLot.verdictQC].variant} className="gap-1">
@@ -613,237 +613,235 @@ const Loturi = () => {
                 <DialogDescription>{selectedLot.reteta}</DialogDescription>
               </DialogHeader>
 
-              <Tabs defaultValue="parametri" className="mt-4">
-                <TabsList className="grid w-full grid-cols-3">
+              <Tabs defaultValue="parametri" className="flex-1 flex flex-col min-h-0">
+                <TabsList className="grid w-full grid-cols-3 flex-shrink-0">
                   <TabsTrigger value="parametri">Parametri</TabsTrigger>
                   <TabsTrigger value="info">Informații</TabsTrigger>
                   <TabsTrigger value="atasamente">Atașamente</TabsTrigger>
                 </TabsList>
 
-                {/* Parametri Tab */}
-                <TabsContent value="parametri" className="space-y-4">
-                  <div className="grid gap-4">
-                    {selectedLot.parametri.map((param, idx) => {
-                      const { deviation, deviationPercent } = getParameterDeviation(param);
-                      const barWidth = getParameterBarWidth(param);
-                      
-                      return (
-                        <Card key={idx} className={`border-l-4 ${
-                          param.status === "ok" ? "border-l-green-500" : 
-                          param.status === "warning" ? "border-l-yellow-500" : "border-l-red-500"
-                        }`}>
-                          <CardContent className="p-4">
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="flex items-center gap-2">
-                                {param.nume === "Umiditate" && <Droplets className="h-5 w-5 text-blue-500" />}
-                                {param.nume === "Temperatură" && <Thermometer className="h-5 w-5 text-orange-500" />}
-                                {(param.nume === "Marshall" || param.nume === "Slump") && <Gauge className="h-5 w-5 text-purple-500" />}
-                                <span className="font-medium">{param.nume}</span>
+                <div className="flex-1 overflow-y-auto mt-3">
+                  {/* Parametri Tab */}
+                  <TabsContent value="parametri" className="space-y-3 m-0">
+                    <div className="grid gap-3">
+                      {selectedLot.parametri.map((param, idx) => {
+                        const { deviation, deviationPercent } = getParameterDeviation(param);
+                        const barWidth = getParameterBarWidth(param);
+                        
+                        return (
+                          <Card key={idx} className={`border-l-4 ${
+                            param.status === "ok" ? "border-l-green-500" : 
+                            param.status === "warning" ? "border-l-yellow-500" : "border-l-red-500"
+                          }`}>
+                            <CardContent className="p-3">
+                              <div className="flex items-center justify-between mb-1">
+                                <div className="flex items-center gap-2">
+                                  {param.nume === "Umiditate" && <Droplets className="h-4 w-4 text-blue-500" />}
+                                  {param.nume === "Temperatură" && <Thermometer className="h-4 w-4 text-orange-500" />}
+                                  {(param.nume === "Marshall" || param.nume === "Slump") && <Gauge className="h-4 w-4 text-purple-500" />}
+                                  <span className="font-medium text-sm">{param.nume}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  {param.status === "ok" ? (
+                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                                  ) : param.status === "warning" ? (
+                                    <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                                  ) : (
+                                    <AlertCircle className="h-4 w-4 text-red-500" />
+                                  )}
+                                  <span className={`font-bold ${
+                                    param.status === "ok" ? "text-green-600" : 
+                                    param.status === "warning" ? "text-yellow-600" : "text-red-600"
+                                  }`}>
+                                    {param.valoare} {param.unitate}
+                                  </span>
+                                </div>
                               </div>
-                              <div className="flex items-center gap-2">
-                                {param.status === "ok" ? (
-                                  <CheckCircle2 className="h-5 w-5 text-green-500" />
-                                ) : param.status === "warning" ? (
-                                  <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                              
+                              {/* Visual Range Bar */}
+                              <div className="relative h-5 bg-muted rounded-full overflow-hidden mb-1">
+                                <div className="absolute inset-y-0 left-0 right-0 flex">
+                                  <div className="flex-1 bg-red-200" />
+                                  <div className="w-1/3 bg-green-200" />
+                                  <div className="flex-1 bg-red-200" />
+                                </div>
+                                <div 
+                                  className={`absolute top-0.5 bottom-0.5 w-2.5 rounded-full ${
+                                    param.status === "ok" ? "bg-green-500" : 
+                                    param.status === "warning" ? "bg-yellow-500" : "bg-red-500"
+                                  }`}
+                                  style={{ left: `calc(${barWidth}% - 5px)` }}
+                                />
+                              </div>
+
+                              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                                <span>{param.tinta - param.tolerantaMinus} {param.unitate}</span>
+                                <span className="font-medium">Țintă: {param.tinta} {param.unitate}</span>
+                                <span>{param.tinta + param.tolerantaPlus} {param.unitate}</span>
+                              </div>
+
+                              {/* Deviation Info */}
+                              <div className="flex items-center justify-end gap-1 text-xs">
+                                {deviation > 0 ? (
+                                  <TrendingUp className="h-3 w-3 text-muted-foreground" />
                                 ) : (
-                                  <AlertCircle className="h-5 w-5 text-red-500" />
+                                  <TrendingDown className="h-3 w-3 text-muted-foreground" />
                                 )}
-                                <span className={`text-lg font-bold ${
-                                  param.status === "ok" ? "text-green-600" : 
-                                  param.status === "warning" ? "text-yellow-600" : "text-red-600"
-                                }`}>
-                                  {param.valoare} {param.unitate}
+                                <span className={deviation === 0 ? "text-green-600" : "text-muted-foreground"}>
+                                  {deviation > 0 ? "+" : ""}{deviation.toFixed(2)} {param.unitate} ({deviationPercent.toFixed(1)}%)
                                 </span>
                               </div>
-                            </div>
-                            
-                            {/* Visual Range Bar */}
-                            <div className="relative h-6 bg-muted rounded-full overflow-hidden mb-2">
-                              <div className="absolute inset-y-0 left-0 right-0 flex">
-                                <div className="flex-1 bg-red-200" />
-                                <div className="w-1/3 bg-green-200" />
-                                <div className="flex-1 bg-red-200" />
-                              </div>
-                              <div 
-                                className={`absolute top-1 bottom-1 w-3 rounded-full ${
-                                  param.status === "ok" ? "bg-green-500" : 
-                                  param.status === "warning" ? "bg-yellow-500" : "bg-red-500"
-                                }`}
-                                style={{ left: `calc(${barWidth}% - 6px)` }}
-                              />
-                            </div>
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
+                    </div>
 
-                            <div className="flex items-center justify-between text-xs text-muted-foreground">
-                              <span>{param.tinta - param.tolerantaMinus} {param.unitate}</span>
-                              <span className="font-medium">Țintă: {param.tinta} {param.unitate}</span>
-                              <span>{param.tinta + param.tolerantaPlus} {param.unitate}</span>
-                            </div>
+                    {/* Control Chart Preview */}
+                    <Card>
+                      <CardContent className="p-3">
+                        <p className="text-sm font-medium flex items-center gap-2 mb-2">
+                          <Activity className="h-4 w-4" />
+                          Grafic Control (Trend)
+                        </p>
+                        <div className="h-20 flex items-center justify-center bg-muted/50 rounded-lg">
+                          <span className="text-muted-foreground text-xs">
+                            Grafic de control - integrare StonemontQC
+                          </span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
 
-                            {/* Deviation Info */}
-                            <div className="flex items-center justify-end gap-1 mt-2 text-sm">
-                              {deviation > 0 ? (
-                                <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                              ) : (
-                                <TrendingDown className="h-4 w-4 text-muted-foreground" />
-                              )}
-                              <span className={deviation === 0 ? "text-green-600" : "text-muted-foreground"}>
-                                {deviation > 0 ? "+" : ""}{deviation.toFixed(2)} {param.unitate} ({deviationPercent.toFixed(1)}%)
-                              </span>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
-                  </div>
-
-                  {/* Control Chart Preview */}
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm flex items-center gap-2">
-                        <Activity className="h-4 w-4" />
-                        Grafic Control (Trend)
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="h-32 flex items-center justify-center bg-muted/50 rounded-lg">
-                        <span className="text-muted-foreground text-sm">
-                          Grafic de control - integrare StonemontQC
-                        </span>
+                  {/* Info Tab */}
+                  <TabsContent value="info" className="space-y-3 m-0">
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <span className="text-muted-foreground">Ordin Producție:</span>
+                        <span className="font-medium ml-1">{selectedLot.ordin}</span>
                       </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
+                      <div>
+                        <span className="text-muted-foreground">Cantitate:</span>
+                        <span className="font-medium ml-1">{selectedLot.cantitate} {selectedLot.unitateMasura}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Data/Ora:</span>
+                        <span className="font-medium ml-1">{selectedLot.dataOra}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Linie:</span>
+                        <span className="font-medium ml-1">{selectedLot.linie}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Operator:</span>
+                        <span className="font-medium ml-1">{selectedLot.operator}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Rețetă:</span>
+                        <span className="font-medium ml-1">{selectedLot.reteta}</span>
+                      </div>
+                    </div>
 
-                {/* Info Tab */}
-                <TabsContent value="info" className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-muted-foreground">Ordin Producție</Label>
-                      <p className="font-medium">{selectedLot.ordin}</p>
-                    </div>
-                    <div>
-                      <Label className="text-muted-foreground">Cantitate</Label>
-                      <p className="font-medium">{selectedLot.cantitate} {selectedLot.unitateMasura}</p>
-                    </div>
-                    <div>
-                      <Label className="text-muted-foreground">Data/Ora Producție</Label>
-                      <p className="font-medium">{selectedLot.dataOra}</p>
-                    </div>
-                    <div>
-                      <Label className="text-muted-foreground">Linie</Label>
-                      <p className="font-medium">{selectedLot.linie}</p>
-                    </div>
-                    <div>
-                      <Label className="text-muted-foreground">Operator</Label>
-                      <p className="font-medium">{selectedLot.operator}</p>
-                    </div>
-                    <div>
-                      <Label className="text-muted-foreground">Rețetă</Label>
-                      <p className="font-medium">{selectedLot.reteta}</p>
-                    </div>
-                  </div>
+                    <Separator />
 
-                  <Separator />
-
-                  <div className="space-y-2">
-                    <Label className="text-muted-foreground">Informații QC</Label>
-                    {selectedLot.trimisLaQC ? (
-                      <div className="grid grid-cols-2 gap-4 p-3 bg-muted/50 rounded-lg">
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Data Verificare</Label>
-                          <p className="text-sm font-medium">{selectedLot.dataQC || "-"}</p>
+                    <div className="space-y-2">
+                      <span className="text-sm text-muted-foreground">Informații QC</span>
+                      {selectedLot.trimisLaQC ? (
+                        <div className="grid grid-cols-2 gap-3 p-2 bg-muted/50 rounded-lg text-sm">
+                          <div>
+                            <span className="text-muted-foreground text-xs">Data Verificare:</span>
+                            <span className="font-medium ml-1">{selectedLot.dataQC || "-"}</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground text-xs">Inspector QC:</span>
+                            <span className="font-medium ml-1">{selectedLot.inspectorQC || "-"}</span>
+                          </div>
                         </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">Nu a fost trimis la QC</p>
+                      )}
+                    </div>
+
+                    {selectedLot.observatii && (
+                      <>
+                        <Separator />
                         <div>
-                          <Label className="text-xs text-muted-foreground">Inspector QC</Label>
-                          <p className="text-sm font-medium">{selectedLot.inspectorQC || "-"}</p>
+                          <span className="text-sm text-muted-foreground">Observații:</span>
+                          <p className="text-sm mt-1">{selectedLot.observatii}</p>
                         </div>
+                      </>
+                    )}
+                  </TabsContent>
+
+                  {/* Atasamente Tab */}
+                  <TabsContent value="atasamente" className="space-y-3 m-0">
+                    {selectedLot.atasamente.length === 0 ? (
+                      <div className="text-center py-6 text-muted-foreground">
+                        <FileText className="h-10 w-10 mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">Niciun atașament</p>
                       </div>
                     ) : (
-                      <p className="text-sm text-muted-foreground">Nu a fost trimis la QC</p>
-                    )}
-                  </div>
-
-                  {selectedLot.observatii && (
-                    <>
-                      <Separator />
-                      <div>
-                        <Label className="text-muted-foreground">Observații</Label>
-                        <p className="text-sm mt-1">{selectedLot.observatii}</p>
-                      </div>
-                    </>
-                  )}
-                </TabsContent>
-
-                {/* Atasamente Tab */}
-                <TabsContent value="atasamente" className="space-y-4">
-                  {selectedLot.atasamente.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <FileText className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                      <p>Niciun atașament</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {selectedLot.atasamente.map((atasament) => (
-                        <div 
-                          key={atasament.id} 
-                          className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors cursor-pointer"
-                        >
-                          <div className="flex items-center gap-3">
-                            {atasament.tip === "foto" ? (
-                              <Camera className="h-5 w-5 text-blue-500" />
-                            ) : (
-                              <FileText className="h-5 w-5 text-orange-500" />
-                            )}
-                            <div>
-                              <p className="font-medium text-sm">{atasament.nume}</p>
-                              <p className="text-xs text-muted-foreground">{atasament.dataAdaugare}</p>
+                      <div className="space-y-2">
+                        {selectedLot.atasamente.map((atasament) => (
+                          <div 
+                            key={atasament.id} 
+                            className="flex items-center justify-between p-2 bg-muted/50 rounded-lg hover:bg-muted transition-colors cursor-pointer"
+                          >
+                            <div className="flex items-center gap-2">
+                              {atasament.tip === "foto" ? (
+                                <Camera className="h-4 w-4 text-blue-500" />
+                              ) : (
+                                <FileText className="h-4 w-4 text-orange-500" />
+                              )}
+                              <div>
+                                <p className="font-medium text-sm">{atasament.nume}</p>
+                                <p className="text-xs text-muted-foreground">{atasament.dataAdaugare}</p>
+                              </div>
                             </div>
+                            <Button variant="ghost" size="sm">
+                              <FileDown className="h-4 w-4" />
+                            </Button>
                           </div>
-                          <Button variant="ghost" size="sm">
-                            <FileDown className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <Button variant="outline" className="w-full">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Adaugă Atașament
-                  </Button>
-                </TabsContent>
+                        ))}
+                      </div>
+                    )}
+                    <Button variant="outline" size="sm" className="w-full">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Adaugă Atașament
+                    </Button>
+                  </TabsContent>
+                </div>
               </Tabs>
 
-              <DialogFooter className="flex-col sm:flex-row gap-2 mt-4">
-                <div className="flex flex-wrap gap-2">
-                  {!selectedLot.trimisLaQC && (
-                    <Button size="sm" onClick={() => handleTrimiteQC(selectedLot)}>
-                      <Send className="h-4 w-4 mr-1" />
-                      Trimite la QC
-                    </Button>
-                  )}
-                  {selectedLot.verdictQC === "În așteptare" && (
-                    <Button size="sm" variant="default" onClick={() => handleConfirmaLot(selectedLot)}>
-                      <CheckCircle2 className="h-4 w-4 mr-1" />
-                      Confirmă Lot
-                    </Button>
-                  )}
-                  {selectedLot.verdictQC !== "Blocat" && (
-                    <Button size="sm" variant="outline" onClick={() => handleBlocheaza(selectedLot)}>
-                      <Lock className="h-4 w-4 mr-1" />
-                      Blochează
-                    </Button>
-                  )}
-                  {selectedLot.verdictQC === "Blocat" && (
-                    <Button size="sm" variant="outline" onClick={() => handleElibereaza(selectedLot)}>
-                      <Unlock className="h-4 w-4 mr-1" />
-                      Eliberează
-                    </Button>
-                  )}
-                  <Button size="sm" variant="outline" onClick={() => handlePrintEticheta(selectedLot)}>
-                    <Tag className="h-4 w-4 mr-1" />
-                    Etichetă Lot
+              <DialogFooter className="flex-shrink-0 flex-wrap gap-1 pt-2">
+                {!selectedLot.trimisLaQC && (
+                  <Button size="sm" onClick={() => handleTrimiteQC(selectedLot)}>
+                    <Send className="h-4 w-4 mr-1" />
+                    Trimite la QC
                   </Button>
-                </div>
+                )}
+                {selectedLot.verdictQC === "În așteptare" && (
+                  <Button size="sm" variant="default" onClick={() => handleConfirmaLot(selectedLot)}>
+                    <CheckCircle2 className="h-4 w-4 mr-1" />
+                    Confirmă Lot
+                  </Button>
+                )}
+                {selectedLot.verdictQC !== "Blocat" && (
+                  <Button size="sm" variant="outline" onClick={() => handleBlocheaza(selectedLot)}>
+                    <Lock className="h-4 w-4 mr-1" />
+                    Blochează
+                  </Button>
+                )}
+                {selectedLot.verdictQC === "Blocat" && (
+                  <Button size="sm" variant="outline" onClick={() => handleElibereaza(selectedLot)}>
+                    <Unlock className="h-4 w-4 mr-1" />
+                    Eliberează
+                  </Button>
+                )}
+                <Button size="sm" variant="outline" onClick={() => handlePrintEticheta(selectedLot)}>
+                  <Tag className="h-4 w-4 mr-1" />
+                  Etichetă Lot
+                </Button>
               </DialogFooter>
             </>
           )}
