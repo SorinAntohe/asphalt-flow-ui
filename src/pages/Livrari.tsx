@@ -780,7 +780,7 @@ const Livrari = () => {
 
       {/* Add/Edit Dialog */}
       <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>{editing ? "Editează Livrarea" : "Adaugă Livrare Nouă"}</DialogTitle>
             <DialogDescription>
@@ -937,7 +937,7 @@ const Livrari = () => {
 
       {/* Details View Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto" hideCloseButton>
+        <DialogContent className="max-w-3xl" hideCloseButton>
           <DialogHeader>
             <div className="flex items-center justify-between">
               <div>

@@ -1371,7 +1371,7 @@ export default function Comenzi() {
 
       {/* Add/Edit Dialog for Materie Prima */}
       <Dialog open={openAddEditMP} onOpenChange={setOpenAddEditMP}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>{editingMP ? "Editează Comanda" : "Adaugă Comandă Nouă"}</DialogTitle>
             <DialogDescription>
@@ -1488,7 +1488,7 @@ export default function Comenzi() {
 
       {/* Details Dialog for Materie Prima */}
       <Dialog open={!!viewingDetailsMP} onOpenChange={() => setViewingDetailsMP(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Detalii Comandă Materie Primă</DialogTitle>
             <DialogDescription>
@@ -1606,7 +1606,7 @@ export default function Comenzi() {
 
       {/* Add/Edit Dialog for Produs Finit */}
       <Dialog open={openAddEditPF} onOpenChange={setOpenAddEditPF}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>{editingPF ? "Editează Comanda" : "Adaugă Comandă Nouă"}</DialogTitle>
             <DialogDescription>
@@ -1723,7 +1723,7 @@ export default function Comenzi() {
 
       {/* Details Dialog for Produs Finit */}
       <Dialog open={!!viewingDetailsPF} onOpenChange={() => setViewingDetailsPF(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Detalii Comandă Produs Finit</DialogTitle>
             <DialogDescription>

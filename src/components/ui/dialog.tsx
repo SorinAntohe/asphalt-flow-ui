@@ -44,9 +44,8 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          "pointer-events-auto z-50 grid w-full max-w-lg gap-4",
-          "border border-border/30 bg-background p-5 sm:p-6 shadow-2xl rounded-2xl",
-          "max-h-[90vh] overflow-y-auto",
+          "pointer-events-auto z-50 grid w-full max-w-lg gap-3",
+          "border border-border/30 bg-background p-4 sm:p-5 shadow-2xl rounded-2xl",
           "duration-100 ease-out",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
           "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
@@ -69,12 +68,12 @@ const DialogContent = React.forwardRef<
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
 const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("flex flex-col space-y-2 text-center sm:text-left", className)} {...props} />
+  <div className={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)} {...props} />
 );
 DialogHeader.displayName = "DialogHeader";
 
 const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 pt-4", className)} {...props} />
+  <div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 pt-3", className)} {...props} />
 );
 DialogFooter.displayName = "DialogFooter";
 

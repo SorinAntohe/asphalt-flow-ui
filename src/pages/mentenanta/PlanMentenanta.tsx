@@ -360,7 +360,7 @@ const PlanMentenanta = () => {
 
       {/* Add/Edit Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" hideCloseButton>
+        <DialogContent className="max-w-2xl" hideCloseButton>
           <DialogHeader>
             <DialogTitle>Adaugă Regulă Preventivă</DialogTitle>
           </DialogHeader>
@@ -454,7 +454,7 @@ const PlanMentenanta = () => {
 
       {/* Detail Dialog */}
       <Dialog open={!!selectedRule} onOpenChange={(open) => !open && setSelectedRule(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto" hideCloseButton>
+        <DialogContent className="max-w-3xl" hideCloseButton>
           {selectedRule && (
             <>
               <DialogHeader>

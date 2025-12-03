@@ -868,7 +868,7 @@ export default function Receptii() {
 
       {/* Add/Edit Dialog */}
       <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
-        <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] max-w-4xl">
           <DialogHeader className="pb-2">
             <DialogTitle className="text-base">{editing ? "Editează Recepția" : "Adaugă Recepție Nouă"}</DialogTitle>
           </DialogHeader>
@@ -1057,7 +1057,7 @@ export default function Receptii() {
 
       {/* Details View Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
-        <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto" hideCloseButton>
+        <DialogContent className="w-[95vw] max-w-4xl" hideCloseButton>
           <DialogHeader className="pb-2">
             <div className="flex items-center justify-between">
               <DialogTitle className="text-base">Detalii Recepție - Cod: {viewingDetails?.cod}</DialogTitle>
