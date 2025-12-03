@@ -463,7 +463,7 @@ const OferteContracte = () => {
               </TableHead>
               <TableHead className="h-10">
                 <DataTableColumnHeader
-                  title="Termen"
+                  title="Termen de plată"
                   sortKey="termenPlata"
                   currentSort={sort}
                   onSort={(key, dir) => setSort({ key, direction: dir })}
