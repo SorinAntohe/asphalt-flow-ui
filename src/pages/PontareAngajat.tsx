@@ -167,11 +167,112 @@ export default function PontareAngajat() {
               </Button>
             </div>
 
-            {/* Empty State */}
-            <div className="text-center py-16">
-              <p className="text-lg font-medium text-foreground">
-                Nu ai înregistrări de timp pentru<br />perioada aleasă
-              </p>
+            {/* Mock Time Entries */}
+            <div className="space-y-3">
+              {/* Entry 1 */}
+              <Card className="border-border/50 hover:bg-muted/30 transition-colors cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Clock className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">03.12.2024</p>
+                        <p className="text-sm text-muted-foreground">08:00 - 17:00</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-foreground">9:00</p>
+                      <p className="text-xs text-green-500">Aprobat</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Entry 2 */}
+              <Card className="border-border/50 hover:bg-muted/30 transition-colors cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Clock className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">02.12.2024</p>
+                        <p className="text-sm text-muted-foreground">07:30 - 16:30</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-foreground">9:00</p>
+                      <p className="text-xs text-green-500">Aprobat</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Entry 3 - Pending */}
+              <Card className="border-border/50 hover:bg-muted/30 transition-colors cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-yellow-500/10 flex items-center justify-center">
+                        <Clock className="h-5 w-5 text-yellow-500" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">01.12.2024</p>
+                        <p className="text-sm text-muted-foreground">08:30 - 18:00</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-foreground">9:30</p>
+                      <p className="text-xs text-yellow-500">În așteptare</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Entry 4 */}
+              <Card className="border-border/50 hover:bg-muted/30 transition-colors cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Clock className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">29.11.2024</p>
+                        <p className="text-sm text-muted-foreground">08:00 - 17:00</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-foreground">9:00</p>
+                      <p className="text-xs text-green-500">Aprobat</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Entry 5 */}
+              <Card className="border-border/50 hover:bg-muted/30 transition-colors cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Clock className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">28.11.2024</p>
+                        <p className="text-sm text-muted-foreground">07:00 - 16:00</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-foreground">9:00</p>
+                      <p className="text-xs text-green-500">Aprobat</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
 
