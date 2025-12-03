@@ -47,6 +47,41 @@ import { UserCheck, Plus, ArrowUp, ArrowDown, ArrowUpDown, ChevronLeft, ChevronR
 import { API_BASE_URL } from "@/lib/api";
 import { exportToCSV } from "@/lib/exportUtils";
 
+// Helper functions for date conversion
+const formatDateForDisplay = (dateStr: string): string => {
+  if (!dateStr) return "";
+  // If already in dd/mm/yyyy format, return as is
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) return dateStr;
+  // If in yyyy-mm-dd format, convert to dd/mm/yyyy
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    const [year, month, day] = dateStr.split("-");
+    return `${day}/${month}/${year}`;
+  }
+  return dateStr;
+};
+
+const formatDateForInput = (dateStr: string): string => {
+  if (!dateStr) return "";
+  // If in dd/mm/yyyy format, convert to yyyy-mm-dd for input
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
+    const [day, month, year] = dateStr.split("/");
+    return `${year}-${month}-${day}`;
+  }
+  // If already in yyyy-mm-dd format, return as is
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+  return dateStr;
+};
+
+const formatDateForAPI = (dateStr: string): string => {
+  if (!dateStr) return "";
+  // If in yyyy-mm-dd format (from input), convert to dd/mm/yyyy
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    const [year, month, day] = dateStr.split("-");
+    return `${day}/${month}/${year}`;
+  }
+  return dateStr;
+};
+
 interface Angajat {
   id: number;
   nume: string;
@@ -196,7 +231,7 @@ export default function Angajati() {
     const payload = {
       nume: formData.nume,
       functie: formData.functie,
-      data_angajari: formData.data_angajari,
+      data_angajari: formatDateForAPI(formData.data_angajari),
       salariu: parseFloat(formData.salariu),
       zile_concediu: parseFloat(formData.zile_concediu) || 0,
     };
@@ -243,7 +278,7 @@ export default function Angajati() {
           update: {
             nume: formData.nume,
             functie: formData.functie,
-            data_angajari: formData.data_angajari,
+            data_angajari: formatDateForAPI(formData.data_angajari),
             salariu: parseFloat(formData.salariu),
             zile_concediu: parseFloat(formData.zile_concediu) || 0,
           },
@@ -322,7 +357,7 @@ export default function Angajati() {
     setFormData({
       nume: angajat.nume,
       functie: angajat.functie,
-      data_angajari: angajat.data_angajari,
+      data_angajari: formatDateForInput(angajat.data_angajari),
       salariu: String(angajat.salariu),
       zile_concediu: String(angajat.zile_concediu ?? 0),
     });
