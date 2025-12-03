@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown, X, Eye, Download } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import {
@@ -46,6 +47,7 @@ interface ContorCurent {
   index_nou: number;
   consum_kw: number;
   pret: number;
+  tip_consum: string;
 }
 
 interface ContorCTL {
@@ -307,7 +309,8 @@ const Consumuri = () => {
       : 0;
     
     setContorCurentFormData({
-      index_vechi: lastIndexNou
+      index_vechi: lastIndexNou,
+      tip_consum: 'activ'
     });
     setIsEditingContorCurent(false);
     setIsContorCurentFormOpen(true);
@@ -342,7 +345,8 @@ const Consumuri = () => {
             index_vechi: contorCurentFormData.index_vechi || 0,
             index_nou: contorCurentFormData.index_nou || 0,
             consum_kw: contorCurentFormData.consum_kw || 0,
-            pret: (contorCurentFormData.pret || 0) * (contorCurentFormData.consum_kw || 0)
+            pret: (contorCurentFormData.pret || 0) * (contorCurentFormData.consum_kw || 0),
+            tip_consum: contorCurentFormData.tip_consum || 'activ'
           }
         };
 
@@ -366,7 +370,8 @@ const Consumuri = () => {
           index_vechi: contorCurentFormData.index_vechi || 0,
           index_nou: contorCurentFormData.index_nou || 0,
           consum_kw: contorCurentFormData.consum_kw || 0,
-          pret: (contorCurentFormData.pret || 0) * (contorCurentFormData.consum_kw || 0)
+          pret: (contorCurentFormData.pret || 0) * (contorCurentFormData.consum_kw || 0),
+          tip_consum: contorCurentFormData.tip_consum || 'activ'
         };
 
         const response = await fetch(`${API_BASE_URL}/contori/adauga/curent`, {
@@ -860,6 +865,7 @@ const Consumuri = () => {
                   exportToCSV(filterAndSortData(contorCurentData, contorCurentFilters, contorCurentSort), 'contor_curent', [
                     { key: 'id', label: 'Nr Crt' },
                     { key: 'data', label: 'Data' },
+                    { key: 'tip_consum', label: 'Tip Consum' },
                     { key: 'index_vechi', label: 'Index Vechi' },
                     { key: 'index_nou', label: 'Index Nou' },
                     { key: 'consum_kw', label: 'Consum kW' },
@@ -939,6 +945,15 @@ const Consumuri = () => {
                       </TableHead>
                       <TableHead className="text-xs">
                         <FilterHeader
+                          label="Tip Consum"
+                          filterValue={contorCurentFilters['tip_consum'] || ''}
+                          onFilterChange={(value) => handleContorCurentFilterChange('tip_consum', value)}
+                          sortDirection={contorCurentSort?.field === 'tip_consum' ? contorCurentSort.direction : null}
+                          onSort={(dir) => handleContorCurentSort('tip_consum', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
                           label="Index Vechi"
                           filterValue={contorCurentFilters['index_vechi'] || ''}
                           onFilterChange={(value) => handleContorCurentFilterChange('index_vechi', value)}
@@ -978,7 +993,7 @@ const Consumuri = () => {
                   <TableBody>
                     {paginatedContorCurent.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                        <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                           Nu există înregistrări
                         </TableCell>
                       </TableRow>
@@ -991,6 +1006,7 @@ const Consumuri = () => {
                         >
                           <TableCell className="py-1 text-xs">{item.id}</TableCell>
                           <TableCell className="py-1 text-xs">{item.data}</TableCell>
+                          <TableCell className="py-1 text-xs capitalize">{item.tip_consum || '-'}</TableCell>
                           <TableCell className="py-1 text-xs">{item.index_vechi}</TableCell>
                           <TableCell className="py-1 text-xs">{item.index_nou}</TableCell>
                           <TableCell className="py-1 text-xs">{item.consum_kw}</TableCell>
@@ -1576,6 +1592,10 @@ const Consumuri = () => {
                   <p className="font-medium">{selectedContorCurent.data}</p>
                 </div>
                 <div>
+                  <Label className="text-muted-foreground text-xs">Tip Consum</Label>
+                  <p className="font-medium capitalize">{selectedContorCurent.tip_consum || '-'}</p>
+                </div>
+                <div>
                   <Label className="text-muted-foreground text-xs">Index Vechi</Label>
                   <p className="font-medium">{selectedContorCurent.index_vechi}</p>
                 </div>
@@ -1617,6 +1637,27 @@ const Consumuri = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
+            <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
+              <div className="space-y-0.5">
+                <Label className="text-sm font-medium">Tip Consum</Label>
+                <p className="text-xs text-muted-foreground">
+                  {contorCurentFormData.tip_consum === 'activ' ? 'Consum activ' : 'Consum pasiv'}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className={`text-xs ${contorCurentFormData.tip_consum === 'pasiv' ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>Pasiv</span>
+                <Switch
+                  checked={contorCurentFormData.tip_consum === 'activ'}
+                  onCheckedChange={(checked) => {
+                    setContorCurentFormData({
+                      ...contorCurentFormData,
+                      tip_consum: checked ? 'activ' : 'pasiv'
+                    });
+                  }}
+                />
+                <span className={`text-xs ${contorCurentFormData.tip_consum === 'activ' ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>Activ</span>
+              </div>
+            </div>
             <div className="space-y-2">
               <Label>Index Vechi</Label>
               <Input
