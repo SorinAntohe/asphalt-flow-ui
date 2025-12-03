@@ -53,6 +53,7 @@ interface Angajat {
   functie: string;
   data_angajari: string;
   salariu: number;
+  zile_concediu: number;
 }
 
 type SortDirection = "asc" | "desc" | null;
@@ -68,6 +69,7 @@ interface Filters {
   functie: ColumnFilter;
   data_angajari: ColumnFilter;
   salariu: ColumnFilter;
+  zile_concediu: ColumnFilter;
 }
 
 const initialFilters: Filters = {
@@ -76,6 +78,7 @@ const initialFilters: Filters = {
   functie: { value: "", sortDirection: null },
   data_angajari: { value: "", sortDirection: null },
   salariu: { value: "", sortDirection: null },
+  zile_concediu: { value: "", sortDirection: null },
 };
 
 export default function Angajati() {
@@ -331,6 +334,7 @@ export default function Angajati() {
       { key: "functie", label: "Funcție" },
       { key: "data_angajari", label: "Data Angajării" },
       { key: "salariu", label: "Salariu" },
+      { key: "zile_concediu", label: "Zile Concediu" },
     ]);
   };
 
@@ -442,12 +446,13 @@ export default function Angajati() {
                       <FilterHeader column="functie" label="Funcție" />
                       <FilterHeader column="data_angajari" label="Data Angajării" />
                       <FilterHeader column="salariu" label="Salariu" />
+                      <FilterHeader column="zile_concediu" label="Zile Concediu" />
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {paginatedData.length === 0 ? (
                       <TableRow className="border-0 hover:bg-transparent">
-                        <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                        <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
                           Nu există angajați.
                         </TableCell>
                       </TableRow>
@@ -463,6 +468,7 @@ export default function Angajati() {
                           <TableCell>{angajat.functie}</TableCell>
                           <TableCell>{angajat.data_angajari}</TableCell>
                           <TableCell>{angajat.salariu?.toLocaleString("ro-RO")} RON</TableCell>
+                          <TableCell>{angajat.zile_concediu ?? 0}</TableCell>
                         </TableRow>
                       ))
                     )}
@@ -652,6 +658,10 @@ export default function Angajati() {
               <div>
                 <Label className="text-muted-foreground text-xs">Salariu</Label>
                 <p className="font-medium">{selectedAngajat.salariu?.toLocaleString("ro-RO")} RON</p>
+              </div>
+              <div>
+                <Label className="text-muted-foreground text-xs">Zile Concediu</Label>
+                <p className="font-medium">{selectedAngajat.zile_concediu ?? 0}</p>
               </div>
             </div>
           )}
