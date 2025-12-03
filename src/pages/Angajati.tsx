@@ -193,17 +193,20 @@ export default function Angajati() {
   };
 
   const handleAdd = async () => {
+    const payload = {
+      nume: formData.nume,
+      functie: formData.functie,
+      data_angajari: formData.data_angajari,
+      salariu: parseFloat(formData.salariu),
+      zile_concediu: parseFloat(formData.zile_concediu) || 0,
+    };
+    console.log("Adăugare angajat - payload trimis:", payload);
+    
     try {
       const response = await fetch(`${API_BASE_URL}/resurse_umane/adauga/angajat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nume: formData.nume,
-          functie: formData.functie,
-          data_angajari: formData.data_angajari,
-          salariu: parseFloat(formData.salariu),
-          zile_concediu: parseFloat(formData.zile_concediu) || 0,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
