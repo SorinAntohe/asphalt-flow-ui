@@ -424,39 +424,55 @@ const OrdineProductie = () => {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Ordine</CardTitle>
-            <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Ordine</p>
+                <p className="text-2xl font-bold">{stats.total}</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <ClipboardCheck className="h-6 w-6 text-primary" />
+              </div>
+            </div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">În Lucru</CardTitle>
-            <Play className="h-4 w-4 text-primary" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-primary">{stats.inLucru}</div>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">În Lucru</p>
+                <p className="text-2xl font-bold text-primary">{stats.inLucru}</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
+                <Play className="h-6 w-6 text-blue-500" />
+              </div>
+            </div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Planificate</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.planificate}</div>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Planificate</p>
+                <p className="text-2xl font-bold">{stats.planificate}</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center">
+                <Clock className="h-6 w-6 text-amber-500" />
+              </div>
+            </div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Cantitate Activă</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.cantitateTotal.toLocaleString()} t</div>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Cantitate Activă</p>
+                <p className="text-2xl font-bold">{stats.cantitateTotal.toLocaleString()} t</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                <Package className="h-6 w-6 text-emerald-500" />
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

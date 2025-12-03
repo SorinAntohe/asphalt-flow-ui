@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   Factory, 
@@ -34,35 +34,35 @@ const KPICard = ({ title, value, subtitle, trend, trendLabel, icon, variant = "d
       variant === "danger" && "border-destructive/30 bg-destructive/5",
       variant === "success" && "border-green-500/30 bg-green-500/5"
     )}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
-          {title}
-        </CardTitle>
-        <div className={cn(
-          "p-2 rounded-lg",
-          variant === "default" && "bg-primary/10 text-primary",
-          variant === "warning" && "bg-yellow-500/10 text-yellow-600",
-          variant === "danger" && "bg-destructive/10 text-destructive",
-          variant === "success" && "bg-green-500/10 text-green-600"
-        )}>
-          {icon}
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        {subtitle && (
-          <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
-        )}
-        {trend !== undefined && (
-          <div className={cn(
-            "flex items-center gap-1 mt-2 text-xs font-medium",
-            isPositive && "text-green-600",
-            isNegative && "text-destructive"
-          )}>
-            {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-            <span>{Math.abs(trend)}% {trendLabel || "vs plan"}</span>
+      <CardContent className="pt-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">{title}</p>
+            <p className="text-2xl font-bold">{value}</p>
+            {subtitle && (
+              <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
+            )}
+            {trend !== undefined && (
+              <div className={cn(
+                "flex items-center gap-1 mt-2 text-xs font-medium",
+                isPositive && "text-green-600",
+                isNegative && "text-destructive"
+              )}>
+                {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                <span>{Math.abs(trend)}% {trendLabel || "vs plan"}</span>
+              </div>
+            )}
           </div>
-        )}
+          <div className={cn(
+            "h-12 w-12 rounded-full flex items-center justify-center shrink-0",
+            variant === "default" && "bg-primary/10 text-primary",
+            variant === "warning" && "bg-yellow-500/10 text-yellow-600",
+            variant === "danger" && "bg-destructive/10 text-destructive",
+            variant === "success" && "bg-green-500/10 text-green-600"
+          )}>
+            {icon}
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

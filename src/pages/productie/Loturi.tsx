@@ -390,48 +390,68 @@ const Loturi = () => {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Loturi</CardTitle>
-            <Layers className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Loturi</p>
+                <p className="text-2xl font-bold">{stats.total}</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Layers className="h-6 w-6 text-primary" />
+              </div>
+            </div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Conforme</CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.conform}</div>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Conforme</p>
+                <p className="text-2xl font-bold text-emerald-600">{stats.conform}</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                <CheckCircle2 className="h-6 w-6 text-emerald-500" />
+              </div>
+            </div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Neconforme</CardTitle>
-            <XCircle className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.neconform}</div>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Neconforme</p>
+                <p className="text-2xl font-bold text-red-600">{stats.neconform}</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-red-500/10 flex items-center justify-center">
+                <XCircle className="h-6 w-6 text-red-500" />
+              </div>
+            </div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">În Așteptare</CardTitle>
-            <Clock className="h-4 w-4 text-yellow-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{stats.inAsteptare}</div>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">În Așteptare</p>
+                <p className="text-2xl font-bold text-amber-600">{stats.inAsteptare}</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center">
+                <Clock className="h-6 w-6 text-amber-500" />
+              </div>
+            </div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Rata Conformitate</CardTitle>
-            <BarChart3 className="h-4 w-4 text-primary" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.rataConformitate}%</div>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Rata Conformitate</p>
+                <p className="text-2xl font-bold">{stats.rataConformitate}%</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
+                <BarChart3 className="h-6 w-6 text-blue-500" />
+              </div>
+            </div>
             <Progress value={stats.rataConformitate} className="mt-2 h-2" />
           </CardContent>
         </Card>
