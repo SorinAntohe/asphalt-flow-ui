@@ -22,13 +22,15 @@ import { ChevronDown } from "lucide-react";
 const dashboardItem = { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard };
 
 const gestiuneItems = [
-  { title: "Liste", url: "/liste", icon: ListChecks },
   { title: "Comenzi", url: "/comenzi", icon: ClipboardList },
   { title: "Receptii", url: "/receptii", icon: PackageCheck },
   { title: "Livrari", url: "/livrari", icon: Truck },
   { title: "Consumuri", url: "/consumuri", icon: BarChart3 },
   { title: "Stocuri", url: "/stocuri", icon: Package },
 ];
+
+// Liste - standalone item at bottom
+const listeItem = { title: "Liste", url: "/liste", icon: ListChecks };
 
 const resurseUmaneItems = [
   { title: "Lista Angajați", url: "/angajati", icon: UserCheck },
@@ -560,6 +562,23 @@ export function AppSidebar() {
                   >
                     <rapoarteItem.icon className="w-5 h-5 flex-shrink-0" />
                     {isOpen && <span>{rapoarteItem.title}</span>}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              {/* Liste - Simple Link at bottom */}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={isActive(listeItem.url)}>
+                  <NavLink
+                    to={listeItem.url}
+                    className={`flex items-center rounded-lg transition-colors hover:bg-sidebar-accent text-sidebar-foreground ${
+                      isOpen ? 'gap-3 px-4 py-2.5' : 'justify-center py-2.5 w-full'
+                    }`}
+                    activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                    title={!isOpen ? listeItem.title : undefined}
+                  >
+                    <listeItem.icon className="w-5 h-5 flex-shrink-0" />
+                    {isOpen && <span>{listeItem.title}</span>}
                   </NavLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
