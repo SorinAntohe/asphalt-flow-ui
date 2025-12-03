@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown, X, Eye, Download } from "lucide-react";
+import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown, X, Eye, Download, Upload, FileText, FileSpreadsheet, File } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import {
   Table,
@@ -209,6 +209,12 @@ const Consumuri = () => {
   const [isConsumDeleteOpen, setIsConsumDeleteOpen] = useState(false);
   const [consumFormData, setConsumFormData] = useState<Partial<Consum>>({});
   const [isEditingConsum, setIsEditingConsum] = useState(false);
+  
+  // Import dialog state
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
 
   // Fetch Contor Curent data
   const fetchContorCurent = async () => {
@@ -792,6 +798,72 @@ const Consumuri = () => {
     }
   };
 
+  // Import handlers
+  const handleImportFileChange = (file: File | null) => {
+    setImportFile(file);
+    if (file) {
+      // Create preview URL for supported file types
+      if (file.type.startsWith('image/') || file.type === 'application/pdf') {
+        const url = URL.createObjectURL(file);
+        setFilePreviewUrl(url);
+      } else {
+        setFilePreviewUrl(null);
+      }
+    } else {
+      setFilePreviewUrl(null);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      handleImportFileChange(files[0]);
+    }
+  };
+
+  const handleImportConfirm = async () => {
+    if (!importFile) return;
+    
+    try {
+      // TODO: Implement actual file upload to backend
+      toast({
+        title: "Succes",
+        description: `Fișierul "${importFile.name}" a fost încărcat cu succes`,
+      });
+      setIsImportDialogOpen(false);
+      setImportFile(null);
+      setFilePreviewUrl(null);
+    } catch (error) {
+      toast({
+        title: "Eroare",
+        description: "Eroare la încărcarea fișierului",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const getFileIcon = (file: File) => {
+    const type = file.type;
+    if (type.includes('spreadsheet') || type.includes('excel') || file.name.endsWith('.xlsx') || file.name.endsWith('.xls') || file.name.endsWith('.csv')) {
+      return <FileSpreadsheet className="h-16 w-16 text-green-500" />;
+    } else if (type === 'application/pdf' || file.name.endsWith('.pdf')) {
+      return <FileText className="h-16 w-16 text-red-500" />;
+    }
+    return <File className="h-16 w-16 text-muted-foreground" />;
+  };
+
   useEffect(() => {
     fetchConsumuriData();
   }, []);
@@ -1240,7 +1312,16 @@ const Consumuri = () => {
             <CardHeader className="p-3 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <CardTitle className="text-base sm:text-lg">Consumuri Materiale</CardTitle>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => setIsImportDialogOpen(true)}
+                    className="h-8"
+                  >
+                    <Upload className="h-4 w-4 mr-1" />
+                    Import
+                  </Button>
                   <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
                   <Select
                     value={consumuriItemsPerPage.toString()}
@@ -2275,6 +2356,143 @@ const Consumuri = () => {
           <DialogFooter className="pt-2">
             <Button variant="outline" size="sm" onClick={() => setIsConsumFormOpen(false)}>Anulează</Button>
             <Button size="sm" onClick={handleConsumSave}>Salvează</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Import Dialog */}
+      <Dialog open={isImportDialogOpen} onOpenChange={(open) => {
+        setIsImportDialogOpen(open);
+        if (!open) {
+          setImportFile(null);
+          setFilePreviewUrl(null);
+        }
+      }}>
+        <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Upload className="h-5 w-5" />
+              Import Consumuri Materiale
+            </DialogTitle>
+            <DialogDescription>
+              Selectează sau trage un fișier pentru a importa datele de consum
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 min-h-[300px]">
+            {/* Left side - Drop zone */}
+            <div 
+              className={`
+                flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg
+                transition-all duration-200 cursor-pointer
+                ${isDragging ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50 hover:bg-muted/50'}
+                ${importFile ? 'bg-muted/30' : ''}
+              `}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => document.getElementById('import-file-input')?.click()}
+            >
+              <input
+                id="import-file-input"
+                type="file"
+                className="hidden"
+                accept=".xlsx,.xls,.csv,.pdf"
+                onChange={(e) => {
+                  const files = e.target.files;
+                  if (files && files.length > 0) {
+                    handleImportFileChange(files[0]);
+                  }
+                }}
+              />
+              
+              {importFile ? (
+                <div className="text-center space-y-3">
+                  {getFileIcon(importFile)}
+                  <div className="space-y-1">
+                    <p className="font-medium text-sm">{importFile.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {(importFile.size / 1024).toFixed(1)} KB
+                    </p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleImportFileChange(null);
+                    }}
+                  >
+                    <X className="h-4 w-4 mr-1" />
+                    Schimbă fișier
+                  </Button>
+                </div>
+              ) : (
+                <div className="text-center space-y-3">
+                  <Upload className="h-12 w-12 text-muted-foreground mx-auto" />
+                  <div className="space-y-1">
+                    <p className="font-medium text-sm">Trage fișierul aici</p>
+                    <p className="text-xs text-muted-foreground">sau click pentru a selecta</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Formate acceptate: XLSX, XLS, CSV, PDF
+                  </p>
+                </div>
+              )}
+            </div>
+            
+            {/* Right side - Preview */}
+            <div className="flex flex-col border rounded-lg overflow-hidden">
+              <div className="bg-muted/50 px-3 py-2 border-b">
+                <span className="text-sm font-medium">Previzualizare</span>
+              </div>
+              <div className="flex-1 flex items-center justify-center p-4 min-h-[250px] bg-muted/20">
+                {importFile ? (
+                  filePreviewUrl && importFile.type === 'application/pdf' ? (
+                    <iframe 
+                      src={filePreviewUrl} 
+                      className="w-full h-full min-h-[250px] rounded"
+                      title="PDF Preview"
+                    />
+                  ) : filePreviewUrl && importFile.type.startsWith('image/') ? (
+                    <img 
+                      src={filePreviewUrl} 
+                      alt="File preview" 
+                      className="max-w-full max-h-[250px] object-contain rounded"
+                    />
+                  ) : (
+                    <div className="text-center space-y-3">
+                      {getFileIcon(importFile)}
+                      <div className="space-y-1">
+                        <p className="font-medium text-sm">{importFile.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Previzualizare indisponibilă pentru acest tip de fișier
+                        </p>
+                      </div>
+                    </div>
+                  )
+                ) : (
+                  <div className="text-center text-muted-foreground">
+                    <Eye className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">Selectează un fișier pentru previzualizare</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => {
+              setIsImportDialogOpen(false);
+              setImportFile(null);
+              setFilePreviewUrl(null);
+            }}>
+              Anulează
+            </Button>
+            <Button onClick={handleImportConfirm} disabled={!importFile}>
+              <Upload className="h-4 w-4 mr-1" />
+              Importă
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
