@@ -1313,15 +1313,6 @@ const Consumuri = () => {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <CardTitle className="text-base sm:text-lg">Consumuri Materiale</CardTitle>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={() => setIsImportDialogOpen(true)}
-                    className="h-8"
-                  >
-                    <Upload className="h-4 w-4 mr-1" />
-                    Import
-                  </Button>
                   <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
                   <Select
                     value={consumuriItemsPerPage.toString()}
@@ -2131,7 +2122,20 @@ const Consumuri = () => {
       <Dialog open={isConsumFormOpen} onOpenChange={setIsConsumFormOpen}>
         <DialogContent className="w-[95vw] max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader className="pb-2">
-            <DialogTitle className="text-base">{isEditingConsum ? 'Editează Consum' : 'Adaugă Consum'}</DialogTitle>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-base">{isEditingConsum ? 'Editează Consum' : 'Adaugă Consum'}</DialogTitle>
+              {!isEditingConsum && (
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => setIsImportDialogOpen(true)}
+                  className="h-8"
+                >
+                  <Upload className="h-4 w-4 mr-1" />
+                  Import
+                </Button>
+              )}
+            </div>
           </DialogHeader>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
             <div className="space-y-1">
