@@ -233,7 +233,6 @@ export default function Angajati() {
       functie: formData.functie,
       data_angajari: formatDateForAPI(formData.data_angajari),
       salariu: parseFloat(formData.salariu),
-      zile_concediu: parseFloat(formData.zile_concediu) || 0,
     };
     console.log("Adăugare angajat - payload trimis:", payload);
     
@@ -610,15 +609,6 @@ export default function Angajati() {
                 type="number"
                 value={formData.salariu}
                 onChange={(e) => setFormData({ ...formData, salariu: e.target.value })}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="zile_concediu">Zile Concediu</Label>
-              <Input
-                id="zile_concediu"
-                type="number"
-                value={formData.zile_concediu}
-                onChange={(e) => setFormData({ ...formData, zile_concediu: e.target.value })}
               />
             </div>
           </div>
