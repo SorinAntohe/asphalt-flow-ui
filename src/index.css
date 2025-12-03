@@ -152,15 +152,23 @@ All colors MUST be HSL.
 @layer base {
   * {
     @apply border-border;
+    outline: none !important;
   }
 
-  /* Remove default focus outline globally - use focus-visible for keyboard navigation */
   *:focus {
-    outline: none;
+    outline: none !important;
   }
 
+  /* Only show focus ring for keyboard navigation */
   *:focus-visible {
-    @apply ring-2 ring-ring ring-offset-2 ring-offset-background;
+    outline: 2px solid hsl(var(--ring)) !important;
+    outline-offset: 2px;
+  }
+  
+  /* Remove focus ring on mouse click */
+  *:focus:not(:focus-visible) {
+    outline: none !important;
+    box-shadow: none;
   }
 
   /* Smooth theme transitions */
