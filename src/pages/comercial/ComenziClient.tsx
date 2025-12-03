@@ -681,7 +681,7 @@ const ComenziClient = () => {
 
       {/* Detail Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" hideCloseButton>
+        <DialogContent className="max-w-2xl" hideCloseButton>
           <DialogHeader>
             <DialogTitle>Detalii Comandă - {viewingDetails?.nr}</DialogTitle>
             <DialogDescription>Informații complete despre comandă</DialogDescription>
@@ -781,7 +781,7 @@ const ComenziClient = () => {
 
       {/* Add/Edit Dialog */}
       <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>{editing ? "Editează Comandă" : "Adaugă Comandă Nouă"}</DialogTitle>
             <DialogDescription>Completează informațiile comenzii.</DialogDescription>

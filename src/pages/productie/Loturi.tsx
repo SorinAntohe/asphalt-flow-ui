@@ -599,7 +599,7 @@ const Loturi = () => {
 
       {/* Detail Dialog */}
       <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" hideCloseButton>
+        <DialogContent className="max-w-4xl" hideCloseButton>
           {selectedLot && (
             <>
               <DialogHeader>

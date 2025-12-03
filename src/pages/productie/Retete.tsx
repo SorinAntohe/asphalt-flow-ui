@@ -490,7 +490,7 @@ const Retete = () => {
 
       {/* Detail Dialog */}
       <Dialog open={!!peekDrawer} onOpenChange={() => setPeekDrawer(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" hideCloseButton>
+        <DialogContent className="max-w-2xl" hideCloseButton>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <FlaskConical className="h-5 w-5" />

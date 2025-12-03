@@ -514,7 +514,7 @@ const OrdineLucru = () => {
 
       {/* Add Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" hideCloseButton>
+        <DialogContent className="max-w-2xl" hideCloseButton>
           <DialogHeader>
             <DialogTitle>Adaugă Ordine de Lucru</DialogTitle>
           </DialogHeader>
