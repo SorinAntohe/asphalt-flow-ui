@@ -1699,86 +1699,172 @@ const Consumuri = () => {
 
       {/* Contor Curent Form Dialog */}
       <Dialog open={isContorCurentFormOpen} onOpenChange={setIsContorCurentFormOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{isEditingContorCurent ? 'Editează Contor Curent' : 'Adaugă Contor Curent'}</DialogTitle>
             <DialogDescription>
               {isEditingContorCurent ? 'Modifică datele contorului' : 'Completează datele pentru noul contor'}
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
-              <div className="space-y-0.5">
-                <Label className="text-sm font-medium">Tip Consum</Label>
-                <p className="text-xs text-muted-foreground">
-                  {contorCurentFormData.tip_consum === 'activ' ? 'Consum activ' : 'Consum pasiv'}
-                </p>
+          <div className="flex flex-col lg:flex-row gap-4">
+            {/* Left side - Form */}
+            <div className="flex-1 space-y-4">
+              <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
+                <div className="space-y-0.5">
+                  <Label className="text-sm font-medium">Tip Consum</Label>
+                  <p className="text-xs text-muted-foreground">
+                    {contorCurentFormData.tip_consum === 'activ' ? 'Consum activ' : 'Consum pasiv'}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs ${contorCurentFormData.tip_consum === 'pasiv' ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>Pasiv</span>
+                  <Switch
+                    checked={contorCurentFormData.tip_consum === 'activ'}
+                    onCheckedChange={(checked) => {
+                      setContorCurentFormData({
+                        ...contorCurentFormData,
+                        tip_consum: checked ? 'activ' : 'pasiv'
+                      });
+                    }}
+                  />
+                  <span className={`text-xs ${contorCurentFormData.tip_consum === 'activ' ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>Activ</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className={`text-xs ${contorCurentFormData.tip_consum === 'pasiv' ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>Pasiv</span>
-                <Switch
-                  checked={contorCurentFormData.tip_consum === 'activ'}
-                  onCheckedChange={(checked) => {
-                    setContorCurentFormData({
-                      ...contorCurentFormData,
-                      tip_consum: checked ? 'activ' : 'pasiv'
+              <div className="space-y-2">
+                <Label>Index Vechi</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={contorCurentFormData.index_vechi || ''}
+                  disabled
+                  className="bg-muted"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Index Nou</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={contorCurentFormData.index_nou || ''}
+                  onChange={(e) => {
+                    const indexNou = Number(e.target.value);
+                    const indexVechi = contorCurentFormData.index_vechi || 0;
+                    const consum = (indexNou - indexVechi) * 200;
+                    setContorCurentFormData({ 
+                      ...contorCurentFormData, 
+                      index_nou: indexNou,
+                      consum_kw: consum
                     });
                   }}
                 />
-                <span className={`text-xs ${contorCurentFormData.tip_consum === 'activ' ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>Activ</span>
+              </div>
+              <div className="space-y-2">
+                <Label>Consum (kW)</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={contorCurentFormData.consum_kw || ''}
+                  disabled
+                  className="bg-muted"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Preț</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={contorCurentFormData.pret || ''}
+                  onChange={(e) => {
+                    setContorCurentFormData({ 
+                      ...contorCurentFormData, 
+                      pret: Number(e.target.value)
+                    });
+                  }}
+                />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label>Index Vechi</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={contorCurentFormData.index_vechi || ''}
-                disabled
-                className="bg-muted"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Index Nou</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={contorCurentFormData.index_nou || ''}
-                onChange={(e) => {
-                  const indexNou = Number(e.target.value);
-                  const indexVechi = contorCurentFormData.index_vechi || 0;
-                  const consum = (indexNou - indexVechi) * 200;
-                  setContorCurentFormData({ 
-                    ...contorCurentFormData, 
-                    index_nou: indexNou,
-                    consum_kw: consum
-                  });
-                }}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Consum (kW)</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={contorCurentFormData.consum_kw || ''}
-                disabled
-                className="bg-muted"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Preț</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={contorCurentFormData.pret || ''}
-                onChange={(e) => {
-                  setContorCurentFormData({ 
-                    ...contorCurentFormData, 
-                    pret: Number(e.target.value)
-                  });
-                }}
-              />
+
+            {/* Right side - Summary */}
+            <div className="lg:w-56 shrink-0">
+              <Card className="h-full">
+                <CardHeader className="py-3 px-4">
+                  <CardTitle className="text-sm">Raport Curent</CardTitle>
+                </CardHeader>
+                <CardContent className="py-2 px-4 space-y-4">
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">Astăzi</p>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="bg-muted/50 rounded p-2">
+                        <p className="text-muted-foreground">Înreg.</p>
+                        <p className="font-semibold text-lg">
+                          {contorCurentData.filter(c => {
+                            const today = new Date();
+                            const [day, month, year] = c.data.split('/');
+                            return day === String(today.getDate()).padStart(2, '0') &&
+                                   month === String(today.getMonth() + 1).padStart(2, '0') &&
+                                   year === String(today.getFullYear());
+                          }).length}
+                        </p>
+                      </div>
+                      <div className="bg-muted/50 rounded p-2">
+                        <p className="text-muted-foreground">Consum</p>
+                        <p className="font-semibold text-lg">
+                          {contorCurentData.filter(c => {
+                            const today = new Date();
+                            const [day, month, year] = c.data.split('/');
+                            return day === String(today.getDate()).padStart(2, '0') &&
+                                   month === String(today.getMonth() + 1).padStart(2, '0') &&
+                                   year === String(today.getFullYear());
+                          }).reduce((sum, c) => sum + (c.consum_kw || 0), 0).toFixed(0)}
+                          <span className="text-xs font-normal ml-1">kW</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">Luna aceasta</p>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="bg-muted/50 rounded p-2">
+                        <p className="text-muted-foreground">Înreg.</p>
+                        <p className="font-semibold text-lg">
+                          {contorCurentData.filter(c => {
+                            const today = new Date();
+                            const [, month, year] = c.data.split('/');
+                            return month === String(today.getMonth() + 1).padStart(2, '0') &&
+                                   year === String(today.getFullYear());
+                          }).length}
+                        </p>
+                      </div>
+                      <div className="bg-muted/50 rounded p-2">
+                        <p className="text-muted-foreground">Consum</p>
+                        <p className="font-semibold text-lg">
+                          {(contorCurentData.filter(c => {
+                            const today = new Date();
+                            const [, month, year] = c.data.split('/');
+                            return month === String(today.getMonth() + 1).padStart(2, '0') &&
+                                   year === String(today.getFullYear());
+                          }).reduce((sum, c) => sum + (c.consum_kw || 0), 0) / 1000).toFixed(1)}
+                          <span className="text-xs font-normal ml-1">MWh</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">Cost Lunar</p>
+                    <div className="bg-primary/10 rounded p-2 text-center">
+                      <p className="font-semibold text-lg text-primary">
+                        {contorCurentData.filter(c => {
+                          const today = new Date();
+                          const [, month, year] = c.data.split('/');
+                          return month === String(today.getMonth() + 1).padStart(2, '0') &&
+                                 year === String(today.getFullYear());
+                        }).reduce((sum, c) => sum + (c.pret || 0), 0).toLocaleString()}
+                        <span className="text-xs font-normal ml-1">RON</span>
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
           <DialogFooter>
@@ -1871,97 +1957,183 @@ const Consumuri = () => {
 
       {/* Contor CTL Form Dialog */}
       <Dialog open={isContorCTLFormOpen} onOpenChange={setIsContorCTLFormOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{isEditingContorCTL ? 'Editează Contor CTL' : 'Adaugă Contor CTL'}</DialogTitle>
             <DialogDescription>
               {isEditingContorCTL ? 'Modifică datele contorului' : 'Completează datele pentru noul contor'}
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Index Vechi Tur</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={contorCTLFormData.index_vechi_tur || ''}
-                disabled
-                className="bg-muted"
-              />
+          <div className="flex flex-col lg:flex-row gap-4">
+            {/* Left side - Form */}
+            <div className="flex-1 space-y-4">
+              <div className="space-y-2">
+                <Label>Index Vechi Tur</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={contorCTLFormData.index_vechi_tur || ''}
+                  disabled
+                  className="bg-muted"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Index Nou Tur</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={contorCTLFormData.index_nou_tur || ''}
+                  onChange={(e) => {
+                    const indexNouTur = Number(e.target.value);
+                    const indexVechiTur = contorCTLFormData.index_vechi_tur || 0;
+                    const returExcesNou = contorCTLFormData.retur_exces_nou || 0;
+                    const returExcesVechi = contorCTLFormData.retur_exces_vechi || 0;
+                    const consumL = (indexNouTur - indexVechiTur) - (returExcesNou - returExcesVechi);
+                    const consumTo = consumL * 0.85;
+                    setContorCTLFormData({ 
+                      ...contorCTLFormData, 
+                      index_nou_tur: indexNouTur,
+                      consum_l: consumL,
+                      consum_to: consumTo
+                    });
+                  }}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Retur Exces Vechi</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={contorCTLFormData.retur_exces_vechi || ''}
+                  disabled
+                  className="bg-muted"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Retur Exces Nou</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={contorCTLFormData.retur_exces_nou || ''}
+                  onChange={(e) => {
+                    const returExcesNou = Number(e.target.value);
+                    const returExcesVechi = contorCTLFormData.retur_exces_vechi || 0;
+                    const indexNouTur = contorCTLFormData.index_nou_tur || 0;
+                    const indexVechiTur = contorCTLFormData.index_vechi_tur || 0;
+                    const consumL = (indexNouTur - indexVechiTur) - (returExcesNou - returExcesVechi);
+                    const consumTo = consumL * 0.85;
+                    setContorCTLFormData({ 
+                      ...contorCTLFormData, 
+                      retur_exces_nou: returExcesNou,
+                      consum_l: consumL,
+                      consum_to: consumTo
+                    });
+                  }}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Consum (L)</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={contorCTLFormData.consum_l || ''}
+                  disabled
+                  className="bg-muted"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Consum (TO)</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={contorCTLFormData.consum_to || ''}
+                  disabled
+                  className="bg-muted"
+                />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label>Index Nou Tur</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={contorCTLFormData.index_nou_tur || ''}
-                onChange={(e) => {
-                  const indexNouTur = Number(e.target.value);
-                  const indexVechiTur = contorCTLFormData.index_vechi_tur || 0;
-                  const returExcesNou = contorCTLFormData.retur_exces_nou || 0;
-                  const returExcesVechi = contorCTLFormData.retur_exces_vechi || 0;
-                  const consumL = (indexNouTur - indexVechiTur) - (returExcesNou - returExcesVechi);
-                  const consumTo = consumL * 0.85;
-                  setContorCTLFormData({ 
-                    ...contorCTLFormData, 
-                    index_nou_tur: indexNouTur,
-                    consum_l: consumL,
-                    consum_to: consumTo
-                  });
-                }}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Retur Exces Vechi</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={contorCTLFormData.retur_exces_vechi || ''}
-                disabled
-                className="bg-muted"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Retur Exces Nou</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={contorCTLFormData.retur_exces_nou || ''}
-                onChange={(e) => {
-                  const returExcesNou = Number(e.target.value);
-                  const returExcesVechi = contorCTLFormData.retur_exces_vechi || 0;
-                  const indexNouTur = contorCTLFormData.index_nou_tur || 0;
-                  const indexVechiTur = contorCTLFormData.index_vechi_tur || 0;
-                  const consumL = (indexNouTur - indexVechiTur) - (returExcesNou - returExcesVechi);
-                  const consumTo = consumL * 0.85;
-                  setContorCTLFormData({ 
-                    ...contorCTLFormData, 
-                    retur_exces_nou: returExcesNou,
-                    consum_l: consumL,
-                    consum_to: consumTo
-                  });
-                }}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Consum (L)</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={contorCTLFormData.consum_l || ''}
-                disabled
-                className="bg-muted"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Consum (TO)</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={contorCTLFormData.consum_to || ''}
-                disabled
-                className="bg-muted"
-              />
+
+            {/* Right side - Summary */}
+            <div className="lg:w-56 shrink-0">
+              <Card className="h-full">
+                <CardHeader className="py-3 px-4">
+                  <CardTitle className="text-sm">Raport CTL</CardTitle>
+                </CardHeader>
+                <CardContent className="py-2 px-4 space-y-4">
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">Astăzi</p>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="bg-muted/50 rounded p-2">
+                        <p className="text-muted-foreground">Înreg.</p>
+                        <p className="font-semibold text-lg">
+                          {contorCTLData.filter(c => {
+                            const today = new Date();
+                            const [day, month, year] = c.data.split('/');
+                            return day === String(today.getDate()).padStart(2, '0') &&
+                                   month === String(today.getMonth() + 1).padStart(2, '0') &&
+                                   year === String(today.getFullYear());
+                          }).length}
+                        </p>
+                      </div>
+                      <div className="bg-muted/50 rounded p-2">
+                        <p className="text-muted-foreground">Consum</p>
+                        <p className="font-semibold text-lg">
+                          {contorCTLData.filter(c => {
+                            const today = new Date();
+                            const [day, month, year] = c.data.split('/');
+                            return day === String(today.getDate()).padStart(2, '0') &&
+                                   month === String(today.getMonth() + 1).padStart(2, '0') &&
+                                   year === String(today.getFullYear());
+                          }).reduce((sum, c) => sum + (c.consum_l || 0), 0).toFixed(0)}
+                          <span className="text-xs font-normal ml-1">L</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">Luna aceasta</p>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="bg-muted/50 rounded p-2">
+                        <p className="text-muted-foreground">Înreg.</p>
+                        <p className="font-semibold text-lg">
+                          {contorCTLData.filter(c => {
+                            const today = new Date();
+                            const [, month, year] = c.data.split('/');
+                            return month === String(today.getMonth() + 1).padStart(2, '0') &&
+                                   year === String(today.getFullYear());
+                          }).length}
+                        </p>
+                      </div>
+                      <div className="bg-muted/50 rounded p-2">
+                        <p className="text-muted-foreground">Consum</p>
+                        <p className="font-semibold text-lg">
+                          {(contorCTLData.filter(c => {
+                            const today = new Date();
+                            const [, month, year] = c.data.split('/');
+                            return month === String(today.getMonth() + 1).padStart(2, '0') &&
+                                   year === String(today.getFullYear());
+                          }).reduce((sum, c) => sum + (c.consum_l || 0), 0) / 1000).toFixed(1)}
+                          <span className="text-xs font-normal ml-1">kL</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">Consum TO Lunar</p>
+                    <div className="bg-primary/10 rounded p-2 text-center">
+                      <p className="font-semibold text-lg text-primary">
+                        {contorCTLData.filter(c => {
+                          const today = new Date();
+                          const [, month, year] = c.data.split('/');
+                          return month === String(today.getMonth() + 1).padStart(2, '0') &&
+                                 year === String(today.getFullYear());
+                        }).reduce((sum, c) => sum + (c.consum_to || 0), 0).toFixed(1)}
+                        <span className="text-xs font-normal ml-1">TO</span>
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
           <DialogFooter>
