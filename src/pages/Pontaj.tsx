@@ -29,6 +29,7 @@ interface Pontaj {
   ora_sfarsit: string;
   pauza_masa: number;
   total_ore: number;
+  zile_concediu: number;
 }
 
 interface Angajat {
@@ -292,7 +293,8 @@ export default function Pontaj() {
       { key: "ora_start" as const, label: "Ora Start" },
       { key: "ora_sfarsit" as const, label: "Ora Sfârșit" },
       { key: "pauza_masa" as const, label: "Pauză Masă (min)" },
-      { key: "total_ore" as const, label: "Total Ore" }
+      { key: "total_ore" as const, label: "Total Ore" },
+      { key: "zile_concediu" as const, label: "Zile Concediu" }
     ];
     exportToCSV(filteredAndSortedData, `pontaj_${format(selectedDate, "dd-MM-yyyy")}`, exportColumns);
     toast({ title: "Succes", description: "Fișierul CSV a fost descărcat." });
@@ -306,7 +308,8 @@ export default function Pontaj() {
     { key: "ora_start", label: "Start" },
     { key: "ora_sfarsit", label: "Sfârșit" },
     { key: "pauza_masa", label: "Pauză" },
-    { key: "total_ore", label: "Total Ore" }
+    { key: "total_ore", label: "Total Ore" },
+    { key: "zile_concediu", label: "Zile Concediu" }
   ];
 
   return (
