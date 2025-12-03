@@ -2121,7 +2121,7 @@ const Consumuri = () => {
       {/* Consum Form Dialog */}
       <Dialog open={isConsumFormOpen} onOpenChange={setIsConsumFormOpen}>
         <DialogContent className="w-[95vw] max-w-5xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader className="pb-2">
+          <DialogHeader className="pb-2 pr-8">
             <div className="flex items-center justify-between">
               <DialogTitle className="text-base">{isEditingConsum ? 'Editează Consum' : 'Adaugă Consum'}</DialogTitle>
               {!isEditingConsum && (
