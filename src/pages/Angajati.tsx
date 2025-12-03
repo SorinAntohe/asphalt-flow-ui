@@ -97,6 +97,7 @@ export default function Angajati() {
     functie: "",
     data_angajari: "",
     salariu: "",
+    zile_concediu: "",
   });
   const { toast } = useToast();
 
@@ -201,6 +202,7 @@ export default function Angajati() {
           functie: formData.functie,
           data_angajari: formData.data_angajari,
           salariu: parseFloat(formData.salariu),
+          zile_concediu: parseFloat(formData.zile_concediu) || 0,
         }),
       });
 
@@ -240,6 +242,7 @@ export default function Angajati() {
             functie: formData.functie,
             data_angajari: formData.data_angajari,
             salariu: parseFloat(formData.salariu),
+            zile_concediu: parseFloat(formData.zile_concediu) || 0,
           },
         }),
       });
@@ -306,6 +309,7 @@ export default function Angajati() {
       functie: "",
       data_angajari: "",
       salariu: "",
+      zile_concediu: "",
     });
     setSelectedAngajat(null);
   };
@@ -317,6 +321,7 @@ export default function Angajati() {
       functie: angajat.functie,
       data_angajari: angajat.data_angajari,
       salariu: String(angajat.salariu),
+      zile_concediu: String(angajat.zile_concediu ?? 0),
     });
     setIsDetailDialogOpen(false);
     setIsEditDialogOpen(true);
@@ -569,6 +574,15 @@ export default function Angajati() {
                 onChange={(e) => setFormData({ ...formData, salariu: e.target.value })}
               />
             </div>
+            <div className="grid gap-2">
+              <Label htmlFor="zile_concediu">Zile Concediu</Label>
+              <Input
+                id="zile_concediu"
+                type="number"
+                value={formData.zile_concediu}
+                onChange={(e) => setFormData({ ...formData, zile_concediu: e.target.value })}
+              />
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
@@ -619,6 +633,15 @@ export default function Angajati() {
                 type="number"
                 value={formData.salariu}
                 onChange={(e) => setFormData({ ...formData, salariu: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="edit-zile_concediu">Zile Concediu</Label>
+              <Input
+                id="edit-zile_concediu"
+                type="number"
+                value={formData.zile_concediu}
+                onChange={(e) => setFormData({ ...formData, zile_concediu: e.target.value })}
               />
             </div>
           </div>
