@@ -32,16 +32,16 @@ const SheetOverlay = React.forwardRef<
 SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
 
 const sheetVariants = cva(
-  "fixed z-50 gap-4 bg-background p-6 shadow-2xl backdrop-blur-sm bg-background/95 transition-all ease-out",
+  "fixed z-50 gap-4 bg-background p-4 sm:p-6 shadow-2xl backdrop-blur-sm bg-background/95 transition-all ease-out overflow-y-auto",
   {
     variants: {
       side: {
-        top: "inset-x-0 top-0 border-b border-border/50 data-[state=closed]:animate-slide-out-top data-[state=open]:animate-slide-in-top",
+        top: "inset-x-0 top-0 border-b border-border/50 max-h-[85vh] data-[state=closed]:animate-slide-out-top data-[state=open]:animate-slide-in-top",
         bottom:
-          "inset-x-0 bottom-0 border-t border-border/50 data-[state=closed]:animate-slide-out-bottom data-[state=open]:animate-slide-in-bottom",
-        left: "inset-y-0 left-0 h-full w-3/4 border-r border-border/50 data-[state=closed]:animate-slide-out-left data-[state=open]:animate-slide-in-left sm:max-w-sm",
+          "inset-x-0 bottom-0 border-t border-border/50 max-h-[85vh] data-[state=closed]:animate-slide-out-bottom data-[state=open]:animate-slide-in-bottom",
+        left: "inset-y-0 left-0 h-full w-[85vw] max-w-md border-r border-border/50 data-[state=closed]:animate-slide-out-left data-[state=open]:animate-slide-in-left",
         right:
-          "inset-y-0 right-0 h-full w-3/4 border-l border-border/50 data-[state=closed]:animate-slide-out-right data-[state=open]:animate-slide-in-right sm:max-w-sm",
+          "inset-y-0 right-0 h-full w-[85vw] max-w-md border-l border-border/50 data-[state=closed]:animate-slide-out-right data-[state=open]:animate-slide-in-right",
       },
     },
     defaultVariants: {
