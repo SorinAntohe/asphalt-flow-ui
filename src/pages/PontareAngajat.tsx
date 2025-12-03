@@ -13,9 +13,15 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 
 export default function PontareAngajat() {
-  const [isPontajActiv, setIsPontajActiv] = useState(false);
+  const [isPontajActiv, setIsPontajActiv] = useState(() => {
+    const saved = localStorage.getItem('pontaj_session_start');
+    return saved !== null;
+  });
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [sessionStart, setSessionStart] = useState<Date | null>(null);
+  const [sessionStart, setSessionStart] = useState<Date | null>(() => {
+    const saved = localStorage.getItem('pontaj_session_start');
+    return saved ? new Date(saved) : null;
+  });
   
   // Sheet states
   const [isAddTimeOpen, setIsAddTimeOpen] = useState(false);
@@ -64,14 +70,17 @@ export default function PontareAngajat() {
   };
 
   const handlePontareIntrare = () => {
+    const now = new Date();
     setIsPontajActiv(true);
-    setSessionStart(new Date());
+    setSessionStart(now);
+    localStorage.setItem('pontaj_session_start', now.toISOString());
     toast.success("Sesiune de lucru începută");
   };
 
   const handlePontareIesire = () => {
     setIsPontajActiv(false);
     setSessionStart(null);
+    localStorage.removeItem('pontaj_session_start');
     toast.success("Sesiune de lucru finalizată");
   };
 
