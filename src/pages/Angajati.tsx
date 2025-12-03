@@ -88,7 +88,9 @@ interface Angajat {
   functie: string;
   data_angajari: string;
   salariu: number;
-  zile_concediu: number;
+  zile_concediu_calculate: number;
+  zile_concediu_luate: number;
+  zile_concediu_ramase: number;
 }
 
 type SortDirection = "asc" | "desc" | null;
@@ -104,7 +106,9 @@ interface Filters {
   functie: ColumnFilter;
   data_angajari: ColumnFilter;
   salariu: ColumnFilter;
-  zile_concediu: ColumnFilter;
+  zile_concediu_calculate: ColumnFilter;
+  zile_concediu_luate: ColumnFilter;
+  zile_concediu_ramase: ColumnFilter;
 }
 
 const initialFilters: Filters = {
@@ -113,7 +117,9 @@ const initialFilters: Filters = {
   functie: { value: "", sortDirection: null },
   data_angajari: { value: "", sortDirection: null },
   salariu: { value: "", sortDirection: null },
-  zile_concediu: { value: "", sortDirection: null },
+  zile_concediu_calculate: { value: "", sortDirection: null },
+  zile_concediu_luate: { value: "", sortDirection: null },
+  zile_concediu_ramase: { value: "", sortDirection: null },
 };
 
 export default function Angajati() {
@@ -132,7 +138,9 @@ export default function Angajati() {
     functie: "",
     data_angajari: "",
     salariu: "",
-    zile_concediu: "",
+    zile_concediu_calculate: "",
+    zile_concediu_luate: "",
+    zile_concediu_ramase: "",
   });
   const { toast } = useToast();
 
@@ -279,7 +287,9 @@ export default function Angajati() {
             functie: formData.functie,
             data_angajari: formatDateForAPI(formData.data_angajari),
             salariu: parseFloat(formData.salariu),
-            zile_concediu: parseFloat(formData.zile_concediu) || 0,
+            zile_concediu_calculate: parseFloat(formData.zile_concediu_calculate) || 0,
+            zile_concediu_luate: parseFloat(formData.zile_concediu_luate) || 0,
+            zile_concediu_ramase: parseFloat(formData.zile_concediu_ramase) || 0,
           },
         }),
       });
@@ -346,7 +356,9 @@ export default function Angajati() {
       functie: "",
       data_angajari: "",
       salariu: "",
-      zile_concediu: "",
+      zile_concediu_calculate: "",
+      zile_concediu_luate: "",
+      zile_concediu_ramase: "",
     });
     setSelectedAngajat(null);
   };
@@ -358,7 +370,9 @@ export default function Angajati() {
       functie: angajat.functie,
       data_angajari: formatDateForInput(angajat.data_angajari),
       salariu: String(angajat.salariu),
-      zile_concediu: String(angajat.zile_concediu ?? 0),
+      zile_concediu_calculate: String(angajat.zile_concediu_calculate ?? 0),
+      zile_concediu_luate: String(angajat.zile_concediu_luate ?? 0),
+      zile_concediu_ramase: String(angajat.zile_concediu_ramase ?? 0),
     });
     setIsDetailDialogOpen(false);
     setIsEditDialogOpen(true);
@@ -376,7 +390,9 @@ export default function Angajati() {
       { key: "functie", label: "Funcție" },
       { key: "data_angajari", label: "Data Angajării" },
       { key: "salariu", label: "Salariu" },
-      { key: "zile_concediu", label: "Zile Concediu" },
+      { key: "zile_concediu_calculate", label: "Zile Concediu Calculate" },
+      { key: "zile_concediu_luate", label: "Zile Concediu Luate" },
+      { key: "zile_concediu_ramase", label: "Zile Concediu Rămase" },
     ]);
   };
 
@@ -488,13 +504,15 @@ export default function Angajati() {
                       <FilterHeader column="functie" label="Funcție" />
                       <FilterHeader column="data_angajari" label="Data Angajării" />
                       <FilterHeader column="salariu" label="Salariu" />
-                      <FilterHeader column="zile_concediu" label="Zile Concediu" />
+                      <FilterHeader column="zile_concediu_calculate" label="Zile Concediu Calculate" />
+                      <FilterHeader column="zile_concediu_luate" label="Zile Concediu Luate" />
+                      <FilterHeader column="zile_concediu_ramase" label="Zile Concediu Rămase" />
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {paginatedData.length === 0 ? (
                       <TableRow className="border-0 hover:bg-transparent">
-                        <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                        <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
                           Nu există angajați.
                         </TableCell>
                       </TableRow>
@@ -510,7 +528,9 @@ export default function Angajati() {
                           <TableCell>{angajat.functie}</TableCell>
                           <TableCell>{angajat.data_angajari}</TableCell>
                           <TableCell>{angajat.salariu?.toLocaleString("ro-RO")} RON</TableCell>
-                          <TableCell>{angajat.zile_concediu ?? 0}</TableCell>
+                          <TableCell>{angajat.zile_concediu_calculate ?? 0}</TableCell>
+                          <TableCell>{angajat.zile_concediu_luate ?? 0}</TableCell>
+                          <TableCell>{angajat.zile_concediu_ramase ?? 0}</TableCell>
                         </TableRow>
                       ))
                     )}
@@ -664,12 +684,30 @@ export default function Angajati() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-zile_concediu">Zile Concediu</Label>
+              <Label htmlFor="edit-zile_concediu_calculate">Zile Concediu Calculate</Label>
               <Input
-                id="edit-zile_concediu"
+                id="edit-zile_concediu_calculate"
                 type="number"
-                value={formData.zile_concediu}
-                onChange={(e) => setFormData({ ...formData, zile_concediu: e.target.value })}
+                value={formData.zile_concediu_calculate}
+                onChange={(e) => setFormData({ ...formData, zile_concediu_calculate: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="edit-zile_concediu_luate">Zile Concediu Luate</Label>
+              <Input
+                id="edit-zile_concediu_luate"
+                type="number"
+                value={formData.zile_concediu_luate}
+                onChange={(e) => setFormData({ ...formData, zile_concediu_luate: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="edit-zile_concediu_ramase">Zile Concediu Rămase</Label>
+              <Input
+                id="edit-zile_concediu_ramase"
+                type="number"
+                value={formData.zile_concediu_ramase}
+                onChange={(e) => setFormData({ ...formData, zile_concediu_ramase: e.target.value })}
               />
             </div>
           </div>
@@ -711,8 +749,16 @@ export default function Angajati() {
                 <p className="font-medium">{selectedAngajat.salariu?.toLocaleString("ro-RO")} RON</p>
               </div>
               <div>
-                <Label className="text-muted-foreground text-xs">Zile Concediu</Label>
-                <p className="font-medium">{selectedAngajat.zile_concediu ?? 0}</p>
+                <Label className="text-muted-foreground text-xs">Zile Concediu Calculate</Label>
+                <p className="font-medium">{selectedAngajat.zile_concediu_calculate ?? 0}</p>
+              </div>
+              <div>
+                <Label className="text-muted-foreground text-xs">Zile Concediu Luate</Label>
+                <p className="font-medium">{selectedAngajat.zile_concediu_luate ?? 0}</p>
+              </div>
+              <div>
+                <Label className="text-muted-foreground text-xs">Zile Concediu Rămase</Label>
+                <p className="font-medium">{selectedAngajat.zile_concediu_ramase ?? 0}</p>
               </div>
             </div>
           )}
