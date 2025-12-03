@@ -320,16 +320,14 @@ const Liste = () => {
 
       <Tabs defaultValue="autoturisme" className="w-full" onValueChange={setActiveTab}>
         <div className="flex flex-col gap-3 mb-4">
-          <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex w-max sm:w-auto h-auto p-1 gap-1">
-              <TabsTrigger value="autoturisme" className="text-xs sm:text-sm px-3 py-1.5 whitespace-nowrap">Autoturisme</TabsTrigger>
-              <TabsTrigger value="soferi" className="text-xs sm:text-sm px-3 py-1.5 whitespace-nowrap">Șoferi</TabsTrigger>
-              <TabsTrigger value="materii" className="text-xs sm:text-sm px-3 py-1.5 whitespace-nowrap">Materii</TabsTrigger>
-              <TabsTrigger value="produse" className="text-xs sm:text-sm px-3 py-1.5 whitespace-nowrap">Produse</TabsTrigger>
-              <TabsTrigger value="clienti" className="text-xs sm:text-sm px-3 py-1.5 whitespace-nowrap">Clienți</TabsTrigger>
-              <TabsTrigger value="furnizori" className="text-xs sm:text-sm px-3 py-1.5 whitespace-nowrap">Furnizori</TabsTrigger>
-            </TabsList>
-          </div>
+          <TabsList className="flex flex-wrap h-auto p-1 gap-1 w-full">
+            <TabsTrigger value="autoturisme" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 min-w-[calc(33.333%-4px)] sm:min-w-0 sm:flex-none">Autoturisme</TabsTrigger>
+            <TabsTrigger value="soferi" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 min-w-[calc(33.333%-4px)] sm:min-w-0 sm:flex-none">Șoferi</TabsTrigger>
+            <TabsTrigger value="materii" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 min-w-[calc(33.333%-4px)] sm:min-w-0 sm:flex-none">Materii</TabsTrigger>
+            <TabsTrigger value="produse" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 min-w-[calc(33.333%-4px)] sm:min-w-0 sm:flex-none">Produse</TabsTrigger>
+            <TabsTrigger value="clienti" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 min-w-[calc(33.333%-4px)] sm:min-w-0 sm:flex-none">Clienți</TabsTrigger>
+            <TabsTrigger value="furnizori" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 min-w-[calc(33.333%-4px)] sm:min-w-0 sm:flex-none">Furnizori</TabsTrigger>
+          </TabsList>
           <div className="flex gap-2">
             <Button 
               variant="outline" 
