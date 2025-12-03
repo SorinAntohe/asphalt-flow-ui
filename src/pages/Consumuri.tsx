@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { API_BASE_URL } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
@@ -2118,7 +2118,7 @@ const Consumuri = () => {
 
       {/* Consum Form Dialog */}
       <Dialog open={isConsumFormOpen} onOpenChange={setIsConsumFormOpen}>
-        <DialogContent className="w-[95vw] max-w-5xl">
+        <DialogContent className="w-[95vw] max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader className="pb-2 pr-8">
             <div className="flex items-center justify-between">
               <DialogTitle className="text-base">{isEditingConsum ? 'Editează Consum' : 'Adaugă Consum'}</DialogTitle>
@@ -2135,7 +2135,10 @@ const Consumuri = () => {
               )}
             </div>
           </DialogHeader>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+          <div className="flex flex-col lg:flex-row gap-4">
+            {/* Left side - Form inputs */}
+            <div className="flex-1">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
             <div className="space-y-1">
               <Label className="text-xs">Produs</Label>
               <Input
@@ -2353,6 +2356,114 @@ const Consumuri = () => {
                 value={consumFormData.consum_ctl || ''}
                 onChange={(e) => setConsumFormData({ ...consumFormData, consum_ctl: Number(e.target.value) })}
               />
+              </div>
+            </div>
+            </div>
+
+            {/* Right side - Consumption Summary */}
+            <div className="lg:w-64 shrink-0">
+              <Card className="h-full">
+                <CardHeader className="py-3 px-4">
+                  <CardTitle className="text-sm">Raport Consum</CardTitle>
+                </CardHeader>
+                <CardContent className="py-2 px-4 space-y-4">
+                  {/* Daily Summary */}
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">Astăzi</p>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="bg-muted/50 rounded p-2">
+                        <p className="text-muted-foreground">Înregistrări</p>
+                        <p className="font-semibold text-lg">
+                          {consumuriData.filter(c => {
+                            const today = new Date();
+                            const [day, month, year] = c.data.split('/');
+                            return day === String(today.getDate()).padStart(2, '0') &&
+                                   month === String(today.getMonth() + 1).padStart(2, '0') &&
+                                   year === String(today.getFullYear());
+                          }).length}
+                        </p>
+                      </div>
+                      <div className="bg-muted/50 rounded p-2">
+                        <p className="text-muted-foreground">Cantitate</p>
+                        <p className="font-semibold text-lg">
+                          {consumuriData.filter(c => {
+                            const today = new Date();
+                            const [day, month, year] = c.data.split('/');
+                            return day === String(today.getDate()).padStart(2, '0') &&
+                                   month === String(today.getMonth() + 1).padStart(2, '0') &&
+                                   year === String(today.getFullYear());
+                          }).reduce((sum, c) => sum + (c.cantitate || 0), 0).toFixed(0)}
+                          <span className="text-xs font-normal ml-1">t</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Monthly Summary */}
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">Luna aceasta</p>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="bg-muted/50 rounded p-2">
+                        <p className="text-muted-foreground">Înregistrări</p>
+                        <p className="font-semibold text-lg">
+                          {consumuriData.filter(c => {
+                            const today = new Date();
+                            const [, month, year] = c.data.split('/');
+                            return month === String(today.getMonth() + 1).padStart(2, '0') &&
+                                   year === String(today.getFullYear());
+                          }).length}
+                        </p>
+                      </div>
+                      <div className="bg-muted/50 rounded p-2">
+                        <p className="text-muted-foreground">Cantitate</p>
+                        <p className="font-semibold text-lg">
+                          {consumuriData.filter(c => {
+                            const today = new Date();
+                            const [, month, year] = c.data.split('/');
+                            return month === String(today.getMonth() + 1).padStart(2, '0') &&
+                                   year === String(today.getFullYear());
+                          }).reduce((sum, c) => sum + (c.cantitate || 0), 0).toFixed(0)}
+                          <span className="text-xs font-normal ml-1">t</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Top Materials */}
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">Top Materiale (Lunar)</p>
+                    <div className="space-y-1 text-xs">
+                      {(() => {
+                        const monthData = consumuriData.filter(c => {
+                          const today = new Date();
+                          const [, month, year] = c.data.split('/');
+                          return month === String(today.getMonth() + 1).padStart(2, '0') &&
+                                 year === String(today.getFullYear());
+                        });
+                        const bitumTotal = monthData.reduce((sum, c) => sum + (c.bitum || 0), 0);
+                        const fillerTotal = monthData.reduce((sum, c) => sum + (c.filler || 0), 0);
+                        const apaTotal = monthData.reduce((sum, c) => sum + (c.apa || 0), 0);
+                        return (
+                          <>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Bitum</span>
+                              <span className="font-medium">{bitumTotal.toFixed(1)} t</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Filler</span>
+                              <span className="font-medium">{fillerTotal.toFixed(1)} t</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Apă</span>
+                              <span className="font-medium">{apaTotal.toFixed(1)} t</span>
+                            </div>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
           <DialogFooter className="pt-2">
