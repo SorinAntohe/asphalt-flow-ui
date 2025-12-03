@@ -371,7 +371,7 @@ const Documente = () => {
               <CardDescription>Gestionare avize de însoțire a mărfurilor</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border overflow-x-auto">
+              <div className="rounded-md border overflow-x-auto" tabIndex={-1}>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -530,7 +530,7 @@ const Documente = () => {
               <CardDescription>Gestionare facturi fiscale</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border overflow-x-auto">
+              <div className="rounded-md border overflow-x-auto" tabIndex={-1}>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -669,7 +669,7 @@ const Documente = () => {
               <CardDescription>Monitorizare transmitere facturi în sistemul e-Factura ANAF</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border overflow-x-auto">
+              <div className="rounded-md border overflow-x-auto" tabIndex={-1}>
                 <Table>
                   <TableHeader>
                     <TableRow>

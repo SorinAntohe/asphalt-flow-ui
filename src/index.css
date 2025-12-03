@@ -152,9 +152,9 @@ All colors MUST be HSL.
 @layer base {
   * {
     @apply border-border;
-    outline: none !important;
   }
 
+  /* Remove focus outline on all elements when clicked */
   *:focus {
     outline: none !important;
   }
@@ -168,7 +168,17 @@ All colors MUST be HSL.
   /* Remove focus ring on mouse click */
   *:focus:not(:focus-visible) {
     outline: none !important;
-    box-shadow: none;
+    box-shadow: none !important;
+  }
+
+  /* Specifically target scrollable containers */
+  [class*="overflow-x-auto"]:focus,
+  [class*="overflow-y-auto"]:focus,
+  [class*="overflow-auto"]:focus,
+  div:focus,
+  table:focus,
+  section:focus {
+    outline: none !important;
   }
 
   /* Smooth theme transitions */
