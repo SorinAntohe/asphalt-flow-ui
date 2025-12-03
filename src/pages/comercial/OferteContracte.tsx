@@ -617,22 +617,25 @@ const OferteContracte = () => {
       {/* Detail Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
         <DialogContent className="max-w-2xl" hideCloseButton>
-          <DialogHeader>
-            <DialogTitle>
-              Detalii {viewingDetails?.tip === "oferta" ? "Ofertă" : "Contract"} - {viewingDetails?.nr}
-            </DialogTitle>
-            <DialogDescription>
-              Informații complete
-            </DialogDescription>
+          <DialogHeader className="pb-2">
+            <div className="flex justify-between items-start">
+              <div>
+                <DialogTitle>
+                  Detalii {viewingDetails?.tip === "oferta" ? "Ofertă" : "Contract"} - {viewingDetails?.nr}
+                </DialogTitle>
+                <DialogDescription>
+                  Informații complete
+                </DialogDescription>
+              </div>
+              {viewingDetails && (
+                <Badge className={statusColors[viewingDetails.status]}>{viewingDetails.status}</Badge>
+              )}
+            </div>
           </DialogHeader>
           
           {viewingDetails && (
-            <div className="grid gap-4 py-4">
-              <div className="flex justify-end">
-                <Badge className={statusColors[viewingDetails.status]}>{viewingDetails.status}</Badge>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid gap-3">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm border rounded-lg p-3 bg-muted/30">
                 <div><span className="text-muted-foreground">Client:</span> <span className="font-medium">{viewingDetails.client}</span></div>
                 <div><span className="text-muted-foreground">Proiect:</span> <span className="font-medium">{viewingDetails.proiect}</span></div>
                 <div><span className="text-muted-foreground">Produs:</span> <span className="font-medium">{viewingDetails.produs}</span></div>
@@ -645,39 +648,42 @@ const OferteContracte = () => {
                 )}
               </div>
               
-              {viewingDetails.conditiiComerciale && (
-                <div className="border-t pt-4">
-                  <p className="text-sm text-muted-foreground mb-1">Condiții comerciale:</p>
-                  <p className="text-sm">{viewingDetails.conditiiComerciale}</p>
-                </div>
-              )}
-              
-              {viewingDetails.observatii && (
-                <div className="border-t pt-4">
-                  <p className="text-sm text-muted-foreground mb-1">Observații:</p>
-                  <p className="text-sm">{viewingDetails.observatii}</p>
+              {(viewingDetails.conditiiComerciale || viewingDetails.observatii) && (
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  {viewingDetails.conditiiComerciale && (
+                    <div className="border rounded-lg p-3">
+                      <p className="text-muted-foreground mb-1">Condiții comerciale:</p>
+                      <p>{viewingDetails.conditiiComerciale}</p>
+                    </div>
+                  )}
+                  {viewingDetails.observatii && (
+                    <div className="border rounded-lg p-3">
+                      <p className="text-muted-foreground mb-1">Observații:</p>
+                      <p>{viewingDetails.observatii}</p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
           )}
 
-          <DialogFooter className="flex-col sm:flex-row gap-2">
+          <DialogFooter className="flex-wrap gap-1 pt-2">
             <Button variant="outline" size="sm" onClick={handleDuplicate}>
-              <Copy className="w-4 h-4 mr-2" />Duplichează
+              <Copy className="w-4 h-4 mr-1" />Duplichează
             </Button>
             <Button variant="outline" size="sm" onClick={handleSendEmail}>
-              <Mail className="w-4 h-4 mr-2" />Trimite pe email
+              <Mail className="w-4 h-4 mr-1" />Trimite pe email
             </Button>
             {viewingDetails?.tip === "oferta" && viewingDetails?.status === "Acceptat" && (
               <Button variant="outline" size="sm" onClick={handleGenerateContract}>
-                <FileText className="w-4 h-4 mr-2" />Generează contract
+                <FileText className="w-4 h-4 mr-1" />Generează contract
               </Button>
             )}
             <Button variant="outline" size="sm" onClick={() => { if (viewingDetails) { handleOpenEdit(viewingDetails); setViewingDetails(null); } }}>
-              <Pencil className="w-4 h-4 mr-2" />Editează
+              <Pencil className="w-4 h-4 mr-1" />Editează
             </Button>
             <Button variant="destructive" size="sm" onClick={() => { if (viewingDetails) { setDeleting(viewingDetails); setViewingDetails(null); } }}>
-              <Trash2 className="w-4 h-4 mr-2" />Șterge
+              <Trash2 className="w-4 h-4 mr-1" />Șterge
             </Button>
             <Button variant="secondary" size="sm" onClick={() => setViewingDetails(null)}>Închide</Button>
           </DialogFooter>
