@@ -11,8 +11,8 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List 
     ref={ref} 
     className={cn(
-      "inline-flex h-12 items-center justify-center rounded-2xl bg-muted/50 p-1.5 text-muted-foreground gap-1",
-      "backdrop-blur-sm border border-border/30 shadow-sm",
+      "inline-flex h-12 sm:h-14 items-center justify-center rounded-2xl bg-muted/50 p-1 sm:p-1.5 text-muted-foreground gap-0.5 sm:gap-1",
+      "backdrop-blur-sm border border-border/30 shadow-sm w-full sm:w-auto overflow-x-auto",
       className
     )} 
     {...props} 
@@ -27,14 +27,14 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger 
     ref={ref} 
     className={cn(
-      "inline-flex items-center justify-center whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-medium",
-      "ring-offset-background transition-all duration-300 ease-out",
+      "inline-flex items-center justify-center whitespace-nowrap rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium",
+      "ring-offset-background transition-all duration-300 ease-out touch-manipulation",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
       "disabled:pointer-events-none disabled:opacity-50",
       "data-[state=active]:bg-background data-[state=active]:text-foreground",
       "data-[state=active]:shadow-md data-[state=active]:border data-[state=active]:border-border/50",
       "hover:text-foreground/80 hover:bg-background/50",
-      "relative overflow-hidden",
+      "relative overflow-hidden flex-1 sm:flex-none min-w-0",
       className
     )} 
     {...props} 

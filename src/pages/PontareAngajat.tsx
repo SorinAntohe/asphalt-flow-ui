@@ -104,7 +104,7 @@ export default function PontareAngajat() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-lg mx-auto px-4 sm:px-0">
         {/* Tabs */}
         <Tabs defaultValue="dashboard" className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-transparent border-b border-border rounded-none h-auto p-0">
