@@ -80,7 +80,7 @@ export function TopBar() {
                 </span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80 p-2">
+            <DropdownMenuContent align="end" className="w-[calc(100vw-1.5rem)] sm:w-80 max-w-80 p-2 mr-1 sm:mr-0">
               <DropdownMenuLabel className="text-sm font-semibold">Notificări</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="flex flex-col items-start gap-1 p-3 rounded-lg cursor-pointer">
