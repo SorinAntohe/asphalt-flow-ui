@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -596,164 +595,117 @@ const OrdineLucru = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Detail Peek Drawer (Sheet) */}
-      <Sheet open={!!selectedWorkOrder} onOpenChange={(open) => !open && setSelectedWorkOrder(null)}>
-        <SheetContent className="sm:max-w-2xl overflow-y-auto">
+      {/* Detail Dialog */}
+      <Dialog open={!!selectedWorkOrder} onOpenChange={(open) => !open && setSelectedWorkOrder(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" hideCloseButton>
+          <DialogHeader>
+            <div className="flex items-center justify-between">
+              <DialogTitle>{selectedWorkOrder?.nr_ordine}</DialogTitle>
+              <div className="flex gap-2">
+                {selectedWorkOrder && getStatusBadge(selectedWorkOrder.status)}
+                {selectedWorkOrder && getPriorityBadge(selectedWorkOrder.prioritate)}
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground">{selectedWorkOrder?.utilaj}</p>
+          </DialogHeader>
+
           {selectedWorkOrder && (
-            <>
-              <SheetHeader>
-                <div className="flex items-center justify-between">
-                  <SheetTitle>{selectedWorkOrder.nr_ordine}</SheetTitle>
-                  <div className="flex gap-2">
-                    {getStatusBadge(selectedWorkOrder.status)}
-                    {getPriorityBadge(selectedWorkOrder.prioritate)}
-                  </div>
-                </div>
-                <p className="text-sm text-muted-foreground">{selectedWorkOrder.utilaj}</p>
-              </SheetHeader>
-
-              <div className="space-y-6 mt-6">
-                {/* Basic Info */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Tip Intervenție</p>
-                    <p className="font-medium text-foreground mt-1">
-                      {selectedWorkOrder.tip === "preventiva" ? "Preventivă" : "Corectivă"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Data Creare</p>
-                    <p className="font-medium text-foreground mt-1">{selectedWorkOrder.data_creare}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Tehnician</p>
-                    <p className="font-medium text-foreground mt-1">{selectedWorkOrder.tehnician || "Neasignat"}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Timp Staționare</p>
-                    <p className={`font-medium mt-1 ${selectedWorkOrder.timp_stationare > 8 ? "text-destructive" : "text-foreground"}`}>
-                      {selectedWorkOrder.timp_stationare} ore
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Cost Total</p>
-                    <p className="font-medium text-foreground mt-1">{selectedWorkOrder.cost.toLocaleString()} RON</p>
-                  </div>
-                  {selectedWorkOrder.data_finalizare && (
-                    <div>
-                      <p className="text-sm text-muted-foreground">Data Finalizare</p>
-                      <p className="font-medium text-foreground mt-1">{selectedWorkOrder.data_finalizare}</p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Description */}
+            <div className="space-y-4 py-4">
+              {/* Basic Info */}
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-2">Descriere</p>
-                  <p className="text-sm text-foreground">{selectedWorkOrder.descriere}</p>
+                  <p className="text-sm text-muted-foreground">Tip Intervenție</p>
+                  <p className="font-medium">{selectedWorkOrder.tip === "preventiva" ? "Preventivă" : "Corectivă"}</p>
                 </div>
-
-                {/* Piese folosite */}
-                {selectedWorkOrder.piese_folosite.length > 0 && (
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-3">Piese Folosite</p>
-                    <div className="space-y-2">
-                      {selectedWorkOrder.piese_folosite.map((piesa, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-3 bg-muted/50 rounded-md">
-                          <div>
-                            <p className="text-sm font-medium text-foreground">{piesa.nume}</p>
-                            <p className="text-xs text-muted-foreground">Cantitate: {piesa.cantitate}</p>
-                          </div>
-                          <p className="text-sm font-semibold text-foreground">{piesa.cost.toLocaleString()} RON</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Timpi */}
-                {selectedWorkOrder.timpi.length > 0 && (
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-3">Timp Alocat pe Activități</p>
-                    <div className="space-y-2">
-                      {selectedWorkOrder.timpi.map((timp, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-3 bg-muted/50 rounded-md">
-                          <p className="text-sm text-foreground">{timp.activitate}</p>
-                          <Badge variant="outline">
-                            <Clock className="h-3 w-3 mr-1" />
-                            {timp.durata}h
-                          </Badge>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Fotografii */}
-                {selectedWorkOrder.fotografii.length > 0 && (
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-3">Fotografii</p>
-                    <div className="grid grid-cols-2 gap-3">
-                      {selectedWorkOrder.fotografii.map((foto, idx) => (
-                        <div key={idx} className="aspect-video bg-muted rounded-md flex items-center justify-center">
-                          <span className="text-sm text-muted-foreground">{foto}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Timeline */}
                 <div>
-                  <p className="text-sm text-muted-foreground mb-3">Timeline Execuție</p>
-                  <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">Data Creare</p>
+                  <p className="font-medium">{selectedWorkOrder.data_creare}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Tehnician</p>
+                  <p className="font-medium">{selectedWorkOrder.tehnician || "Neasignat"}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Timp Staționare</p>
+                  <p className={`font-medium ${selectedWorkOrder.timp_stationare > 8 ? "text-destructive" : ""}`}>
+                    {selectedWorkOrder.timp_stationare} ore
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Cost Total</p>
+                  <p className="font-medium">{selectedWorkOrder.cost.toLocaleString()} RON</p>
+                </div>
+                {selectedWorkOrder.data_finalizare && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Data Finalizare</p>
+                    <p className="font-medium">{selectedWorkOrder.data_finalizare}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Description */}
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">Descriere</p>
+                <p className="text-sm">{selectedWorkOrder.descriere}</p>
+              </div>
+
+              {/* Piese folosite */}
+              {selectedWorkOrder.piese_folosite.length > 0 && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-2">Piese Folosite</p>
+                  <div className="space-y-2">
+                    {selectedWorkOrder.piese_folosite.map((piesa, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-2 bg-muted/50 rounded-md text-sm">
+                        <div>
+                          <p className="font-medium">{piesa.nume}</p>
+                          <p className="text-xs text-muted-foreground">Cantitate: {piesa.cantitate}</p>
+                        </div>
+                        <p className="font-semibold">{piesa.cost.toLocaleString()} RON</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Timeline */}
+              {selectedWorkOrder.timeline.length > 0 && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-2">Timeline</p>
+                  <div className="space-y-2">
                     {selectedWorkOrder.timeline.map((event, idx) => (
-                      <div key={idx} className="flex gap-3 relative">
-                        {idx !== selectedWorkOrder.timeline.length - 1 && (
-                          <div className="absolute left-2 top-6 bottom-0 w-px bg-border" />
-                        )}
-                        <div className="w-4 h-4 rounded-full bg-primary mt-1 z-10" />
-                        <div className="flex-1 pb-2">
-                          <p className="text-sm font-medium text-foreground">{event.actiune}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {event.data} • {event.user}
-                          </p>
+                      <div key={idx} className="flex gap-3 text-sm">
+                        <div className="w-2 h-2 rounded-full bg-primary mt-1.5" />
+                        <div>
+                          <p className="font-medium">{event.actiune}</p>
+                          <p className="text-xs text-muted-foreground">{event.data} • {event.user}</p>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
-
-                {/* Actions */}
-                <div className="flex flex-wrap gap-2 pt-4 border-t border-border">
-                  {selectedWorkOrder.status !== "inchis" && (
-                    <>
-                      <Button
-                        variant="outline"
-                        className="gap-2"
-                        onClick={() => {
-                          setIsAssignDialogOpen(true);
-                        }}
-                      >
-                        <Users className="h-4 w-4" />
-                        Asignează
-                      </Button>
-                      <Button className="gap-2">
-                        <CheckCircle2 className="h-4 w-4" />
-                        Închide Ordine
-                      </Button>
-                    </>
-                  )}
-                  <Button variant="outline" className="gap-2">
-                    <Printer className="h-4 w-4" />
-                    Tipărește Raport
-                  </Button>
-                </div>
-              </div>
-            </>
+              )}
+            </div>
           )}
-        </SheetContent>
-      </Sheet>
+
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            {selectedWorkOrder?.status !== "inchis" && (
+              <>
+                <Button variant="outline" size="sm" onClick={() => setIsAssignDialogOpen(true)}>
+                  <Users className="w-4 h-4 mr-2" />
+                  Asignează
+                </Button>
+                <Button size="sm">
+                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                  Închide Ordine
+                </Button>
+              </>
+            )}
+            <Button variant="outline" size="sm" onClick={() => setSelectedWorkOrder(null)}>
+              Închide
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Assign Dialog */}
       <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
