@@ -10,7 +10,8 @@ import { Scale, Search, Wifi, WifiOff, Truck, Package, Plus } from "lucide-react
 import { SessionCard } from "./cantar/components/SessionCard";
 import { ActiveWeighPanel } from "./cantar/components/ActiveWeighPanel";
 import { RowPickerDialog } from "./cantar/components/RowPickerDialog";
-import { WeighSession, EligibleRow } from "./cantar/types";
+import { NewWeighingDialog } from "./cantar/components/NewWeighingDialog";
+import { WeighSession, EligibleRow, Direction } from "./cantar/types";
 import { toast } from "@/hooks/use-toast";
 
 // Mock data
@@ -108,6 +109,7 @@ export default function ConsolaCantarire() {
   const [rowPickerOpen, setRowPickerOpen] = useState(false);
   const [eligibleRows, setEligibleRows] = useState<EligibleRow[]>([]);
   const [pendingSessionData, setPendingSessionData] = useState<Partial<WeighSession> | null>(null);
+  const [newWeighingDialogOpen, setNewWeighingDialogOpen] = useState(false);
 
   // Check if there's an existing session for this nr auto
   const existingSession = useMemo(() => {
@@ -210,6 +212,33 @@ export default function ConsolaCantarire() {
     }
   };
 
+  const handleNewWeighingCreated = (sessionData: { direction: Direction; orderNo?: string; poNo?: string; nrAuto: string }) => {
+    const newSession: WeighSession = {
+      id: `new-${Date.now()}`,
+      sessionCode: `SC-${String(Date.now()).slice(-3)}`,
+      direction: sessionData.direction,
+      poNo: sessionData.poNo,
+      orderNo: sessionData.orderNo,
+      rowId: `ROW-${String(Date.now()).slice(-3)}`,
+      nrAuto: sessionData.nrAuto,
+      step: '1/2',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      createdBy: "Current User",
+      plantId: selectedPlant,
+      financeApproved: true,
+    };
+    
+    setActiveSession(newSession);
+    setNrAuto(sessionData.nrAuto);
+    setQueue1(prev => [...prev, newSession]);
+    
+    toast({
+      title: "Sesiune creată",
+      description: `Cod sesiune: ${newSession.sessionCode} - ${sessionData.nrAuto}`
+    });
+  };
+
   const handleWeightEntered = async (type: 'TARA' | 'BRUT', value: number) => {
     if (!activeSession) return;
 
@@ -274,10 +303,7 @@ export default function ConsolaCantarire() {
           
           <div className="flex flex-wrap items-center gap-2">
             {/* New Weighing Button */}
-            <Button onClick={() => {
-              setActiveSession(null);
-              setNrAuto("");
-            }}>
+            <Button onClick={() => setNewWeighingDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Cântărire nouă
             </Button>
@@ -400,6 +426,13 @@ export default function ConsolaCantarire() {
         onSelect={handleRowSelect}
         orderOrPo={pendingSessionData?.direction === 'INBOUND' ? 'PO-2024-XXX' : 'ORD-2024-XXX'}
         isInbound={pendingSessionData?.direction === 'INBOUND'}
+      />
+
+      {/* New Weighing Dialog */}
+      <NewWeighingDialog
+        open={newWeighingDialogOpen}
+        onOpenChange={setNewWeighingDialogOpen}
+        onSessionCreated={handleNewWeighingCreated}
       />
     </>
   );
