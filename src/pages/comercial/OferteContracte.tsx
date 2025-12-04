@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { FileCheck, Plus, Download, Copy, Mail, FileText, Pencil, Trash2, X } from "lucide-react";
+import { FileCheck, Plus, Download, Copy, Mail, FileText, Pencil, Trash2, X, CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -11,9 +11,14 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
 import { exportToCSV } from "@/lib/exportUtils";
 import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
+import { format, addDays } from "date-fns";
+import { ro } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 
 // Types
 interface ProdusItem {
@@ -901,20 +906,52 @@ const OferteContracte = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Valabilitate</Label>
-                <Input placeholder="DD/MM/YYYY" value={form.valabilitate} onChange={(e) => setForm({ ...form, valabilitate: e.target.value })} />
+                <Label>Valabilitate (max 30 zile)</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal h-12",
+                        !form.valabilitate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {form.valabilitate || "Selectează data"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={form.valabilitate ? (() => {
+                        const parts = form.valabilitate.split('/');
+                        if (parts.length === 3) {
+                          return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+                        }
+                        return undefined;
+                      })() : undefined}
+                      onSelect={(date) => {
+                        if (date) {
+                          setForm({ ...form, valabilitate: format(date, 'dd/MM/yyyy') });
+                        }
+                      }}
+                      disabled={(date) => date < new Date() || date > addDays(new Date(), 30)}
+                      initialFocus
+                      locale={ro}
+                      className="p-3 pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
               <div className="space-y-2">
-                <Label>Termen plată</Label>
-                <Select value={form.termenPlata} onValueChange={(v) => setForm({ ...form, termenPlata: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="15 zile">15 zile</SelectItem>
-                    <SelectItem value="30 zile">30 zile</SelectItem>
-                    <SelectItem value="45 zile">45 zile</SelectItem>
-                    <SelectItem value="60 zile">60 zile</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label>Termen plată (zile)</Label>
+                <Input 
+                  type="number" 
+                  min="1"
+                  placeholder="ex: 30"
+                  value={form.termenPlata.replace(' zile', '')} 
+                  onChange={(e) => setForm({ ...form, termenPlata: e.target.value ? `${e.target.value} zile` : '' })} 
+                />
               </div>
             </div>
             <div className="space-y-2">
