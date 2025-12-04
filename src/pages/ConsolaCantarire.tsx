@@ -229,13 +229,12 @@ export default function ConsolaCantarire() {
       financeApproved: true,
     };
     
-    setActiveSession(newSession);
-    setNrAuto(sessionData.nrAuto);
+    // Adaugă doar în coadă, nu setează ca sesiune activă
     setQueue1(prev => [...prev, newSession]);
     
     toast({
-      title: "Sesiune creată",
-      description: `Cod sesiune: ${newSession.sessionCode} - ${sessionData.nrAuto}`
+      title: "Cântărire adăugată în coadă",
+      description: `${sessionData.nrAuto} - ${sessionData.direction === 'INBOUND' ? 'Recepție' : 'Livrare'}`
     });
   };
 

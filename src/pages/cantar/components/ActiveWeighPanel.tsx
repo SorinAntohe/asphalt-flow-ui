@@ -34,18 +34,11 @@ export function ActiveWeighPanel({
   const [weightType, setWeightType] = useState<'TARA' | 'BRUT'>('TARA');
   const [isSaving, setIsSaving] = useState(false);
 
-  const normalizeNrAuto = (value: string) => {
-    return value.toUpperCase().replace(/\s+/g, ' ').trim();
-  };
-
-  const validateNrAuto = (value: string): boolean => {
-    const pattern = /^[A-Z]{1,2}\s?\d{2,3}\s?[A-Z]{3}$/;
-    return pattern.test(value.replace(/\s+/g, ' ').trim());
-  };
-
   const handleNrAutoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onNrAutoChange(normalizeNrAuto(e.target.value));
+    onNrAutoChange(e.target.value);
   };
+
+  const nrAutoValid = nrAuto.trim().length > 0;
 
   const handleOpenWeightDialog = (type: 'TARA' | 'BRUT') => {
     setWeightType(type);
@@ -92,7 +85,7 @@ export function ActiveWeighPanel({
     ? session.masaBrut - session.tara 
     : null;
 
-  const nrAutoValid = validateNrAuto(nrAuto);
+  
 
   return (
     <Card className="h-full flex flex-col">
@@ -120,16 +113,11 @@ export function ActiveWeighPanel({
           <Label htmlFor="nr-auto">Nr. Auto *</Label>
           <Input
             id="nr-auto"
-            placeholder="ex. B 123 ABC"
+            placeholder="Nr. înmatriculare"
             value={nrAuto}
             onChange={handleNrAutoChange}
             className="font-mono text-lg"
           />
-          {nrAuto && !nrAutoValid && (
-            <p className="text-xs text-destructive">
-              Format nevalid. Exemplu: B 123 ABC
-            </p>
-          )}
         </div>
 
         {/* Start/Continue Session Button */}
