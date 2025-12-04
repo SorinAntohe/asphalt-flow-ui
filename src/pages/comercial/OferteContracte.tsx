@@ -95,6 +95,8 @@ const statusColors: Record<string, string> = {
   Expirat: "bg-red-500/20 text-red-600 dark:text-red-400",
 };
 
+const statusOptions = ["Draft", "Trimis", "Acceptat", "Expirat"] as const;
+
 const OferteContracte = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"oferte" | "contracte">("oferte");
@@ -382,6 +384,19 @@ const OferteContracte = () => {
     
     toast({ title: "Succes", description: `${deleting.tip === "oferta" ? "Oferta" : "Contractul"} a fost șters.` });
     setDeleting(null);
+  };
+
+  const handleStatusChange = (item: Item, newStatus: "Draft" | "Trimis" | "Acceptat" | "Expirat") => {
+    if (item.tip === "oferta") {
+      setOferte(prev => prev.map(o => o.id === item.id ? { ...o, status: newStatus } : o));
+    } else {
+      setContracte(prev => prev.map(c => c.id === item.id ? { ...c, status: newStatus } : c));
+    }
+    // Update viewingDetails if open
+    if (viewingDetails && viewingDetails.id === item.id && viewingDetails.tip === item.tip) {
+      setViewingDetails({ ...viewingDetails, status: newStatus });
+    }
+    toast({ title: "Status actualizat", description: `Statusul a fost schimbat în "${newStatus}".` });
   };
 
   const handleDuplicate = () => {
@@ -714,7 +729,21 @@ const OferteContracte = () => {
                 </DialogDescription>
               </div>
               {viewingDetails && (
-                <Badge className={statusColors[viewingDetails.status]}>{viewingDetails.status}</Badge>
+                <Select 
+                  value={viewingDetails.status} 
+                  onValueChange={(v) => handleStatusChange(viewingDetails, v as "Draft" | "Trimis" | "Acceptat" | "Expirat")}
+                >
+                  <SelectTrigger className="w-32 h-8">
+                    <Badge className={cn(statusColors[viewingDetails.status], "px-2 py-0.5")}>{viewingDetails.status}</Badge>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {statusOptions.map(status => (
+                      <SelectItem key={status} value={status}>
+                        <Badge className={cn(statusColors[status], "px-2 py-0.5")}>{status}</Badge>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               )}
             </div>
           </DialogHeader>
