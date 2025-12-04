@@ -3,22 +3,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Scale, Search, Wifi, WifiOff, Bell, Truck, Package } from "lucide-react";
+import { Scale, Search, Wifi, WifiOff, Bell, Truck, Package, Plus } from "lucide-react";
 import { SessionCard } from "./cantar/components/SessionCard";
 import { ActiveWeighPanel } from "./cantar/components/ActiveWeighPanel";
 import { RowPickerDialog } from "./cantar/components/RowPickerDialog";
-import { WeighSession, EligibleRow, Plant } from "./cantar/types";
+import { WeighSession, EligibleRow } from "./cantar/types";
 import { toast } from "@/hooks/use-toast";
 
 // Mock data
-const mockPlants: Plant[] = [
-  { id: "1", name: "Asfalt + Emulsie" },
-  { id: "2", name: "Beton Stabilizat (BSC)" },
-  { id: "3", name: "Betoane" },
-];
 
 const mockQueue1: WeighSession[] = [
   {
@@ -278,22 +273,17 @@ export default function ConsolaCantarire() {
           </div>
           
           <div className="flex flex-wrap items-center gap-2">
-            {/* Plant Selector */}
-            <Select value={selectedPlant} onValueChange={setSelectedPlant}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Selectează planta" />
-              </SelectTrigger>
-              <SelectContent>
-                {mockPlants.map(plant => (
-                  <SelectItem key={plant.id} value={plant.id}>
-                    {plant.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {/* New Weighing Button */}
+            <Button onClick={() => {
+              setActiveSession(null);
+              setNrAuto("");
+            }}>
+              <Plus className="h-4 w-4 mr-2" />
+              Cântărire nouă
+            </Button>
 
             {/* Call Next Button */}
-            <Button onClick={handleCallNext} disabled={queue1.length === 0}>
+            <Button variant="outline" onClick={handleCallNext} disabled={queue1.length === 0}>
               <Bell className="h-4 w-4 mr-2" />
               Cheamă următorul
             </Button>
