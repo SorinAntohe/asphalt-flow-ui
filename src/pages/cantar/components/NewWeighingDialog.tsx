@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Package, Truck } from "lucide-react";
+import { Loader2, Package, Truck, Plus } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
 import { Direction } from "../types";
+import { Link } from "react-router-dom";
 
 interface NewWeighingDialogProps {
   open: boolean;
@@ -239,7 +240,15 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
 
             {/* Vehicle Selection */}
             <div className="space-y-2">
-              <Label htmlFor="vehicle">Nr. Înmatriculare</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="vehicle">Nr. Înmatriculare</Label>
+                <Button variant="ghost" size="sm" asChild className="h-auto p-0 text-xs text-primary hover:text-primary/80">
+                  <Link to="/liste?tab=autoturisme&action=add">
+                    <Plus className="h-3 w-3 mr-1" />
+                    Adaugă autoturism
+                  </Link>
+                </Button>
+              </div>
               <Select value={selectedVehicle} onValueChange={setSelectedVehicle}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selectează autoturismul" />
@@ -265,7 +274,15 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
 
             {/* Driver Selection */}
             <div className="space-y-2">
-              <Label htmlFor="sofer">Șofer</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="sofer">Șofer</Label>
+                <Button variant="ghost" size="sm" asChild className="h-auto p-0 text-xs text-primary hover:text-primary/80">
+                  <Link to="/liste?tab=soferi&action=add">
+                    <Plus className="h-3 w-3 mr-1" />
+                    Adaugă șofer
+                  </Link>
+                </Button>
+              </div>
               <Select value={selectedSofer} onValueChange={setSelectedSofer}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selectează șoferul" />
