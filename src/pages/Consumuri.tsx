@@ -1729,7 +1729,7 @@ const Consumuri = () => {
 
       {/* Contor Curent Form Dialog */}
       <Dialog open={isContorCurentFormOpen} onOpenChange={setIsContorCurentFormOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{isEditingContorCurent ? 'Editează Contor Curent' : 'Adaugă Contor Curent'}</DialogTitle>
             <DialogDescription>
@@ -1746,7 +1746,7 @@ const Consumuri = () => {
                     Poză Contor <span className="text-destructive">*</span>
                   </Label>
                   <div
-                    className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer ${
+                    className={`border-2 border-dashed rounded-lg p-3 text-center transition-colors cursor-pointer ${
                       contorCurentImagePreview ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/50'
                     }`}
                     onClick={() => contorCurentInputRef.current?.click()}
@@ -1767,13 +1767,16 @@ const Consumuri = () => {
                       }}
                     />
                     {contorCurentImagePreview ? (
-                      <div className="space-y-2">
+                      <div className="flex items-center gap-3">
                         <img 
                           src={contorCurentImagePreview} 
                           alt="Preview" 
-                          className="max-h-32 mx-auto rounded-lg object-contain"
+                          className="h-16 w-16 rounded-lg object-cover"
                         />
-                        <p className="text-xs text-muted-foreground">{contorCurentImage?.name}</p>
+                        <div className="flex-1 text-left">
+                          <p className="text-xs text-muted-foreground truncate">{contorCurentImage?.name}</p>
+                          <p className="text-xs text-muted-foreground">OCR va autocompleta datele ulterior</p>
+                        </div>
                         <Button
                           type="button"
                           variant="outline"
@@ -1784,30 +1787,29 @@ const Consumuri = () => {
                             setContorCurentImagePreview(null);
                           }}
                         >
-                          <X className="h-3 w-3 mr-1" />
-                          Șterge
+                          <X className="h-3 w-3" />
                         </Button>
                       </div>
                     ) : (
-                      <div className="space-y-2 py-4">
-                        <div className="flex justify-center gap-2">
-                          <Camera className="h-8 w-8 text-muted-foreground" />
-                          <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                      <div className="flex items-center gap-3 py-2">
+                        <div className="flex gap-1">
+                          <Camera className="h-6 w-6 text-muted-foreground" />
+                          <ImageIcon className="h-6 w-6 text-muted-foreground" />
                         </div>
-                        <p className="text-sm font-medium">Fotografiați sau încărcați poza contorului</p>
-                        <p className="text-xs text-muted-foreground">Apăsați pentru a selecta sau a face o poză</p>
+                        <div className="text-left">
+                          <p className="text-sm font-medium">Fotografiați sau încărcați poza</p>
+                          <p className="text-xs text-muted-foreground">OCR va autocompleta datele ulterior</p>
+                        </div>
                       </div>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    OCR-ul va autocompleta datele ulterior (momentan doar upload)
-                  </p>
                 </div>
               )}
 
-              <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
+              {/* Tip Consum Switch */}
+              <div className="flex items-center justify-between p-2.5 rounded-lg border bg-muted/30">
                 <div className="space-y-0.5">
-                  <Label className="text-sm font-medium">Tip Consum</Label>
+                  <Label className="text-xs font-medium">Tip Consum</Label>
                   <p className="text-xs text-muted-foreground">
                     {contorCurentFormData.tip_consum === 'activ' ? 'Consum activ' : 'Consum pasiv'}
                   </p>
@@ -1826,63 +1828,69 @@ const Consumuri = () => {
                   <span className={`text-xs ${contorCurentFormData.tip_consum === 'activ' ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>Activ</span>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label>Index Vechi</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={contorCurentFormData.index_vechi || ''}
-                  disabled
-                  className="bg-muted"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Index Nou</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={contorCurentFormData.index_nou || ''}
-                  onChange={(e) => {
-                    const indexNou = Number(e.target.value);
-                    const indexVechi = contorCurentFormData.index_vechi || 0;
-                    const consum = (indexNou - indexVechi) * 200;
-                    setContorCurentFormData({ 
-                      ...contorCurentFormData, 
-                      index_nou: indexNou,
-                      consum_kw: consum
-                    });
-                  }}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Consum (kW)</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={contorCurentFormData.consum_kw || ''}
-                  disabled
-                  className="bg-muted"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Preț</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={contorCurentFormData.pret || ''}
-                  onChange={(e) => {
-                    setContorCurentFormData({ 
-                      ...contorCurentFormData, 
-                      pret: Number(e.target.value)
-                    });
-                  }}
-                />
+
+              {/* Form fields in 2 columns */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Index Vechi</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={contorCurentFormData.index_vechi || ''}
+                    disabled
+                    className="bg-muted h-9"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Index Nou</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    className="h-9"
+                    value={contorCurentFormData.index_nou || ''}
+                    onChange={(e) => {
+                      const indexNou = Number(e.target.value);
+                      const indexVechi = contorCurentFormData.index_vechi || 0;
+                      const consum = (indexNou - indexVechi) * 200;
+                      setContorCurentFormData({ 
+                        ...contorCurentFormData, 
+                        index_nou: indexNou,
+                        consum_kw: consum
+                      });
+                    }}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Consum (kW)</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={contorCurentFormData.consum_kw || ''}
+                    disabled
+                    className="bg-muted h-9"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Preț unitar (RON/kW)</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    className="h-9"
+                    value={contorCurentFormData.pret || ''}
+                    onChange={(e) => {
+                      setContorCurentFormData({ 
+                        ...contorCurentFormData, 
+                        pret: Number(e.target.value)
+                      });
+                    }}
+                  />
+                </div>
               </div>
             </div>
 
             {/* Right side - Summary */}
             <div className="lg:w-56 shrink-0">
-              <Card className="h-full">
+              <Card variant="flat" className="h-full">
                 <CardHeader className="py-3 px-4">
                   <CardTitle className="text-sm">Raport Curent</CardTitle>
                 </CardHeader>
