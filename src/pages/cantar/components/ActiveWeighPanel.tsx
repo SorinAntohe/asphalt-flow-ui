@@ -16,7 +16,8 @@ interface ActiveWeighPanelProps {
   nrAuto: string;
   onNrAutoChange: (value: string) => void;
   onStartSession: () => void;
-  onWeightEntered: (type: 'TARA' | 'BRUT', value: number) => void;
+  onWeightEntered: (type: 'TARA' | 'BRUT', value: number) => Promise<boolean>;
+  onSessionCompleted?: (sessionId: string) => void;
   isLoading?: boolean;
   hasExistingSession?: boolean;
 }
@@ -27,6 +28,7 @@ export function ActiveWeighPanel({
   onNrAutoChange, 
   onStartSession, 
   onWeightEntered,
+  onSessionCompleted,
   isLoading,
   hasExistingSession 
 }: ActiveWeighPanelProps) {
@@ -48,11 +50,18 @@ export function ActiveWeighPanel({
   const handleWeightConfirm = async (weight: number) => {
     setIsSaving(true);
     try {
-      await onWeightEntered(weightType, weight);
-      toast({
-        title: "Greutate salvată",
-        description: `${weightType} de ${weight} kg a fost înregistrată cu succes.`
-      });
+      const success = await onWeightEntered(weightType, weight);
+      if (success) {
+        toast({
+          title: "Greutate salvată",
+          description: `${weightType} de ${weight} kg a fost înregistrată cu succes.`
+        });
+        
+        // If step 2/2 completed successfully, notify parent to remove from queue
+        if (session?.step === '2/2' && onSessionCompleted) {
+          onSessionCompleted(session.id);
+        }
+      }
     } catch (error) {
       toast({
         title: "Eroare",
