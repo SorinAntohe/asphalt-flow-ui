@@ -71,7 +71,10 @@ export function FilterableSelect({
           }
           return 0
         }}>
-          <CommandInput placeholder={searchPlaceholder} className="h-9" />
+          <CommandInput 
+            placeholder={searchPlaceholder} 
+            className="h-9 text-foreground placeholder:text-muted-foreground" 
+          />
           <CommandList>
             <CommandEmpty>{emptyText}</CommandEmpty>
             <CommandGroup className="max-h-64 overflow-auto">
