@@ -23,11 +23,11 @@ const dashboardItem = { title: "Dashboard", url: "/dashboard", icon: LayoutDashb
 
 const gestiuneItems = [
   { title: "Comenzi", url: "/comenzi", icon: ClipboardList },
+  { title: "Consolă Cântărire", url: "/cantar", icon: Scale },
   { title: "Receptii", url: "/receptii", icon: PackageCheck },
   { title: "Livrari", url: "/livrari", icon: Truck },
   { title: "Consumuri", url: "/consumuri", icon: BarChart3 },
   { title: "Stocuri", url: "/stocuri", icon: Package },
-  { title: "Consolă Cântărire", url: "/cantar", icon: Scale },
 ];
 
 // Liste - standalone item at bottom
