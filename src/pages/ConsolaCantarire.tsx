@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Scale, Search, Wifi, WifiOff, Bell, RefreshCw, Truck, Package } from "lucide-react";
+import { Scale, Search, Wifi, WifiOff, Bell, Truck, Package } from "lucide-react";
 import { SessionCard } from "./cantar/components/SessionCard";
 import { ActiveWeighPanel } from "./cantar/components/ActiveWeighPanel";
 import { RowPickerDialog } from "./cantar/components/RowPickerDialog";
@@ -269,7 +268,7 @@ export default function ConsolaCantarire() {
   );
 
   return (
-    <Layout>
+    <>
       <div className="flex flex-col h-[calc(100vh-120px)]">
         {/* Header Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
@@ -417,6 +416,6 @@ export default function ConsolaCantarire() {
         orderOrPo={pendingSessionData?.direction === 'INBOUND' ? 'PO-2024-XXX' : 'ORD-2024-XXX'}
         isInbound={pendingSessionData?.direction === 'INBOUND'}
       />
-    </Layout>
+    </>
   );
 }
