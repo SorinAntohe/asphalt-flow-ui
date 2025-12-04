@@ -42,7 +42,6 @@ const resurseUmaneItems = [
 const comercialItems = [
   { title: "Oferte & Contracte", url: "/comercial/oferte-contracte", icon: FileCheck },
   { title: "Comenzi Client", url: "/comercial/comenzi", icon: ShoppingCart },
-  { title: "Planificare Livrări", url: "/comercial/planificare-livrari", icon: CalendarDays },
   { title: "Documente", url: "/comercial/documente", icon: FileBox },
 ];
 
