@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FilterableSelect } from "@/components/ui/filterable-select";
 import { Loader2, Package, Truck, Plus } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
@@ -215,30 +215,20 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
             {/* Order Selection */}
             <div className="space-y-2">
               <Label htmlFor="order">Comandă</Label>
-              <Select value={selectedOrder} onValueChange={setSelectedOrder}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selectează comanda" />
-                </SelectTrigger>
-                <SelectContent>
-                  {orders.length === 0 ? (
-                    <SelectItem value="none" disabled>Nu există comenzi</SelectItem>
-                  ) : (
-                    orders.map((order) => (
-                      <SelectItem key={order.id} value={order.cod}>
-                        <div className="flex flex-col">
-                          <span className="font-medium">{order.cod}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {direction === 'INBOUND' 
-                              ? `${(order as ComandaMateriePrima).furnizor} - ${(order as ComandaMateriePrima).material}`
-                              : `${(order as ComandaProdusFinit).client} - ${(order as ComandaProdusFinit).produs}`
-                            }
-                          </span>
-                        </div>
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
+              <FilterableSelect
+                id="order"
+                value={selectedOrder}
+                onValueChange={setSelectedOrder}
+                options={orders.map((order) => ({
+                  value: order.cod,
+                  label: direction === 'INBOUND' 
+                    ? `${order.cod} - ${(order as ComandaMateriePrima).furnizor} - ${(order as ComandaMateriePrima).material}`
+                    : `${order.cod} - ${(order as ComandaProdusFinit).client} - ${(order as ComandaProdusFinit).produs}`
+                }))}
+                placeholder="Selectează comanda"
+                searchPlaceholder="Caută comandă..."
+                emptyText="Nu există comenzi"
+              />
             </div>
 
             {/* Vehicle Selection */}
@@ -252,27 +242,18 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
                   </Link>
                 </Button>
               </div>
-              <Select value={selectedVehicle} onValueChange={setSelectedVehicle}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selectează autoturismul" />
-                </SelectTrigger>
-                <SelectContent>
-                  {autoturisme.length === 0 ? (
-                    <SelectItem value="none" disabled>Nu există autoturisme</SelectItem>
-                  ) : (
-                    autoturisme.map((auto) => (
-                      <SelectItem key={auto.id} value={auto.id.toString()}>
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono font-medium">{auto.nr_auto}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {auto.tip_masina} · {auto.sarcina_max}t
-                          </span>
-                        </div>
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
+              <FilterableSelect
+                id="vehicle"
+                value={selectedVehicle}
+                onValueChange={setSelectedVehicle}
+                options={autoturisme.map((auto) => ({
+                  value: auto.id.toString(),
+                  label: `${auto.nr_auto} - ${auto.tip_masina} · ${auto.sarcina_max}t`
+                }))}
+                placeholder="Selectează autoturismul"
+                searchPlaceholder="Caută autoturism..."
+                emptyText="Nu există autoturisme"
+              />
             </div>
 
             {/* Driver Selection */}
@@ -286,22 +267,18 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
                   </Link>
                 </Button>
               </div>
-              <Select value={selectedSofer} onValueChange={setSelectedSofer}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selectează șoferul" />
-                </SelectTrigger>
-                <SelectContent>
-                  {soferi.length === 0 ? (
-                    <SelectItem value="none" disabled>Nu există șoferi</SelectItem>
-                  ) : (
-                    soferi.map((sofer) => (
-                      <SelectItem key={sofer.id} value={sofer.id.toString()}>
-                        <span className="font-medium">{sofer.nume_sofer}</span>
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
+              <FilterableSelect
+                id="sofer"
+                value={selectedSofer}
+                onValueChange={setSelectedSofer}
+                options={soferi.map((sofer) => ({
+                  value: sofer.id.toString(),
+                  label: sofer.nume_sofer
+                }))}
+                placeholder="Selectează șoferul"
+                searchPlaceholder="Caută șofer..."
+                emptyText="Nu există șoferi"
+              />
             </div>
           </div>
         )}
