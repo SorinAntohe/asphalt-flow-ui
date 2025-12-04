@@ -330,7 +330,7 @@ export default function ConsolaCantarire() {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-amber-500" />
-                  Coadă Step 1/2
+                  Coadă Pas 1/2
                 </CardTitle>
                 <Badge variant="outline">{filteredQueue1.length}</Badge>
               </div>
@@ -377,7 +377,7 @@ export default function ConsolaCantarire() {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-green-500" />
-                  Coadă Step 2/2
+                  Coadă Pas 2/2
                 </CardTitle>
                 <Badge variant="outline">{filteredQueue2.length}</Badge>
               </div>
