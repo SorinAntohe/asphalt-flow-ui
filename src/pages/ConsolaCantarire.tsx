@@ -238,8 +238,8 @@ export default function ConsolaCantarire() {
     });
   };
 
-  const handleWeightEntered = async (type: 'TARA' | 'BRUT', value: number) => {
-    if (!activeSession) return;
+  const handleWeightEntered = async (type: 'TARA' | 'BRUT', value: number): Promise<boolean> => {
+    if (!activeSession) return false;
 
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 300));
@@ -262,7 +262,7 @@ export default function ConsolaCantarire() {
           description: "BRUT trebuie să fie mai mare decât TARA.",
           variant: "destructive"
         });
-        return;
+        return false;
       }
     }
 
@@ -274,6 +274,19 @@ export default function ConsolaCantarire() {
 
     updatedSession.updatedAt = new Date().toISOString();
     setActiveSession(updatedSession);
+    return true;
+  };
+
+  const handleSessionCompleted = (sessionId: string) => {
+    // Remove from queue2
+    setQueue2(prev => prev.filter(s => s.id !== sessionId));
+    // Clear active session
+    setActiveSession(null);
+    setNrAuto("");
+    toast({
+      title: "Cântărire finalizată",
+      description: "Sesiunea a fost finalizată și eliminată din coadă."
+    });
   };
 
   const filteredQueue1 = queue1.filter(s => 
@@ -367,6 +380,7 @@ export default function ConsolaCantarire() {
             onNrAutoChange={setNrAuto}
             onStartSession={handleStartSession}
             onWeightEntered={handleWeightEntered}
+            onSessionCompleted={handleSessionCompleted}
             isLoading={isLoading}
             hasExistingSession={!!existingSession}
           />
