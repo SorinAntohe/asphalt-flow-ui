@@ -857,56 +857,46 @@ const OferteContracte = () => {
             {/* Transport Pricing Section */}
             <div className="space-y-3 p-3 border rounded-lg bg-muted/30">
               <Label className="text-base font-medium">Preț Transport</Label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <Label className="text-xs">Tip transport</Label>
-                  <Select 
-                    value={form.transport.tipTransport} 
-                    onValueChange={(v: TransportPricing["tipTransport"]) => setForm({ 
+                  <Label className="text-xs">Preț chirie transport (RON)</Label>
+                  <Input 
+                    type="number" 
+                    className="h-9"
+                    placeholder="ex: 1500"
+                    value={form.transport.pretInchiriere || ""} 
+                    onChange={(e) => setForm({ 
                       ...form, 
-                      transport: { ...form.transport, tipTransport: v } 
-                    })}
-                  >
-                    <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="inclus">Inclus în preț</SelectItem>
-                      <SelectItem value="inchiriere">Închiriere transport</SelectItem>
-                      <SelectItem value="tona_km">Preț tonă/km</SelectItem>
-                    </SelectContent>
-                  </Select>
+                      transport: { 
+                        ...form.transport, 
+                        tipTransport: e.target.value ? "inchiriere" : form.transport.tipTransport,
+                        pretInchiriere: Number(e.target.value),
+                        pretTonaKm: e.target.value ? 0 : form.transport.pretTonaKm
+                      } 
+                    })} 
+                  />
                 </div>
-                {form.transport.tipTransport === "inchiriere" && (
-                  <div className="space-y-1">
-                    <Label className="text-xs">Preț închiriere (RON)</Label>
-                    <Input 
-                      type="number" 
-                      className="h-9"
-                      placeholder="ex: 1500"
-                      value={form.transport.pretInchiriere || ""} 
-                      onChange={(e) => setForm({ 
-                        ...form, 
-                        transport: { ...form.transport, pretInchiriere: Number(e.target.value) } 
-                      })} 
-                    />
-                  </div>
-                )}
-                {form.transport.tipTransport === "tona_km" && (
-                  <div className="space-y-1">
-                    <Label className="text-xs">Preț/tonă·km (RON)</Label>
-                    <Input 
-                      type="number" 
-                      step="0.01"
-                      className="h-9"
-                      placeholder="ex: 0.85"
-                      value={form.transport.pretTonaKm || ""} 
-                      onChange={(e) => setForm({ 
-                        ...form, 
-                        transport: { ...form.transport, pretTonaKm: Number(e.target.value) } 
-                      })} 
-                    />
-                  </div>
-                )}
+                <div className="space-y-1">
+                  <Label className="text-xs">Preț tonă/km (RON)</Label>
+                  <Input 
+                    type="number" 
+                    step="0.01"
+                    className="h-9"
+                    placeholder="ex: 0.85"
+                    value={form.transport.pretTonaKm || ""} 
+                    onChange={(e) => setForm({ 
+                      ...form, 
+                      transport: { 
+                        ...form.transport, 
+                        tipTransport: e.target.value ? "tona_km" : form.transport.tipTransport,
+                        pretTonaKm: Number(e.target.value),
+                        pretInchiriere: e.target.value ? 0 : form.transport.pretInchiriere
+                      } 
+                    })} 
+                  />
+                </div>
               </div>
+              <p className="text-xs text-muted-foreground">Completează doar unul dintre cele două câmpuri de preț transport</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
