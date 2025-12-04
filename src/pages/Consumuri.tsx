@@ -2070,7 +2070,7 @@ const Consumuri = () => {
                     Poză Contor CTL <span className="text-destructive">*</span>
                   </Label>
                   <div
-                    className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer ${
+                    className={`border-2 border-dashed rounded-lg p-3 text-center transition-colors cursor-pointer ${
                       contorCTLImagePreview ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/50'
                     }`}
                     onClick={() => contorCTLInputRef.current?.click()}
@@ -2091,13 +2091,16 @@ const Consumuri = () => {
                       }}
                     />
                     {contorCTLImagePreview ? (
-                      <div className="space-y-2">
+                      <div className="flex items-center gap-3">
                         <img 
                           src={contorCTLImagePreview} 
                           alt="Preview" 
-                          className="max-h-32 mx-auto rounded-lg object-contain"
+                          className="h-16 w-16 rounded-lg object-cover"
                         />
-                        <p className="text-xs text-muted-foreground">{contorCTLImage?.name}</p>
+                        <div className="flex-1 text-left">
+                          <p className="text-xs text-muted-foreground truncate">{contorCTLImage?.name}</p>
+                          <p className="text-xs text-muted-foreground">OCR va autocompleta datele ulterior</p>
+                        </div>
                         <Button
                           type="button"
                           variant="outline"
@@ -2108,110 +2111,113 @@ const Consumuri = () => {
                             setContorCTLImagePreview(null);
                           }}
                         >
-                          <X className="h-3 w-3 mr-1" />
-                          Șterge
+                          <X className="h-3 w-3" />
                         </Button>
                       </div>
                     ) : (
-                      <div className="space-y-2 py-4">
-                        <div className="flex justify-center gap-2">
-                          <Camera className="h-8 w-8 text-muted-foreground" />
-                          <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                      <div className="flex items-center gap-3 py-2">
+                        <div className="flex gap-1">
+                          <Camera className="h-6 w-6 text-muted-foreground" />
+                          <ImageIcon className="h-6 w-6 text-muted-foreground" />
                         </div>
-                        <p className="text-sm font-medium">Fotografiați sau încărcați poza contorului</p>
-                        <p className="text-xs text-muted-foreground">Apăsați pentru a selecta sau a face o poză</p>
+                        <div className="text-left">
+                          <p className="text-sm font-medium">Fotografiați sau încărcați poza</p>
+                          <p className="text-xs text-muted-foreground">OCR va autocompleta datele ulterior</p>
+                        </div>
                       </div>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    OCR-ul va autocompleta datele ulterior (momentan doar upload)
-                  </p>
                 </div>
               )}
 
-              <div className="space-y-2">
-                <Label>Index Vechi Tur</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={contorCTLFormData.index_vechi_tur || ''}
-                  disabled
-                  className="bg-muted"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Index Nou Tur</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={contorCTLFormData.index_nou_tur || ''}
-                  onChange={(e) => {
-                    const indexNouTur = Number(e.target.value);
-                    const indexVechiTur = contorCTLFormData.index_vechi_tur || 0;
-                    const returExcesNou = contorCTLFormData.retur_exces_nou || 0;
-                    const returExcesVechi = contorCTLFormData.retur_exces_vechi || 0;
-                    const consumL = (indexNouTur - indexVechiTur) - (returExcesNou - returExcesVechi);
-                    const consumTo = consumL * 0.85;
-                    setContorCTLFormData({ 
-                      ...contorCTLFormData, 
-                      index_nou_tur: indexNouTur,
-                      consum_l: consumL,
-                      consum_to: consumTo
-                    });
-                  }}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Retur Exces Vechi</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={contorCTLFormData.retur_exces_vechi || ''}
-                  disabled
-                  className="bg-muted"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Retur Exces Nou</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={contorCTLFormData.retur_exces_nou || ''}
-                  onChange={(e) => {
-                    const returExcesNou = Number(e.target.value);
-                    const returExcesVechi = contorCTLFormData.retur_exces_vechi || 0;
-                    const indexNouTur = contorCTLFormData.index_nou_tur || 0;
-                    const indexVechiTur = contorCTLFormData.index_vechi_tur || 0;
-                    const consumL = (indexNouTur - indexVechiTur) - (returExcesNou - returExcesVechi);
-                    const consumTo = consumL * 0.85;
-                    setContorCTLFormData({ 
-                      ...contorCTLFormData, 
-                      retur_exces_nou: returExcesNou,
-                      consum_l: consumL,
-                      consum_to: consumTo
-                    });
-                  }}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Consum (L)</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={contorCTLFormData.consum_l || ''}
-                  disabled
-                  className="bg-muted"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Consum (TO)</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={contorCTLFormData.consum_to || ''}
-                  disabled
-                  className="bg-muted"
-                />
+              {/* Form fields in 2 columns */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Index Vechi Tur</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={contorCTLFormData.index_vechi_tur || ''}
+                    disabled
+                    className="bg-muted h-9"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Index Nou Tur</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    className="h-9"
+                    value={contorCTLFormData.index_nou_tur || ''}
+                    onChange={(e) => {
+                      const indexNouTur = Number(e.target.value);
+                      const indexVechiTur = contorCTLFormData.index_vechi_tur || 0;
+                      const returExcesNou = contorCTLFormData.retur_exces_nou || 0;
+                      const returExcesVechi = contorCTLFormData.retur_exces_vechi || 0;
+                      const consumL = (indexNouTur - indexVechiTur) - (returExcesNou - returExcesVechi);
+                      const consumTo = consumL * 0.85;
+                      setContorCTLFormData({ 
+                        ...contorCTLFormData, 
+                        index_nou_tur: indexNouTur,
+                        consum_l: consumL,
+                        consum_to: consumTo
+                      });
+                    }}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Retur Exces Vechi</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={contorCTLFormData.retur_exces_vechi || ''}
+                    disabled
+                    className="bg-muted h-9"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Retur Exces Nou</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    className="h-9"
+                    value={contorCTLFormData.retur_exces_nou || ''}
+                    onChange={(e) => {
+                      const returExcesNou = Number(e.target.value);
+                      const returExcesVechi = contorCTLFormData.retur_exces_vechi || 0;
+                      const indexNouTur = contorCTLFormData.index_nou_tur || 0;
+                      const indexVechiTur = contorCTLFormData.index_vechi_tur || 0;
+                      const consumL = (indexNouTur - indexVechiTur) - (returExcesNou - returExcesVechi);
+                      const consumTo = consumL * 0.85;
+                      setContorCTLFormData({ 
+                        ...contorCTLFormData, 
+                        retur_exces_nou: returExcesNou,
+                        consum_l: consumL,
+                        consum_to: consumTo
+                      });
+                    }}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Consum (L)</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={contorCTLFormData.consum_l || ''}
+                    disabled
+                    className="bg-muted h-9"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Consum (TO)</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={contorCTLFormData.consum_to || ''}
+                    disabled
+                    className="bg-muted h-9"
+                  />
+                </div>
               </div>
             </div>
 
