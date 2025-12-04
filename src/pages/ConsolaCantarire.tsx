@@ -304,7 +304,7 @@ export default function ConsolaCantarire() {
             {/* New Weighing Button */}
             <Button onClick={() => setNewWeighingDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              Cântărire nouă
+              Adaugă în coadă
             </Button>
 
 
