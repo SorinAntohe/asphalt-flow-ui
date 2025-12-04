@@ -17,9 +17,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronLeft, ChevronRight, UserCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/api";
+import { useSearchParams } from "react-router-dom";
 
 const Liste = () => {
   const { toast } = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [autoturismePerPage, setAutoturismePerPage] = useState(10);
   const [soferiPerPage, setSoferiPerPage] = useState(10);
   const [materiiPrimePerPage, setMateriiPrimePerPage] = useState(10);
@@ -293,7 +295,47 @@ const Liste = () => {
     fetchAngajati();
   }, []);
 
-
+  // Handle URL params for opening add dialogs from other pages
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    const action = searchParams.get('action');
+    
+    if (tab) {
+      setActiveTab(tab);
+      
+      if (action === 'add') {
+        // Small delay to ensure tab is rendered first
+        setTimeout(() => {
+          switch (tab) {
+            case 'autoturisme':
+              setAutoturismeDialog({ open: true, mode: 'add' });
+              break;
+            case 'soferi':
+              setSoferiDialog({ open: true, mode: 'add' });
+              break;
+            case 'materii':
+              setMateriiPrimeDialog({ open: true, mode: 'add' });
+              break;
+            case 'produse':
+              setProduseFiniteDialog({ open: true, mode: 'add' });
+              break;
+            case 'clienti':
+              setClientiDialog({ open: true, mode: 'add' });
+              break;
+            case 'furnizori':
+              setFurnizoriDialog({ open: true, mode: 'add' });
+              break;
+            case 'angajati':
+              setAngajatiDialog({ open: true, mode: 'add' });
+              break;
+          }
+        }, 100);
+        
+        // Clear the URL params after processing
+        setSearchParams({});
+      }
+    }
+  }, [searchParams, setSearchParams]);
   // Pagination helpers
   const getPaginatedData = (data: any[], page: number, itemsPerPage: number) => {
     const startIndex = (page - 1) * itemsPerPage;
