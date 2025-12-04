@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Scale, Search, Wifi, WifiOff, Truck, Package, Plus } from "lucide-react";
+import { Scale, Search, Truck, Package, Plus } from "lucide-react";
 import { SessionCard } from "./cantar/components/SessionCard";
 import { ActiveWeighPanel } from "./cantar/components/ActiveWeighPanel";
 import { RowPickerDialog } from "./cantar/components/RowPickerDialog";
@@ -100,7 +100,7 @@ const mockEligibleRows: EligibleRow[] = [
 export default function ConsolaCantarire() {
   const [selectedPlant, setSelectedPlant] = useState("1");
   const [searchQuery, setSearchQuery] = useState("");
-  const [isConnected, setIsConnected] = useState(true);
+  
   const [queue1, setQueue1] = useState<WeighSession[]>(mockQueue1);
   const [queue2, setQueue2] = useState<WeighSession[]>(mockQueue2);
   const [activeSession, setActiveSession] = useState<WeighSession | null>(null);
@@ -315,15 +315,8 @@ export default function ConsolaCantarire() {
                 placeholder="Nr. auto / Comandă / PO"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 w-[200px]"
               />
             </div>
-
-            {/* Connection Status */}
-            <Badge variant={isConnected ? "success" : "destructive"} className="gap-1">
-              {isConnected ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
-              {isConnected ? 'Conectat' : 'Deconectat'}
-            </Badge>
           </div>
         </div>
 
