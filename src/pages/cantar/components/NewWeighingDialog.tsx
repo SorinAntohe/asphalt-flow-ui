@@ -17,6 +17,7 @@ interface NewWeighingDialogProps {
     orderNo?: string;
     poNo?: string;
     nrAuto: string;
+    sofer: string;
   }) => void;
 }
 
@@ -44,10 +45,17 @@ interface Autoturism {
   tip_transport: string;
 }
 
+interface Sofer {
+  id: number;
+  nume_sofer: string;
+  ci: string;
+}
+
 export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewWeighingDialogProps) {
   const [direction, setDirection] = useState<Direction>("INBOUND");
   const [selectedOrder, setSelectedOrder] = useState("");
   const [selectedVehicle, setSelectedVehicle] = useState("");
+  const [selectedSofer, setSelectedSofer] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   
@@ -55,6 +63,7 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
   const [comenziMateriePrima, setComenziMateriePrima] = useState<ComandaMateriePrima[]>([]);
   const [comenziProdusFinit, setComenziProdusFinit] = useState<ComandaProdusFinit[]>([]);
   const [autoturisme, setAutoturisme] = useState<Autoturism[]>([]);
+  const [soferi, setSoferi] = useState<Sofer[]>([]);
 
   // Fetch data on open
   useEffect(() => {
@@ -66,10 +75,11 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [comenziMPRes, comenziPFRes, autoturismeRes] = await Promise.all([
+      const [comenziMPRes, comenziPFRes, autoturismeRes, soferiRes] = await Promise.all([
         fetch(`${API_BASE_URL}/comenzi/returneaza/comanda_materie_prima`),
         fetch(`${API_BASE_URL}/comenzi/returneaza/comanda_produs_finit`),
-        fetch(`${API_BASE_URL}/liste/returneaza/masini`)
+        fetch(`${API_BASE_URL}/liste/returneaza/masini`),
+        fetch(`${API_BASE_URL}/liste/returneaza/soferi`)
       ]);
 
       if (comenziMPRes.ok) {
@@ -84,6 +94,10 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
         const data = await autoturismeRes.json();
         setAutoturisme(data);
       }
+      if (soferiRes.ok) {
+        const data = await soferiRes.json();
+        setSoferi(data);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
       toast({
@@ -97,17 +111,18 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
   };
 
   const handleSubmit = () => {
-    if (!selectedOrder || !selectedVehicle) {
+    if (!selectedOrder || !selectedVehicle || !selectedSofer) {
       toast({
         title: "Date incomplete",
-        description: "Selectați comanda și autoturismul.",
+        description: "Selectați comanda, autoturismul și șoferul.",
         variant: "destructive"
       });
       return;
     }
 
     const vehicle = autoturisme.find(a => a.id.toString() === selectedVehicle);
-    if (!vehicle) return;
+    const sofer = soferi.find(s => s.id.toString() === selectedSofer);
+    if (!vehicle || !sofer) return;
 
     setIsSaving(true);
     
@@ -118,7 +133,8 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
         ? { poNo: selectedOrder }
         : { orderNo: selectedOrder }
       ),
-      nrAuto: vehicle.nr_auto
+      nrAuto: vehicle.nr_auto,
+      sofer: sofer.nume_sofer
     };
 
     onSessionCreated(sessionData);
@@ -126,6 +142,7 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
     // Reset form
     setSelectedOrder("");
     setSelectedVehicle("");
+    setSelectedSofer("");
     setDirection("INBOUND");
     setIsSaving(false);
     onOpenChange(false);
@@ -134,6 +151,7 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
   const handleClose = () => {
     setSelectedOrder("");
     setSelectedVehicle("");
+    setSelectedSofer("");
     setDirection("INBOUND");
     onOpenChange(false);
   };
@@ -246,6 +264,27 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Driver Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="sofer">Șofer</Label>
+              <Select value={selectedSofer} onValueChange={setSelectedSofer}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selectează șoferul" />
+                </SelectTrigger>
+                <SelectContent>
+                  {soferi.length === 0 ? (
+                    <SelectItem value="none" disabled>Nu există șoferi</SelectItem>
+                  ) : (
+                    soferi.map((sofer) => (
+                      <SelectItem key={sofer.id} value={sofer.id.toString()}>
+                        <span className="font-medium">{sofer.nume_sofer}</span>
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         )}
 
@@ -255,7 +294,7 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
           </Button>
           <Button 
             onClick={handleSubmit} 
-            disabled={isLoading || isSaving || !selectedOrder || !selectedVehicle}
+            disabled={isLoading || isSaving || !selectedOrder || !selectedVehicle || !selectedSofer}
           >
             {isSaving ? (
               <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Se creează...</>

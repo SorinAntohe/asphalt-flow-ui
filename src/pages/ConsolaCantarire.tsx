@@ -212,7 +212,7 @@ export default function ConsolaCantarire() {
     }
   };
 
-  const handleNewWeighingCreated = (sessionData: { direction: Direction; orderNo?: string; poNo?: string; nrAuto: string }) => {
+  const handleNewWeighingCreated = (sessionData: { direction: Direction; orderNo?: string; poNo?: string; nrAuto: string; sofer: string }) => {
     const newSession: WeighSession = {
       id: `new-${Date.now()}`,
       sessionCode: `SC-${String(Date.now()).slice(-3)}`,
@@ -224,7 +224,7 @@ export default function ConsolaCantarire() {
       step: '1/2',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      createdBy: "Current User",
+      createdBy: sessionData.sofer,
       plantId: selectedPlant,
       financeApproved: true,
     };
@@ -234,7 +234,7 @@ export default function ConsolaCantarire() {
     
     toast({
       title: "Cântărire adăugată în coadă",
-      description: `${sessionData.nrAuto} - ${sessionData.direction === 'INBOUND' ? 'Recepție' : 'Livrare'}`
+      description: `${sessionData.nrAuto} - ${sessionData.sofer}`
     });
   };
 
