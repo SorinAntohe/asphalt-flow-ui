@@ -154,31 +154,21 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
-  /* Remove focus outline on all elements when clicked */
-  *:focus {
-    outline: none !important;
-  }
-
-  /* Only show focus ring for keyboard navigation */
-  *:focus-visible {
-    outline: 2px solid hsl(var(--ring)) !important;
-    outline-offset: 2px;
-  }
-  
-  /* Remove focus ring on mouse click */
-  *:focus:not(:focus-visible) {
+  /* Remove all focus outlines and rings */
+  *:focus,
+  *:focus-visible,
+  *:focus-within {
     outline: none !important;
     box-shadow: none !important;
   }
 
-  /* Specifically target scrollable containers */
-  [class*="overflow-x-auto"]:focus,
-  [class*="overflow-y-auto"]:focus,
-  [class*="overflow-auto"]:focus,
-  div:focus,
-  table:focus,
-  section:focus {
+  /* Remove ring from all elements */
+  *[data-state="open"],
+  *[data-state="checked"],
+  *[data-state="active"],
+  *[aria-selected="true"] {
     outline: none !important;
+    box-shadow: none !important;
   }
 
   /* Smooth theme transitions */
@@ -270,9 +260,9 @@ All colors MUST be HSL.
     100% { transform: translateX(100%); }
   }
 
-  /* Focus ring */
+  /* Focus ring - disabled */
   .focus-ring {
-    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+    @apply focus:outline-none;
   }
 
   /* Text gradient */
