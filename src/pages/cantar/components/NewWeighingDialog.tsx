@@ -17,6 +17,7 @@ interface NewWeighingDialogProps {
     direction: Direction;
     orderNo?: string;
     poNo?: string;
+    rowId: string;
     nrAuto: string;
     sofer: string;
   }) => void;
@@ -123,7 +124,8 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
 
     const vehicle = autoturisme.find(a => a.id.toString() === selectedVehicle);
     const sofer = soferi.find(s => s.id.toString() === selectedSofer);
-    if (!vehicle || !sofer) return;
+    const order = orders.find(o => o.cod === selectedOrder);
+    if (!vehicle || !sofer || !order) return;
 
     setIsSaving(true);
     
@@ -134,6 +136,7 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
         ? { poNo: selectedOrder }
         : { orderNo: selectedOrder }
       ),
+      rowId: order.id.toString(),
       nrAuto: vehicle.nr_auto,
       sofer: sofer.nume_sofer
     };
