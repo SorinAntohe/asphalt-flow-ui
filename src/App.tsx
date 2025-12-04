@@ -45,6 +45,9 @@ import RapoarteCalitate from "./pages/rapoarte/RapoarteCalitate";
 import RapoarteMentenanta from "./pages/rapoarte/RapoarteMentenanta";
 import RapoarteFinanciar from "./pages/rapoarte/RapoarteFinanciar";
 
+// Cantar page
+import ConsolaCantarire from "./pages/ConsolaCantarire";
+
 const queryClient = new QueryClient();
 
 // Protected Route wrapper
@@ -68,6 +71,7 @@ const AppRoutes = () => (
     <Route path="/consumuri" element={<ProtectedRoute><Consumuri /></ProtectedRoute>} />
     <Route path="/comenzi" element={<ProtectedRoute><Comenzi /></ProtectedRoute>} />
     <Route path="/stocuri" element={<ProtectedRoute><Stocuri /></ProtectedRoute>} />
+    <Route path="/cantar" element={<ProtectedRoute><ConsolaCantarire /></ProtectedRoute>} />
     <Route path="/angajati" element={<Navigate to="/liste" replace />} />
     <Route path="/pontaj" element={<ProtectedRoute><Pontaj /></ProtectedRoute>} />
     <Route path="/pontare" element={<ProtectedRoute><PontareAngajat /></ProtectedRoute>} />
