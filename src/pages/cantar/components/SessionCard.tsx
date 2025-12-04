@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Clock, Truck, Package } from "lucide-react";
+import { Clock, Truck, Package, User } from "lucide-react";
 import { WeighSession } from "../types";
 import { cn } from "@/lib/utils";
 
@@ -41,7 +41,7 @@ export function SessionCard({ session, isActive, onClick, showWaitTime }: Sessio
             )}
           </Badge>
           <Badge variant="outline" className="text-xs">
-            Step {session.step}
+            Pas {session.step}
           </Badge>
         </div>
       </div>
@@ -54,6 +54,10 @@ export function SessionCard({ session, isActive, onClick, showWaitTime }: Sessio
           <span className="font-mono">{session.nrAuto}</span>
           <span>·</span>
           <span className="text-primary font-medium">SC: {session.sessionCode}</span>
+        </div>
+        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+          <User className="h-3 w-3" />
+          <span>{session.createdBy}</span>
         </div>
         {showWaitTime && (
           <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
