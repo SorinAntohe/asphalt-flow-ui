@@ -56,7 +56,7 @@ export function TopBar() {
             <Input 
               type="search" 
               placeholder="Căutare globală..." 
-              className="pl-10 bg-background border-2 border-foreground/20 placeholder:text-foreground/60 placeholder:font-medium hover:border-foreground/40 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 transition-all shadow-sm" 
+              className="pl-10 bg-background border-2 border-foreground/20 placeholder:text-foreground/60 placeholder:font-medium hover:border-foreground/40 focus:border-primary transition-all shadow-sm" 
             />
           </div>
         </div>
