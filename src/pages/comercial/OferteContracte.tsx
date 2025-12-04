@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { FileCheck, Plus, Download, Copy, Mail, FileText, Pencil, Trash2, X, CalendarIcon } from "lucide-react";
+import { useState, useMemo, useRef } from "react";
+import { FileCheck, Plus, Download, Copy, Mail, FileText, Pencil, Trash2, X, CalendarIcon, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -124,7 +124,13 @@ const OferteContracte = () => {
     conditiiComerciale: "",
     observatii: "",
     indexareCombustibil: "",
+    garantie: { biletOrdin: null as File | null, procesVerbal: null as File | null },
+    avansPlata: 0,
   });
+  
+  // File input refs
+  const biletOrdinRef = useRef<HTMLInputElement>(null);
+  const procesVerbalRef = useRef<HTMLInputElement>(null);
   
   // Column filters
   const [oferteFilters, setOferteFilters] = useState<Record<string, string>>({
@@ -237,6 +243,8 @@ const OferteContracte = () => {
       conditiiComerciale: "",
       observatii: "",
       indexareCombustibil: "",
+      garantie: { biletOrdin: null, procesVerbal: null },
+      avansPlata: 0,
     });
     setOpenAddEdit(true);
   };
@@ -258,6 +266,8 @@ const OferteContracte = () => {
       conditiiComerciale: item.conditiiComerciale,
       observatii: item.observatii,
       indexareCombustibil: item.tip === "contract" ? (item as Contract).indexareCombustibil : "",
+      garantie: { biletOrdin: null, procesVerbal: null },
+      avansPlata: 0,
     });
     setOpenAddEdit(true);
   };
@@ -964,6 +974,70 @@ const OferteContracte = () => {
                 <Input placeholder="ex: Ajustare trimestrială +/- 5%" value={form.indexareCombustibil} onChange={(e) => setForm({ ...form, indexareCombustibil: e.target.value })} />
               </div>
             )}
+
+            {/* Garanție Section */}
+            <div className="space-y-3 p-3 border rounded-lg bg-muted/30">
+              <Label className="text-base font-medium">Garanție</Label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-xs">Bilet de ordin / Cec (document scanat)</Label>
+                  <input
+                    type="file"
+                    ref={biletOrdinRef}
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null;
+                      setForm({ ...form, garantie: { ...form.garantie, biletOrdin: file } });
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full h-12 justify-start"
+                    onClick={() => biletOrdinRef.current?.click()}
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    {form.garantie.biletOrdin ? form.garantie.biletOrdin.name : "Încarcă document"}
+                  </Button>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs">Proces verbal predare-primire (document scanat)</Label>
+                  <input
+                    type="file"
+                    ref={procesVerbalRef}
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null;
+                      setForm({ ...form, garantie: { ...form.garantie, procesVerbal: file } });
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full h-12 justify-start"
+                    onClick={() => procesVerbalRef.current?.click()}
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    {form.garantie.procesVerbal ? form.garantie.procesVerbal.name : "Încarcă document"}
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Avans de plată */}
+            <div className="space-y-2">
+              <Label>Avans de plată (RON)</Label>
+              <Input 
+                type="number" 
+                min="0"
+                placeholder="ex: 5000"
+                value={form.avansPlata || ""} 
+                onChange={(e) => setForm({ ...form, avansPlata: Number(e.target.value) })} 
+              />
+            </div>
+
             <div className="space-y-2">
               <Label>Observații</Label>
               <Textarea placeholder="Observații suplimentare..." value={form.observatii} onChange={(e) => setForm({ ...form, observatii: e.target.value })} />
