@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { API_BASE_URL } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown, X, Eye, Download, Upload, FileText, FileSpreadsheet, File } from "lucide-react";
+import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown, X, Eye, Download, Upload, FileText, FileSpreadsheet, File, Camera, Image as ImageIcon } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import {
   Table,
@@ -182,6 +182,9 @@ const Consumuri = () => {
   const [isContorCurentDeleteOpen, setIsContorCurentDeleteOpen] = useState(false);
   const [contorCurentFormData, setContorCurentFormData] = useState<Partial<ContorCurent>>({});
   const [isEditingContorCurent, setIsEditingContorCurent] = useState(false);
+  const [contorCurentImage, setContorCurentImage] = useState<File | null>(null);
+  const [contorCurentImagePreview, setContorCurentImagePreview] = useState<string | null>(null);
+  const contorCurentInputRef = useRef<HTMLInputElement>(null);
 
   // Contor CTL state
   const [contorCTLItemsPerPage, setContorCTLItemsPerPage] = useState(10);
@@ -196,6 +199,9 @@ const Consumuri = () => {
   const [isContorCTLDeleteOpen, setIsContorCTLDeleteOpen] = useState(false);
   const [contorCTLFormData, setContorCTLFormData] = useState<Partial<ContorCTL>>({});
   const [isEditingContorCTL, setIsEditingContorCTL] = useState(false);
+  const [contorCTLImage, setContorCTLImage] = useState<File | null>(null);
+  const [contorCTLImagePreview, setContorCTLImagePreview] = useState<string | null>(null);
+  const contorCTLInputRef = useRef<HTMLInputElement>(null);
 
   // Consumuri state
   const [consumuriItemsPerPage, setConsumuriItemsPerPage] = useState(10);
@@ -319,6 +325,8 @@ const Consumuri = () => {
       tip_consum: 'activ'
     });
     setIsEditingContorCurent(false);
+    setContorCurentImage(null);
+    setContorCurentImagePreview(null);
     setIsContorCurentFormOpen(true);
   };
 
@@ -341,6 +349,16 @@ const Consumuri = () => {
   };
 
   const handleContorCurentSave = async () => {
+    // Validate image for add mode
+    if (!isEditingContorCurent && !contorCurentImage) {
+      toast({
+        title: "Eroare",
+        description: "Vă rugăm să încărcați o poză a contorului",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       if (isEditingContorCurent && contorCurentFormData.id) {
         // Edit mode
@@ -468,6 +486,8 @@ const Consumuri = () => {
       retur_exces_vechi: lastReturExcesNou
     });
     setIsEditingContorCTL(false);
+    setContorCTLImage(null);
+    setContorCTLImagePreview(null);
     setIsContorCTLFormOpen(true);
   };
 
@@ -484,6 +504,16 @@ const Consumuri = () => {
   };
 
   const handleContorCTLSave = async () => {
+    // Validate image for add mode
+    if (!isEditingContorCTL && !contorCTLImage) {
+      toast({
+        title: "Eroare",
+        description: "Vă rugăm să încărcați o poză a contorului",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       if (isEditingContorCTL && contorCTLFormData.id) {
         // Edit mode
@@ -1709,6 +1739,72 @@ const Consumuri = () => {
           <div className="flex flex-col lg:flex-row gap-4">
             {/* Left side - Form */}
             <div className="flex-1 space-y-4">
+              {/* Image Upload - Only for Add mode */}
+              {!isEditingContorCurent && (
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-1">
+                    Poză Contor <span className="text-destructive">*</span>
+                  </Label>
+                  <div
+                    className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer ${
+                      contorCurentImagePreview ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/50'
+                    }`}
+                    onClick={() => contorCurentInputRef.current?.click()}
+                  >
+                    <input
+                      ref={contorCurentInputRef}
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setContorCurentImage(file);
+                          const url = URL.createObjectURL(file);
+                          setContorCurentImagePreview(url);
+                        }
+                      }}
+                    />
+                    {contorCurentImagePreview ? (
+                      <div className="space-y-2">
+                        <img 
+                          src={contorCurentImagePreview} 
+                          alt="Preview" 
+                          className="max-h-32 mx-auto rounded-lg object-contain"
+                        />
+                        <p className="text-xs text-muted-foreground">{contorCurentImage?.name}</p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setContorCurentImage(null);
+                            setContorCurentImagePreview(null);
+                          }}
+                        >
+                          <X className="h-3 w-3 mr-1" />
+                          Șterge
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-2 py-4">
+                        <div className="flex justify-center gap-2">
+                          <Camera className="h-8 w-8 text-muted-foreground" />
+                          <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                        </div>
+                        <p className="text-sm font-medium">Fotografiați sau încărcați poza contorului</p>
+                        <p className="text-xs text-muted-foreground">Apăsați pentru a selecta sau a face o poză</p>
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    OCR-ul va autocompleta datele ulterior (momentan doar upload)
+                  </p>
+                </div>
+              )}
+
               <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
                 <div className="space-y-0.5">
                   <Label className="text-sm font-medium">Tip Consum</Label>
@@ -1967,6 +2063,72 @@ const Consumuri = () => {
           <div className="flex flex-col lg:flex-row gap-4">
             {/* Left side - Form */}
             <div className="flex-1 space-y-4">
+              {/* Image Upload - Only for Add mode */}
+              {!isEditingContorCTL && (
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-1">
+                    Poză Contor CTL <span className="text-destructive">*</span>
+                  </Label>
+                  <div
+                    className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer ${
+                      contorCTLImagePreview ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/50'
+                    }`}
+                    onClick={() => contorCTLInputRef.current?.click()}
+                  >
+                    <input
+                      ref={contorCTLInputRef}
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setContorCTLImage(file);
+                          const url = URL.createObjectURL(file);
+                          setContorCTLImagePreview(url);
+                        }
+                      }}
+                    />
+                    {contorCTLImagePreview ? (
+                      <div className="space-y-2">
+                        <img 
+                          src={contorCTLImagePreview} 
+                          alt="Preview" 
+                          className="max-h-32 mx-auto rounded-lg object-contain"
+                        />
+                        <p className="text-xs text-muted-foreground">{contorCTLImage?.name}</p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setContorCTLImage(null);
+                            setContorCTLImagePreview(null);
+                          }}
+                        >
+                          <X className="h-3 w-3 mr-1" />
+                          Șterge
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-2 py-4">
+                        <div className="flex justify-center gap-2">
+                          <Camera className="h-8 w-8 text-muted-foreground" />
+                          <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                        </div>
+                        <p className="text-sm font-medium">Fotografiați sau încărcați poza contorului</p>
+                        <p className="text-xs text-muted-foreground">Apăsați pentru a selecta sau a face o poză</p>
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    OCR-ul va autocompleta datele ulterior (momentan doar upload)
+                  </p>
+                </div>
+              )}
+
               <div className="space-y-2">
                 <Label>Index Vechi Tur</Label>
                 <Input
