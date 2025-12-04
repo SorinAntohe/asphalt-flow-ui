@@ -210,12 +210,10 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
 
             {/* Order Selection */}
             <div className="space-y-2">
-              <Label htmlFor="order">
-                {direction === 'INBOUND' ? 'Comandă Materie Primă (PO)' : 'Comandă Produs Finit'}
-              </Label>
+              <Label htmlFor="order">Comandă</Label>
               <Select value={selectedOrder} onValueChange={setSelectedOrder}>
                 <SelectTrigger>
-                  <SelectValue placeholder={`Selectează ${direction === 'INBOUND' ? 'PO' : 'comanda'}`} />
+                  <SelectValue placeholder="Selectează comanda" />
                 </SelectTrigger>
                 <SelectContent>
                   {orders.length === 0 ? (
