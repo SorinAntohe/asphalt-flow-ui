@@ -121,7 +121,6 @@ const OferteContracte = () => {
     transport: { tipTransport: "inclus" as TransportPricing["tipTransport"], pretInchiriere: 0, pretTonaKm: 0 },
     valabilitate: "",
     termenPlata: "30 zile",
-    conditiiComerciale: "",
     observatii: "",
     indexareCombustibil: "",
     garantie: { biletOrdin: null as File | null, procesVerbal: null as File | null },
@@ -240,7 +239,6 @@ const OferteContracte = () => {
       transport: { tipTransport: "inclus", pretInchiriere: 0, pretTonaKm: 0 },
       valabilitate: "",
       termenPlata: "30 zile",
-      conditiiComerciale: "",
       observatii: "",
       indexareCombustibil: "",
       garantie: { biletOrdin: null, procesVerbal: null },
@@ -263,7 +261,6 @@ const OferteContracte = () => {
       },
       valabilitate: item.valabilitate,
       termenPlata: item.termenPlata,
-      conditiiComerciale: item.conditiiComerciale,
       observatii: item.observatii,
       indexareCombustibil: item.tip === "contract" ? (item as Contract).indexareCombustibil : "",
       garantie: { biletOrdin: null, procesVerbal: null },
@@ -315,13 +312,13 @@ const OferteContracte = () => {
       if (editing.tip === "oferta") {
         setOferte(prev => prev.map(item => 
           item.id === editing.id 
-            ? { ...item, client: form.client, proiect: form.proiect, produs: produsDisplay, pret: totalPret, produse: validProduse, transport, valabilitate: form.valabilitate || item.valabilitate, termenPlata: form.termenPlata, conditiiComerciale: form.conditiiComerciale, observatii: form.observatii }
+            ? { ...item, client: form.client, proiect: form.proiect, produs: produsDisplay, pret: totalPret, produse: validProduse, transport, valabilitate: form.valabilitate || item.valabilitate, termenPlata: form.termenPlata, observatii: form.observatii }
             : item
         ));
       } else {
         setContracte(prev => prev.map(item => 
           item.id === editing.id 
-            ? { ...item, client: form.client, proiect: form.proiect, produs: produsDisplay, pret: totalPret, produse: validProduse, transport, valabilitate: form.valabilitate || item.valabilitate, termenPlata: form.termenPlata, conditiiComerciale: form.conditiiComerciale, observatii: form.observatii, indexareCombustibil: form.indexareCombustibil }
+            ? { ...item, client: form.client, proiect: form.proiect, produs: produsDisplay, pret: totalPret, produse: validProduse, transport, valabilitate: form.valabilitate || item.valabilitate, termenPlata: form.termenPlata, observatii: form.observatii, indexareCombustibil: form.indexareCombustibil }
             : item
         ));
       }
@@ -342,7 +339,7 @@ const OferteContracte = () => {
           status: "Draft",
           tip: "oferta",
           dataCreare: currentDate,
-          conditiiComerciale: form.conditiiComerciale,
+          conditiiComerciale: "",
           observatii: form.observatii,
         };
         setOferte(prev => [...prev, newOferta]);
@@ -362,7 +359,7 @@ const OferteContracte = () => {
           status: "Draft",
           tip: "contract",
           dataCreare: currentDate,
-          conditiiComerciale: form.conditiiComerciale,
+          conditiiComerciale: "",
           observatii: form.observatii,
           indexareCombustibil: form.indexareCombustibil,
         };
@@ -963,10 +960,6 @@ const OferteContracte = () => {
                   onChange={(e) => setForm({ ...form, termenPlata: e.target.value ? `${e.target.value} zile` : '' })} 
                 />
               </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Condiții comerciale</Label>
-              <Textarea placeholder="Condiții de livrare, plată, etc." value={form.conditiiComerciale} onChange={(e) => setForm({ ...form, conditiiComerciale: e.target.value })} />
             </div>
             {(activeTab === "contracte" || editing?.tip === "contract") && (
               <div className="space-y-2">
