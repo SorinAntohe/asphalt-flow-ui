@@ -2053,7 +2053,7 @@ const Consumuri = () => {
 
       {/* Contor CTL Form Dialog */}
       <Dialog open={isContorCTLFormOpen} onOpenChange={setIsContorCTLFormOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{isEditingContorCTL ? 'Editează Contor CTL' : 'Adaugă Contor CTL'}</DialogTitle>
             <DialogDescription>
