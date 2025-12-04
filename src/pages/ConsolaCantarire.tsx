@@ -212,14 +212,14 @@ export default function ConsolaCantarire() {
     }
   };
 
-  const handleNewWeighingCreated = (sessionData: { direction: Direction; orderNo?: string; poNo?: string; nrAuto: string; sofer: string }) => {
+  const handleNewWeighingCreated = (sessionData: { direction: Direction; orderNo?: string; poNo?: string; rowId: string; nrAuto: string; sofer: string }) => {
     const newSession: WeighSession = {
       id: `new-${Date.now()}`,
       sessionCode: `SC-${String(Date.now()).slice(-3)}`,
       direction: sessionData.direction,
       poNo: sessionData.poNo,
       orderNo: sessionData.orderNo,
-      rowId: `ROW-${String(Date.now()).slice(-3)}`,
+      rowId: sessionData.rowId,
       nrAuto: sessionData.nrAuto,
       step: '1/2',
       createdAt: new Date().toISOString(),
