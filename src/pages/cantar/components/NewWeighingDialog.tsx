@@ -175,7 +175,6 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
                   >
                     <Package className="mb-2 h-6 w-6" />
                     <span className="font-medium">Recepție</span>
-                    <span className="text-xs text-muted-foreground">INBOUND</span>
                   </Label>
                 </div>
                 <div>
@@ -186,7 +185,6 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
                   >
                     <Truck className="mb-2 h-6 w-6" />
                     <span className="font-medium">Livrare</span>
-                    <span className="text-xs text-muted-foreground">OUTBOUND</span>
                   </Label>
                 </div>
               </RadioGroup>
