@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Scale, Search, Wifi, WifiOff, Bell, Truck, Package, Plus } from "lucide-react";
+import { Scale, Search, Wifi, WifiOff, Truck, Package, Plus } from "lucide-react";
 import { SessionCard } from "./cantar/components/SessionCard";
 import { ActiveWeighPanel } from "./cantar/components/ActiveWeighPanel";
 import { RowPickerDialog } from "./cantar/components/RowPickerDialog";
@@ -282,11 +282,6 @@ export default function ConsolaCantarire() {
               Cântărire nouă
             </Button>
 
-            {/* Call Next Button */}
-            <Button variant="outline" onClick={handleCallNext} disabled={queue1.length === 0}>
-              <Bell className="h-4 w-4 mr-2" />
-              Cheamă următorul
-            </Button>
 
             {/* Search */}
             <div className="relative">
