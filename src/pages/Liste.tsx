@@ -12,7 +12,9 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ChevronLeft, ChevronRight, UserCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/api";
 
@@ -24,6 +26,7 @@ const Liste = () => {
   const [produseFinitePerPage, setProduseFinitePerPage] = useState(10);
   const [clientiPerPage, setClientiPerPage] = useState(10);
   const [furnizoriPerPage, setFurnizoriPerPage] = useState(10);
+  const [angajatiPerPage, setAngajatiPerPage] = useState(10);
   
   const [autoturismePage, setAutoturismePage] = useState(1);
   const [soferiPage, setSoferiPage] = useState(1);
@@ -31,6 +34,7 @@ const Liste = () => {
   const [produseFinitePage, setProduseFinitePage] = useState(1);
   const [clientiPage, setClientiPage] = useState(1);
   const [furnizoriPage, setFurnizoriPage] = useState(1);
+  const [angajatiPage, setAngajatiPage] = useState(1);
 
   // Filters
   const [autoturismeFilters, setAutoturismeFilters] = useState({ id: "", tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "", tara: "" });
@@ -39,6 +43,7 @@ const Liste = () => {
   const [produseFiniteFilters, setProduseFiniteFilters] = useState({ id: "", denumire: "" });
   const [clientiFilters, setClientiFilters] = useState({ id: "", denumire: "", sediu: "", cui: "", nrReg: "" });
   const [furnizoriFilters, setFurnizoriFilters] = useState({ id: "", denumire: "", sediu: "", cui: "", nrReg: "" });
+  const [angajatiFilters, setAngajatiFilters] = useState({ id: "", nume: "", functie: "", data_angajari: "", salariu: "" });
 
   // Sorting
   const [autoturismeSort, setAutoturismeSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
@@ -47,6 +52,7 @@ const Liste = () => {
   const [produseFiniteSort, setProduseFiniteSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
   const [clientiSort, setClientiSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
   const [furnizoriSort, setFurnizoriSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
+  const [angajatiSort, setAngajatiSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
 
   // Dialog states
   const [autoturismeDialog, setAutoturismeDialog] = useState<{ open: boolean; mode: 'add' | 'edit'; data?: any }>({ open: false, mode: 'add' });
@@ -55,6 +61,7 @@ const Liste = () => {
   const [produseFiniteDialog, setProduseFiniteDialog] = useState<{ open: boolean; mode: 'add' | 'edit'; data?: any }>({ open: false, mode: 'add' });
   const [clientiDialog, setClientiDialog] = useState<{ open: boolean; mode: 'add' | 'edit'; data?: any }>({ open: false, mode: 'add' });
   const [furnizoriDialog, setFurnizoriDialog] = useState<{ open: boolean; mode: 'add' | 'edit'; data?: any }>({ open: false, mode: 'add' });
+  const [angajatiDialog, setAngajatiDialog] = useState<{ open: boolean; mode: 'add' | 'edit'; data?: any }>({ open: false, mode: 'add' });
 
   // Delete dialog states
   const [autoturismeDeleteDialog, setAutoturismeDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
@@ -63,6 +70,7 @@ const Liste = () => {
   const [produseFiniteDeleteDialog, setProduseFiniteDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
   const [clientiDeleteDialog, setClientiDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
   const [furnizoriDeleteDialog, setFurnizoriDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
+  const [angajatiDeleteDialog, setAngajatiDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
 
   // Details view states
   const [viewingAutoturism, setViewingAutoturism] = useState<any | null>(null);
@@ -71,6 +79,7 @@ const Liste = () => {
   const [viewingProdusFinit, setViewingProdusFinit] = useState<any | null>(null);
   const [viewingClient, setViewingClient] = useState<any | null>(null);
   const [viewingFurnizor, setViewingFurnizor] = useState<any | null>(null);
+  const [viewingAngajat, setViewingAngajat] = useState<any | null>(null);
 
   // Form data states
   const [autoturismeFormData, setAutoturismeFormData] = useState({ tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "", tara: "" });
@@ -79,7 +88,9 @@ const Liste = () => {
   const [produseFiniteFormData, setProduseFiniteFormData] = useState({ denumire: "" });
   const [clientiFormData, setClientiFormData] = useState({ denumire: "", sediu: "", cui: "", nrReg: "" });
   const [furnizoriFormData, setFurnizoriFormData] = useState({ denumire: "", sediu: "", cui: "", nrReg: "" });
+  const [angajatiFormData, setAngajatiFormData] = useState({ nume: "", functie: "", data_angajari: "", salariu: "", zile_concediu_calculate: "", zile_concediu_luate: "", zile_concediu_ramase: "" });
   const [activeTab, setActiveTab] = useState("autoturisme");
+  const [angajatiLoading, setAngajatiLoading] = useState(true);
   
   const materiiPrimeList = [
     "0/4 NAT", "0/4 CONC", "0/4 CRIBLURI", "4/8 CONC", "4/8 CRIBLURI", "4/8 NAT",
@@ -96,6 +107,37 @@ const Liste = () => {
   const [produseFinite, setProduseFinite] = useState<any[]>([]);
   const [clienti, setClienti] = useState<any[]>([]);
   const [furnizori, setFurnizori] = useState<any[]>([]);
+  const [angajati, setAngajati] = useState<any[]>([]);
+
+  // Date formatting helpers for angajati
+  const formatDateForDisplay = (dateStr: string): string => {
+    if (!dateStr) return "";
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) return dateStr;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      const [year, month, day] = dateStr.split("-");
+      return `${day}/${month}/${year}`;
+    }
+    return dateStr;
+  };
+
+  const formatDateForInput = (dateStr: string): string => {
+    if (!dateStr) return "";
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
+      const [day, month, year] = dateStr.split("/");
+      return `${year}-${month}-${day}`;
+    }
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+    return dateStr;
+  };
+
+  const formatDateForAPI = (dateStr: string): string => {
+    if (!dateStr) return "";
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      const [year, month, day] = dateStr.split("-");
+      return `${day}/${month}/${year}`;
+    }
+    return dateStr;
+  };
 
   // Fetch autoturisme data
   useEffect(() => {
@@ -228,6 +270,29 @@ const Liste = () => {
     fetchFurnizori();
   }, []);
 
+  // Fetch angajati data
+  const fetchAngajati = async () => {
+    setAngajatiLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/resurse_umane/returneaza/lista_angajati`);
+      if (response.ok) {
+        const data = await response.json();
+        setAngajati(data);
+      } else {
+        setAngajati([]);
+      }
+    } catch (error) {
+      console.error('Error fetching angajati:', error);
+      setAngajati([]);
+    } finally {
+      setAngajatiLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAngajati();
+  }, []);
+
 
   // Pagination helpers
   const getPaginatedData = (data: any[], page: number, itemsPerPage: number) => {
@@ -293,12 +358,21 @@ const Liste = () => {
     (item.nrReg?.toLowerCase() || '').includes(furnizoriFilters.nrReg.toLowerCase())
   );
 
+  const filterAngajati = angajati.filter(item =>
+    (item.id?.toString() || '').includes(angajatiFilters.id) &&
+    (item.nume?.toLowerCase() || '').includes(angajatiFilters.nume.toLowerCase()) &&
+    (item.functie?.toLowerCase() || '').includes(angajatiFilters.functie.toLowerCase()) &&
+    (item.data_angajari?.toLowerCase() || '').includes(angajatiFilters.data_angajari.toLowerCase()) &&
+    (item.salariu?.toString() || '').includes(angajatiFilters.salariu)
+  );
+
   const sortedAutoturisme = sortData(filterAutoturisme, autoturismeSort.field, autoturismeSort.direction);
   const sortedSoferi = sortData(filterSoferi, soferiSort.field, soferiSort.direction);
   const sortedMateriiPrime = sortData(filterMateriiPrime, materiiPrimeSort.field, materiiPrimeSort.direction);
   const sortedProduseFinite = sortData(filterProduseFinite, produseFiniteSort.field, produseFiniteSort.direction);
   const sortedClienti = sortData(filterClienti, clientiSort.field, clientiSort.direction);
   const sortedFurnizori = sortData(filterFurnizori, furnizoriSort.field, furnizoriSort.direction);
+  const sortedAngajati = sortData(filterAngajati, angajatiSort.field, angajatiSort.direction);
 
   const paginatedAutoturisme = getPaginatedData(sortedAutoturisme, autoturismePage, autoturismePerPage);
   const paginatedSoferi = getPaginatedData(sortedSoferi, soferiPage, soferiPerPage);
@@ -306,6 +380,7 @@ const Liste = () => {
   const paginatedProduseFinite = getPaginatedData(sortedProduseFinite, produseFinitePage, produseFinitePerPage);
   const paginatedClienti = getPaginatedData(sortedClienti, clientiPage, clientiPerPage);
   const paginatedFurnizori = getPaginatedData(sortedFurnizori, furnizoriPage, furnizoriPerPage);
+  const paginatedAngajati = getPaginatedData(sortedAngajati, angajatiPage, angajatiPerPage);
   
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -327,6 +402,7 @@ const Liste = () => {
             <TabsTrigger value="produse" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 min-w-[calc(33.333%-4px)] sm:min-w-0 sm:flex-none">Produse</TabsTrigger>
             <TabsTrigger value="clienti" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 min-w-[calc(33.333%-4px)] sm:min-w-0 sm:flex-none">Clienți</TabsTrigger>
             <TabsTrigger value="furnizori" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 min-w-[calc(33.333%-4px)] sm:min-w-0 sm:flex-none">Furnizori</TabsTrigger>
+            <TabsTrigger value="angajati" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 min-w-[calc(33.333%-4px)] sm:min-w-0 sm:flex-none">Angajați</TabsTrigger>
           </TabsList>
           <div className="flex gap-2">
             <Button 
@@ -354,6 +430,14 @@ const Liste = () => {
                     { key: 'id', label: 'ID' }, { key: 'denumire', label: 'Denumire' }, { key: 'sediu', label: 'Sediu' },
                     { key: 'cui', label: 'CUI' }, { key: 'nrReg', label: 'Nr. Reg' }
                   ]);
+                } else if (activeTab === 'angajati') {
+                  exportToCSV(sortedAngajati, 'angajati', [
+                    { key: 'id', label: 'ID' }, { key: 'nume', label: 'Nume' }, { key: 'functie', label: 'Funcție' },
+                    { key: 'data_angajari', label: 'Data Angajării' }, { key: 'salariu', label: 'Salariu' },
+                    { key: 'zile_concediu_calculate', label: 'Zile Concediu Calculate' },
+                    { key: 'zile_concediu_luate', label: 'Zile Concediu Luate' },
+                    { key: 'zile_concediu_ramase', label: 'Zile Concediu Rămase' }
+                  ]);
                 }
               }}
             >
@@ -379,6 +463,9 @@ const Liste = () => {
               } else if (activeTab === 'furnizori') {
                 setFurnizoriFormData({ denumire: "", sediu: "", cui: "", nrReg: "" });
                 setFurnizoriDialog({ open: true, mode: 'add' });
+              } else if (activeTab === 'angajati') {
+                setAngajatiFormData({ nume: "", functie: "", data_angajari: "", salariu: "", zile_concediu_calculate: "", zile_concediu_luate: "", zile_concediu_ramase: "" });
+                setAngajatiDialog({ open: true, mode: 'add' });
               }
             }}>
               <Plus className="w-4 h-4 sm:mr-2" />
@@ -389,6 +476,7 @@ const Liste = () => {
                 {activeTab === 'produse' && 'Adaugă Produs Finit'}
                 {activeTab === 'clienti' && 'Adaugă Client'}
                 {activeTab === 'furnizori' && 'Adaugă Furnizor'}
+                {activeTab === 'angajati' && 'Adaugă Angajat'}
               </span>
             </Button>
           </div>
@@ -2557,6 +2645,319 @@ const Liste = () => {
              </AlertDialogContent>
            </AlertDialog>
          </TabsContent>
+
+         {/* Angajati Tab */}
+         <TabsContent value="angajati">
+           <Card>
+             <CardHeader className="p-3 sm:p-6">
+               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                 <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                   <UserCheck className="h-5 w-5 text-primary" />
+                   Lista Angajați
+                 </CardTitle>
+                 <div className="flex items-center gap-2">
+                   <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
+                   <Select value={angajatiPerPage.toString()} onValueChange={(value) => { setAngajatiPerPage(Number(value)); setAngajatiPage(1); }}>
+                     <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
+                       <SelectValue />
+                     </SelectTrigger>
+                     <SelectContent>
+                       <SelectItem value="5">5</SelectItem>
+                       <SelectItem value="10">10</SelectItem>
+                       <SelectItem value="20">20</SelectItem>
+                       <SelectItem value="50">50</SelectItem>
+                       <SelectItem value="100">100</SelectItem>
+                     </SelectContent>
+                   </Select>
+                 </div>
+               </div>
+             </CardHeader>
+             <CardContent className="overflow-x-auto">
+               {angajatiLoading ? (
+                 <div className="space-y-2">
+                   {[...Array(5)].map((_, i) => (
+                     <Skeleton key={i} className="h-12 w-full" />
+                   ))}
+                 </div>
+               ) : (
+                 <Table className="min-w-[1000px]">
+                   <TableHeader>
+                     <TableRow>
+                       <TableHead className="h-10 text-xs">
+                         <div className="flex items-center gap-1">
+                           <Popover>
+                             <PopoverTrigger asChild>
+                               <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                                 <span>ID</span>
+                                 {angajatiSort.field === 'id' ? (angajatiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                               </Button>
+                             </PopoverTrigger>
+                             <PopoverContent className="w-56 p-2">
+                               <div className="space-y-2">
+                                 <Input placeholder="Caută ID..." value={angajatiFilters.id} onChange={(e) => { setAngajatiFilters({...angajatiFilters, id: e.target.value}); setAngajatiPage(1); }} className="h-7 text-xs" />
+                                 <div className="flex gap-1">
+                                   <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAngajatiSort({ field: 'id', direction: 'asc' })}><ArrowUp className="h-3 w-3 mr-1" /> Cresc.</Button>
+                                   <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAngajatiSort({ field: 'id', direction: 'desc' })}><ArrowDown className="h-3 w-3 mr-1" /> Descresc.</Button>
+                                 </div>
+                               </div>
+                             </PopoverContent>
+                           </Popover>
+                         </div>
+                       </TableHead>
+                       <TableHead className="h-10 text-xs">
+                         <div className="flex items-center gap-1">
+                           <Popover>
+                             <PopoverTrigger asChild>
+                               <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                                 <span>Nume</span>
+                                 {angajatiSort.field === 'nume' ? (angajatiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                               </Button>
+                             </PopoverTrigger>
+                             <PopoverContent className="w-56 p-2">
+                               <div className="space-y-2">
+                                 <Input placeholder="Caută nume..." value={angajatiFilters.nume} onChange={(e) => { setAngajatiFilters({...angajatiFilters, nume: e.target.value}); setAngajatiPage(1); }} className="h-7 text-xs" />
+                                 <div className="flex gap-1">
+                                   <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAngajatiSort({ field: 'nume', direction: 'asc' })}><ArrowUp className="h-3 w-3 mr-1" /> Cresc.</Button>
+                                   <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAngajatiSort({ field: 'nume', direction: 'desc' })}><ArrowDown className="h-3 w-3 mr-1" /> Descresc.</Button>
+                                 </div>
+                               </div>
+                             </PopoverContent>
+                           </Popover>
+                         </div>
+                       </TableHead>
+                       <TableHead className="h-10 text-xs">
+                         <div className="flex items-center gap-1">
+                           <Popover>
+                             <PopoverTrigger asChild>
+                               <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                                 <span>Funcție</span>
+                                 {angajatiSort.field === 'functie' ? (angajatiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                               </Button>
+                             </PopoverTrigger>
+                             <PopoverContent className="w-56 p-2">
+                               <div className="space-y-2">
+                                 <Input placeholder="Caută funcție..." value={angajatiFilters.functie} onChange={(e) => { setAngajatiFilters({...angajatiFilters, functie: e.target.value}); setAngajatiPage(1); }} className="h-7 text-xs" />
+                                 <div className="flex gap-1">
+                                   <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAngajatiSort({ field: 'functie', direction: 'asc' })}><ArrowUp className="h-3 w-3 mr-1" /> Cresc.</Button>
+                                   <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAngajatiSort({ field: 'functie', direction: 'desc' })}><ArrowDown className="h-3 w-3 mr-1" /> Descresc.</Button>
+                                 </div>
+                               </div>
+                             </PopoverContent>
+                           </Popover>
+                         </div>
+                       </TableHead>
+                       <TableHead className="h-10 text-xs">
+                         <div className="flex items-center gap-1">
+                           <Popover>
+                             <PopoverTrigger asChild>
+                               <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                                 <span>Data Angajării</span>
+                                 {angajatiSort.field === 'data_angajari' ? (angajatiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                               </Button>
+                             </PopoverTrigger>
+                             <PopoverContent className="w-56 p-2">
+                               <div className="space-y-2">
+                                 <Input placeholder="Caută data..." value={angajatiFilters.data_angajari} onChange={(e) => { setAngajatiFilters({...angajatiFilters, data_angajari: e.target.value}); setAngajatiPage(1); }} className="h-7 text-xs" />
+                                 <div className="flex gap-1">
+                                   <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAngajatiSort({ field: 'data_angajari', direction: 'asc' })}><ArrowUp className="h-3 w-3 mr-1" /> Cresc.</Button>
+                                   <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAngajatiSort({ field: 'data_angajari', direction: 'desc' })}><ArrowDown className="h-3 w-3 mr-1" /> Descresc.</Button>
+                                 </div>
+                               </div>
+                             </PopoverContent>
+                           </Popover>
+                         </div>
+                       </TableHead>
+                       <TableHead className="h-10 text-xs">
+                         <div className="flex items-center gap-1">
+                           <Popover>
+                             <PopoverTrigger asChild>
+                               <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                                 <span>Salariu</span>
+                                 {angajatiSort.field === 'salariu' ? (angajatiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                               </Button>
+                             </PopoverTrigger>
+                             <PopoverContent className="w-56 p-2">
+                               <div className="space-y-2">
+                                 <Input placeholder="Caută salariu..." value={angajatiFilters.salariu} onChange={(e) => { setAngajatiFilters({...angajatiFilters, salariu: e.target.value}); setAngajatiPage(1); }} className="h-7 text-xs" />
+                                 <div className="flex gap-1">
+                                   <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAngajatiSort({ field: 'salariu', direction: 'asc' })}><ArrowUp className="h-3 w-3 mr-1" /> Cresc.</Button>
+                                   <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setAngajatiSort({ field: 'salariu', direction: 'desc' })}><ArrowDown className="h-3 w-3 mr-1" /> Descresc.</Button>
+                                 </div>
+                               </div>
+                             </PopoverContent>
+                           </Popover>
+                         </div>
+                       </TableHead>
+                       <TableHead className="h-10 text-xs">Zile Calculate</TableHead>
+                       <TableHead className="h-10 text-xs">Zile Luate</TableHead>
+                       <TableHead className="h-10 text-xs">Zile Rămase</TableHead>
+                     </TableRow>
+                   </TableHeader>
+                   <TableBody>
+                     {paginatedAngajati.length === 0 ? (
+                       <TableRow>
+                         <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                           Nu există angajați.
+                         </TableCell>
+                       </TableRow>
+                     ) : (
+                       paginatedAngajati.map((item: any) => (
+                         <TableRow key={item.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setViewingAngajat(item)}>
+                           <TableCell className="text-xs sm:text-sm font-medium">{item.id}</TableCell>
+                           <TableCell className="text-xs sm:text-sm">{item.nume}</TableCell>
+                           <TableCell className="text-xs sm:text-sm">{item.functie}</TableCell>
+                           <TableCell className="text-xs sm:text-sm">{item.data_angajari}</TableCell>
+                           <TableCell className="text-xs sm:text-sm">{item.salariu?.toLocaleString("ro-RO")} RON</TableCell>
+                           <TableCell className="text-xs sm:text-sm">{item.zile_concediu_calculate ?? 0}</TableCell>
+                           <TableCell className="text-xs sm:text-sm">{item.zile_concediu_luate ?? 0}</TableCell>
+                           <TableCell className="text-xs sm:text-sm">{item.zile_concediu_ramase ?? 0}</TableCell>
+                         </TableRow>
+                       ))
+                     )}
+                   </TableBody>
+                 </Table>
+               )}
+             </CardContent>
+           </Card>
+           {/* Pagination */}
+           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
+             <div className="text-xs sm:text-sm text-muted-foreground">
+               Afișare {paginatedAngajati.length > 0 ? ((angajatiPage - 1) * angajatiPerPage + 1) : 0} - {Math.min(angajatiPage * angajatiPerPage, sortedAngajati.length)} din {sortedAngajati.length}
+             </div>
+             <div className="flex items-center gap-2">
+               <Button variant="outline" size="sm" onClick={() => setAngajatiPage(Math.max(1, angajatiPage - 1))} disabled={angajatiPage === 1}>
+                 <ChevronLeft className="h-4 w-4" />
+               </Button>
+               <span className="text-sm text-muted-foreground">Pagina {angajatiPage} din {getTotalPages(sortedAngajati.length, angajatiPerPage) || 1}</span>
+               <Button variant="outline" size="sm" onClick={() => setAngajatiPage(Math.min(getTotalPages(sortedAngajati.length, angajatiPerPage), angajatiPage + 1))} disabled={angajatiPage >= getTotalPages(sortedAngajati.length, angajatiPerPage)}>
+                 <ChevronRight className="h-4 w-4" />
+               </Button>
+             </div>
+           </div>
+
+           {/* Add/Edit Dialog */}
+           <Dialog open={angajatiDialog.open} onOpenChange={(open) => setAngajatiDialog({ ...angajatiDialog, open })}>
+             <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+               <DialogHeader>
+                 <DialogTitle>{angajatiDialog.mode === 'add' ? 'Adaugă Angajat' : 'Editează Angajat'}</DialogTitle>
+                 <DialogDescription>{angajatiDialog.mode === 'add' ? 'Completează datele noului angajat.' : 'Modifică datele angajatului.'}</DialogDescription>
+               </DialogHeader>
+               <div className="grid gap-4 py-4">
+                 <div className="grid gap-2">
+                   <Label htmlFor="angajat-nume">Nume *</Label>
+                   <Input id="angajat-nume" placeholder="Ex: Ion Popescu" value={angajatiFormData.nume} onChange={(e) => setAngajatiFormData({ ...angajatiFormData, nume: e.target.value })} />
+                 </div>
+                 <div className="grid gap-2">
+                   <Label htmlFor="angajat-functie">Funcție *</Label>
+                   <Input id="angajat-functie" placeholder="Ex: Operator" value={angajatiFormData.functie} onChange={(e) => setAngajatiFormData({ ...angajatiFormData, functie: e.target.value })} />
+                 </div>
+                 <div className="grid gap-2">
+                   <Label htmlFor="angajat-data">Data Angajării *</Label>
+                   <Input id="angajat-data" type="date" value={angajatiFormData.data_angajari} onChange={(e) => setAngajatiFormData({ ...angajatiFormData, data_angajari: e.target.value })} />
+                 </div>
+                 <div className="grid gap-2">
+                   <Label htmlFor="angajat-salariu">Salariu (RON) *</Label>
+                   <Input id="angajat-salariu" type="number" placeholder="Ex: 5000" value={angajatiFormData.salariu} onChange={(e) => setAngajatiFormData({ ...angajatiFormData, salariu: e.target.value })} />
+                 </div>
+                 {angajatiDialog.mode === 'edit' && (
+                   <>
+                     <div className="grid gap-2">
+                       <Label htmlFor="angajat-zile-calc">Zile Concediu Calculate</Label>
+                       <Input id="angajat-zile-calc" type="number" value={angajatiFormData.zile_concediu_calculate} onChange={(e) => setAngajatiFormData({ ...angajatiFormData, zile_concediu_calculate: e.target.value })} />
+                     </div>
+                     <div className="grid gap-2">
+                       <Label htmlFor="angajat-zile-luate">Zile Concediu Luate</Label>
+                       <Input id="angajat-zile-luate" type="number" value={angajatiFormData.zile_concediu_luate} onChange={(e) => setAngajatiFormData({ ...angajatiFormData, zile_concediu_luate: e.target.value })} />
+                     </div>
+                     <div className="grid gap-2">
+                       <Label htmlFor="angajat-zile-ramase">Zile Concediu Rămase</Label>
+                       <Input id="angajat-zile-ramase" type="number" value={angajatiFormData.zile_concediu_ramase} onChange={(e) => setAngajatiFormData({ ...angajatiFormData, zile_concediu_ramase: e.target.value })} />
+                     </div>
+                   </>
+                 )}
+               </div>
+               <DialogFooter>
+                 <Button variant="outline" onClick={() => setAngajatiDialog({ ...angajatiDialog, open: false })}>Anulează</Button>
+                 <Button onClick={async () => {
+                   if (!angajatiFormData.nume || !angajatiFormData.functie || !angajatiFormData.data_angajari || !angajatiFormData.salariu) {
+                     toast({ title: "Eroare", description: "Toate câmpurile obligatorii trebuie completate", variant: "destructive" });
+                     return;
+                   }
+                   try {
+                     if (angajatiDialog.mode === 'edit' && angajatiDialog.data) {
+                       const response = await fetch(`${API_BASE_URL}/editeaza`, {
+                         method: 'PATCH',
+                         headers: { 'Content-Type': 'application/json' },
+                         body: JSON.stringify({
+                           tabel: "lista_angajati",
+                           id: angajatiDialog.data.id,
+                           update: {
+                             nume: angajatiFormData.nume,
+                             functie: angajatiFormData.functie,
+                             data_angajari: formatDateForAPI(angajatiFormData.data_angajari),
+                             salariu: parseFloat(angajatiFormData.salariu),
+                             zile_concediu_calculate: parseFloat(angajatiFormData.zile_concediu_calculate) || 0,
+                             zile_concediu_luate: parseFloat(angajatiFormData.zile_concediu_luate) || 0,
+                             zile_concediu_ramase: parseFloat(angajatiFormData.zile_concediu_ramase) || 0,
+                           }
+                         })
+                       });
+                       if (!response.ok) throw new Error('Eroare la editarea angajatului');
+                       toast({ title: "Succes", description: "Angajatul a fost editat cu succes" });
+                     } else {
+                       const response = await fetch(`${API_BASE_URL}/resurse_umane/adauga/angajat`, {
+                         method: 'POST',
+                         headers: { 'Content-Type': 'application/json' },
+                         body: JSON.stringify({
+                           nume: angajatiFormData.nume,
+                           functie: angajatiFormData.functie,
+                           data_angajari: formatDateForAPI(angajatiFormData.data_angajari),
+                           salariu: parseFloat(angajatiFormData.salariu)
+                         })
+                       });
+                       if (!response.ok) throw new Error('Eroare la adăugarea angajatului');
+                       toast({ title: "Succes", description: "Angajatul a fost adăugat cu succes" });
+                     }
+                     fetchAngajati();
+                     setAngajatiDialog({ ...angajatiDialog, open: false });
+                   } catch (error) {
+                     toast({ title: "Eroare", description: `Nu s-a putut ${angajatiDialog.mode === 'edit' ? 'edita' : 'adăuga'} angajatul`, variant: "destructive" });
+                   }
+                 }}>
+                   {angajatiDialog.mode === 'add' ? 'Adaugă' : 'Salvează'}
+                 </Button>
+               </DialogFooter>
+             </DialogContent>
+           </Dialog>
+
+           {/* Delete Dialog */}
+           <AlertDialog open={angajatiDeleteDialog.open} onOpenChange={(open) => setAngajatiDeleteDialog({ ...angajatiDeleteDialog, open })}>
+             <AlertDialogContent>
+               <AlertDialogHeader>
+                 <AlertDialogTitle>Confirmare ștergere</AlertDialogTitle>
+                 <AlertDialogDescription>Sigur doriți să ștergeți acest angajat? Această acțiune nu poate fi anulată.</AlertDialogDescription>
+               </AlertDialogHeader>
+               <AlertDialogFooter>
+                 <AlertDialogCancel>Anulează</AlertDialogCancel>
+                 <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
+                   try {
+                     const response = await fetch(`${API_BASE_URL}/sterge`, {
+                       method: 'DELETE',
+                       headers: { 'Content-Type': 'application/json' },
+                       body: JSON.stringify({ tabel: "lista_angajati", id: angajatiDeleteDialog.id })
+                     });
+                     if (!response.ok) throw new Error('Eroare la ștergerea angajatului');
+                     toast({ title: "Succes", description: "Angajatul a fost șters cu succes" });
+                     setAngajatiDeleteDialog({ open: false });
+                     fetchAngajati();
+                   } catch (error) {
+                     toast({ title: "Eroare", description: "Nu s-a putut șterge angajatul", variant: "destructive" });
+                   }
+                 }}>Șterge</AlertDialogAction>
+               </AlertDialogFooter>
+             </AlertDialogContent>
+           </AlertDialog>
+         </TabsContent>
        </Tabs>
 
       {/* Details Dialogs */}
@@ -2893,6 +3294,92 @@ const Liste = () => {
               Șterge
             </Button>
             <Button variant="outline" size="sm" onClick={() => setViewingFurnizor(null)}>
+              <X className="w-4 h-4 mr-2" />
+              Închide
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Angajati Details */}
+      <Dialog open={!!viewingAngajat} onOpenChange={() => setViewingAngajat(null)}>
+        <DialogContent className="max-w-lg" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle>Detalii Angajat</DialogTitle>
+          </DialogHeader>
+          {viewingAngajat && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">ID</Label>
+                  <p className="font-medium">{viewingAngajat.id}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Nume</Label>
+                  <p className="font-medium">{viewingAngajat.nume}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Funcție</Label>
+                  <p className="font-medium">{viewingAngajat.functie}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Data Angajării</Label>
+                  <p className="font-medium">{viewingAngajat.data_angajari}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Salariu</Label>
+                  <p className="font-medium">{viewingAngajat.salariu?.toLocaleString("ro-RO")} RON</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Zile Concediu Calculate</Label>
+                  <p className="font-medium">{viewingAngajat.zile_concediu_calculate ?? 0}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Zile Concediu Luate</Label>
+                  <p className="font-medium">{viewingAngajat.zile_concediu_luate ?? 0}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Zile Concediu Rămase</Label>
+                  <p className="font-medium">{viewingAngajat.zile_concediu_ramase ?? 0}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => {
+              if (viewingAngajat) {
+                setAngajatiFormData({
+                  nume: viewingAngajat.nume,
+                  functie: viewingAngajat.functie,
+                  data_angajari: formatDateForInput(viewingAngajat.data_angajari),
+                  salariu: String(viewingAngajat.salariu),
+                  zile_concediu_calculate: String(viewingAngajat.zile_concediu_calculate ?? 0),
+                  zile_concediu_luate: String(viewingAngajat.zile_concediu_luate ?? 0),
+                  zile_concediu_ramase: String(viewingAngajat.zile_concediu_ramase ?? 0)
+                });
+                setAngajatiDialog({ open: true, mode: 'edit', data: viewingAngajat });
+                setViewingAngajat(null);
+              }
+            }}>
+              <Pencil className="w-4 h-4 mr-2" />
+              Editează
+            </Button>
+            <Button variant="destructive" size="sm" onClick={() => {
+              if (viewingAngajat) {
+                setAngajatiDeleteDialog({ open: true, id: viewingAngajat.id });
+                setViewingAngajat(null);
+              }
+            }}>
+              <Trash2 className="w-4 h-4 mr-2" />
+              Șterge
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setViewingAngajat(null)}>
               <X className="w-4 h-4 mr-2" />
               Închide
             </Button>
