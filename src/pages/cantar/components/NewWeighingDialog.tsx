@@ -189,7 +189,7 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
                   <RadioGroupItem value="INBOUND" id="inbound" className="peer sr-only" />
                   <Label
                     htmlFor="inbound"
-                    className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                    className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground cursor-pointer transition-colors"
                   >
                     <Package className="mb-2 h-6 w-6" />
                     <span className="font-medium">Recepție</span>
@@ -199,7 +199,7 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
                   <RadioGroupItem value="OUTBOUND" id="outbound" className="peer sr-only" />
                   <Label
                     htmlFor="outbound"
-                    className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                    className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground cursor-pointer transition-colors"
                   >
                     <Truck className="mb-2 h-6 w-6" />
                     <span className="font-medium">Livrare</span>
