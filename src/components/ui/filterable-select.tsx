@@ -40,10 +40,26 @@ export function FilterableSelect({
   id
 }: FilterableSelectProps) {
   const [open, setOpen] = React.useState(false)
+  const [searchValue, setSearchValue] = React.useState("")
 
   const selectedLabel = React.useMemo(() => {
     return options.find((option) => option.value === value)?.label
   }, [options, value])
+
+  // Filter options based on search
+  const filteredOptions = React.useMemo(() => {
+    if (!searchValue) return options
+    return options.filter((option) =>
+      option.label.toLowerCase().includes(searchValue.toLowerCase())
+    )
+  }, [options, searchValue])
+
+  // Reset search when closing
+  React.useEffect(() => {
+    if (!open) {
+      setSearchValue("")
+    }
+  }, [open])
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -62,30 +78,30 @@ export function FilterableSelect({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[--radix-popover-trigger-width] p-0 bg-popover z-50" align="start">
-        <Command filter={(value, search) => {
-          // Custom filter that searches in the label
-          const option = options.find(o => o.label.toLowerCase() === value.toLowerCase())
-          if (option && option.label.toLowerCase().includes(search.toLowerCase())) {
-            return 1
-          }
-          return 0
-        }}>
+      <PopoverContent 
+        className="w-[--radix-popover-trigger-width] p-0 bg-popover border border-border shadow-md z-[100]" 
+        align="start"
+        sideOffset={4}
+      >
+        <Command shouldFilter={false}>
           <CommandInput 
             placeholder={searchPlaceholder} 
-            className="h-9 text-foreground placeholder:text-muted-foreground" 
+            value={searchValue}
+            onValueChange={setSearchValue}
+            className="h-10 border-b border-border"
           />
-          <CommandList>
+          <CommandList className="max-h-60">
             <CommandEmpty>{emptyText}</CommandEmpty>
-            <CommandGroup className="max-h-64 overflow-auto">
-              {options.map((option) => (
+            <CommandGroup>
+              {filteredOptions.map((option) => (
                 <CommandItem
                   key={option.value}
-                  value={option.label}
+                  value={option.value}
                   onSelect={() => {
                     onValueChange(option.value === value ? "" : option.value)
                     setOpen(false)
                   }}
+                  className="cursor-pointer"
                 >
                   <Check
                     className={cn(
