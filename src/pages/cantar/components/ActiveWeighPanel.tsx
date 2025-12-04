@@ -142,25 +142,23 @@ export function ActiveWeighPanel({
           <>
             <div className="p-4 bg-muted/50 rounded-lg space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">
-                  {isInbound ? 'PO' : 'Comandă'}
-                </span>
+                <span className="text-sm text-muted-foreground">Comandă</span>
                 <span className="font-medium">
                   {isInbound ? session.poNo : session.orderNo}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Row ID</span>
+                <span className="text-sm text-muted-foreground">Id</span>
                 <span className="font-mono text-sm">{session.rowId}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Session Code</span>
+                <span className="text-sm text-muted-foreground">Cod sesiune</span>
                 <Badge variant="premium" className="font-mono">
                   {session.sessionCode}
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Step</span>
+                <span className="text-sm text-muted-foreground">Pas</span>
                 <Badge variant="outline">{session.step}</Badge>
               </div>
             </div>
