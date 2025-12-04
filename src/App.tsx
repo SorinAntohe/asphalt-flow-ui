@@ -13,7 +13,7 @@ import Livrari from "./pages/Livrari";
 import Consumuri from "./pages/Consumuri";
 import Comenzi from "./pages/Comenzi";
 import Stocuri from "./pages/Stocuri";
-import Angajati from "./pages/Angajati";
+
 import Pontaj from "./pages/Pontaj";
 import PontareAngajat from "./pages/PontareAngajat";
 import NotFound from "./pages/NotFound";
@@ -68,7 +68,7 @@ const AppRoutes = () => (
     <Route path="/consumuri" element={<ProtectedRoute><Consumuri /></ProtectedRoute>} />
     <Route path="/comenzi" element={<ProtectedRoute><Comenzi /></ProtectedRoute>} />
     <Route path="/stocuri" element={<ProtectedRoute><Stocuri /></ProtectedRoute>} />
-    <Route path="/angajati" element={<ProtectedRoute><Angajati /></ProtectedRoute>} />
+    <Route path="/angajati" element={<Navigate to="/liste" replace />} />
     <Route path="/pontaj" element={<ProtectedRoute><Pontaj /></ProtectedRoute>} />
     <Route path="/pontare" element={<ProtectedRoute><PontareAngajat /></ProtectedRoute>} />
     {/* Comercial module routes */}

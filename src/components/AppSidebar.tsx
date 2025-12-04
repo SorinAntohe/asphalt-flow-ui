@@ -33,7 +33,6 @@ const gestiuneItems = [
 const listeItem = { title: "Liste", url: "/liste", icon: ListChecks };
 
 const resurseUmaneItems = [
-  { title: "Lista Angajați", url: "/angajati", icon: UserCheck },
   { title: "Pontaj", url: "/pontaj", icon: CalendarClock },
   { title: "Pontare Angajat", url: "/pontare", icon: Clock },
 ];
