@@ -3,8 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertTriangle, Check, Delete } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { AlertTriangle, Check } from "lucide-react";
 
 interface ManualWeightDialogProps {
   open: boolean;
@@ -19,27 +18,6 @@ export function ManualWeightDialog({ open, onOpenChange, weightType, onConfirm, 
   const [confirmValue, setConfirmValue] = useState("");
   const [step, setStep] = useState<'enter' | 'confirm'>('enter');
   const [error, setError] = useState("");
-
-  const handleKeyPress = (key: string) => {
-    if (step === 'enter') {
-      if (key === 'clear') {
-        setValue("");
-      } else if (key === 'backspace') {
-        setValue(v => v.slice(0, -1));
-      } else {
-        setValue(v => v + key);
-      }
-    } else {
-      if (key === 'clear') {
-        setConfirmValue("");
-      } else if (key === 'backspace') {
-        setConfirmValue(v => v.slice(0, -1));
-      } else {
-        setConfirmValue(v => v + key);
-      }
-    }
-    setError("");
-  };
 
   const handleNext = () => {
     const numValue = parseFloat(value);
@@ -77,8 +55,6 @@ export function ManualWeightDialog({ open, onOpenChange, weightType, onConfirm, 
     onOpenChange(false);
   };
 
-  const numPadKeys = ['7', '8', '9', '4', '5', '6', '1', '2', '3', '0', '.'];
-
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
@@ -98,12 +74,21 @@ export function ManualWeightDialog({ open, onOpenChange, weightType, onConfirm, 
             <Label className="text-sm text-muted-foreground">
               {step === 'enter' ? 'Greutate (kg)' : 'Confirmare greutate (kg)'}
             </Label>
-            <div className="mt-1 p-4 bg-muted/50 rounded-lg text-center">
-              <span className="text-4xl font-mono font-bold">
-                {step === 'enter' ? (value || '0') : (confirmValue || '0')}
-              </span>
-              <span className="text-2xl text-muted-foreground ml-2">kg</span>
-            </div>
+            <Input
+              type="number"
+              placeholder="0"
+              value={step === 'enter' ? value : confirmValue}
+              onChange={(e) => {
+                if (step === 'enter') {
+                  setValue(e.target.value);
+                } else {
+                  setConfirmValue(e.target.value);
+                }
+                setError("");
+              }}
+              className="mt-2 text-2xl font-mono h-14 text-center"
+              autoFocus
+            />
             {step === 'confirm' && (
               <p className="text-sm text-muted-foreground mt-2 text-center">
                 Valoare inițială: <span className="font-mono font-medium">{value} kg</span>
@@ -117,37 +102,6 @@ export function ManualWeightDialog({ open, onOpenChange, weightType, onConfirm, 
               <span>{error}</span>
             </div>
           )}
-
-          {/* Numeric Keypad */}
-          <div className="grid grid-cols-3 gap-2">
-            {numPadKeys.map((key) => (
-              <Button
-                key={key}
-                variant="outline"
-                size="lg"
-                className="h-14 text-xl font-mono"
-                onClick={() => handleKeyPress(key)}
-              >
-                {key}
-              </Button>
-            ))}
-            <Button
-              variant="outline"
-              size="lg"
-              className="h-14"
-              onClick={() => handleKeyPress('backspace')}
-            >
-              <Delete className="h-5 w-5" />
-            </Button>
-          </div>
-
-          <Button
-            variant="ghost"
-            className="w-full mt-2"
-            onClick={() => handleKeyPress('clear')}
-          >
-            Șterge tot
-          </Button>
         </div>
 
         <DialogFooter className="flex-col sm:flex-row gap-2">
