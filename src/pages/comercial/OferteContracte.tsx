@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { FileCheck, Plus, Download, Copy, Mail, FileText, Pencil, Trash2 } from "lucide-react";
+import { FileCheck, Plus, Download, Copy, Mail, FileText, Pencil, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -16,13 +16,27 @@ import { exportToCSV } from "@/lib/exportUtils";
 import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
 
 // Types
+interface ProdusItem {
+  produs: string;
+  pret: number;
+  cantitate?: number;
+}
+
+interface TransportPricing {
+  tipTransport: "inchiriere" | "tona_km" | "inclus";
+  pretInchiriere?: number;
+  pretTonaKm?: number;
+}
+
 interface Oferta {
   id: number;
   nr: string;
   client: string;
   proiect: string;
-  produs: string;
-  pret: number;
+  produs: string; // Pentru afișare în tabel (primul produs sau "Multiple")
+  pret: number; // Pentru afișare în tabel (suma totală)
+  produse: ProdusItem[];
+  transport: TransportPricing;
   valabilitate: string;
   termenPlata: string;
   status: "Draft" | "Trimis" | "Acceptat" | "Expirat";
@@ -39,6 +53,8 @@ interface Contract {
   proiect: string;
   produs: string;
   pret: number;
+  produse: ProdusItem[];
+  transport: TransportPricing;
   valabilitate: string;
   termenPlata: string;
   status: "Draft" | "Trimis" | "Acceptat" | "Expirat";
@@ -53,17 +69,17 @@ type Item = Oferta | Contract;
 
 // Mock data
 const initialOferte: Oferta[] = [
-  { id: 1, nr: "OF-2024-001", client: "Construcții Modern SRL", proiect: "Autostrada A3 - Lot 2", produs: "Asfalt BA16", pret: 450, valabilitate: "31/12/2024", termenPlata: "30 zile", status: "Acceptat", tip: "oferta", dataCreare: "15/11/2024", conditiiComerciale: "Preț franco șantier, inclusiv transport", observatii: "Client prioritar" },
-  { id: 2, nr: "OF-2024-002", client: "Drumuri Naționale SA", proiect: "DN1 - Reparații km 45-60", produs: "Asfalt MASF16", pret: 520, valabilitate: "15/01/2025", termenPlata: "45 zile", status: "Trimis", tip: "oferta", dataCreare: "20/11/2024", conditiiComerciale: "Preț EXW, transport separat", observatii: "" },
-  { id: 3, nr: "OF-2024-003", client: "Primăria Sector 3", proiect: "Reabilitare Bd. Decebal", produs: "Asfalt BA8", pret: 380, valabilitate: "01/12/2024", termenPlata: "60 zile", status: "Draft", tip: "oferta", dataCreare: "25/11/2024", conditiiComerciale: "Preț franco șantier", observatii: "Așteptare aprobare buget" },
-  { id: 4, nr: "OF-2024-004", client: "Beta Construct SRL", proiect: "Parcare mall", produs: "Asfalt BA16", pret: 440, valabilitate: "20/11/2024", termenPlata: "30 zile", status: "Expirat", tip: "oferta", dataCreare: "01/11/2024", conditiiComerciale: "Preț franco șantier", observatii: "" },
-  { id: 5, nr: "OF-2024-005", client: "Infrastructură Plus SRL", proiect: "Centura ocolitoare", produs: "Emulsie cationică", pret: 2800, valabilitate: "28/02/2025", termenPlata: "30 zile", status: "Trimis", tip: "oferta", dataCreare: "28/11/2024", conditiiComerciale: "Preț per tonă, livrare în cisternă", observatii: "Volum mare estimat" },
+  { id: 1, nr: "OF-2024-001", client: "Construcții Modern SRL", proiect: "Autostrada A3 - Lot 2", produs: "Asfalt BA16", pret: 450, produse: [{ produs: "Asfalt BA16", pret: 450 }], transport: { tipTransport: "inclus" }, valabilitate: "31/12/2024", termenPlata: "30 zile", status: "Acceptat", tip: "oferta", dataCreare: "15/11/2024", conditiiComerciale: "Preț franco șantier, inclusiv transport", observatii: "Client prioritar" },
+  { id: 2, nr: "OF-2024-002", client: "Drumuri Naționale SA", proiect: "DN1 - Reparații km 45-60", produs: "Asfalt MASF16", pret: 520, produse: [{ produs: "Asfalt MASF16", pret: 520 }], transport: { tipTransport: "tona_km", pretTonaKm: 0.85 }, valabilitate: "15/01/2025", termenPlata: "45 zile", status: "Trimis", tip: "oferta", dataCreare: "20/11/2024", conditiiComerciale: "Preț EXW, transport separat", observatii: "" },
+  { id: 3, nr: "OF-2024-003", client: "Primăria Sector 3", proiect: "Reabilitare Bd. Decebal", produs: "Asfalt BA8", pret: 380, produse: [{ produs: "Asfalt BA8", pret: 380 }], transport: { tipTransport: "inclus" }, valabilitate: "01/12/2024", termenPlata: "60 zile", status: "Draft", tip: "oferta", dataCreare: "25/11/2024", conditiiComerciale: "Preț franco șantier", observatii: "Așteptare aprobare buget" },
+  { id: 4, nr: "OF-2024-004", client: "Beta Construct SRL", proiect: "Parcare mall", produs: "Asfalt BA16", pret: 440, produse: [{ produs: "Asfalt BA16", pret: 440 }], transport: { tipTransport: "inchiriere", pretInchiriere: 1500 }, valabilitate: "20/11/2024", termenPlata: "30 zile", status: "Expirat", tip: "oferta", dataCreare: "01/11/2024", conditiiComerciale: "Preț franco șantier", observatii: "" },
+  { id: 5, nr: "OF-2024-005", client: "Infrastructură Plus SRL", proiect: "Centura ocolitoare", produs: "Multiple", pret: 3320, produse: [{ produs: "Emulsie cationică", pret: 2800 }, { produs: "Asfalt BA16", pret: 520 }], transport: { tipTransport: "tona_km", pretTonaKm: 0.75 }, valabilitate: "28/02/2025", termenPlata: "30 zile", status: "Trimis", tip: "oferta", dataCreare: "28/11/2024", conditiiComerciale: "Preț per tonă, livrare în cisternă", observatii: "Volum mare estimat" },
 ];
 
 const initialContracte: Contract[] = [
-  { id: 1, nr: "CTR-2024-001", client: "Construcții Modern SRL", proiect: "Autostrada A3 - Lot 2", produs: "Asfalt BA16", pret: 445, valabilitate: "31/12/2025", termenPlata: "30 zile", status: "Acceptat", tip: "contract", dataCreare: "20/11/2024", conditiiComerciale: "Preț fix pe durata contractului, inclusiv transport", observatii: "Contract cadru anual", indexareCombustibil: "Ajustare trimestrială +/- 5%" },
-  { id: 2, nr: "CTR-2024-002", client: "Drumuri Naționale SA", proiect: "Întreținere DN1 2024-2025", produs: "Multiple", pret: 0, valabilitate: "31/03/2025", termenPlata: "45 zile", status: "Acceptat", tip: "contract", dataCreare: "01/10/2024", conditiiComerciale: "Contract cadru cu comenzi lunare", observatii: "Include BA8, BA16, MASF16", indexareCombustibil: "Ajustare lunară conform indicele ANRE" },
-  { id: 3, nr: "CTR-2024-003", client: "Alpha Roads SRL", proiect: "Dezvoltare zonă industrială", produs: "Asfalt BA16", pret: 460, valabilitate: "30/06/2025", termenPlata: "30 zile", status: "Draft", tip: "contract", dataCreare: "29/11/2024", conditiiComerciale: "În negociere", observatii: "Așteptare semnături", indexareCombustibil: "De stabilit" },
+  { id: 1, nr: "CTR-2024-001", client: "Construcții Modern SRL", proiect: "Autostrada A3 - Lot 2", produs: "Asfalt BA16", pret: 445, produse: [{ produs: "Asfalt BA16", pret: 445 }], transport: { tipTransport: "inclus" }, valabilitate: "31/12/2025", termenPlata: "30 zile", status: "Acceptat", tip: "contract", dataCreare: "20/11/2024", conditiiComerciale: "Preț fix pe durata contractului, inclusiv transport", observatii: "Contract cadru anual", indexareCombustibil: "Ajustare trimestrială +/- 5%" },
+  { id: 2, nr: "CTR-2024-002", client: "Drumuri Naționale SA", proiect: "Întreținere DN1 2024-2025", produs: "Multiple", pret: 1320, produse: [{ produs: "Asfalt BA8", pret: 380 }, { produs: "Asfalt BA16", pret: 450 }, { produs: "Asfalt MASF16", pret: 490 }], transport: { tipTransport: "tona_km", pretTonaKm: 0.80 }, valabilitate: "31/03/2025", termenPlata: "45 zile", status: "Acceptat", tip: "contract", dataCreare: "01/10/2024", conditiiComerciale: "Contract cadru cu comenzi lunare", observatii: "Include BA8, BA16, MASF16", indexareCombustibil: "Ajustare lunară conform indicele ANRE" },
+  { id: 3, nr: "CTR-2024-003", client: "Alpha Roads SRL", proiect: "Dezvoltare zonă industrială", produs: "Asfalt BA16", pret: 460, produse: [{ produs: "Asfalt BA16", pret: 460 }], transport: { tipTransport: "inchiriere", pretInchiriere: 1800 }, valabilitate: "30/06/2025", termenPlata: "30 zile", status: "Draft", tip: "contract", dataCreare: "29/11/2024", conditiiComerciale: "În negociere", observatii: "Așteptare semnături", indexareCombustibil: "De stabilit" },
 ];
 
 const statusColors: Record<string, string> = {
@@ -96,8 +112,8 @@ const OferteContracte = () => {
   const [form, setForm] = useState({
     client: "",
     proiect: "",
-    produs: "",
-    pret: 0,
+    produse: [{ produs: "", pret: 0 }] as ProdusItem[],
+    transport: { tipTransport: "inclus" as TransportPricing["tipTransport"], pretInchiriere: 0, pretTonaKm: 0 },
     valabilitate: "",
     termenPlata: "30 zile",
     conditiiComerciale: "",
@@ -209,8 +225,8 @@ const OferteContracte = () => {
     setForm({
       client: "",
       proiect: "",
-      produs: "",
-      pret: 0,
+      produse: [{ produs: "", pret: 0 }],
+      transport: { tipTransport: "inclus", pretInchiriere: 0, pretTonaKm: 0 },
       valabilitate: "",
       termenPlata: "30 zile",
       conditiiComerciale: "",
@@ -222,11 +238,16 @@ const OferteContracte = () => {
 
   const handleOpenEdit = (item: Item) => {
     setEditing(item);
+    const itemTransport = item.transport || { tipTransport: "inclus" as const };
     setForm({
       client: item.client,
       proiect: item.proiect,
-      produs: item.produs,
-      pret: item.pret,
+      produse: item.produse && item.produse.length > 0 ? item.produse : [{ produs: item.produs, pret: item.pret }],
+      transport: { 
+        tipTransport: itemTransport.tipTransport, 
+        pretInchiriere: itemTransport.pretInchiriere || 0, 
+        pretTonaKm: itemTransport.pretTonaKm || 0 
+      },
       valabilitate: item.valabilitate,
       termenPlata: item.termenPlata,
       conditiiComerciale: item.conditiiComerciale,
@@ -236,25 +257,56 @@ const OferteContracte = () => {
     setOpenAddEdit(true);
   };
 
+  const handleAddProdus = () => {
+    setForm(prev => ({
+      ...prev,
+      produse: [...prev.produse, { produs: "", pret: 0 }]
+    }));
+  };
+
+  const handleRemoveProdus = (index: number) => {
+    if (form.produse.length > 1) {
+      setForm(prev => ({
+        ...prev,
+        produse: prev.produse.filter((_, i) => i !== index)
+      }));
+    }
+  };
+
+  const handleProdusChange = (index: number, field: keyof ProdusItem, value: string | number) => {
+    setForm(prev => ({
+      ...prev,
+      produse: prev.produse.map((p, i) => i === index ? { ...p, [field]: value } : p)
+    }));
+  };
+
   const handleSave = () => {
-    if (!form.client || !form.produs) {
-      toast({ title: "Eroare", description: "Completează câmpurile obligatorii.", variant: "destructive" });
+    const validProduse = form.produse.filter(p => p.produs);
+    if (!form.client || validProduse.length === 0) {
+      toast({ title: "Eroare", description: "Completează câmpurile obligatorii (client și cel puțin un produs).", variant: "destructive" });
       return;
     }
 
     const currentDate = new Date().toLocaleDateString('ro-RO');
+    const totalPret = validProduse.reduce((sum, p) => sum + p.pret, 0);
+    const produsDisplay = validProduse.length === 1 ? validProduse[0].produs : "Multiple";
+    const transport: TransportPricing = {
+      tipTransport: form.transport.tipTransport,
+      ...(form.transport.tipTransport === "inchiriere" && { pretInchiriere: form.transport.pretInchiriere }),
+      ...(form.transport.tipTransport === "tona_km" && { pretTonaKm: form.transport.pretTonaKm }),
+    };
 
     if (editing) {
       if (editing.tip === "oferta") {
         setOferte(prev => prev.map(item => 
           item.id === editing.id 
-            ? { ...item, ...form, valabilitate: form.valabilitate || item.valabilitate }
+            ? { ...item, client: form.client, proiect: form.proiect, produs: produsDisplay, pret: totalPret, produse: validProduse, transport, valabilitate: form.valabilitate || item.valabilitate, termenPlata: form.termenPlata, conditiiComerciale: form.conditiiComerciale, observatii: form.observatii }
             : item
         ));
       } else {
         setContracte(prev => prev.map(item => 
           item.id === editing.id 
-            ? { ...item, ...form, valabilitate: form.valabilitate || item.valabilitate, indexareCombustibil: form.indexareCombustibil }
+            ? { ...item, client: form.client, proiect: form.proiect, produs: produsDisplay, pret: totalPret, produse: validProduse, transport, valabilitate: form.valabilitate || item.valabilitate, termenPlata: form.termenPlata, conditiiComerciale: form.conditiiComerciale, observatii: form.observatii, indexareCombustibil: form.indexareCombustibil }
             : item
         ));
       }
@@ -266,8 +318,10 @@ const OferteContracte = () => {
           nr: `OF-2024-${String(oferte.length + 1).padStart(3, '0')}`,
           client: form.client,
           proiect: form.proiect,
-          produs: form.produs,
-          pret: form.pret,
+          produs: produsDisplay,
+          pret: totalPret,
+          produse: validProduse,
+          transport,
           valabilitate: form.valabilitate,
           termenPlata: form.termenPlata,
           status: "Draft",
@@ -284,8 +338,10 @@ const OferteContracte = () => {
           nr: `CTR-2024-${String(contracte.length + 1).padStart(3, '0')}`,
           client: form.client,
           proiect: form.proiect,
-          produs: form.produs,
-          pret: form.pret,
+          produs: produsDisplay,
+          pret: totalPret,
+          produse: validProduse,
+          transport,
           valabilitate: form.valabilitate,
           termenPlata: form.termenPlata,
           status: "Draft",
@@ -321,21 +377,27 @@ const OferteContracte = () => {
     const currentDate = new Date().toLocaleDateString('ro-RO');
     
     if (viewingDetails.tip === "oferta") {
+      const sourceOferta = viewingDetails as Oferta;
       const newOferta: Oferta = {
-        ...viewingDetails as Oferta,
+        ...sourceOferta,
         id: Math.max(...oferte.map(o => o.id), 0) + 1,
         nr: `OF-2024-${String(oferte.length + 1).padStart(3, '0')}`,
         status: "Draft",
         dataCreare: currentDate,
+        produse: [...sourceOferta.produse],
+        transport: { ...sourceOferta.transport },
       };
       setOferte(prev => [...prev, newOferta]);
     } else {
+      const sourceContract = viewingDetails as Contract;
       const newContract: Contract = {
-        ...viewingDetails as Contract,
+        ...sourceContract,
         id: Math.max(...contracte.map(c => c.id), 0) + 1,
         nr: `CTR-2024-${String(contracte.length + 1).padStart(3, '0')}`,
         status: "Draft",
         dataCreare: currentDate,
+        produse: [...sourceContract.produse],
+        transport: { ...sourceContract.transport },
       };
       setContracte(prev => [...prev, newContract]);
     }
@@ -360,6 +422,8 @@ const OferteContracte = () => {
         proiect: oferta.proiect,
         produs: oferta.produs,
         pret: oferta.pret,
+        produse: [...oferta.produse],
+        transport: { ...oferta.transport },
         valabilitate: oferta.valabilitate,
         termenPlata: oferta.termenPlata,
         status: "Draft",
@@ -373,6 +437,15 @@ const OferteContracte = () => {
       toast({ title: "Contract generat", description: `Contractul ${newContract.nr} a fost generat din oferta ${oferta.nr}.` });
       setViewingDetails(null);
       setActiveTab("contracte");
+    }
+  };
+  
+  const getTransportLabel = (transport: TransportPricing) => {
+    switch (transport.tipTransport) {
+      case "inclus": return "Inclus în preț";
+      case "inchiriere": return `Închiriere: ${transport.pretInchiriere?.toLocaleString()} RON`;
+      case "tona_km": return `${transport.pretTonaKm?.toFixed(2)} RON/tonă·km`;
+      default: return "-";
     }
   };
 
@@ -638,15 +711,32 @@ const OferteContracte = () => {
               <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm border rounded-lg p-3 bg-muted/30">
                 <div><span className="text-muted-foreground">Client:</span> <span className="font-medium">{viewingDetails.client}</span></div>
                 <div><span className="text-muted-foreground">Proiect:</span> <span className="font-medium">{viewingDetails.proiect}</span></div>
-                <div><span className="text-muted-foreground">Produs:</span> <span className="font-medium">{viewingDetails.produs}</span></div>
-                <div><span className="text-muted-foreground">Preț:</span> <span className="font-medium">{viewingDetails.pret > 0 ? `${viewingDetails.pret.toLocaleString()} RON` : "-"}</span></div>
                 <div><span className="text-muted-foreground">Valabilitate:</span> <span className="font-medium">{viewingDetails.valabilitate}</span></div>
                 <div><span className="text-muted-foreground">Termen plată:</span> <span className="font-medium">{viewingDetails.termenPlata}</span></div>
                 <div><span className="text-muted-foreground">Data creare:</span> <span className="font-medium">{viewingDetails.dataCreare}</span></div>
+                <div><span className="text-muted-foreground">Transport:</span> <span className="font-medium">{viewingDetails.transport ? getTransportLabel(viewingDetails.transport) : "-"}</span></div>
                 {viewingDetails.tip === "contract" && (
-                  <div><span className="text-muted-foreground">Indexare:</span> <span className="font-medium">{(viewingDetails as Contract).indexareCombustibil || "-"}</span></div>
+                  <div className="col-span-2"><span className="text-muted-foreground">Indexare:</span> <span className="font-medium">{(viewingDetails as Contract).indexareCombustibil || "-"}</span></div>
                 )}
               </div>
+
+              {/* Products List */}
+              {viewingDetails.produse && viewingDetails.produse.length > 0 && (
+                <div className="border rounded-lg p-3">
+                  <p className="text-muted-foreground text-sm mb-2">Produse:</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {viewingDetails.produse.map((p, idx) => (
+                      <div key={idx} className="flex justify-between items-center bg-muted/50 rounded px-3 py-2 text-sm">
+                        <span className="font-medium">{p.produs}</span>
+                        <span>{p.pret.toLocaleString()} RON</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex justify-end mt-2 pt-2 border-t">
+                    <span className="text-sm"><span className="text-muted-foreground">Total:</span> <span className="font-semibold">{viewingDetails.pret.toLocaleString()} RON</span></span>
+                  </div>
+                </div>
+              )}
               
               {(viewingDetails.conditiiComerciale || viewingDetails.observatii) && (
                 <div className="grid grid-cols-2 gap-3 text-sm">
@@ -692,7 +782,7 @@ const OferteContracte = () => {
 
       {/* Add/Edit Dialog */}
       <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {editing 
@@ -714,24 +804,112 @@ const OferteContracte = () => {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Produs *</Label>
-                <Select value={form.produs} onValueChange={(v) => setForm({ ...form, produs: v })}>
-                  <SelectTrigger><SelectValue placeholder="Selectează produs" /></SelectTrigger>
-                  <SelectContent>
-                    {produse.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <Label>Proiect/Șantier</Label>
+                <Input placeholder="Denumire proiect" value={form.proiect} onChange={(e) => setForm({ ...form, proiect: e.target.value })} />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label>Proiect/Șantier</Label>
-              <Input placeholder="Denumire proiect" value={form.proiect} onChange={(e) => setForm({ ...form, proiect: e.target.value })} />
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label>Preț (RON)</Label>
-                <Input type="number" value={form.pret} onChange={(e) => setForm({ ...form, pret: Number(e.target.value) })} />
+
+            {/* Multiple Products Section */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="text-base font-medium">Produse *</Label>
+                <Button type="button" variant="outline" size="sm" onClick={handleAddProdus}>
+                  <Plus className="w-4 h-4 mr-1" />Adaugă produs
+                </Button>
               </div>
+              <div className="grid grid-cols-2 gap-3">
+                {form.produse.map((item, index) => (
+                  <div key={index} className="flex gap-2 items-end p-3 border rounded-lg bg-muted/30">
+                    <div className="flex-1 space-y-1">
+                      <Label className="text-xs">Produs</Label>
+                      <Select value={item.produs} onValueChange={(v) => handleProdusChange(index, "produs", v)}>
+                        <SelectTrigger className="h-9"><SelectValue placeholder="Selectează" /></SelectTrigger>
+                        <SelectContent>
+                          {produse.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="w-28 space-y-1">
+                      <Label className="text-xs">Preț (RON)</Label>
+                      <Input 
+                        type="number" 
+                        className="h-9"
+                        value={item.pret} 
+                        onChange={(e) => handleProdusChange(index, "pret", Number(e.target.value))} 
+                      />
+                    </div>
+                    {form.produse.length > 1 && (
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-9 w-9 text-destructive hover:text-destructive"
+                        onClick={() => handleRemoveProdus(index)}
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Transport Pricing Section */}
+            <div className="space-y-3 p-3 border rounded-lg bg-muted/30">
+              <Label className="text-base font-medium">Preț Transport</Label>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="space-y-1">
+                  <Label className="text-xs">Tip transport</Label>
+                  <Select 
+                    value={form.transport.tipTransport} 
+                    onValueChange={(v: TransportPricing["tipTransport"]) => setForm({ 
+                      ...form, 
+                      transport: { ...form.transport, tipTransport: v } 
+                    })}
+                  >
+                    <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="inclus">Inclus în preț</SelectItem>
+                      <SelectItem value="inchiriere">Închiriere transport</SelectItem>
+                      <SelectItem value="tona_km">Preț tonă/km</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {form.transport.tipTransport === "inchiriere" && (
+                  <div className="space-y-1">
+                    <Label className="text-xs">Preț închiriere (RON)</Label>
+                    <Input 
+                      type="number" 
+                      className="h-9"
+                      placeholder="ex: 1500"
+                      value={form.transport.pretInchiriere || ""} 
+                      onChange={(e) => setForm({ 
+                        ...form, 
+                        transport: { ...form.transport, pretInchiriere: Number(e.target.value) } 
+                      })} 
+                    />
+                  </div>
+                )}
+                {form.transport.tipTransport === "tona_km" && (
+                  <div className="space-y-1">
+                    <Label className="text-xs">Preț/tonă·km (RON)</Label>
+                    <Input 
+                      type="number" 
+                      step="0.01"
+                      className="h-9"
+                      placeholder="ex: 0.85"
+                      value={form.transport.pretTonaKm || ""} 
+                      onChange={(e) => setForm({ 
+                        ...form, 
+                        transport: { ...form.transport, pretTonaKm: Number(e.target.value) } 
+                      })} 
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Valabilitate</Label>
                 <Input placeholder="DD/MM/YYYY" value={form.valabilitate} onChange={(e) => setForm({ ...form, valabilitate: e.target.value })} />
