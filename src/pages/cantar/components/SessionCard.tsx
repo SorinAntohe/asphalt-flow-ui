@@ -26,41 +26,60 @@ export function SessionCard({ session, isActive, onClick, showWaitTime }: Sessio
   return (
     <Card 
       className={cn(
-        "p-3 cursor-pointer transition-all hover:shadow-md hover:border-primary/50",
-        isActive && "ring-2 ring-primary border-primary"
+        "p-3 cursor-pointer transition-all hover:shadow-md",
+        isActive 
+          ? "bg-primary text-primary-foreground hover:bg-primary/90" 
+          : "hover:border-primary/50"
       )}
       onClick={onClick}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Badge variant={isInbound ? "info" : "warning"} className="text-xs">
+          <Badge 
+            variant={isInbound ? "info" : "warning"} 
+            className={cn("text-xs", isActive && "bg-primary-foreground/20 text-primary-foreground")}
+          >
             {isInbound ? (
               <><Package className="h-3 w-3 mr-1" /> Recepție</>
             ) : (
               <><Truck className="h-3 w-3 mr-1" /> Livrare</>
             )}
           </Badge>
-          <Badge variant="outline" className="text-xs">
+          <Badge 
+            variant="outline" 
+            className={cn("text-xs", isActive && "border-primary-foreground/30 text-primary-foreground")}
+          >
             Pas {session.step}
           </Badge>
         </div>
       </div>
       
       <div className="mt-2 space-y-1">
-        <p className="font-medium text-sm">
+        <p className={cn("font-medium text-sm", isActive && "text-primary-foreground")}>
           {isInbound ? `PO: ${session.poNo}` : `Comandă: ${session.orderNo}`}
         </p>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <div className={cn(
+          "flex items-center gap-2 text-xs",
+          isActive ? "text-primary-foreground/80" : "text-muted-foreground"
+        )}>
           <span className="font-mono">{session.nrAuto}</span>
           <span>·</span>
-          <span className="text-primary font-medium">SC: {session.sessionCode}</span>
+          <span className={cn("font-medium", isActive ? "text-primary-foreground" : "text-primary")}>
+            SC: {session.sessionCode}
+          </span>
         </div>
-        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+        <div className={cn(
+          "flex items-center gap-1 text-xs",
+          isActive ? "text-primary-foreground/80" : "text-muted-foreground"
+        )}>
           <User className="h-3 w-3" />
           <span>{session.createdBy}</span>
         </div>
         {showWaitTime && (
-          <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+          <div className={cn(
+            "flex items-center gap-1 text-xs mt-1",
+            isActive ? "text-primary-foreground/80" : "text-muted-foreground"
+          )}>
             <Clock className="h-3 w-3" />
             <span>În așteptare: {getWaitTime()}</span>
           </div>
