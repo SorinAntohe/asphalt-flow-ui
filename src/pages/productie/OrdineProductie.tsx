@@ -771,7 +771,7 @@ const OrdineProductie = () => {
 
         {/* Calendar View */}
         <TabsContent value="calendar" className="mt-4">
-          <CalendarProductie />
+          <CalendarProductie ordine={ordine} />
         </TabsContent>
       </Tabs>
 

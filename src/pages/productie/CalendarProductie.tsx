@@ -11,42 +11,89 @@ import { cn } from "@/lib/utils";
 // Hours for the daily view (6:00 - 22:00)
 const hours = Array.from({ length: 17 }, (_, i) => i + 6);
 
-// Color palette for different product types (recipes)
-const recipeColors: Record<string, { bg: string; border: string; text: string }> = {
-  "BA 16 rul 50/70": { bg: "bg-blue-500", border: "border-blue-600", text: "text-white" },
-  "MASF 16": { bg: "bg-emerald-500", border: "border-emerald-600", text: "text-white" },
-  "Emulsie C60B4": { bg: "bg-amber-500", border: "border-amber-600", text: "text-white" },
-  "BSC 0/31.5": { bg: "bg-purple-500", border: "border-purple-600", text: "text-white" },
-  "AB2 22.4": { bg: "bg-rose-500", border: "border-rose-600", text: "text-white" },
+// Color palette for different product types
+const productColors: Record<string, { bg: string; border: string; text: string }> = {
+  "BA16 - Beton Asfaltic": { bg: "bg-blue-500", border: "border-blue-600", text: "text-white" },
+  "MASF16 - Mixtură Asfaltică": { bg: "bg-emerald-500", border: "border-emerald-600", text: "text-white" },
+  "BSC - Beton Stabilizat": { bg: "bg-purple-500", border: "border-purple-600", text: "text-white" },
+  "AB2 - Anrobat Bituminos": { bg: "bg-rose-500", border: "border-rose-600", text: "text-white" },
 };
 
-const getRecipeColor = (recipe: string) => {
-  return recipeColors[recipe] || { bg: "bg-primary", border: "border-primary", text: "text-primary-foreground" };
+const getProductColor = (produs: string) => {
+  return productColors[produs] || { bg: "bg-primary", border: "border-primary", text: "text-primary-foreground" };
 };
 
-// Mock scheduled orders with dates
-const initialScheduledOrders = [
-  { id: "OP-001", recipe: "BA 16 rul 50/70", quantity: 200, startHour: 7, duration: 3, status: "in_lucru", date: "2025-12-05" },
-  { id: "OP-002", recipe: "MASF 16", quantity: 150, startHour: 11, duration: 2, status: "planificat", date: "2025-12-05" },
-  { id: "OP-003", recipe: "Emulsie C60B4", quantity: 80, startHour: 8, duration: 2, status: "planificat", date: "2025-12-05" },
-  { id: "OP-004", recipe: "BSC 0/31.5", quantity: 100, startHour: 9, duration: 4, status: "planificat", date: "2025-12-06" },
-  { id: "OP-005", recipe: "BA 16 rul 50/70", quantity: 180, startHour: 6, duration: 3, status: "finalizat", date: "2025-12-04" },
-  { id: "OP-006", recipe: "AB2 22.4", quantity: 120, startHour: 14, duration: 2, status: "planificat", date: "2025-12-07" },
-  { id: "OP-007", recipe: "BA 16 rul 50/70", quantity: 250, startHour: 8, duration: 4, status: "planificat", date: "2025-12-10" },
-  { id: "OP-008", recipe: "MASF 16", quantity: 180, startHour: 10, duration: 3, status: "planificat", date: "2025-12-12" },
-  { id: "OP-009", recipe: "Emulsie C60B4", quantity: 90, startHour: 7, duration: 2, status: "in_lucru", date: "2025-12-15" },
-  { id: "OP-010", recipe: "BSC 0/31.5", quantity: 150, startHour: 12, duration: 5, status: "planificat", date: "2025-12-18" },
-  { id: "OP-011", recipe: "BA 16 rul 50/70", quantity: 300, startHour: 6, duration: 5, status: "planificat", date: "2025-12-20" },
-  { id: "OP-012", recipe: "AB2 22.4", quantity: 200, startHour: 8, duration: 3, status: "finalizat", date: "2025-12-22" },
-];
+// Types
+interface ProdusOrdin {
+  produs: string;
+  cantitate: number;
+  reteta: string;
+}
 
-type ScheduledOrder = typeof initialScheduledOrders[0];
+interface OrdinProductie {
+  id: number;
+  numar: string;
+  produse: ProdusOrdin[];
+  cantitateTotala: number;
+  unitateMasura: string;
+  startPlanificat: string;
+  operator: string;
+  sefSchimb: string;
+  status: "Planificat" | "În lucru" | "Finalizat";
+  observatii: string;
+}
 
-const CalendarProductie = () => {
-  const [scheduledOrders] = useState(initialScheduledOrders);
+interface CalendarOrder {
+  id: string;
+  produs: string;
+  quantity: number;
+  startHour: number;
+  duration: number;
+  status: string;
+  date: string;
+}
+
+interface CalendarProductieProps {
+  ordine?: OrdinProductie[];
+}
+
+const CalendarProductie = ({ ordine = [] }: CalendarProductieProps) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [showDayDialog, setShowDayDialog] = useState(false);
+
+  // Transform ordine to calendar format
+  const scheduledOrders = useMemo((): CalendarOrder[] => {
+    return ordine.flatMap(ordin => {
+      // Parse date from startPlanificat (format: "DD/MM/YYYY HH:mm")
+      const dateParts = ordin.startPlanificat.split(" ");
+      const [day, month, year] = dateParts[0].split("/");
+      const timePart = dateParts[1] || "08:00";
+      const [hourStr] = timePart.split(":");
+      const startHour = parseInt(hourStr) || 8;
+      
+      // Convert DD/MM/YYYY to YYYY-MM-DD
+      const dateStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      
+      // Map status
+      const statusMap: Record<string, string> = {
+        "Planificat": "planificat",
+        "În lucru": "in_lucru",
+        "Finalizat": "finalizat"
+      };
+
+      // Create an entry for each product in the order
+      return ordin.produse.map((p, idx) => ({
+        id: `${ordin.numar}${idx > 0 ? `-${idx + 1}` : ''}`,
+        produs: p.produs,
+        quantity: p.cantitate,
+        startHour: startHour + idx * 2, // Stagger multiple products
+        duration: Math.max(2, Math.ceil(p.cantitate / 100)), // Duration based on quantity
+        status: statusMap[ordin.status] || "planificat",
+        date: dateStr
+      }));
+    });
+  }, [ordine]);
 
   // Get calendar days for the current month
   const calendarDays = useMemo(() => {
@@ -217,7 +264,7 @@ const CalendarProductie = () => {
                                 )} />
                               </TooltipTrigger>
                               <TooltipContent side="top" className="text-xs">
-                                <div>{order.id} - {order.recipe}</div>
+                                <div>{order.id} - {order.produs}</div>
                                 <div>{order.quantity} to</div>
                               </TooltipContent>
                             </Tooltip>
@@ -304,7 +351,7 @@ const CalendarProductie = () => {
                       
                       {/* Order bars */}
                       {selectedDayOrders.map((order, idx) => {
-                        const colors = getRecipeColor(order.recipe);
+                        const colors = getProductColor(order.produs);
                         return (
                           <div key={order.id} className="flex border-b-2 border-foreground/20 h-14 relative">
                             <div className="w-24 shrink-0 p-2 bg-muted/20 border-r-2 border-foreground/30 flex items-center">
@@ -329,14 +376,14 @@ const CalendarProductie = () => {
                                       bottom: '4px'
                                     }}
                                   >
-                                    <div className="text-sm font-bold truncate">{order.recipe}</div>
+                                    <div className="text-sm font-bold truncate">{order.produs}</div>
                                     <div className="text-xs opacity-90 truncate">{order.quantity} to • {order.startHour}:00-{order.startHour + order.duration}:00</div>
                                   </div>
                                 </TooltipTrigger>
                                 <TooltipContent side="top" className="p-3">
                                   <div className="space-y-2">
                                     <div className="font-bold text-sm">{order.id}</div>
-                                    <div className="text-sm">{order.recipe}</div>
+                                    <div className="text-sm">{order.produs}</div>
                                     <div className="text-sm font-medium">{order.quantity} tone</div>
                                     <div className="text-sm text-muted-foreground">{order.startHour}:00 - {order.startHour + order.duration}:00</div>
                                     {getStatusBadge(order.status)}
@@ -366,12 +413,12 @@ const CalendarProductie = () => {
                     <span><strong>{selectedDayOrders.reduce((sum, o) => sum + o.quantity, 0)}</strong> tone planificate</span>
                   </div>
                 </div>
-                {/* Recipe color legend */}
+                {/* Product color legend */}
                 <div className="flex flex-wrap items-center gap-3 text-xs">
-                  {Object.entries(recipeColors).map(([recipe, colors]) => (
-                    <div key={recipe} className="flex items-center gap-1.5">
+                  {Object.entries(productColors).map(([produs, colors]) => (
+                    <div key={produs} className="flex items-center gap-1.5">
                       <div className={cn("w-3 h-3 rounded", colors.bg)} />
-                      <span className="text-muted-foreground">{recipe}</span>
+                      <span className="text-muted-foreground">{produs}</span>
                     </div>
                   ))}
                 </div>
