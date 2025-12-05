@@ -809,15 +809,9 @@ const OferteContracte = () => {
           
           const termenPlataNumber = parseFloat(form.termenPlata.replace(/[^0-9]/g, '')) || 0;
           
-          // Concatenate products and prices with comma
-          const produseList = validProduse.map(p => p.produs).join(", ");
-          const preturiProduse = validProduse.map(p => String(p.pret)).join(", ");
-          
-          const payload = {
+          const basePayload = {
             client: form.client,
             proiect_santier: form.proiect,
-            produse: produseList,
-            preturi_produse: preturiProduse,
             tip_transport: tipTransport,
             pret_transport: pretTransport,
             valabilitate: form.valabilitate,
@@ -829,11 +823,39 @@ const OferteContracte = () => {
             locatie_proces_verbal_predare_primire: procesVerbalUploadUrl || "",
           };
           
-          await fetch(`${API_BASE_URL}/comercial/adauga/oferta`, {
+          // First call without cod_oferta to get the generated code
+          const firstProduct = validProduse[0];
+          const firstPayload = {
+            ...basePayload,
+            produse: firstProduct.produs,
+            preturi_produse: String(firstProduct.pret),
+          };
+          
+          const firstResponse = await fetch(`${API_BASE_URL}/comercial/adauga/oferta`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
+            body: JSON.stringify(firstPayload),
           });
+          
+          const firstResult = await firstResponse.json();
+          const codOferta = firstResult.cod_oferta;
+          
+          // For remaining products, use the same cod_oferta
+          for (let i = 1; i < validProduse.length; i++) {
+            const produs = validProduse[i];
+            const payload = {
+              ...basePayload,
+              cod_oferta: codOferta,
+              produse: produs.produs,
+              preturi_produse: String(produs.pret),
+            };
+            
+            await fetch(`${API_BASE_URL}/comercial/adauga/oferta`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+          }
           
           toast({ title: "Succes", description: "Oferta a fost adăugată." });
           fetchOferte();
