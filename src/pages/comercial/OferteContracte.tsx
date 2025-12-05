@@ -163,7 +163,7 @@ const OferteContracte = () => {
         setBiletOrdinUploadUrl(data.public_url);
         toast({
           title: "Fișier încărcat cu succes",
-          description: `URL public: ${data.public_url}`,
+          description: "Documentul a fost încărcat pe server.",
         });
       } else {
         toast({
@@ -205,7 +205,7 @@ const OferteContracte = () => {
         setProcesVerbalUploadUrl(data.public_url);
         toast({
           title: "Fișier încărcat cu succes",
-          description: `URL public: ${data.public_url}`,
+          description: "Documentul a fost încărcat pe server.",
         });
       } else {
         toast({
@@ -1150,11 +1150,6 @@ const OferteContracte = () => {
                       </>
                     )}
                   </Button>
-                  {biletOrdinUploadUrl && (
-                    <p className="text-xs text-muted-foreground truncate">
-                      URL: {biletOrdinUploadUrl}
-                    </p>
-                  )}
                 </div>
                 <div className="space-y-2">
                   <Label className="text-xs">Proces verbal predare-primire (document scanat)</Label>
@@ -1190,11 +1185,6 @@ const OferteContracte = () => {
                       </>
                     )}
                   </Button>
-                  {procesVerbalUploadUrl && (
-                    <p className="text-xs text-muted-foreground truncate">
-                      URL: {procesVerbalUploadUrl}
-                    </p>
-                  )}
                 </div>
               </div>
             </div>
