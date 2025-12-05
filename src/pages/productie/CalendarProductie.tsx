@@ -97,16 +97,29 @@ const CalendarProductie = ({ ordine = [] }: CalendarProductieProps) => {
         "Finalizat": "finalizat"
       };
 
-      // Create an entry for each product in the order
-      return ordin.produse.map((p, idx) => ({
-        id: `${ordin.numar}${idx > 0 ? `-${idx + 1}` : ''}`,
-        produs: p.produs,
-        quantity: p.cantitate,
-        startHour: Math.min(22, Math.max(6, startHour + idx * 2)), // Keep within bounds 6-22
-        duration: Math.max(2, Math.ceil(p.cantitate / 100)), // Duration based on quantity
-        status: statusMap[ordin.status] || "planificat",
-        date: dateStr
-      }));
+      // Production rate: 125 tons/hour
+      const TONS_PER_HOUR = 125;
+      
+      // Create an entry for each product in the order, scheduled sequentially
+      let currentHour = startHour;
+      return ordin.produse.map((p, idx) => {
+        // Calculate duration based on quantity and production rate (125 t/h)
+        const durationHours = Math.max(1, Math.ceil(p.cantitate / TONS_PER_HOUR));
+        const productStartHour = currentHour;
+        
+        // Update currentHour for next product
+        currentHour = Math.min(22, currentHour + durationHours);
+        
+        return {
+          id: `${ordin.numar}${idx > 0 ? `-${idx + 1}` : ''}`,
+          produs: p.produs,
+          quantity: p.cantitate,
+          startHour: Math.min(22, Math.max(6, productStartHour)),
+          duration: durationHours,
+          status: statusMap[ordin.status] || "planificat",
+          date: dateStr
+        };
+      });
     });
   }, [ordine]);
 
