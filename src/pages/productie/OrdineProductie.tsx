@@ -20,7 +20,8 @@ import {
   Link2,
   AlertTriangle,
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
+  X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,14 +41,18 @@ import { exportToCSV } from "@/lib/exportUtils";
 import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
 
 // Types
+interface ProdusOrdin {
+  produs: string;
+  cantitate: number;
+  reteta: string;
+}
+
 interface OrdinProductie {
   id: number;
   numar: string;
-  reteta: string;
-  cantitate: number;
+  produse: ProdusOrdin[];
+  cantitateTotala: number;
   unitateMasura: string;
-  linie: string;
-  planta: string;
   startPlanificat: string;
   operator: string;
   sefSchimb: string;
@@ -64,11 +69,12 @@ const mockOrdine: OrdinProductie[] = [
   {
     id: 1,
     numar: "OP-2024-001",
-    reteta: "BA16 - Beton Asfaltic",
-    cantitate: 500,
+    produse: [
+      { produs: "BA16 - Beton Asfaltic", cantitate: 300, reteta: "Rețetă BA16 Standard" },
+      { produs: "MASF16 - Mixtură Asfaltică", cantitate: 200, reteta: "Rețetă MASF16 Premium" }
+    ],
+    cantitateTotala: 500,
     unitateMasura: "tone",
-    linie: "Linia 1",
-    planta: "Stația Asfalt Nord",
     startPlanificat: "15/01/2024 08:00",
     operator: "Ion Popescu",
     sefSchimb: "Gheorghe Ionescu",
@@ -89,11 +95,11 @@ const mockOrdine: OrdinProductie[] = [
   {
     id: 2,
     numar: "OP-2024-002",
-    reteta: "MASF16 - Mixtură Asfaltică",
-    cantitate: 300,
+    produse: [
+      { produs: "MASF16 - Mixtură Asfaltică", cantitate: 300, reteta: "Rețetă MASF16 Standard" }
+    ],
+    cantitateTotala: 300,
     unitateMasura: "tone",
-    linie: "Linia 2",
-    planta: "Stația Asfalt Nord",
     startPlanificat: "15/01/2024 14:00",
     operator: "Maria Dumitrescu",
     sefSchimb: "Gheorghe Ionescu",
@@ -110,11 +116,12 @@ const mockOrdine: OrdinProductie[] = [
   {
     id: 3,
     numar: "OP-2024-003",
-    reteta: "BSC - Beton Stabilizat",
-    cantitate: 800,
+    produse: [
+      { produs: "BSC - Beton Stabilizat", cantitate: 500, reteta: "Rețetă BSC Standard" },
+      { produs: "AB2 - Anrobat Bituminos", cantitate: 300, reteta: "Rețetă AB2 Premium" }
+    ],
+    cantitateTotala: 800,
     unitateMasura: "tone",
-    linie: "Linia 1",
-    planta: "Stația Beton Sud",
     startPlanificat: "16/01/2024 06:00",
     operator: "Andrei Vasilescu",
     sefSchimb: "Mihai Constantinescu",
@@ -131,11 +138,11 @@ const mockOrdine: OrdinProductie[] = [
   {
     id: 4,
     numar: "OP-2024-004",
-    reteta: "BA16 - Beton Asfaltic",
-    cantitate: 250,
+    produse: [
+      { produs: "BA16 - Beton Asfaltic", cantitate: 250, reteta: "Rețetă BA16 Standard" }
+    ],
+    cantitateTotala: 250,
     unitateMasura: "tone",
-    linie: "Linia 2",
-    planta: "Stația Asfalt Nord",
     startPlanificat: "14/01/2024 08:00",
     operator: "Elena Stanciu",
     sefSchimb: "Gheorghe Ionescu",
@@ -148,33 +155,18 @@ const mockOrdine: OrdinProductie[] = [
     rezervariStoc: [],
     loturiAsociate: ["LOT-003", "LOT-004", "LOT-005"],
     atasamente: ["raport_final.pdf"]
-  },
-  {
-    id: 5,
-    numar: "OP-2024-005",
-    reteta: "MASF16 - Mixtură Asfaltică",
-    cantitate: 450,
-    unitateMasura: "tone",
-    linie: "Linia 1",
-    planta: "Stația Asfalt Nord",
-    startPlanificat: "17/01/2024 07:00",
-    operator: "Ion Popescu",
-    sefSchimb: "Gheorghe Ionescu",
-    status: "Draft",
-    observatii: "",
-    consumEstimat: [
-      { material: "Bitum 50/70", cantitate: 27, disponibil: 100 },
-      { material: "Agregat 4/8", cantitate: 180, disponibil: 200 }
-    ],
-    rezervariStoc: [],
-    loturiAsociate: [],
-    atasamente: []
   }
 ];
 
-const mockRetete = ["BA16 - Beton Asfaltic", "MASF16 - Mixtură Asfaltică", "BSC - Beton Stabilizat", "AB2 - Anrobat Bituminos"];
-const mockLinii = ["Linia 1", "Linia 2", "Linia 3"];
-const mockPlante = ["Stația Asfalt Nord", "Stația Beton Sud", "Stația Balast"];
+const mockRetete = [
+  "Rețetă BA16 Standard",
+  "Rețetă BA16 Premium",
+  "Rețetă MASF16 Standard",
+  "Rețetă MASF16 Premium",
+  "Rețetă BSC Standard",
+  "Rețetă AB2 Premium"
+];
+const mockProduseFinite = ["BA16 - Beton Asfaltic", "MASF16 - Mixtură Asfaltică", "BSC - Beton Stabilizat", "AB2 - Anrobat Bituminos"];
 const mockOperatori = ["Ion Popescu", "Maria Dumitrescu", "Andrei Vasilescu", "Elena Stanciu"];
 const mockSefiSchimb = ["Gheorghe Ionescu", "Mihai Constantinescu"];
 
@@ -205,17 +197,20 @@ const OrdineProductie = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Wizard form state
-  const [wizardForm, setWizardForm] = useState({
-    reteta: "",
-    cantitate: "",
+  const [wizardForm, setWizardForm] = useState<{
+    produse: { produs: string; cantitate: string; reteta: string }[];
+    unitateMasura: string;
+    startPlanificat: string;
+    operator: string;
+    sefSchimb: string;
+    observatii: string;
+  }>({
+    produse: [{ produs: "", cantitate: "", reteta: "" }],
     unitateMasura: "tone",
-    linie: "",
-    planta: "",
     startPlanificat: "",
     operator: "",
     sefSchimb: "",
-    observatii: "",
-    batches: [{ cantitate: "", prioritate: "Normal" }]
+    observatii: ""
   });
 
   // Calendar state
@@ -226,7 +221,7 @@ const OrdineProductie = () => {
     const total = ordine.length;
     const inLucru = ordine.filter(o => o.status === "În lucru").length;
     const planificate = ordine.filter(o => o.status === "Planificată").length;
-    const cantitateTotal = ordine.filter(o => o.status !== "Închisă").reduce((sum, o) => sum + o.cantitate, 0);
+    const cantitateTotal = ordine.filter(o => o.status !== "Închisă").reduce((sum, o) => sum + o.cantitateTotala, 0);
     return { total, inLucru, planificate, cantitateTotal };
   }, [ordine]);
 
@@ -273,12 +268,21 @@ const OrdineProductie = () => {
   };
 
   const handleExportCSV = () => {
-    exportToCSV(ordine, "ordine_productie", [
+    const exportData = ordine.map(o => ({
+      numar: o.numar,
+      produse: o.produse.map(p => `${p.produs} (${p.cantitate}t - ${p.reteta})`).join("; "),
+      cantitateTotala: o.cantitateTotala,
+      unitateMasura: o.unitateMasura,
+      startPlanificat: o.startPlanificat,
+      operator: o.operator,
+      sefSchimb: o.sefSchimb,
+      status: o.status,
+      observatii: o.observatii
+    }));
+    exportToCSV(exportData, "ordine_productie", [
       { key: "numar", label: "Nr." },
-      { key: "reteta", label: "Rețetă" },
-      { key: "cantitate", label: "Cantitate" },
-      { key: "linie", label: "Linie" },
-      { key: "planta", label: "Plantă" },
+      { key: "produse", label: "Produse" },
+      { key: "cantitateTotala", label: "Cantitate Totală" },
       { key: "startPlanificat", label: "Start Planificat" },
       { key: "operator", label: "Operator" },
       { key: "sefSchimb", label: "Șef Schimb" },
@@ -317,19 +321,55 @@ const OrdineProductie = () => {
     toast.info(`Se imprimă biletul de producție pentru ${ordin.numar}`);
   };
 
+  // Wizard helpers
+  const addProdus = () => {
+    setWizardForm(prev => ({
+      ...prev,
+      produse: [...prev.produse, { produs: "", cantitate: "", reteta: "" }]
+    }));
+  };
+
+  const removeProdus = (index: number) => {
+    if (wizardForm.produse.length > 1) {
+      setWizardForm(prev => ({
+        ...prev,
+        produse: prev.produse.filter((_, i) => i !== index)
+      }));
+    }
+  };
+
+  const updateProdus = (index: number, field: string, value: string) => {
+    setWizardForm(prev => ({
+      ...prev,
+      produse: prev.produse.map((p, i) => i === index ? { ...p, [field]: value } : p)
+    }));
+  };
+
+  const cantitateTotalaForm = useMemo(() => {
+    return wizardForm.produse.reduce((sum, p) => sum + (parseFloat(p.cantitate) || 0), 0);
+  }, [wizardForm.produse]);
+
   const handleWizardNext = () => {
-    if (wizardStep < 3) {
+    if (wizardStep < 2) {
       setWizardStep(wizardStep + 1);
     } else {
       // Submit
+      const validProduse = wizardForm.produse.filter(p => p.produs && p.cantitate && p.reteta);
+      if (validProduse.length === 0) {
+        toast.error("Adăugați cel puțin un produs cu cantitate și rețetă");
+        return;
+      }
+
       const newOrdin: OrdinProductie = {
         id: ordine.length + 1,
         numar: `OP-2024-${String(ordine.length + 1).padStart(3, '0')}`,
-        reteta: wizardForm.reteta,
-        cantitate: parseFloat(wizardForm.cantitate) || 0,
+        produse: validProduse.map(p => ({
+          produs: p.produs,
+          cantitate: parseFloat(p.cantitate) || 0,
+          reteta: p.reteta
+        })),
+        cantitateTotala: validProduse.reduce((sum, p) => sum + (parseFloat(p.cantitate) || 0), 0),
         unitateMasura: wizardForm.unitateMasura,
-        linie: wizardForm.linie,
-        planta: wizardForm.planta,
         startPlanificat: wizardForm.startPlanificat,
         operator: wizardForm.operator,
         sefSchimb: wizardForm.sefSchimb,
@@ -345,32 +385,14 @@ const OrdineProductie = () => {
       setWizardOpen(false);
       setWizardStep(1);
       setWizardForm({
-        reteta: "",
-        cantitate: "",
+        produse: [{ produs: "", cantitate: "", reteta: "" }],
         unitateMasura: "tone",
-        linie: "",
-        planta: "",
         startPlanificat: "",
         operator: "",
         sefSchimb: "",
-        observatii: "",
-        batches: [{ cantitate: "", prioritate: "Normal" }]
+        observatii: ""
       });
     }
-  };
-
-  const addBatch = () => {
-    setWizardForm(prev => ({
-      ...prev,
-      batches: [...prev.batches, { cantitate: "", prioritate: "Normal" }]
-    }));
-  };
-
-  const updateBatch = (index: number, field: string, value: string) => {
-    setWizardForm(prev => ({
-      ...prev,
-      batches: prev.batches.map((b, i) => i === index ? { ...b, [field]: value } : b)
-    }));
   };
 
   // Kanban grouped data
@@ -386,9 +408,8 @@ const OrdineProductie = () => {
   const calendarData = useMemo(() => {
     const hours = Array.from({ length: 12 }, (_, i) => `${6 + i}:00`);
     const days = ["Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă", "Duminică"];
-    const linii = ["Linia 1", "Linia 2", "Linia 3"];
     
-    return { hours, days, linii };
+    return { hours, days };
   }, []);
 
   const getCapacityColor = (load: number) => {
@@ -396,6 +417,14 @@ const OrdineProductie = () => {
     if (load < 50) return "bg-green-500/30";
     if (load < 80) return "bg-yellow-500/30";
     return "bg-red-500/30";
+  };
+
+  // Helper to format products for display
+  const formatProduseDisplay = (produse: ProdusOrdin[]) => {
+    if (produse.length === 1) {
+      return produse[0].produs;
+    }
+    return `${produse.length} produse`;
   };
 
   return (
@@ -466,7 +495,7 @@ const OrdineProductie = () => {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Cantitate Activă</p>
+                <p className="text-sm font-medium text-muted-foreground">Masă Totală Activă</p>
                 <p className="text-2xl font-bold">{stats.cantitateTotal.toLocaleString()} t</p>
               </div>
               <div className="h-12 w-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
@@ -512,34 +541,15 @@ const OrdineProductie = () => {
                           onFilterChange={(value) => handleFilter("numar", value)}
                         />
                       </TableHead>
+                      <TableHead>Produse</TableHead>
                       <TableHead>
                         <DataTableColumnHeader
-                          title="Rețetă"
-                          sortKey="reteta"
+                          title="Masă Totală"
+                          sortKey="cantitateTotala"
                           currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
-                          filterValue={filters.reteta || ""}
+                          filterValue={filters.cantitateTotala || ""}
                           onSort={handleSort}
-                          onFilterChange={(value) => handleFilter("reteta", value)}
-                        />
-                      </TableHead>
-                      <TableHead>
-                        <DataTableColumnHeader
-                          title="Cantitate"
-                          sortKey="cantitate"
-                          currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
-                          filterValue={filters.cantitate || ""}
-                          onSort={handleSort}
-                          onFilterChange={(value) => handleFilter("cantitate", value)}
-                        />
-                      </TableHead>
-                      <TableHead>
-                        <DataTableColumnHeader
-                          title="Linie/Plantă"
-                          sortKey="linie"
-                          currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
-                          filterValue={filters.linie || ""}
-                          onSort={handleSort}
-                          onFilterChange={(value) => handleFilter("linie", value)}
+                          onFilterChange={(value) => handleFilter("cantitateTotala", value)}
                         />
                       </TableHead>
                       <TableHead>
@@ -577,7 +587,7 @@ const OrdineProductie = () => {
                   </TableHeader>
                   <TableBody>
                     {paginatedOrdine.length === 0 ? (
-                      <DataTableEmpty colSpan={8} message="Nu există ordine de producție" />
+                      <DataTableEmpty colSpan={7} message="Nu există ordine de producție" />
                     ) : (
                       paginatedOrdine.map((ordin) => (
                         <TableRow
@@ -586,14 +596,17 @@ const OrdineProductie = () => {
                           onClick={() => handleRowClick(ordin)}
                         >
                           <TableCell className="font-medium">{ordin.numar}</TableCell>
-                          <TableCell>{ordin.reteta}</TableCell>
-                          <TableCell>{ordin.cantitate} {ordin.unitateMasura}</TableCell>
                           <TableCell>
-                            <div className="flex flex-col">
-                              <span>{ordin.linie}</span>
-                              <span className="text-xs text-muted-foreground">{ordin.planta}</span>
+                            <div className="flex flex-col gap-0.5">
+                              {ordin.produse.map((p, idx) => (
+                                <div key={idx} className="text-xs">
+                                  <span className="font-medium">{p.produs}</span>
+                                  <span className="text-muted-foreground"> - {p.cantitate}t ({p.reteta})</span>
+                                </div>
+                              ))}
                             </div>
                           </TableCell>
+                          <TableCell className="font-semibold">{ordin.cantitateTotala} {ordin.unitateMasura}</TableCell>
                           <TableCell>{ordin.startPlanificat}</TableCell>
                           <TableCell>
                             <div className="flex flex-col">
@@ -657,11 +670,14 @@ const OrdineProductie = () => {
                           <div className="space-y-2">
                             <div className="flex items-center justify-between">
                               <span className="font-medium text-sm">{ordin.numar}</span>
-                              <Badge variant="outline" className="text-xs">{ordin.linie}</Badge>
+                              <Badge variant="outline" className="text-xs">{ordin.cantitateTotala}t</Badge>
                             </div>
-                            <p className="text-xs text-muted-foreground truncate">{ordin.reteta}</p>
+                            <div className="text-xs text-muted-foreground">
+                              {ordin.produse.map((p, idx) => (
+                                <div key={idx}>{p.produs} ({p.cantitate}t)</div>
+                              ))}
+                            </div>
                             <div className="flex items-center justify-between text-xs">
-                              <span>{ordin.cantitate} {ordin.unitateMasura}</span>
                               <span className="text-muted-foreground">{ordin.startPlanificat.split(' ')[0]}</span>
                             </div>
                             <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -700,60 +716,58 @@ const OrdineProductie = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {calendarData.linii.map((linie) => (
-                  <div key={linie} className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Factory className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">{linie}</span>
-                    </div>
-                    <div className="overflow-x-auto">
-                      <div className="grid grid-cols-8 gap-1 min-w-[600px]">
-                        <div className="text-xs text-muted-foreground"></div>
-                        {calendarData.days.map((day) => (
-                          <div key={day} className="text-xs text-center font-medium">{day}</div>
-                        ))}
-                        {calendarData.hours.map((hour) => (
-                          <>
-                            <div key={`${hour}-label`} className="text-xs text-muted-foreground text-right pr-2">{hour}</div>
-                            {calendarData.days.map((day) => {
-                              const load = Math.floor(Math.random() * 100);
-                              return (
-                                <TooltipProvider key={`${day}-${hour}`}>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <div className={`h-6 rounded ${getCapacityColor(load)} cursor-pointer hover:ring-1 hover:ring-primary`} />
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                      <p>{day} {hour} - {load}% capacitate</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-                              );
-                            })}
-                          </>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                <div className="flex items-center gap-4 text-xs">
-                  <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded bg-muted" />
-                    <span>Liber</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded bg-green-500/30" />
-                    <span>&lt;50%</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded bg-yellow-500/30" />
-                    <span>50-80%</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded bg-red-500/30" />
-                    <span>&gt;80%</span>
-                  </div>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-20">Ora</TableHead>
+                      {calendarData.days.map(day => (
+                        <TableHead key={day} className="text-center">{day}</TableHead>
+                      ))}
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {calendarData.hours.map(hour => (
+                      <TableRow key={hour}>
+                        <TableCell className="font-medium">{hour}</TableCell>
+                        {calendarData.days.map(day => {
+                          const load = Math.floor(Math.random() * 100);
+                          return (
+                            <TableCell key={`${day}-${hour}`} className="p-1">
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <div className={`h-8 rounded ${getCapacityColor(load)} cursor-pointer`} />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>{day} {hour} - Încărcare: {load}%</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="flex items-center gap-4 mt-4 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded bg-muted" />
+                  <span>Liber</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded bg-green-500/30" />
+                  <span>&lt;50%</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded bg-yellow-500/30" />
+                  <span>50-80%</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded bg-red-500/30" />
+                  <span>&gt;80%</span>
                 </div>
               </div>
             </CardContent>
@@ -767,135 +781,118 @@ const OrdineProductie = () => {
           {selectedOrdin && (
             <>
               <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  {selectedOrdin.numar}
-                  <Badge variant={statusConfig[selectedOrdin.status].variant} className="gap-1">
-                    {statusConfig[selectedOrdin.status].icon}
-                    {selectedOrdin.status}
-                  </Badge>
-                </DialogTitle>
-                <DialogDescription>{selectedOrdin.reteta}</DialogDescription>
+                <div className="flex items-center justify-between">
+                  <DialogTitle className="flex items-center gap-2">
+                    {selectedOrdin.numar}
+                    <Badge variant={statusConfig[selectedOrdin.status].variant} className="ml-2">
+                      {statusConfig[selectedOrdin.status].icon}
+                      {selectedOrdin.status}
+                    </Badge>
+                  </DialogTitle>
+                </div>
+                <DialogDescription>
+                  Detalii ordin de producție
+                </DialogDescription>
               </DialogHeader>
 
               <div className="space-y-6">
-                {/* Quick Info */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div>
-                    <Label className="text-muted-foreground">Cantitate</Label>
-                    <p className="font-medium">{selectedOrdin.cantitate} {selectedOrdin.unitateMasura}</p>
-                  </div>
-                  <div>
-                    <Label className="text-muted-foreground">Linie</Label>
-                    <p className="font-medium">{selectedOrdin.linie}</p>
-                  </div>
-                  <div>
-                    <Label className="text-muted-foreground">Plantă</Label>
-                    <p className="font-medium">{selectedOrdin.planta}</p>
-                  </div>
-                  <div>
-                    <Label className="text-muted-foreground">Start Planificat</Label>
-                    <p className="font-medium">{selectedOrdin.startPlanificat}</p>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Personnel */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-muted-foreground">Operator</Label>
-                    <p className="font-medium">{selectedOrdin.operator}</p>
-                  </div>
-                  <div>
-                    <Label className="text-muted-foreground">Șef Schimb</Label>
-                    <p className="font-medium">{selectedOrdin.sefSchimb}</p>
-                  </div>
-                </div>
-
-                {/* Consum Estimat vs Disponibil */}
+                {/* Produse */}
                 <div>
-                  <Label className="text-muted-foreground mb-2 block">Consum Estimat vs Disponibil</Label>
+                  <h4 className="text-sm font-medium mb-2">Produse</h4>
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Material</TableHead>
-                        <TableHead className="text-right">Necesar</TableHead>
-                        <TableHead className="text-right">Disponibil</TableHead>
-                        <TableHead className="text-right">Status</TableHead>
+                        <TableHead>Produs</TableHead>
+                        <TableHead>Cantitate</TableHead>
+                        <TableHead>Rețetă</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {selectedOrdin.consumEstimat.map((item, idx) => (
+                      {selectedOrdin.produse.map((p, idx) => (
                         <TableRow key={idx}>
-                          <TableCell>{item.material}</TableCell>
-                          <TableCell className="text-right">{item.cantitate} t</TableCell>
-                          <TableCell className="text-right">{item.disponibil} t</TableCell>
-                          <TableCell className="text-right">
-                            {item.disponibil >= item.cantitate ? (
-                              <Badge variant="outline" className="bg-green-500/10 text-green-600">OK</Badge>
-                            ) : (
-                              <Badge variant="destructive" className="gap-1">
-                                <AlertTriangle className="h-3 w-3" />
-                                Insuficient
-                              </Badge>
-                            )}
-                          </TableCell>
+                          <TableCell className="font-medium">{p.produs}</TableCell>
+                          <TableCell>{p.cantitate} {selectedOrdin.unitateMasura}</TableCell>
+                          <TableCell>{p.reteta}</TableCell>
                         </TableRow>
                       ))}
+                      <TableRow className="bg-muted/50">
+                        <TableCell className="font-bold">TOTAL</TableCell>
+                        <TableCell className="font-bold">{selectedOrdin.cantitateTotala} {selectedOrdin.unitateMasura}</TableCell>
+                        <TableCell></TableCell>
+                      </TableRow>
                     </TableBody>
                   </Table>
                 </div>
 
-                {/* Rezervări Stoc */}
-                {selectedOrdin.rezervariStoc.length > 0 && (
-                  <div>
-                    <Label className="text-muted-foreground mb-2 block">Rezervări Stoc</Label>
-                    <div className="space-y-1">
-                      {selectedOrdin.rezervariStoc.map((rez, idx) => (
-                        <div key={idx} className="flex items-center justify-between text-sm p-2 bg-muted/50 rounded">
-                          <span>{rez.material}</span>
-                          <span>{rez.cantitate} t - {rez.dataRezervare}</span>
-                        </div>
-                      ))}
+                {/* Info Grid */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <Label className="text-muted-foreground text-xs">Start Planificat</Label>
+                    <p className="font-medium">{selectedOrdin.startPlanificat}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-muted-foreground text-xs">Operator</Label>
+                    <p className="font-medium">{selectedOrdin.operator}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-muted-foreground text-xs">Șef Schimb</Label>
+                    <p className="font-medium">{selectedOrdin.sefSchimb}</p>
+                  </div>
+                  {selectedOrdin.observatii && (
+                    <div className="space-y-1 col-span-2">
+                      <Label className="text-muted-foreground text-xs">Observații</Label>
+                      <p>{selectedOrdin.observatii}</p>
                     </div>
+                  )}
+                </div>
+
+                <Separator />
+
+                {/* Consum Estimat */}
+                {selectedOrdin.consumEstimat.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-medium mb-2">Consum Estimat Materii Prime</h4>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Material</TableHead>
+                          <TableHead>Necesar</TableHead>
+                          <TableHead>Disponibil</TableHead>
+                          <TableHead>Status</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {selectedOrdin.consumEstimat.map((c, idx) => (
+                          <TableRow key={idx}>
+                            <TableCell>{c.material}</TableCell>
+                            <TableCell>{c.cantitate} t</TableCell>
+                            <TableCell>{c.disponibil} t</TableCell>
+                            <TableCell>
+                              {c.disponibil >= c.cantitate ? (
+                                <Badge variant="outline" className="bg-green-500/10 text-green-600">OK</Badge>
+                              ) : (
+                                <Badge variant="destructive">Insuficient</Badge>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   </div>
                 )}
 
                 {/* Loturi Asociate */}
                 {selectedOrdin.loturiAsociate.length > 0 && (
                   <div>
-                    <Label className="text-muted-foreground mb-2 block">Loturi Asociate</Label>
+                    <h4 className="text-sm font-medium mb-2">Loturi Asociate</h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedOrdin.loturiAsociate.map((lot) => (
-                        <Badge key={lot} variant="outline" className="gap-1 cursor-pointer hover:bg-muted">
+                        <Badge key={lot} variant="outline" className="gap-1">
                           <Link2 className="h-3 w-3" />
                           {lot}
                         </Badge>
                       ))}
                     </div>
-                  </div>
-                )}
-
-                {/* Atașamente */}
-                {selectedOrdin.atasamente.length > 0 && (
-                  <div>
-                    <Label className="text-muted-foreground mb-2 block">Atașamente</Label>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedOrdin.atasamente.map((file) => (
-                        <Badge key={file} variant="secondary" className="gap-1 cursor-pointer">
-                          <FileText className="h-3 w-3" />
-                          {file}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Observații */}
-                {selectedOrdin.observatii && (
-                  <div>
-                    <Label className="text-muted-foreground">Observații</Label>
-                    <p className="text-sm">{selectedOrdin.observatii}</p>
                   </div>
                 )}
               </div>
@@ -952,17 +949,17 @@ const OrdineProductie = () => {
         setWizardOpen(open);
         if (!open) setWizardStep(1);
       }}>
-        <DialogContent className="max-w-2xl" hideCloseButton>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" hideCloseButton>
           <DialogHeader>
             <DialogTitle>Lansează Ordin de Producție</DialogTitle>
             <DialogDescription>
-              Pasul {wizardStep} din 3: {wizardStep === 1 ? "Antet" : wizardStep === 2 ? "Linii/Batching" : "Confirmă"}
+              Pasul {wizardStep} din 2: {wizardStep === 1 ? "Produse și Cantități" : "Confirmare"}
             </DialogDescription>
           </DialogHeader>
 
           {/* Progress Indicator */}
           <div className="flex items-center justify-center gap-2 py-2">
-            {[1, 2, 3].map((step) => (
+            {[1, 2].map((step) => (
               <div key={step} className="flex items-center">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
                   step === wizardStep ? "bg-primary text-primary-foreground" : 
@@ -970,185 +967,180 @@ const OrdineProductie = () => {
                 }`}>
                   {step}
                 </div>
-                {step < 3 && <div className={`w-12 h-0.5 ${step < wizardStep ? "bg-primary" : "bg-muted"}`} />}
+                {step < 2 && <div className={`w-12 h-0.5 ${step < wizardStep ? "bg-primary" : "bg-muted"}`} />}
               </div>
             ))}
           </div>
 
-          {/* Step 1: Antet */}
+          {/* Step 1: Produse și Cantități */}
           {wizardStep === 1 && (
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                <Label>Rețetă *</Label>
-                <Select value={wizardForm.reteta} onValueChange={(v) => setWizardForm(prev => ({ ...prev, reteta: v }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectează rețeta" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mockRetete.map((r) => (
-                      <SelectItem key={r} value={r}>{r}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Cantitate *</Label>
-                <Input
-                  type="number"
-                  value={wizardForm.cantitate}
-                  onChange={(e) => setWizardForm(prev => ({ ...prev, cantitate: e.target.value }))}
-                  placeholder="Ex: 500"
-                />
-              </div>
-              <div>
-                <Label>Unitate măsură</Label>
-                <Select value={wizardForm.unitateMasura} onValueChange={(v) => setWizardForm(prev => ({ ...prev, unitateMasura: v }))}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="tone">Tone</SelectItem>
-                    <SelectItem value="mc">m³</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Plantă *</Label>
-                <Select value={wizardForm.planta} onValueChange={(v) => setWizardForm(prev => ({ ...prev, planta: v }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectează planta" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mockPlante.map((p) => (
-                      <SelectItem key={p} value={p}>{p}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Linie *</Label>
-                <Select value={wizardForm.linie} onValueChange={(v) => setWizardForm(prev => ({ ...prev, linie: v }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectează linia" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mockLinii.map((l) => (
-                      <SelectItem key={l} value={l}>{l}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Start Planificat *</Label>
-                <Input
-                  type="datetime-local"
-                  value={wizardForm.startPlanificat}
-                  onChange={(e) => setWizardForm(prev => ({ ...prev, startPlanificat: e.target.value }))}
-                />
-              </div>
-              <div>
-                <Label>Operator</Label>
-                <Select value={wizardForm.operator} onValueChange={(v) => setWizardForm(prev => ({ ...prev, operator: v }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectează operator" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mockOperatori.map((o) => (
-                      <SelectItem key={o} value={o}>{o}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Șef Schimb</Label>
-                <Select value={wizardForm.sefSchimb} onValueChange={(v) => setWizardForm(prev => ({ ...prev, sefSchimb: v }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectează șef schimb" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mockSefiSchimb.map((s) => (
-                      <SelectItem key={s} value={s}>{s}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="col-span-2">
-                <Label>Observații</Label>
-                <Textarea
-                  value={wizardForm.observatii}
-                  onChange={(e) => setWizardForm(prev => ({ ...prev, observatii: e.target.value }))}
-                  placeholder="Observații suplimentare..."
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Step 2: Linii/Batching */}
-          {wizardStep === 2 && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label>Împărțire pe loturi (Batching)</Label>
-                <Button variant="outline" size="sm" onClick={addBatch}>
+                <Label className="text-base font-medium">Produse Finite *</Label>
+                <Button variant="outline" size="sm" onClick={addProdus}>
                   <Plus className="h-4 w-4 mr-1" />
-                  Adaugă Lot
+                  Adaugă Produs
                 </Button>
               </div>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Lot</TableHead>
-                    <TableHead>Cantitate</TableHead>
-                    <TableHead>Prioritate</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {wizardForm.batches.map((batch, idx) => (
-                    <TableRow key={idx}>
-                      <TableCell>Lot {idx + 1}</TableCell>
-                      <TableCell>
-                        <Input
-                          type="number"
-                          value={batch.cantitate}
-                          onChange={(e) => updateBatch(idx, "cantitate", e.target.value)}
-                          placeholder="Cantitate"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Select value={batch.prioritate} onValueChange={(v) => updateBatch(idx, "prioritate", v)}>
-                          <SelectTrigger>
-                            <SelectValue />
+              
+              <div className="space-y-3">
+                {wizardForm.produse.map((item, index) => (
+                  <div key={index} className="p-3 border rounded-lg bg-muted/30 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Produs {index + 1}</span>
+                      {wizardForm.produse.length > 1 && (
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => removeProdus(index)}>
+                          <X className="h-4 w-4 text-destructive" />
+                        </Button>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <Label className="text-xs">Produs Finit</Label>
+                        <Select value={item.produs} onValueChange={(v) => updateProdus(index, "produs", v)}>
+                          <SelectTrigger className="h-9">
+                            <SelectValue placeholder="Selectează" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Ridicată">Ridicată</SelectItem>
-                            <SelectItem value="Normal">Normal</SelectItem>
-                            <SelectItem value="Scăzută">Scăzută</SelectItem>
+                            {mockProduseFinite.map((p) => (
+                              <SelectItem key={p} value={p}>{p}</SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <div className="text-sm text-muted-foreground">
-                Total cantitate loturi: {wizardForm.batches.reduce((sum, b) => sum + (parseFloat(b.cantitate) || 0), 0)} / {wizardForm.cantitate || 0} {wizardForm.unitateMasura}
+                      </div>
+                      <div>
+                        <Label className="text-xs">Cantitate (tone)</Label>
+                        <Input
+                          type="number"
+                          className="h-9"
+                          placeholder="Ex: 100"
+                          value={item.cantitate}
+                          onChange={(e) => updateProdus(index, "cantitate", e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Rețetă</Label>
+                        <Select value={item.reteta} onValueChange={(v) => updateProdus(index, "reteta", v)}>
+                          <SelectTrigger className="h-9">
+                            <SelectValue placeholder="Selectează" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {mockRetete.map((r) => (
+                              <SelectItem key={r} value={r}>{r}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="p-3 bg-primary/10 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">Masă Totală:</span>
+                  <span className="text-xl font-bold">{cantitateTotalaForm} tone</span>
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Start Planificat *</Label>
+                  <Input
+                    type="datetime-local"
+                    value={wizardForm.startPlanificat}
+                    onChange={(e) => setWizardForm(prev => ({ ...prev, startPlanificat: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <Label>Unitate măsură</Label>
+                  <Select value={wizardForm.unitateMasura} onValueChange={(v) => setWizardForm(prev => ({ ...prev, unitateMasura: v }))}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="tone">Tone</SelectItem>
+                      <SelectItem value="mc">m³</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Operator</Label>
+                  <Select value={wizardForm.operator} onValueChange={(v) => setWizardForm(prev => ({ ...prev, operator: v }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selectează operator" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {mockOperatori.map((o) => (
+                        <SelectItem key={o} value={o}>{o}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Șef Schimb</Label>
+                  <Select value={wizardForm.sefSchimb} onValueChange={(v) => setWizardForm(prev => ({ ...prev, sefSchimb: v }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selectează șef schimb" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {mockSefiSchimb.map((s) => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="col-span-2">
+                  <Label>Observații</Label>
+                  <Textarea
+                    value={wizardForm.observatii}
+                    onChange={(e) => setWizardForm(prev => ({ ...prev, observatii: e.target.value }))}
+                    placeholder="Observații suplimentare..."
+                  />
+                </div>
               </div>
             </div>
           )}
 
-          {/* Step 3: Confirmă */}
-          {wizardStep === 3 && (
+          {/* Step 2: Confirmă */}
+          {wizardStep === 2 && (
             <div className="space-y-4">
               <div className="bg-muted/50 rounded-lg p-4 space-y-3">
                 <h4 className="font-medium">Rezumat Ordin</h4>
+                
+                <div>
+                  <Label className="text-xs text-muted-foreground">Produse:</Label>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Produs</TableHead>
+                        <TableHead>Cantitate</TableHead>
+                        <TableHead>Rețetă</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {wizardForm.produse.filter(p => p.produs && p.cantitate).map((p, idx) => (
+                        <TableRow key={idx}>
+                          <TableCell>{p.produs}</TableCell>
+                          <TableCell>{p.cantitate} {wizardForm.unitateMasura}</TableCell>
+                          <TableCell>{p.reteta}</TableCell>
+                        </TableRow>
+                      ))}
+                      <TableRow className="font-bold bg-muted/30">
+                        <TableCell>TOTAL</TableCell>
+                        <TableCell>{cantitateTotalaForm} {wizardForm.unitateMasura}</TableCell>
+                        <TableCell></TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
+
                 <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div><span className="text-muted-foreground">Rețetă:</span> {wizardForm.reteta}</div>
-                  <div><span className="text-muted-foreground">Cantitate:</span> {wizardForm.cantitate} {wizardForm.unitateMasura}</div>
-                  <div><span className="text-muted-foreground">Plantă:</span> {wizardForm.planta}</div>
-                  <div><span className="text-muted-foreground">Linie:</span> {wizardForm.linie}</div>
                   <div><span className="text-muted-foreground">Start:</span> {wizardForm.startPlanificat}</div>
                   <div><span className="text-muted-foreground">Operator:</span> {wizardForm.operator || "-"}</div>
                   <div><span className="text-muted-foreground">Șef Schimb:</span> {wizardForm.sefSchimb || "-"}</div>
-                  <div><span className="text-muted-foreground">Loturi:</span> {wizardForm.batches.length}</div>
                 </div>
                 {wizardForm.observatii && (
                   <div className="text-sm">
@@ -1171,7 +1163,7 @@ const OrdineProductie = () => {
               </Button>
             )}
             <Button onClick={handleWizardNext}>
-              {wizardStep < 3 ? (
+              {wizardStep < 2 ? (
                 <>
                   Continuă
                   <ChevronRight className="h-4 w-4 ml-1" />
