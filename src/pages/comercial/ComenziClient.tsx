@@ -40,7 +40,7 @@ interface ComandaClient {
   unitate_masura: string;
   fereastra_incarcare: string;
   prioritate: Priority;
-  avans_plata: number;
+  avans: number;
   punct_descarcare: string;
   observatii: string;
   status: OrderStatus;
@@ -156,16 +156,16 @@ const ComenziClient = () => {
     cantitate: 0,
     unitate_masura: "tone",
     prioritate: "Normala" as Priority,
-    avans_plata: 0,
+    avans: 0,
     punct_descarcare: "",
     observatii: "",
     fereastra_incarcare: "",
-    status: "Preaprobat" as OrderStatus,
+    status: "Planificat" as OrderStatus,
   });
   
   // Column filters
   const [filters, setFilters] = useState<Record<string, string>>({
-    cod_comanda: "", client: "", produs: "", cantitate: "", data: "", status: "", prioritate: "", avans_plata: "", observatii: ""
+    cod_comanda: "", client: "", produs: "", cantitate: "", data: "", status: "", prioritate: "", avans: "", observatii: ""
   });
   
   
@@ -200,7 +200,7 @@ const ComenziClient = () => {
           (item.data || "").toLowerCase().includes(filters.data.toLowerCase()) &&
           (filters.status === "" || item.status === filters.status) &&
           (filters.prioritate === "" || item.prioritate === filters.prioritate) &&
-          (item.avans_plata?.toString() || "").includes(filters.avans_plata) &&
+          (item.avans?.toString() || "").includes(filters.avans) &&
           (item.observatii || "").toLowerCase().includes(filters.observatii.toLowerCase())
         );
       })
@@ -245,7 +245,7 @@ const ComenziClient = () => {
       { key: "cantitate" as const, label: "Cantitate" },
       { key: "status" as const, label: "Status" },
       { key: "prioritate" as const, label: "Prioritate" },
-      { key: "avans_plata" as const, label: "Avans" },
+      { key: "avans" as const, label: "Avans" },
       { key: "observatii" as const, label: "Observații" },
     ];
     exportToCSV(filteredComenzi, `comenzi_client_${new Date().toISOString().split('T')[0]}`, columns);
@@ -260,7 +260,7 @@ const ComenziClient = () => {
       cantitate: 0,
       unitate_masura: "tone",
       prioritate: "Normala",
-      avans_plata: 0,
+      avans: 0,
       punct_descarcare: "",
       observatii: "",
       fereastra_incarcare: "",
@@ -277,7 +277,7 @@ const ComenziClient = () => {
       cantitate: item.cantitate || 0,
       unitate_masura: item.unitate_masura || "tone",
       prioritate: item.prioritate || "Normala",
-      avans_plata: item.avans_plata || 0,
+      avans: item.avans || 0,
       punct_descarcare: item.punct_descarcare || "",
       observatii: item.observatii || "",
       fereastra_incarcare: item.fereastra_incarcare || "",
@@ -307,7 +307,7 @@ const ComenziClient = () => {
               cantitate: form.cantitate,
               unitate_masura: form.unitate_masura,
               prioritate: form.prioritate,
-              avans: form.avans_plata,
+              avans: form.avans,
               punct_descarcare: form.punct_descarcare,
               observatii: form.observatii,
               fereastra_incarcare: form.fereastra_incarcare,
@@ -323,7 +323,7 @@ const ComenziClient = () => {
           client: form.client,
           produs: form.produs,
           cantitate: form.cantitate,
-          avans: form.avans_plata,
+          avans: form.avans,
           unitate_masura: form.unitate_masura,
           fereastra_incarcare: form.fereastra_incarcare,
           prioritate: form.prioritate,
@@ -511,7 +511,7 @@ const ComenziClient = () => {
                         <DataTableColumnHeader title="Prioritate" sortKey="prioritate" currentSort={sort} onSort={(k, d) => setSort({ key: k, direction: d })} filterValue={filters.prioritate} onFilterChange={(v) => { setFilters(f => ({ ...f, prioritate: v })); setPage(1); }} filterPlaceholder="Caută..." />
                       </TableHead>
                       <TableHead className="h-10">
-                        <DataTableColumnHeader title="Avans" sortKey="avans_plata" currentSort={sort} onSort={(k, d) => setSort({ key: k, direction: d })} filterValue={filters.avans_plata} onFilterChange={(v) => { setFilters(f => ({ ...f, avans_plata: v })); setPage(1); }} filterPlaceholder="Caută..." />
+                        <DataTableColumnHeader title="Avans" sortKey="avans" currentSort={sort} onSort={(k, d) => setSort({ key: k, direction: d })} filterValue={filters.avans} onFilterChange={(v) => { setFilters(f => ({ ...f, avans: v })); setPage(1); }} filterPlaceholder="Caută..." />
                       </TableHead>
                       <TableHead className="h-10">
                         <DataTableColumnHeader title="Observații" sortKey="observatii" currentSort={sort} onSort={(k, d) => setSort({ key: k, direction: d })} filterValue={filters.observatii} onFilterChange={(v) => { setFilters(f => ({ ...f, observatii: v })); setPage(1); }} filterPlaceholder="Caută..." />
@@ -531,7 +531,7 @@ const ComenziClient = () => {
                           <TableCell className="py-1 text-xs text-right">{comanda.cantitate} {comanda.unitate_masura}</TableCell>
                           <TableCell className="py-1 text-xs"><Badge className={statusColors[comanda.status]}>{comanda.status}</Badge></TableCell>
                           <TableCell className="py-1 text-xs"><Badge className={priorityColors[comanda.prioritate]}>{comanda.prioritate}</Badge></TableCell>
-                          <TableCell className="py-1 text-xs">{comanda.avans_plata}</TableCell>
+                          <TableCell className="py-1 text-xs">{comanda.avans}</TableCell>
                           <TableCell className="py-1 text-xs max-w-[150px] truncate">{comanda.observatii}</TableCell>
                         </TableRow>
                       ))
@@ -709,7 +709,7 @@ const ComenziClient = () => {
                 <div><span className="text-muted-foreground">Data:</span> <span className="font-medium">{viewingDetails.data}</span></div>
                 <div><span className="text-muted-foreground">Fereastră:</span> <span className="font-medium">{viewingDetails.fereastra_incarcare}</span></div>
                 <div><span className="text-muted-foreground">Punct descărcare:</span> <span className="font-medium">{viewingDetails.punct_descarcare}</span></div>
-                <div><span className="text-muted-foreground">Avans:</span> <span className="font-medium">{viewingDetails.avans_plata}</span></div>
+                <div><span className="text-muted-foreground">Avans:</span> <span className="font-medium">{viewingDetails.avans}</span></div>
                 {viewingDetails.observatii && (
                   <div className="col-span-2 pt-2 border-t mt-1">
                     <span className="text-muted-foreground">Observații:</span> <span className="font-medium">{viewingDetails.observatii}</span>
@@ -811,7 +811,7 @@ const ComenziClient = () => {
               </div>
               <div className="space-y-2">
                 <Label>Avans</Label>
-                <Input type="number" placeholder="0" value={form.avans_plata} onChange={(e) => setForm({ ...form, avans_plata: Number(e.target.value) })} />
+                <Input type="number" placeholder="0" value={form.avans} onChange={(e) => setForm({ ...form, avans: Number(e.target.value) })} />
               </div>
             </div>
             <div className="space-y-2">
