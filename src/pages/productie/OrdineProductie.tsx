@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   ClipboardCheck, 
@@ -41,6 +41,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { toast } from "sonner";
 import { exportToCSV } from "@/lib/exportUtils";
 import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
+import { API_BASE_URL } from "@/lib/api";
 
 // Types
 interface ProdusOrdin {
@@ -67,124 +68,16 @@ interface OrdinProductie {
   comenziAsociate: string[];
 }
 
-// Mock data
-const mockOrdine: OrdinProductie[] = [
-  {
-    id: 1,
-    numar: "OP-2024-001",
-    produse: [
-      { produs: "BA16 - Beton Asfaltic", cantitate: 300, reteta: "Rețetă BA16 Standard" },
-      { produs: "MASF16 - Mixtură Asfaltică", cantitate: 200, reteta: "Rețetă MASF16 Premium" }
-    ],
-    cantitateTotala: 500,
-    unitateMasura: "tone",
-    startPlanificat: "15/01/2024 08:00",
-    operator: "Ion Popescu",
-    sefSchimb: "Gheorghe Ionescu",
-    status: "În lucru" as const,
-    observatii: "Comandă urgentă pentru autostradă",
-    consumEstimat: [
-      { material: "Bitum 50/70", cantitate: 25, disponibil: 100 },
-      { material: "Agregat 0/4", cantitate: 200, disponibil: 180 },
-      { material: "Filler", cantitate: 30, disponibil: 50 }
-    ],
-    rezervariStoc: [
-      { material: "Bitum 50/70", cantitate: 25, dataRezervare: "14/01/2024" },
-      { material: "Filler", cantitate: 30, dataRezervare: "14/01/2024" }
-    ],
-    loturiAsociate: ["LOT-001", "LOT-002"],
-    atasamente: ["specificatie_tehnica.pdf", "plan_calitate.pdf"],
-    comenziAsociate: ["CMD-2024-001", "CMD-2024-002"]
-  },
-  {
-    id: 2,
-    numar: "OP-2024-002",
-    produse: [
-      { produs: "MASF16 - Mixtură Asfaltică", cantitate: 300, reteta: "Rețetă MASF16 Standard" }
-    ],
-    cantitateTotala: 300,
-    unitateMasura: "tone",
-    startPlanificat: "15/01/2024 14:00",
-    operator: "Maria Dumitrescu",
-    sefSchimb: "Gheorghe Ionescu",
-    status: "Planificat" as const,
-    observatii: "",
-    consumEstimat: [
-      { material: "Bitum 50/70", cantitate: 18, disponibil: 75 },
-      { material: "Agregat 4/8", cantitate: 120, disponibil: 200 }
-    ],
-    rezervariStoc: [],
-    loturiAsociate: [],
-    atasamente: [],
-    comenziAsociate: ["CMD-2024-003"]
-  },
-  {
-    id: 3,
-    numar: "OP-2024-003",
-    produse: [
-      { produs: "BSC - Beton Stabilizat", cantitate: 500, reteta: "Rețetă BSC Standard" },
-      { produs: "AB2 - Anrobat Bituminos", cantitate: 300, reteta: "Rețetă AB2 Premium" }
-    ],
-    cantitateTotala: 800,
-    unitateMasura: "tone",
-    startPlanificat: "16/01/2024 06:00",
-    operator: "Andrei Vasilescu",
-    sefSchimb: "Mihai Constantinescu",
-    status: "Planificat" as const,
-    observatii: "Așteaptă aprobare tehnică",
-    consumEstimat: [
-      { material: "Ciment", cantitate: 40, disponibil: 60 },
-      { material: "Agregat 0/4", cantitate: 400, disponibil: 180 }
-    ],
-    rezervariStoc: [],
-    loturiAsociate: [],
-    atasamente: ["caiet_sarcini.pdf"],
-    comenziAsociate: []
-  },
-  {
-    id: 4,
-    numar: "OP-2024-004",
-    produse: [
-      { produs: "BA16 - Beton Asfaltic", cantitate: 250, reteta: "Rețetă BA16 Standard" }
-    ],
-    cantitateTotala: 250,
-    unitateMasura: "tone",
-    startPlanificat: "14/01/2024 08:00",
-    operator: "Elena Stanciu",
-    sefSchimb: "Gheorghe Ionescu",
-    status: "Finalizat" as const,
-    observatii: "Finalizat conform planului",
-    consumEstimat: [
-      { material: "Bitum 50/70", cantitate: 12.5, disponibil: 0 },
-      { material: "Agregat 0/4", cantitate: 100, disponibil: 0 }
-    ],
-    rezervariStoc: [],
-    loturiAsociate: ["LOT-003", "LOT-004", "LOT-005"],
-    atasamente: ["raport_final.pdf"],
-    comenziAsociate: ["CMD-2024-004"]
-  }
-];
+// Types for API data
+interface SefSchimb {
+  id: number;
+  nume: string;
+}
 
-const mockComenzi = [
-  "CMD-2024-001",
-  "CMD-2024-002", 
-  "CMD-2024-003",
-  "CMD-2024-004",
-  "CMD-2024-005",
-  "CMD-2024-006"
-];
-
-const mockRetete = [
-  "Rețetă BA16 Standard",
-  "Rețetă BA16 Premium",
-  "Rețetă MASF16 Standard",
-  "Rețetă MASF16 Premium",
-  "Rețetă BSC Standard",
-  "Rețetă AB2 Premium"
-];
-const mockProduseFinite = ["BA16 - Beton Asfaltic", "MASF16 - Mixtură Asfaltică", "BSC - Beton Stabilizat", "AB2 - Anrobat Bituminos"];
-const mockOperatori = ["Ion Popescu", "Maria Dumitrescu", "Andrei Vasilescu", "Elena Stanciu"];
-const mockSefiSchimb = ["Gheorghe Ionescu", "Mihai Constantinescu"];
+interface Operator {
+  id: number;
+  nume: string;
+}
 
 const statusConfig: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ReactNode; color: string }> = {
   "Planificat": { variant: "secondary", icon: <Clock className="h-3 w-3" />, color: "bg-amber-500 text-white" },
@@ -194,7 +87,7 @@ const statusConfig: Record<string, { variant: "default" | "secondary" | "destruc
 
 const OrdineProductie = () => {
   const navigate = useNavigate();
-  const [ordine, setOrdine] = useState<OrdinProductie[]>(mockOrdine);
+  const [ordine, setOrdine] = useState<OrdinProductie[]>([]);
   const [activeView, setActiveView] = useState<"list" | "kanban" | "calendar">("list");
   const [selectedOrdin, setSelectedOrdin] = useState<OrdinProductie | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
@@ -202,6 +95,82 @@ const OrdineProductie = () => {
   const [wizardStep, setWizardStep] = useState(1);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  // API data states
+  const [operatori, setOperatori] = useState<Operator[]>([]);
+  const [sefiSchimb, setSefiSchimb] = useState<SefSchimb[]>([]);
+  const [produseFinite, setProduseFinite] = useState<string[]>([]);
+  const [retete, setRetete] = useState<string[]>([]);
+  const [comenziDisponibile, setComenziDisponibile] = useState<string[]>([]);
+
+  // Fetch operatori and sefi schimb
+  useEffect(() => {
+    const fetchOperatori = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/productie/returneaza/operator`);
+        if (response.ok) {
+          const data = await response.json();
+          setOperatori(data);
+        }
+      } catch (error) {
+        console.error("Error fetching operatori:", error);
+      }
+    };
+
+    const fetchSefiSchimb = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/productie/returneaza/sefi_schimb`);
+        if (response.ok) {
+          const data = await response.json();
+          setSefiSchimb(data);
+        }
+      } catch (error) {
+        console.error("Error fetching sefi schimb:", error);
+      }
+    };
+
+    const fetchProduseFinite = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/liste/returneaza/produse_finite`);
+        if (response.ok) {
+          const data = await response.json();
+          setProduseFinite(data.map((p: { denumire: string }) => p.denumire));
+        }
+      } catch (error) {
+        console.error("Error fetching produse finite:", error);
+      }
+    };
+
+    const fetchRetete = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/productie/returneaza/retete`);
+        if (response.ok) {
+          const data = await response.json();
+          setRetete(data.map((r: { cod_reteta: string; denumire: string }) => `${r.cod_reteta} - ${r.denumire}`));
+        }
+      } catch (error) {
+        console.error("Error fetching retete:", error);
+      }
+    };
+
+    const fetchComenzi = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/comercial/returneaza/comenzi_client`);
+        if (response.ok) {
+          const data = await response.json();
+          setComenziDisponibile(data.map((c: { cod: string }) => c.cod));
+        }
+      } catch (error) {
+        console.error("Error fetching comenzi:", error);
+      }
+    };
+
+    fetchOperatori();
+    fetchSefiSchimb();
+    fetchProduseFinite();
+    fetchRetete();
+    fetchComenzi();
+  }, []);
 
   // Filters
   const [sortKey, setSortKey] = useState<string | null>(null);
@@ -998,7 +967,7 @@ const OrdineProductie = () => {
                             <SelectValue placeholder="Selectează" />
                           </SelectTrigger>
                           <SelectContent>
-                            {mockProduseFinite.map((p) => (
+                            {produseFinite.map((p) => (
                               <SelectItem key={p} value={p}>{p}</SelectItem>
                             ))}
                           </SelectContent>
@@ -1021,7 +990,7 @@ const OrdineProductie = () => {
                             <SelectValue placeholder="Selectează" />
                           </SelectTrigger>
                           <SelectContent>
-                            {mockRetete.map((r) => (
+                            {retete.map((r) => (
                               <SelectItem key={r} value={r}>{r}</SelectItem>
                             ))}
                           </SelectContent>
@@ -1069,8 +1038,8 @@ const OrdineProductie = () => {
                       <SelectValue placeholder="Selectează operator" />
                     </SelectTrigger>
                     <SelectContent>
-                      {mockOperatori.map((o) => (
-                        <SelectItem key={o} value={o}>{o}</SelectItem>
+                      {operatori.map((o) => (
+                        <SelectItem key={o.id} value={o.nume}>{o.nume}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -1082,8 +1051,8 @@ const OrdineProductie = () => {
                       <SelectValue placeholder="Selectează șef schimb" />
                     </SelectTrigger>
                     <SelectContent>
-                      {mockSefiSchimb.map((s) => (
-                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      {sefiSchimb.map((s) => (
+                        <SelectItem key={s.id} value={s.nume}>{s.nume}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -1116,7 +1085,7 @@ const OrdineProductie = () => {
                       <SelectValue placeholder="Adaugă comandă..." />
                     </SelectTrigger>
                     <SelectContent>
-                      {mockComenzi.filter(c => !wizardForm.comenziAsociate.includes(c)).map((cmd) => (
+                      {comenziDisponibile.filter(c => !wizardForm.comenziAsociate.includes(c)).map((cmd) => (
                         <SelectItem key={cmd} value={cmd}>{cmd}</SelectItem>
                       ))}
                     </SelectContent>
@@ -1260,7 +1229,7 @@ const OrdineProductie = () => {
                           <SelectValue placeholder="Selectează" />
                         </SelectTrigger>
                         <SelectContent>
-                          {mockProduseFinite.map((p) => (
+                          {produseFinite.map((p) => (
                             <SelectItem key={p} value={p}>{p}</SelectItem>
                           ))}
                         </SelectContent>
@@ -1283,7 +1252,7 @@ const OrdineProductie = () => {
                           <SelectValue placeholder="Selectează" />
                         </SelectTrigger>
                         <SelectContent>
-                          {mockRetete.map((r) => (
+                          {retete.map((r) => (
                             <SelectItem key={r} value={r}>{r}</SelectItem>
                           ))}
                         </SelectContent>
@@ -1331,8 +1300,8 @@ const OrdineProductie = () => {
                     <SelectValue placeholder="Selectează operator" />
                   </SelectTrigger>
                   <SelectContent>
-                    {mockOperatori.map((o) => (
-                      <SelectItem key={o} value={o}>{o}</SelectItem>
+                    {operatori.map((o) => (
+                      <SelectItem key={o.id} value={o.nume}>{o.nume}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -1344,8 +1313,8 @@ const OrdineProductie = () => {
                     <SelectValue placeholder="Selectează șef schimb" />
                   </SelectTrigger>
                   <SelectContent>
-                    {mockSefiSchimb.map((s) => (
-                      <SelectItem key={s} value={s}>{s}</SelectItem>
+                    {sefiSchimb.map((s) => (
+                      <SelectItem key={s.id} value={s.nume}>{s.nume}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -1378,7 +1347,7 @@ const OrdineProductie = () => {
                     <SelectValue placeholder="Adaugă comandă..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {mockComenzi.filter(c => !wizardForm.comenziAsociate.includes(c)).map((cmd) => (
+                    {comenziDisponibile.filter(c => !wizardForm.comenziAsociate.includes(c)).map((cmd) => (
                       <SelectItem key={cmd} value={cmd}>{cmd}</SelectItem>
                     ))}
                   </SelectContent>
