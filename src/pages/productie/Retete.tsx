@@ -40,7 +40,7 @@ interface Component {
 }
 
 interface Reteta {
-  id: number;
+  id: string; // comma-separated IDs from aggregation
   cod_reteta: string;
   denumire: string;
   tip: string;
@@ -200,23 +200,28 @@ const Retete = () => {
     try {
       console.log("=== STERGERE RETETA ===");
       console.log("Cod reteta de sters:", reteta.cod_reteta);
+      console.log("IDs de sters:", reteta.id);
       
-      const response = await fetch(`${API_BASE_URL}/sterge`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tabel: "retete",
-          coloana: "cod_reteta",
-          valoare: reteta.cod_reteta
-        })
-      });
-
-      if (!response.ok) throw new Error('Failed to delete reteta');
+      // Parse comma-separated IDs and delete each one
+      const ids = String(reteta.id).split(",").map(id => id.trim()).filter(Boolean);
+      console.log("IDs parsate:", ids);
       
-      const result = await response.json();
-      console.log("Raspuns stergere:", result);
+      for (const id of ids) {
+        console.log(`Sterg ID: ${id}`);
+        const response = await fetch(`${API_BASE_URL}/sterge`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tabel: "retete",
+            id: parseInt(id)
+          })
+        });
+        
+        const result = await response.json();
+        console.log(`Raspuns stergere ID ${id}:`, result);
+      }
 
-      toast.success(`Rețeta ${reteta.cod_reteta} a fost ștearsă`);
+      toast.success(`Rețeta ${reteta.cod_reteta} a fost ștearsă (${ids.length} înregistrări)`);
       
       // Refresh list
       const refreshResponse = await fetch(`${API_BASE_URL}/productie/returneaza/retete`);
