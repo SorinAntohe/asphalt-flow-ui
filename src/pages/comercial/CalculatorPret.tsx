@@ -325,6 +325,47 @@ const CalculatorPret = () => {
                   </p>
                 </div>
 
+                {/* Analiză Comparativă Concurență */}
+                {preturiConcurenti.length > 0 && (
+                  <div className="p-3 rounded-lg bg-muted/50 border border-border">
+                    <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                      <Users className="h-4 w-4" />
+                      Analiză vs Concurență
+                    </h4>
+                    {(() => {
+                      const pretNostru = costBreakdown.pretRecomandat / parseFloat(cantitate);
+                      const diferentaMedie = pretNostru - competitorStats.mediu;
+                      const diferentaMinim = pretNostru - competitorStats.minim;
+                      const procentMedie = ((diferentaMedie / competitorStats.mediu) * 100);
+                      
+                      return (
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between items-center">
+                            <span className="text-muted-foreground">vs Preț Mediu</span>
+                            <Badge variant={diferentaMedie > 0 ? "destructive" : "default"} className="text-xs">
+                              {diferentaMedie > 0 ? "+" : ""}{procentMedie.toFixed(1)}%
+                            </Badge>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-muted-foreground">vs Cel Mai Ieftin</span>
+                            <Badge variant={diferentaMinim > 0 ? "outline" : "default"} className="text-xs">
+                              {diferentaMinim > 0 ? "+" : ""}{formatCurrency(diferentaMinim)}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
+                            {diferentaMedie <= 0 
+                              ? "✓ Prețul este competitiv, sub media pieței"
+                              : diferentaMedie <= competitorStats.mediu * 0.05
+                                ? "~ Prețul este în linie cu piața"
+                                : "⚠ Prețul este peste media pieței"
+                            }
+                          </p>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+
                 <Separator />
 
                 {/* Cost Materii Prime */}
