@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { FileCheck, Plus, Download, Copy, Mail, FileText, Pencil, Trash2, X, CalendarIcon, Upload, Loader2 } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -95,6 +95,55 @@ const OferteContracte = () => {
   // Data state
   const [oferte, setOferte] = useState<Oferta[]>(initialOferte);
   const [contracte, setContracte] = useState<Contract[]>(initialContracte);
+  const [isLoadingOferte, setIsLoadingOferte] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  
+  // Fetch oferte from API
+  const fetchOferte = async () => {
+    setIsLoadingOferte(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/comercial/returneaza/oferte`);
+      if (!response.ok) throw new Error("Eroare la încărcarea ofertelor");
+      const data = await response.json();
+      
+      // Map API data to Oferta type
+      const mappedOferte: Oferta[] = data.map((item: any, index: number) => ({
+        id: item.id || index + 1,
+        nr: item.nr || `OF-${index + 1}`,
+        client: item.client || "",
+        proiect: item.proiect_santier || "",
+        produs: item.produse || "",
+        pret: 0,
+        produse: [{ produs: item.produse || "", pret: 0 }],
+        transport: { 
+          tipTransport: "tona_km" as const,
+          pretTonaKm: parseFloat(item.pret_transport) || 0
+        },
+        valabilitate: item.valabilitate || "",
+        termenPlata: `${item.termen_de_plata || 0} zile`,
+        status: (item.status as "Draft" | "Trimis" | "Acceptat" | "Expirat") || "Draft",
+        tip: "oferta" as const,
+        dataCreare: "",
+        conditiiComerciale: "",
+        observatii: item.observatii || "",
+      }));
+      
+      setOferte(mappedOferte);
+    } catch (error) {
+      console.error("Error fetching oferte:", error);
+      toast({
+        title: "Eroare",
+        description: "Nu s-au putut încărca ofertele.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingOferte(false);
+    }
+  };
+  
+  useEffect(() => {
+    fetchOferte();
+  }, []);
   
   // Pagination
   const [ofertePage, setOfertePage] = useState(1);
@@ -385,7 +434,7 @@ const OferteContracte = () => {
     }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const validProduse = form.produse.filter(p => p.produs);
     if (!form.client || validProduse.length === 0) {
       toast({ title: "Eroare", description: "Completează câmpurile obligatorii (client și cel puțin un produs).", variant: "destructive" });
@@ -416,27 +465,60 @@ const OferteContracte = () => {
         ));
       }
       toast({ title: "Succes", description: `${editing.tip === "oferta" ? "Oferta" : "Contractul"} a fost actualizat.` });
+      setOpenAddEdit(false);
     } else {
       if (activeTab === "oferte") {
-        const newOferta: Oferta = {
-          id: Math.max(...oferte.map(o => o.id), 0) + 1,
-          nr: `OF-2024-${String(oferte.length + 1).padStart(3, '0')}`,
-          client: form.client,
-          proiect: form.proiect,
-          produs: produsDisplay,
-          pret: totalPret,
-          produse: validProduse,
-          transport,
-          valabilitate: form.valabilitate,
-          termenPlata: form.termenPlata,
-          status: "Draft",
-          tip: "oferta",
-          dataCreare: currentDate,
-          conditiiComerciale: "",
-          observatii: form.observatii,
-        };
-        setOferte(prev => [...prev, newOferta]);
-        toast({ title: "Succes", description: "Oferta a fost adăugată." });
+        // Call API to add oferta
+        setIsSaving(true);
+        try {
+          const pretTransport = form.transport.tipTransport === "tona_km" 
+            ? String(form.transport.pretTonaKm || 0)
+            : form.transport.tipTransport === "inchiriere"
+            ? String(form.transport.pretInchiriere || 0)
+            : "0";
+          
+          const termenPlataNumber = parseFloat(form.termenPlata.replace(/[^0-9]/g, '')) || 0;
+          
+          const payload = {
+            client: form.client,
+            proiect_santier: form.proiect,
+            produse: produsDisplay,
+            pret_transport: pretTransport,
+            valabilitate: form.valabilitate,
+            termen_de_plata: termenPlataNumber,
+            avans_de_plata: form.avansPlata || 0,
+            observatii: form.observatii,
+            status: "Draft",
+            locatie_bilet_ordin_cec: biletOrdinUploadUrl || "",
+            locatie_proces_verbal_predare_primire: procesVerbalUploadUrl || "",
+          };
+          
+          const response = await fetch(`${API_BASE_URL}/comercial/adauga/oferta`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          
+          if (!response.ok) throw new Error("Eroare la salvarea ofertei");
+          
+          const result = await response.json();
+          
+          toast({ title: "Succes", description: "Oferta a fost adăugată." });
+          
+          // Refresh oferte list
+          fetchOferte();
+          setOpenAddEdit(false);
+        } catch (error) {
+          console.error("Error saving oferta:", error);
+          toast({ 
+            title: "Eroare", 
+            description: "Nu s-a putut salva oferta.", 
+            variant: "destructive" 
+          });
+          return;
+        } finally {
+          setIsSaving(false);
+        }
       } else {
         const newContract: Contract = {
           id: Math.max(...contracte.map(c => c.id), 0) + 1,
@@ -458,9 +540,9 @@ const OferteContracte = () => {
         };
         setContracte(prev => [...prev, newContract]);
         toast({ title: "Succes", description: "Contractul a fost adăugat." });
+        setOpenAddEdit(false);
       }
     }
-    setOpenAddEdit(false);
   };
 
   const handleDelete = () => {
@@ -1201,8 +1283,11 @@ const OferteContracte = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenAddEdit(false)}>Anulează</Button>
-            <Button onClick={handleSave}>{editing ? "Salvează" : "Adaugă"}</Button>
+            <Button variant="outline" onClick={() => setOpenAddEdit(false)} disabled={isSaving}>Anulează</Button>
+            <Button onClick={handleSave} disabled={isSaving}>
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {editing ? "Salvează" : "Adaugă"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
