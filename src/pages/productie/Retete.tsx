@@ -284,6 +284,10 @@ const Retete = () => {
         toast.success("Rețetă actualizată cu succes");
       } else {
         // Add new reteta - send each material separately
+        console.log("=== ADAUGARE RETETA DEBUG ===");
+        console.log("Total componente:", editorComponents.length);
+        console.log("Componente:", editorComponents);
+        
         const basePayload = {
           denumire: editorForm.denumire,
           tip: editorForm.tip,
@@ -298,7 +302,8 @@ const Retete = () => {
           cantitati: String(firstComponent.cantitate),
         };
         
-        console.log("Sending first reteta payload:", firstPayload);
+        console.log("=== PRIMA CERERE (fara cod_reteta) ===");
+        console.log("Payload:", JSON.stringify(firstPayload, null, 2));
         
         const firstResponse = await fetch(`${API_BASE_URL}/productie/adauga/reteta`, {
           method: "POST",
@@ -309,10 +314,14 @@ const Retete = () => {
         if (!firstResponse.ok) throw new Error("Eroare la salvarea rețetei");
         
         const firstResult = await firstResponse.json();
+        console.log("Raspuns prima cerere:", firstResult);
         const codReteta = firstResult.cod_reteta;
         console.log("Cod reteta generat:", codReteta);
         
         // For remaining components, use the same cod_reteta
+        console.log("=== CERERI URMATOARE (cu cod_reteta) ===");
+        console.log("Numar cereri ramase:", editorComponents.length - 1);
+        
         for (let i = 1; i < editorComponents.length; i++) {
           const component = editorComponents[i];
           const payload = {
@@ -322,13 +331,19 @@ const Retete = () => {
             cantitati: String(component.cantitate),
           };
           
-          await fetch(`${API_BASE_URL}/productie/adauga/reteta`, {
+          console.log(`Cerere ${i}/${editorComponents.length - 1}:`, JSON.stringify(payload, null, 2));
+          
+          const response = await fetch(`${API_BASE_URL}/productie/adauga/reteta`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
           });
+          
+          const result = await response.json();
+          console.log(`Raspuns cerere ${i}:`, result);
         }
         
+        console.log("=== FINALIZAT ADAUGARE ===");
         toast.success(`Rețetă ${codReteta || ''} adăugată cu succes`);
       }
       
