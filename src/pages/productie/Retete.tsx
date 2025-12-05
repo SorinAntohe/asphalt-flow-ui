@@ -198,16 +198,23 @@ const Retete = () => {
 
   const handleDelete = async (reteta: Reteta) => {
     try {
+      console.log("=== STERGERE RETETA ===");
+      console.log("Cod reteta de sters:", reteta.cod_reteta);
+      
       const response = await fetch(`${API_BASE_URL}/sterge`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           tabel: "retete",
-          id: reteta.id
+          coloana: "cod_reteta",
+          valoare: reteta.cod_reteta
         })
       });
 
       if (!response.ok) throw new Error('Failed to delete reteta');
+      
+      const result = await response.json();
+      console.log("Raspuns stergere:", result);
 
       toast.success(`Rețeta ${reteta.cod_reteta} a fost ștearsă`);
       
