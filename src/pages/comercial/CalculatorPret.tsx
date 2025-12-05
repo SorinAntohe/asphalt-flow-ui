@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Calculator, Plus, Trash2, TrendingUp, TrendingDown, Minus, BarChart3, Users, Zap, Package, Info } from "lucide-react";
+import { Calculator, Plus, Trash2, TrendingUp, TrendingDown, Minus, BarChart3, Users, Zap, Package, Info, History, Save } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { API_BASE_URL } from "@/lib/api";
 import { toast } from "sonner";
 
@@ -39,6 +40,18 @@ interface PretConcurent {
   concurent: string;
   produs: string;
   pret: number;
+}
+
+interface PretCalculat {
+  id: string;
+  data: string;
+  codReteta: string;
+  denumireReteta: string;
+  cantitate: number;
+  marjaProfit: number;
+  costTotal: number;
+  pretRecomandat: number;
+  pretPeTona: number;
 }
 
 // Mock data for demonstration
@@ -80,6 +93,9 @@ const mockCostBreakdown: CostBreakdown = {
 };
 
 const CalculatorPret = () => {
+  // Tab state
+  const [activeTab, setActiveTab] = useState("calculator");
+
   // Input parameters state
   const [retete, setRetete] = useState<Reteta[]>(mockRetete);
   const [selectedReteta, setSelectedReteta] = useState("RET001");
@@ -89,6 +105,9 @@ const CalculatorPret = () => {
 
   // Calculation result state
   const [costBreakdown, setCostBreakdown] = useState<CostBreakdown | null>(mockCostBreakdown);
+
+  // Saved calculations state
+  const [preturiCalculate, setPreturiCalculate] = useState<PretCalculat[]>([]);
 
   // Competitor prices state
   const [preturiConcurenti, setPreturiConcurenti] = useState<PretConcurent[]>(mockPreturiConcurenti);
@@ -221,6 +240,37 @@ const CalculatorPret = () => {
     setPreturiConcurenti(prev => prev.filter(p => p.id !== id));
   };
 
+  // Save calculated price
+  const handleSaveCalculation = () => {
+    if (!costBreakdown || !selectedReteta) {
+      toast.error("Realizați mai întâi un calcul");
+      return;
+    }
+
+    const reteta = retete.find(r => r.cod_reteta === selectedReteta);
+    const qty = parseFloat(cantitate);
+
+    const newCalculation: PretCalculat = {
+      id: crypto.randomUUID(),
+      data: new Date().toLocaleDateString("ro-RO"),
+      codReteta: selectedReteta,
+      denumireReteta: reteta?.denumire || selectedReteta,
+      cantitate: qty,
+      marjaProfit: marjaProfit,
+      costTotal: costBreakdown.costTotal,
+      pretRecomandat: costBreakdown.pretRecomandat,
+      pretPeTona: costBreakdown.pretRecomandat / qty
+    };
+
+    setPreturiCalculate(prev => [newCalculation, ...prev]);
+    toast.success("Prețul a fost salvat");
+  };
+
+  // Remove saved calculation
+  const handleRemoveCalculation = (id: string) => {
+    setPreturiCalculate(prev => prev.filter(p => p.id !== id));
+  };
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("ro-RO", {
       style: "currency",
@@ -242,8 +292,22 @@ const CalculatorPret = () => {
         </p>
       </div>
 
-      {/* Three Cards Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsTrigger value="calculator" className="flex items-center gap-2">
+            <Calculator className="h-4 w-4" />
+            Calculator
+          </TabsTrigger>
+          <TabsTrigger value="preturi-calculate" className="flex items-center gap-2">
+            <History className="h-4 w-4" />
+            Prețuri Calculate
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="calculator" className="mt-6">
+          {/* Three Cards Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Card 1: Parametrii de Intrare */}
         <Card variant="elevated">
@@ -535,6 +599,82 @@ const CalculatorPret = () => {
           </CardContent>
         </Card>
       </div>
+        </TabsContent>
+
+        <TabsContent value="preturi-calculate" className="mt-6">
+          <Card variant="elevated">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <History className="h-5 w-5" />
+                Prețuri Calculate
+              </CardTitle>
+              {costBreakdown && (
+                <Button size="sm" onClick={handleSaveCalculation}>
+                  <Save className="h-4 w-4 mr-2" />
+                  Salvează Calculul Curent
+                </Button>
+              )}
+            </CardHeader>
+            <CardContent>
+              {preturiCalculate.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <History className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>Nu există prețuri calculate salvate</p>
+                  <p className="text-sm mt-1">Realizați un calcul și salvați-l pentru a-l vedea aici</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Data</TableHead>
+                        <TableHead>Cod Rețetă</TableHead>
+                        <TableHead>Denumire</TableHead>
+                        <TableHead className="text-right">Cantitate</TableHead>
+                        <TableHead className="text-right">Marjă</TableHead>
+                        <TableHead className="text-right">Cost Total</TableHead>
+                        <TableHead className="text-right">Preț/Tonă</TableHead>
+                        <TableHead className="text-right">Preț Total</TableHead>
+                        <TableHead className="w-10"></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {preturiCalculate.map((pret) => (
+                        <TableRow key={pret.id}>
+                          <TableCell>{pret.data}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{pret.codReteta}</Badge>
+                          </TableCell>
+                          <TableCell>{pret.denumireReteta}</TableCell>
+                          <TableCell className="text-right">{pret.cantitate} t</TableCell>
+                          <TableCell className="text-right">{pret.marjaProfit}%</TableCell>
+                          <TableCell className="text-right">{formatCurrency(pret.costTotal)}</TableCell>
+                          <TableCell className="text-right font-medium text-primary">
+                            {formatCurrency(pret.pretPeTona)}
+                          </TableCell>
+                          <TableCell className="text-right font-medium">
+                            {formatCurrency(pret.pretRecomandat)}
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:text-destructive"
+                              onClick={() => handleRemoveCalculation(pret.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {/* Details Dialog */}
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
