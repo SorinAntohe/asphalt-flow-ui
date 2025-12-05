@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   Archive,
   AlertTriangle,
-  ThermometerSun,
   Scale,
   Beaker,
   ListChecks
@@ -24,7 +23,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
@@ -41,13 +39,6 @@ interface Component {
   observatii: string;
 }
 
-interface ParametruProces {
-  id: number;
-  parametru: string;
-  valoare: string;
-  unitate: string;
-}
-
 interface Reteta {
   id: number;
   cod: string;
@@ -57,7 +48,6 @@ interface Reteta {
   status: "Activ" | "Arhivat";
   ultimaModificare: string;
   componente: Component[];
-  parametriProces: ParametruProces[];
   umiditate?: number;
   temperatura?: number;
   marshall?: number;
@@ -84,13 +74,6 @@ const reteteInitiale: Reteta[] = [
       { id: 4, material: "Filler", cantitate: 50, observatii: "Calcar" },
       { id: 5, material: "Bitum 50/70", cantitate: 50, observatii: "" },
     ],
-    parametriProces: [
-      { id: 1, parametru: "Temperatura agregat", valoare: "180-200", unitate: "°C" },
-      { id: 2, parametru: "Temperatura bitum", valoare: "160-170", unitate: "°C" },
-      { id: 3, parametru: "Timp malaxare uscată", valoare: "15", unitate: "sec" },
-      { id: 4, parametru: "Timp malaxare umedă", valoare: "35", unitate: "sec" },
-      { id: 5, parametru: "Temperatura mixtura", valoare: "165±5", unitate: "°C" },
-    ],
   },
   {
     id: 2,
@@ -110,12 +93,6 @@ const reteteInitiale: Reteta[] = [
       { id: 4, material: "Filler", cantitate: 40, observatii: "" },
       { id: 5, material: "Bitum modificat", cantitate: 60, observatii: "PMB 45/80" },
     ],
-    parametriProces: [
-      { id: 1, parametru: "Temperatura agregat", valoare: "185-205", unitate: "°C" },
-      { id: 2, parametru: "Temperatura bitum", valoare: "170-180", unitate: "°C" },
-      { id: 3, parametru: "Timp malaxare uscată", valoare: "20", unitate: "sec" },
-      { id: 4, parametru: "Timp malaxare umedă", valoare: "40", unitate: "sec" },
-    ],
   },
   {
     id: 3,
@@ -132,10 +109,6 @@ const reteteInitiale: Reteta[] = [
       { id: 2, material: "Ciment", cantitate: 50, observatii: "CEM II" },
       { id: 3, material: "Apă", cantitate: 100, observatii: "" },
     ],
-    parametriProces: [
-      { id: 1, parametru: "Timp malaxare", valoare: "45", unitate: "sec" },
-      { id: 2, parametru: "Umiditate optimă", valoare: "8±2", unitate: "%" },
-    ],
   },
   {
     id: 4,
@@ -150,7 +123,6 @@ const reteteInitiale: Reteta[] = [
       { id: 2, material: "Pietriș 8/31.5", cantitate: 350, observatii: "" },
       { id: 3, material: "Nisip 0/8", cantitate: 250, observatii: "" },
     ],
-    parametriProces: [],
   },
 ];
 
@@ -208,7 +180,6 @@ const Retete = () => {
   // Dialogs & Drawers
   const [peekDrawer, setPeekDrawer] = useState<Reteta | null>(null);
   const [editorDialog, setEditorDialog] = useState<{ reteta: Reteta | null; isNew: boolean } | null>(null);
-  const [editorTab, setEditorTab] = useState("componenta");
   const [autocorrectDialog, setAutocorrectDialog] = useState<Reteta | null>(null);
   
   // Editor form state
@@ -501,7 +472,7 @@ const Retete = () => {
                 {peekDrawer.temperatura && (
                   <div className="p-3 rounded-lg bg-muted/50">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <ThermometerSun className="h-4 w-4" />
+                      <Beaker className="h-4 w-4" />
                       Temperatură
                     </div>
                     <p className="text-lg font-semibold mt-1">{peekDrawer.temperatura}°C</p>
@@ -573,191 +544,118 @@ const Retete = () => {
               {editorDialog?.isNew ? "Adaugă Rețetă Nouă" : `Editează ${editorDialog?.reteta?.cod}`}
             </DialogTitle>
             <DialogDescription>
-              Configurați componența și parametrii de proces
+              Configurați componența rețetei
             </DialogDescription>
           </DialogHeader>
 
-          <Tabs value={editorTab} onValueChange={setEditorTab} className="flex-1 overflow-hidden flex flex-col">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="componenta" className="gap-1">
-                <ListChecks className="h-4 w-4" />
-                <span className="hidden sm:inline">Componență</span>
-              </TabsTrigger>
-              <TabsTrigger value="parametri" className="gap-1">
-                <ThermometerSun className="h-4 w-4" />
-                <span className="hidden sm:inline">Parametri</span>
-              </TabsTrigger>
-            </TabsList>
-
-            <ScrollArea className="flex-1 mt-4">
-              {/* Componență Tab */}
-              <TabsContent value="componenta" className="mt-0 space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <Label>Cod Rețetă</Label>
-                    <Input defaultValue={editorDialog?.reteta?.cod || ""} placeholder="ex: BA16-STD" />
-                  </div>
-                  <div>
-                    <Label>Denumire</Label>
-                    <Input defaultValue={editorDialog?.reteta?.denumire || ""} placeholder="Denumire completă" />
-                  </div>
-                  <div>
-                    <Label>Tip</Label>
-                    <Select defaultValue={editorDialog?.reteta?.tip || "Asfalt"}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Asfalt">Asfalt</SelectItem>
-                        <SelectItem value="Emulsie">Emulsie</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
+          <ScrollArea className="flex-1 mt-4">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <Label>Componente</Label>
-                    <div className="flex items-center gap-2">
-                      {editorComponents.length > 0 && (
-                        <span className={`text-sm font-medium ${getTotalCantitate(editorComponents) === 1000 ? 'text-green-600' : 'text-destructive'}`}>
-                          Total: {getTotalCantitate(editorComponents)} kg
-                          {getTotalCantitate(editorComponents) !== 1000 && (
-                            <AlertTriangle className="inline h-4 w-4 ml-1" />
-                          )}
-                        </span>
-                      )}
-                      <Button size="sm" variant="outline" onClick={handleAddComponent}>
-                        <Plus className="h-4 w-4 mr-1" />
-                        Adaugă
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="rounded-md border overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Material</TableHead>
-                          <TableHead className="text-right">Cantitate (kg/tonă)</TableHead>
-                          <TableHead>Observații</TableHead>
-                          <TableHead className="w-10"></TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {editorComponents.length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
-                              Nu există componente. Apasă "Adaugă" pentru a adăuga materiale.
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          editorComponents.map((comp) => (
-                            <TableRow key={comp.id}>
-                              <TableCell>
-                                <FilterableSelect
-                                  value={comp.material}
-                                  onValueChange={(value) => handleUpdateComponent(comp.id, "material", value)}
-                                  options={materiiPrimeOptions}
-                                  placeholder="Selectează material..."
-                                  searchPlaceholder="Caută material..."
-                                  className="h-8 min-w-[180px]"
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <Input 
-                                  type="number" 
-                                  value={comp.cantitate} 
-                                  onChange={(e) => handleUpdateComponent(comp.id, "cantitate", parseFloat(e.target.value) || 0)}
-                                  className="h-8 w-24 text-right" 
-                                  placeholder="kg"
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <Input 
-                                  value={comp.observatii} 
-                                  onChange={(e) => handleUpdateComponent(comp.id, "observatii", e.target.value)}
-                                  className="h-8" 
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon" 
-                                  className="h-8 w-8 text-destructive hover:text-destructive"
-                                  onClick={() => handleRemoveComponent(comp.id)}
-                                >
-                                  ×
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </div>
+                  <Label>Cod Rețetă</Label>
+                  <Input defaultValue={editorDialog?.reteta?.cod || ""} placeholder="ex: BA16-STD" />
                 </div>
-              </TabsContent>
+                <div>
+                  <Label>Denumire</Label>
+                  <Input defaultValue={editorDialog?.reteta?.denumire || ""} placeholder="Denumire completă" />
+                </div>
+                <div>
+                  <Label>Tip</Label>
+                  <Select defaultValue={editorDialog?.reteta?.tip || "Asfalt"}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Asfalt">Asfalt</SelectItem>
+                      <SelectItem value="Emulsie">Emulsie</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-              {/* Parametri Tab */}
-              <TabsContent value="parametri" className="mt-0 space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label>Parametri Proces</Label>
-                  <Button size="sm" variant="outline">
-                    <Plus className="h-4 w-4 mr-1" />
-                    Adaugă
-                  </Button>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label>Componente</Label>
+                  <div className="flex items-center gap-2">
+                    {editorComponents.length > 0 && (
+                      <span className={`text-sm font-medium ${getTotalCantitate(editorComponents) === 1000 ? 'text-green-600' : 'text-destructive'}`}>
+                        Total: {getTotalCantitate(editorComponents)} kg
+                        {getTotalCantitate(editorComponents) !== 1000 && (
+                          <AlertTriangle className="inline h-4 w-4 ml-1" />
+                        )}
+                      </span>
+                    )}
+                    <Button size="sm" variant="outline" onClick={handleAddComponent}>
+                      <Plus className="h-4 w-4 mr-1" />
+                      Adaugă
+                    </Button>
+                  </div>
                 </div>
                 <div className="rounded-md border overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Parametru</TableHead>
-                        <TableHead>Valoare</TableHead>
-                        <TableHead>Unitate</TableHead>
+                        <TableHead>Material</TableHead>
+                        <TableHead className="text-right">Cantitate (kg/tonă)</TableHead>
+                        <TableHead>Observații</TableHead>
+                        <TableHead className="w-10"></TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {(editorDialog?.reteta?.parametriProces || []).map((param) => (
-                        <TableRow key={param.id}>
-                          <TableCell>
-                            <Input defaultValue={param.parametru} className="h-8" />
-                          </TableCell>
-                          <TableCell>
-                            <Input defaultValue={param.valoare} className="h-8" />
-                          </TableCell>
-                          <TableCell>
-                            <Input defaultValue={param.unitate} className="h-8 w-20" />
+                      {editorComponents.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                            Nu există componente. Apasă "Adaugă" pentru a adăuga materiale.
                           </TableCell>
                         </TableRow>
-                      ))}
+                      ) : (
+                        editorComponents.map((comp) => (
+                          <TableRow key={comp.id}>
+                            <TableCell>
+                              <FilterableSelect
+                                value={comp.material}
+                                onValueChange={(value) => handleUpdateComponent(comp.id, "material", value)}
+                                options={materiiPrimeOptions}
+                                placeholder="Selectează material..."
+                                searchPlaceholder="Caută material..."
+                                className="h-8 min-w-[180px]"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input 
+                                type="number" 
+                                value={comp.cantitate} 
+                                onChange={(e) => handleUpdateComponent(comp.id, "cantitate", parseFloat(e.target.value) || 0)}
+                                className="h-8 w-24 text-right" 
+                                placeholder="kg"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input 
+                                value={comp.observatii} 
+                                onChange={(e) => handleUpdateComponent(comp.id, "observatii", e.target.value)}
+                                className="h-8" 
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-destructive hover:text-destructive"
+                                onClick={() => handleRemoveComponent(comp.id)}
+                              >
+                                ×
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
                     </TableBody>
                   </Table>
                 </div>
-
-                <Separator />
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  <div>
-                    <Label>Umiditate (%)</Label>
-                    <Input type="number" defaultValue={editorDialog?.reteta?.umiditate || ""} />
-                  </div>
-                  <div>
-                    <Label>Temperatură (°C)</Label>
-                    <Input type="number" defaultValue={editorDialog?.reteta?.temperatura || ""} />
-                  </div>
-                  <div>
-                    <Label>Marshall (kN)</Label>
-                    <Input type="number" defaultValue={editorDialog?.reteta?.marshall || ""} />
-                  </div>
-                  <div>
-                    <Label>Slump (cm)</Label>
-                    <Input type="number" defaultValue={editorDialog?.reteta?.slump || ""} />
-                  </div>
-                </div>
-              </TabsContent>
-
-            </ScrollArea>
-          </Tabs>
+              </div>
+            </div>
+          </ScrollArea>
 
           <DialogFooter className="mt-4">
             <Button variant="outline" onClick={() => setEditorDialog(null)}>Anulează</Button>
