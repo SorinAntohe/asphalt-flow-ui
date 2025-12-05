@@ -353,7 +353,7 @@ const CalculatorPret = () => {
                 </div>
 
                 {/* Analiză Comparativă Concurență */}
-                {filteredPreturiConcurenti.length > 0 && (
+                {filteredPreturiConcurenti.length > 0 ? (
                   <div className="p-3 rounded-lg bg-muted/50 border border-border">
                     <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
                       <Users className="h-4 w-4" />
@@ -390,6 +390,10 @@ const CalculatorPret = () => {
                         </div>
                       );
                     })()}
+                  </div>
+                ) : (
+                  <div className="p-3 rounded-lg bg-muted/50 border border-border text-sm text-muted-foreground">
+                    Nu există prețuri ale concurenței introduse pentru produsul: <span className="font-medium text-foreground">{selectedProductName}</span>
                   </div>
                 )}
 
