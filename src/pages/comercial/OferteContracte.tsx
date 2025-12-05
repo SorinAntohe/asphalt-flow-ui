@@ -582,6 +582,7 @@ const OferteContracte = () => {
               termen_de_plata: termenPlataNumber,
               avans_de_plata: form.avansPlata || 0,
               observatii: form.observatii || "",
+              status: form.status,
               ...(biletOrdinUploadUrl && { locatie_bilet_ordin_cec: biletOrdinUploadUrl }),
               ...(procesVerbalUploadUrl && { locatie_proces_verbal_predare_primire: procesVerbalUploadUrl }),
             }
