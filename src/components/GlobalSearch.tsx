@@ -214,20 +214,60 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
   const handleQuickAction = (e: React.MouseEvent, result: SearchResult, action: string) => {
     e.stopPropagation();
     
+    // Build proper route based on action type
+    let targetRoute = result.route;
+    
     switch (action) {
+      case 'open':
+      case 'view':
+      case 'details':
+      case 'profile':
+        // These actions should open the detail dialog - use result.route which already has ?open=xxx
+        targetRoute = result.route;
+        break;
+      case 'edit':
+        // Add edit action parameter
+        targetRoute = result.route.includes('?') 
+          ? `${result.route}&action=edit` 
+          : `${result.route}?action=edit`;
+        break;
       case 'calculator':
-        navigate('/comercial/calculator');
+        // Navigate to calculator with recipe pre-selected
+        targetRoute = `/comercial/calculator?reteta=${result.id.replace('ret-', '')}`;
         break;
       case 'trace':
-        navigate('/productie/trasabilitate');
+        // Navigate to trasabilitate with lot code
+        targetRoute = `/productie/trasabilitate?lot=${result.title}`;
         break;
       case 'timesheet':
-        navigate('/pontare');
+        // Navigate to pontaj for employee
+        targetRoute = `/pontare?angajat=${result.id}`;
+        break;
+      case 'orders':
+        // Navigate to comenzi filtered by client/supplier
+        if (result.type === 'clienti') {
+          targetRoute = `/comercial/comenzi?client=${encodeURIComponent(result.title)}`;
+        } else if (result.type === 'furnizori') {
+          targetRoute = `/comenzi?tab=materie-prima&furnizor=${encodeURIComponent(result.title)}`;
+        }
+        break;
+      case 'history':
+        // Navigate to vehicle history
+        targetRoute = `/liste?tab=autoturisme&open=${result.id}&view=history`;
+        break;
+      case 'recalculate':
+        // Go to calculator
+        targetRoute = '/comercial/calculator';
+        break;
+      case 'download':
+        // For document download - still navigate to see the document
+        targetRoute = result.route;
         break;
       default:
-        navigate(result.route);
+        targetRoute = result.route;
     }
     
+    navigate(targetRoute);
     onOpenChange(false);
     setQuery("");
   };
