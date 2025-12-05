@@ -38,32 +38,71 @@ interface PretConcurent {
   pret: number;
 }
 
+// Mock data for demonstration
+const mockRetete: Reteta[] = [
+  { cod_reteta: "RET001", denumire: "BA 16 - Beton Asfaltic", tip: "Asfalt" },
+  { cod_reteta: "RET002", denumire: "MASF 16 - Mixtura Asfaltica", tip: "Asfalt" },
+  { cod_reteta: "RET003", denumire: "AB2 - Asfalt Beton tip 2", tip: "Asfalt" },
+  { cod_reteta: "RET004", denumire: "Emulsie C60B4", tip: "Emulsie" },
+  { cod_reteta: "RET005", denumire: "BAD 22.4 - Beton Asfaltic Deschis", tip: "Asfalt" },
+];
+
+const mockPreturiConcurenti: PretConcurent[] = [
+  { id: "1", concurent: "Strabag", produs: "BA 16", pret: 385 },
+  { id: "2", concurent: "Porr", produs: "BA 16", pret: 392 },
+  { id: "3", concurent: "Colas", produs: "BA 16", pret: 378 },
+  { id: "4", concurent: "Eurovia", produs: "MASF 16", pret: 410 },
+  { id: "5", concurent: "Bitumex", produs: "BA 16", pret: 365 },
+];
+
+const mockCostBreakdown: CostBreakdown = {
+  materiale: [
+    { material: "Bitum 50/70", cantitate: 5, pretUnitar: 3500, total: 17500 },
+    { material: "Agregat 0/4", cantitate: 35, pretUnitar: 45, total: 1575 },
+    { material: "Agregat 4/8", cantitate: 25, pretUnitar: 50, total: 1250 },
+    { material: "Filler", cantitate: 8, pretUnitar: 120, total: 960 },
+    { material: "Agregat 8/16", cantitate: 27, pretUnitar: 55, total: 1485 },
+  ],
+  curent: 1500,
+  costuriIndirecte: {
+    manopera: 2500,
+    amortizare: 1800,
+    mentenanta: 1200,
+    administrative: 800,
+  },
+  costTotal: 30570,
+  pretRecomandat: 35155.5
+};
+
 const CalculatorPret = () => {
   // Input parameters state
-  const [retete, setRetete] = useState<Reteta[]>([]);
-  const [selectedReteta, setSelectedReteta] = useState("");
-  const [cantitate, setCantitate] = useState("");
+  const [retete, setRetete] = useState<Reteta[]>(mockRetete);
+  const [selectedReteta, setSelectedReteta] = useState("RET001");
+  const [cantitate, setCantitate] = useState("100");
   const [marjaProfit, setMarjaProfit] = useState(15);
   const [loading, setLoading] = useState(false);
 
   // Calculation result state
-  const [costBreakdown, setCostBreakdown] = useState<CostBreakdown | null>(null);
+  const [costBreakdown, setCostBreakdown] = useState<CostBreakdown | null>(mockCostBreakdown);
 
   // Competitor prices state
-  const [preturiConcurenti, setPreturiConcurenti] = useState<PretConcurent[]>([]);
+  const [preturiConcurenti, setPreturiConcurenti] = useState<PretConcurent[]>(mockPreturiConcurenti);
   const [newConcurent, setNewConcurent] = useState({ concurent: "", produs: "", pret: "" });
 
-  // Fetch retete
+  // Fetch retete (keeping for when API is available)
   useEffect(() => {
     const fetchRetete = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/productie/returneaza/retete`);
         if (response.ok) {
           const data = await response.json();
-          setRetete(data);
+          if (data.length > 0) {
+            setRetete(data);
+          }
         }
       } catch (error) {
         console.error("Error fetching retete:", error);
+        // Keep mock data on error
       }
     };
     fetchRetete();
