@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Calculator, Plus, Trash2, TrendingUp, TrendingDown, Minus, BarChart3, Users, Zap, Package, Info, History, Save } from "lucide-react";
+import { Calculator, Plus, Trash2, TrendingUp, TrendingDown, Minus, BarChart3, Users, Zap, Package, Info, History } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -185,8 +185,24 @@ const CalculatorPret = () => {
       mockBreakdown.pretRecomandat = mockBreakdown.costTotal * (1 + marja);
 
       setCostBreakdown(mockBreakdown);
+
+      // Auto-save calculation
+      const reteta = retete.find(r => r.cod_reteta === selectedReteta);
+      const newCalculation: PretCalculat = {
+        id: crypto.randomUUID(),
+        data: new Date().toLocaleDateString("ro-RO"),
+        codReteta: selectedReteta,
+        denumireReteta: reteta?.denumire || selectedReteta,
+        cantitate: qty,
+        marjaProfit: marjaProfit,
+        costTotal: mockBreakdown.costTotal,
+        pretRecomandat: mockBreakdown.pretRecomandat,
+        pretPeTona: mockBreakdown.pretRecomandat / qty
+      };
+      setPreturiCalculate(prev => [newCalculation, ...prev]);
+
       setLoading(false);
-      toast.success("Calculul a fost realizat cu succes");
+      toast.success("Calculul a fost realizat și salvat");
     }, 500);
   };
 
@@ -238,32 +254,6 @@ const CalculatorPret = () => {
   // Remove competitor price
   const handleRemoveConcurent = (id: string) => {
     setPreturiConcurenti(prev => prev.filter(p => p.id !== id));
-  };
-
-  // Save calculated price
-  const handleSaveCalculation = () => {
-    if (!costBreakdown || !selectedReteta) {
-      toast.error("Realizați mai întâi un calcul");
-      return;
-    }
-
-    const reteta = retete.find(r => r.cod_reteta === selectedReteta);
-    const qty = parseFloat(cantitate);
-
-    const newCalculation: PretCalculat = {
-      id: crypto.randomUUID(),
-      data: new Date().toLocaleDateString("ro-RO"),
-      codReteta: selectedReteta,
-      denumireReteta: reteta?.denumire || selectedReteta,
-      cantitate: qty,
-      marjaProfit: marjaProfit,
-      costTotal: costBreakdown.costTotal,
-      pretRecomandat: costBreakdown.pretRecomandat,
-      pretPeTona: costBreakdown.pretRecomandat / qty
-    };
-
-    setPreturiCalculate(prev => [newCalculation, ...prev]);
-    toast.success("Prețul a fost salvat");
   };
 
   // Remove saved calculation
@@ -603,17 +593,11 @@ const CalculatorPret = () => {
 
         <TabsContent value="preturi-calculate" className="mt-6">
           <Card variant="elevated">
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <History className="h-5 w-5" />
                 Prețuri Calculate
               </CardTitle>
-              {costBreakdown && (
-                <Button size="sm" onClick={handleSaveCalculation}>
-                  <Save className="h-4 w-4 mr-2" />
-                  Salvează Calculul Curent
-                </Button>
-              )}
             </CardHeader>
             <CardContent>
               {preturiCalculate.length === 0 ? (
