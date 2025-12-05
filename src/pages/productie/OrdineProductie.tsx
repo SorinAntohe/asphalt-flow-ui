@@ -85,9 +85,93 @@ const statusConfig: Record<string, { variant: "default" | "secondary" | "destruc
   "Finalizat": { variant: "outline", icon: <CheckCircle2 className="h-3 w-3" />, color: "bg-emerald-500 text-white" }
 };
 
+// Mock data for display
+const mockOrdine: OrdinProductie[] = [
+  {
+    id: 1,
+    numar: "OP-2024-001",
+    produse: [
+      { produs: "BA16 - Beton Asfaltic", cantitate: 300, reteta: "R001 - Rețetă BA16" },
+      { produs: "MASF16 - Mixtură Asfaltică", cantitate: 200, reteta: "R002 - Rețetă MASF16" }
+    ],
+    cantitateTotala: 500,
+    unitateMasura: "tone",
+    startPlanificat: "15/01/2024 08:00",
+    operator: "Ion Popescu",
+    sefSchimb: "Gheorghe Ionescu",
+    status: "În lucru" as const,
+    observatii: "Comandă urgentă pentru autostradă",
+    consumEstimat: [
+      { material: "Bitum 50/70", cantitate: 25, disponibil: 100 },
+      { material: "Agregat 0/4", cantitate: 200, disponibil: 180 }
+    ],
+    rezervariStoc: [],
+    loturiAsociate: ["LOT-001", "LOT-002"],
+    atasamente: [],
+    comenziAsociate: ["CMD-2024-001"]
+  },
+  {
+    id: 2,
+    numar: "OP-2024-002",
+    produse: [
+      { produs: "MASF16 - Mixtură Asfaltică", cantitate: 300, reteta: "R002 - Rețetă MASF16" }
+    ],
+    cantitateTotala: 300,
+    unitateMasura: "tone",
+    startPlanificat: "15/01/2024 14:00",
+    operator: "Maria Dumitrescu",
+    sefSchimb: "Gheorghe Ionescu",
+    status: "Planificat" as const,
+    observatii: "",
+    consumEstimat: [],
+    rezervariStoc: [],
+    loturiAsociate: [],
+    atasamente: [],
+    comenziAsociate: ["CMD-2024-003"]
+  },
+  {
+    id: 3,
+    numar: "OP-2024-003",
+    produse: [
+      { produs: "BSC - Beton Stabilizat", cantitate: 500, reteta: "R003 - Rețetă BSC" }
+    ],
+    cantitateTotala: 500,
+    unitateMasura: "tone",
+    startPlanificat: "16/01/2024 06:00",
+    operator: "Andrei Vasilescu",
+    sefSchimb: "Mihai Constantinescu",
+    status: "Planificat" as const,
+    observatii: "Așteaptă aprobare tehnică",
+    consumEstimat: [],
+    rezervariStoc: [],
+    loturiAsociate: [],
+    atasamente: [],
+    comenziAsociate: []
+  },
+  {
+    id: 4,
+    numar: "OP-2024-004",
+    produse: [
+      { produs: "BA16 - Beton Asfaltic", cantitate: 250, reteta: "R001 - Rețetă BA16" }
+    ],
+    cantitateTotala: 250,
+    unitateMasura: "tone",
+    startPlanificat: "14/01/2024 08:00",
+    operator: "Elena Stanciu",
+    sefSchimb: "Gheorghe Ionescu",
+    status: "Finalizat" as const,
+    observatii: "Finalizat conform planului",
+    consumEstimat: [],
+    rezervariStoc: [],
+    loturiAsociate: ["LOT-003", "LOT-004"],
+    atasamente: [],
+    comenziAsociate: ["CMD-2024-004"]
+  }
+];
+
 const OrdineProductie = () => {
   const navigate = useNavigate();
-  const [ordine, setOrdine] = useState<OrdinProductie[]>([]);
+  const [ordine, setOrdine] = useState<OrdinProductie[]>(mockOrdine);
   const [activeView, setActiveView] = useState<"list" | "kanban" | "calendar">("list");
   const [selectedOrdin, setSelectedOrdin] = useState<OrdinProductie | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
