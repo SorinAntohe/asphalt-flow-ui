@@ -658,7 +658,7 @@ const Retete = () => {
 
       {/* Editor Dialog */}
       <Dialog open={!!editorDialog} onOpenChange={() => setEditorDialog(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col" hideCloseButton>
+        <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col" hideCloseButton>
           <DialogHeader>
             <DialogTitle>
               {editorDialog?.isNew ? "Adaugă Rețetă Nouă" : `Editează ${editorDialog?.reteta?.cod_reteta}`}
@@ -668,7 +668,7 @@ const Retete = () => {
             </DialogDescription>
           </DialogHeader>
 
-          <ScrollArea className="flex-1 mt-4">
+          <ScrollArea className="flex-1 mt-4 overflow-y-auto max-h-[60vh]">
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
