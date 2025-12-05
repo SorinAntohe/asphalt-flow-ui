@@ -542,9 +542,9 @@ const OrdineProductie = () => {
       setWizardStep(wizardStep + 1);
     } else {
       // Submit to API
-      const validProduse = wizardForm.produse.filter(p => p.produs && p.cantitate && p.reteta);
+      const validProduse = wizardForm.produse.filter(p => p.produs && p.cantitate);
       if (validProduse.length === 0) {
-        toast.error("Adăugați cel puțin un produs cu cantitate și rețetă");
+        toast.error("Adăugați cel puțin un produs cu cantitate");
         return;
       }
 
@@ -560,58 +560,114 @@ const OrdineProductie = () => {
         return `${day}/${month}/${year} ${hours}:${minutes}`;
       };
 
-      // Prepare API payload - comma-separated values
-      const payload = {
-        produse: validProduse.map(p => p.produs).join(","),
-        cantitati: validProduse.map(p => p.cantitate).join(","),
-        retete: validProduse.map(p => p.reteta).join(","),
-        masa_totala: String(validProduse.reduce((sum, p) => sum + (parseFloat(p.cantitate) || 0), 0)),
-        start_planificat: formatDateForApi(wizardForm.startPlanificat),
-        unitate_masura: wizardForm.unitateMasura,
-        operator: wizardForm.operator,
-        sef_schimb: wizardForm.sefSchimb,
-        comenzi_asociate: wizardForm.comenziAsociate.join(","),
-        observatii: wizardForm.observatii || ""
-      };
-
       try {
-        const response = await fetch(`${API_BASE_URL}/productie/adauga/ordine`, {
+        console.log("=== ADAUGARE ORDIN PRODUCTIE ===");
+        console.log("Total produse:", validProduse.length);
+        console.log("Produse:", validProduse);
+
+        const basePayload = {
+          start_planificat: formatDateForApi(wizardForm.startPlanificat),
+          unitate_masura: wizardForm.unitateMasura,
+          operator: wizardForm.operator,
+          sef_schimb: wizardForm.sefSchimb,
+          comenzi_asociate: wizardForm.comenziAsociate.join(","),
+          observatii: wizardForm.observatii || ""
+        };
+
+        // First call without cod_ordin to get the generated code
+        const firstProduct = validProduse[0];
+        const firstPayload = {
+          ...basePayload,
+          produse: firstProduct.produs,
+          cantitati: String(firstProduct.cantitate),
+        };
+
+        console.log("=== PRIMA CERERE (fara cod_ordin) ===");
+        console.log("Payload:", JSON.stringify(firstPayload, null, 2));
+
+        const firstResponse = await fetch(`${API_BASE_URL}/productie/adauga/ordine`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(firstPayload)
         });
 
-        if (!response.ok) {
+        if (!firstResponse.ok) {
           throw new Error("Eroare la adăugarea ordinului");
         }
 
-        const result = await response.json();
+        const firstResult = await firstResponse.json();
+        console.log("Raspuns prima cerere:", firstResult);
+        const codOrdin = firstResult.cod_ordin;
+        console.log("Cod ordin generat:", codOrdin);
+
+        // For remaining products, use the same cod_ordin
+        console.log("=== CERERI URMATOARE (cu cod_ordin) ===");
+        console.log("Numar cereri ramase:", validProduse.length - 1);
+
+        for (let i = 1; i < validProduse.length; i++) {
+          const product = validProduse[i];
+          const payload = {
+            ...basePayload,
+            cod_ordin: codOrdin,
+            produse: product.produs,
+            cantitati: String(product.cantitate),
+          };
+
+          console.log(`Cerere ${i}/${validProduse.length - 1}:`, JSON.stringify(payload, null, 2));
+
+          const response = await fetch(`${API_BASE_URL}/productie/adauga/ordine`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+
+          const result = await response.json();
+          console.log(`Raspuns cerere ${i}:`, result);
+        }
+
+        console.log("=== FINALIZAT ADAUGARE ===");
+        toast.success(`Ordinul ${codOrdin || ''} a fost creat cu succes`);
         
-        // Add to local state with the generated code
-        const newOrdin: OrdinProductie = {
-          id: ordine.length + 1,
-          numar: result.cod_ordin || `OP-${Date.now()}`,
-          produse: validProduse.map(p => ({
-            produs: p.produs,
-            cantitate: parseFloat(p.cantitate) || 0,
-            reteta: p.reteta
-          })),
-          cantitateTotala: validProduse.reduce((sum, p) => sum + (parseFloat(p.cantitate) || 0), 0),
-          unitateMasura: wizardForm.unitateMasura,
-          startPlanificat: formatDateForApi(wizardForm.startPlanificat),
-          operator: wizardForm.operator,
-          sefSchimb: wizardForm.sefSchimb,
-          status: "Planificat" as const,
-          observatii: wizardForm.observatii,
-          consumEstimat: [],
-          rezervariStoc: [],
-          loturiAsociate: [],
-          atasamente: [],
-          comenziAsociate: wizardForm.comenziAsociate
-        };
+        // Refresh list from API
+        const refreshResponse = await fetch(`${API_BASE_URL}/productie/returneaza/ordine`);
+        if (refreshResponse.ok) {
+          const data: OrdinApiResponse[] = await refreshResponse.json();
+          
+          // Transform API data to OrdinProductie format
+          const transformedOrdine: OrdinProductie[] = data.map((item, index) => {
+            const produseArray = item.produse ? item.produse.split(", ") : [];
+            const cantitatiArray = item.cantitati ? item.cantitati.split(", ").map(c => parseFloat(c) || 0) : [];
+            
+            const produse: ProdusOrdin[] = produseArray.map((produs, i) => ({
+              produs: produs,
+              cantitate: cantitatiArray[i] || 0,
+              reteta: ""
+            }));
+            
+            const cantitateTotala = cantitatiArray.reduce((sum, c) => sum + c, 0);
+            
+            return {
+              id: parseInt(item.id.split(", ")[0]) || index + 1,
+              numar: item.cod_ordin,
+              produse: produse,
+              cantitateTotala: cantitateTotala,
+              unitateMasura: "tone",
+              startPlanificat: item.data_start || "",
+              operator: item.operator || "",
+              sefSchimb: item.sef_schimb || "",
+              status: (item.status as "Planificat" | "În lucru" | "Finalizat") || "Planificat",
+              observatii: item.observatii || "",
+              consumEstimat: [],
+              rezervariStoc: [],
+              loturiAsociate: [],
+              atasamente: [],
+              comenziAsociate: item.comenzi_asociate ? item.comenzi_asociate.split(", ").filter(Boolean) : []
+            };
+          });
+          
+          setOrdine(transformedOrdine);
+        }
         
-        setOrdine(prev => [...prev, newOrdin]);
-        toast.success(`Ordinul ${result.cod_ordin} a fost creat cu succes`);
         setWizardOpen(false);
         setWizardStep(1);
         setWizardForm({
