@@ -171,18 +171,35 @@ const CalculatorPret = () => {
     }, 500);
   };
 
-  // Competitor price stats
+  // Extract product name from selected recipe (e.g., "BA 16" from "BA 16 - Beton Asfaltic")
+  const selectedProductName = useMemo(() => {
+    const reteta = retete.find(r => r.cod_reteta === selectedReteta);
+    if (!reteta) return "";
+    // Extract product code from denumire (first part before " - ")
+    const match = reteta.denumire.match(/^([A-Z0-9\s.]+)/i);
+    return match ? match[1].trim() : reteta.denumire.split(" - ")[0].trim();
+  }, [selectedReteta, retete]);
+
+  // Filter competitor prices by selected product
+  const filteredPreturiConcurenti = useMemo(() => {
+    if (!selectedProductName) return preturiConcurenti;
+    return preturiConcurenti.filter(p => 
+      p.produs.toLowerCase() === selectedProductName.toLowerCase()
+    );
+  }, [preturiConcurenti, selectedProductName]);
+
+  // Competitor price stats (based on filtered prices)
   const competitorStats = useMemo(() => {
-    if (preturiConcurenti.length === 0) {
+    if (filteredPreturiConcurenti.length === 0) {
       return { mediu: 0, minim: 0, maxim: 0 };
     }
-    const preturi = preturiConcurenti.map(p => p.pret);
+    const preturi = filteredPreturiConcurenti.map(p => p.pret);
     return {
       mediu: preturi.reduce((a, b) => a + b, 0) / preturi.length,
       minim: Math.min(...preturi),
       maxim: Math.max(...preturi)
     };
-  }, [preturiConcurenti]);
+  }, [filteredPreturiConcurenti]);
 
   // Add competitor price
   const handleAddConcurent = () => {
@@ -336,7 +353,7 @@ const CalculatorPret = () => {
                 </div>
 
                 {/* Analiză Comparativă Concurență */}
-                {preturiConcurenti.length > 0 && (
+                {filteredPreturiConcurenti.length > 0 && (
                   <div className="p-3 rounded-lg bg-muted/50 border border-border">
                     <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
                       <Users className="h-4 w-4" />
@@ -403,11 +420,16 @@ const CalculatorPret = () => {
             <CardTitle className="flex items-center gap-2 text-lg">
               <Users className="h-5 w-5" />
               Prețuri Concurență
+              {selectedProductName && (
+                <Badge variant="secondary" className="ml-auto text-xs">
+                  Filtru: {selectedProductName}
+                </Badge>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Stats */}
-            {preturiConcurenti.length > 0 && (
+            {filteredPreturiConcurenti.length > 0 ? (
               <div className="grid grid-cols-3 gap-2">
                 <div className="p-2 rounded-lg bg-muted/50 text-center">
                   <p className="text-xs text-muted-foreground">Preț Mediu</p>
@@ -431,7 +453,11 @@ const CalculatorPret = () => {
                   </p>
                 </div>
               </div>
-            )}
+            ) : preturiConcurenti.length > 0 ? (
+              <div className="p-3 rounded-lg bg-muted/50 text-center text-sm text-muted-foreground">
+                Nu există prețuri pentru "{selectedProductName}"
+              </div>
+            ) : null}
 
             {/* Add form */}
             <div className="space-y-2">
