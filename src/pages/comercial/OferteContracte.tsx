@@ -533,11 +533,13 @@ const OferteContracte = () => {
             valabilitate: form.valabilitate,
             termen_de_plata: termenPlataNumber,
             avans_de_plata: form.avansPlata || 0,
-            observatii: form.observatii,
+            observatii: form.observatii || "",
             status: "Draft",
             locatie_bilet_ordin_cec: biletOrdinUploadUrl || "",
             locatie_proces_verbal_predare_primire: procesVerbalUploadUrl || "",
           };
+          
+          console.log("Sending oferta payload:", payload);
           
           const response = await fetch(`${API_BASE_URL}/comercial/adauga/oferta`, {
             method: "POST",
