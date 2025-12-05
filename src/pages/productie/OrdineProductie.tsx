@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   ClipboardCheck, 
   Plus, 
@@ -192,6 +193,7 @@ const statusConfig: Record<string, { variant: "default" | "secondary" | "destruc
 };
 
 const OrdineProductie = () => {
+  const navigate = useNavigate();
   const [ordine, setOrdine] = useState<OrdinProductie[]>(mockOrdine);
   const [activeView, setActiveView] = useState<"list" | "kanban" | "calendar">("list");
   const [selectedOrdin, setSelectedOrdin] = useState<OrdinProductie | null>(null);
@@ -972,7 +974,15 @@ const OrdineProductie = () => {
                     <h4 className="text-sm font-medium mb-2">Comenzi Asociate</h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedOrdin.comenziAsociate.map((cmd) => (
-                        <Badge key={cmd} variant="secondary" className="gap-1">
+                        <Badge 
+                          key={cmd} 
+                          variant="secondary" 
+                          className="gap-1 cursor-pointer hover:bg-secondary/80"
+                          onClick={() => {
+                            setDetailDialogOpen(false);
+                            navigate(`/comenzi?tab=materie-prima&search=${cmd}`);
+                          }}
+                        >
                           <FileText className="h-3 w-3" />
                           {cmd}
                         </Badge>

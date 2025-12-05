@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -94,6 +95,7 @@ const comandaPFSchema = z.object({
 
 export default function Comenzi() {
   const { toast } = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [comenziMateriePrima, setComenziMateriePrima] = useState<ComandaMateriePrima[]>([]);
   const [loadingMP, setLoadingMP] = useState(false);
   const [comenziProduseFinite, setComenziProduseFinite] = useState<ComandaProdusFinal[]>([]);
@@ -618,7 +620,30 @@ export default function Comenzi() {
     setCurrentPagePF(1);
   }, [filtersPF]);
 
-  const [activeTab, setActiveTab] = useState("materie-prima");
+  const [activeTab, setActiveTab] = useState(() => {
+    const tabParam = searchParams.get("tab");
+    return tabParam === "materie-prima" || tabParam === "produs-finit" ? tabParam : "materie-prima";
+  });
+
+  // Handle URL search params for deep linking
+  useEffect(() => {
+    const searchParam = searchParams.get("search");
+    const tabParam = searchParams.get("tab");
+    
+    if (tabParam) {
+      setActiveTab(tabParam === "produs-finit" ? "produs-finit" : "materie-prima");
+    }
+    
+    if (searchParam) {
+      if (tabParam === "produs-finit") {
+        setFiltersPF(prev => ({ ...prev, cod: searchParam }));
+      } else {
+        setFiltersMP(prev => ({ ...prev, cod: searchParam }));
+      }
+      // Clear URL params after applying
+      setSearchParams({});
+    }
+  }, []);
 
   const handleExport = () => {
     if (activeTab === "materie-prima") {
