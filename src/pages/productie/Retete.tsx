@@ -367,14 +367,13 @@ const Retete = () => {
                     />
                   </TableHead>
                   <TableHead>Tip</TableHead>
-                  <TableHead className="text-right">Densitate</TableHead>
-                  <TableHead>Modificat</TableHead>
+                  <TableHead>Observații</TableHead>
                   <TableHead className="text-right">Acțiuni</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {paginatedRetete.length === 0 ? (
-                  <DataTableEmpty colSpan={6} message="Nu există rețete." />
+                  <DataTableEmpty colSpan={5} message="Nu există rețete." />
                 ) : (
                   paginatedRetete.map((reteta) => (
                     <TableRow
@@ -385,8 +384,7 @@ const Retete = () => {
                       <TableCell className="font-medium font-mono">{reteta.cod}</TableCell>
                       <TableCell>{reteta.denumire}</TableCell>
                       <TableCell>{getTipBadge(reteta.tip)}</TableCell>
-                      <TableCell className="text-right">{reteta.densitateTinta} g/cm³</TableCell>
-                      <TableCell className="text-muted-foreground">{reteta.ultimaModificare}</TableCell>
+                      <TableCell className="text-muted-foreground max-w-[200px] truncate">{reteta.observatii || "-"}</TableCell>
                       <TableCell className="text-right">
                         <TooltipProvider>
                           <div className="flex justify-end gap-1">
@@ -405,14 +403,6 @@ const Retete = () => {
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>Duplică</TooltipContent>
-                            </Tooltip>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); handleAutocorrect(reteta); }}>
-                                  <Droplets className="h-4 w-4" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>Autocorecție umiditate</TooltipContent>
                             </Tooltip>
                           </div>
                         </TooltipProvider>
