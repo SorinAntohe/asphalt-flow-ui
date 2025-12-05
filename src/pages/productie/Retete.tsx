@@ -297,7 +297,12 @@ const Retete = () => {
         });
 
         if (!response.ok) throw new Error("Eroare la salvarea rețetei");
-        toast.success("Rețetă adăugată cu succes");
+        
+        const result = await response.json();
+        const codReteta = result.cod_reteta;
+        console.log("Cod reteta generat:", codReteta);
+        
+        toast.success(`Rețetă ${codReteta || ''} adăugată cu succes`);
       }
       
       setEditorDialog(null);
