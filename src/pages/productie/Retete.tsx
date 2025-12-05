@@ -118,17 +118,17 @@ const Retete = () => {
         if (!response.ok) throw new Error("Eroare la încărcarea materialelor");
         const data = await response.json();
         console.log("API response:", data);
-        // Use materiale_prime from response
-        const materiale = data?.materiale_prime || [];
+        // API returns array of objects: [{materiale_prime: "..."}, ...]
+        const materiale = Array.isArray(data) 
+          ? data.map((item: any) => item.materiale_prime).filter(Boolean)
+          : [];
         console.log("Parsed materiale:", materiale);
         setMateriiPrimeList(materiale);
       } catch (error) {
         console.error("Error fetching materiale:", error);
         // Fallback pentru testare când API-ul nu este accesibil
-        console.log("Using fallback materials for testing");
         setMateriiPrimeList([
           "0/4 NAT", "0/4 CONC", "0/4 CRIBLURI", "4/8 CONC", "4/8 CRIBLURI",
-          "4/8 NAT", "8/16 CONC", "8/16 CRIBLURI", "16/22.4 CONC", "16/22.4 CRIBLURI",
           "BITUM 50/70", "FILLER", "CTL", "MOTORINA", "CURENT ELECTRIC"
         ]);
       }
