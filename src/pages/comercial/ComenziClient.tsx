@@ -353,7 +353,7 @@ const ComenziClient = () => {
       const response = await fetch(`${API_BASE_URL}/sterge`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ table: "comenzi_client", id: deleting.id })
+        body: JSON.stringify({ tabel: "comenzi_client", id: deleting.id })
       });
       if (!response.ok) throw new Error("Eroare la ștergere");
       toast({ title: "Succes", description: "Comanda a fost ștearsă." });
