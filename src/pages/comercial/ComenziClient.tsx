@@ -24,7 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
 
 // Types
-type OrderStatus = "Aprobat" | "Planificat" | "In Productie" | "Livrat";
+type OrderStatus = "Preaprobat" | "Aprobat" | "Planificat" | "In Productie" | "Livrat";
 type Priority = "Scazut" | "Normala" | "Ridicata" | "Urgenta";
 
 interface ComandaClient {
@@ -47,96 +47,10 @@ interface ComandaClient {
 }
 
 // Mock data
-const initialComenzi: ComandaClient[] = [
-  { 
-    id: 1, nr: "CMD-2024-001", client: "Construcții Modern SRL", produs: "Asfalt BA16", 
-    cantitate: 500, unitateMasura: "tone", planta: "Asfalt + Emulsie", dataOra: "2024-12-02T08:00", 
-    status: "Aprobat", prioritate: "Ridicata", avansPlata: "30% achitat", punctDescarcare: "Autostrada A3 - km 45",
-    observatii: "Livrare urgentă", fereastraIncarcare: "08:00 - 12:00",
-    atasamente: ["comanda_client.pdf", "specificatii.docx"],
-    timeline: [
-      { data: "01/12/2024 14:30", eveniment: "Comandă creată", user: "Ion Popescu" },
-      { data: "01/12/2024 15:00", eveniment: "Comandă aprobată", user: "Maria Ionescu" }
-    ]
-  },
-  { 
-    id: 2, nr: "CMD-2024-002", client: "Drumuri Naționale SA", produs: "Asfalt MASF16", 
-    cantitate: 1200, unitateMasura: "tone", planta: "Asfalt + Emulsie", dataOra: "2024-12-03T06:00", 
-    status: "Planificat", prioritate: "Urgenta", avansPlata: "50% achitat", punctDescarcare: "DN1 - km 120",
-    observatii: "Contract cadru", fereastraIncarcare: "06:00 - 18:00",
-    atasamente: ["contract_cadru.pdf"],
-    timeline: [
-      { data: "28/11/2024 09:00", eveniment: "Comandă creată", user: "Andrei Vasile" },
-      { data: "28/11/2024 11:00", eveniment: "Comandă aprobată", user: "Director Comercial" },
-      { data: "29/11/2024 10:00", eveniment: "Planificat în producție", user: "Sistem" }
-    ]
-  },
-  { 
-    id: 3, nr: "CMD-2024-003", client: "Primăria Sector 3", produs: "Asfalt BA8", 
-    cantitate: 200, unitateMasura: "tone", planta: "Asfalt + Emulsie", dataOra: "2024-12-04T10:00", 
-    status: "Aprobat", prioritate: "Normala", avansPlata: "Neplătit", punctDescarcare: "Bd. Decebal nr. 15",
-    observatii: "Așteptare aprobare buget", fereastraIncarcare: "10:00 - 14:00",
-    atasamente: [],
-    timeline: [
-      { data: "30/11/2024 16:00", eveniment: "Comandă creată", user: "Elena Pop" }
-    ]
-  },
-  { 
-    id: 4, nr: "CMD-2024-004", client: "Beta Construct SRL", produs: "Emulsie cationică", 
-    cantitate: 50, unitateMasura: "tone", planta: "Asfalt + Emulsie", dataOra: "2024-12-02T14:00", 
-    status: "In Productie", prioritate: "Normala", avansPlata: "100% achitat", punctDescarcare: "Depozit Beta",
-    observatii: "", fereastraIncarcare: "14:00 - 16:00",
-    atasamente: ["factura_proforma.pdf"],
-    timeline: [
-      { data: "25/11/2024 10:00", eveniment: "Comandă creată", user: "Ion Popescu" },
-      { data: "25/11/2024 14:00", eveniment: "Comandă aprobată", user: "Director" },
-      { data: "26/11/2024 08:00", eveniment: "Planificat", user: "Sistem" },
-      { data: "02/12/2024 06:00", eveniment: "Început producție", user: "Operator" }
-    ]
-  },
-  { 
-    id: 5, nr: "CMD-2024-005", client: "Alpha Roads SRL", produs: "Asfalt BA16", 
-    cantitate: 800, unitateMasura: "tone", planta: "Beton Stabilizat(BSC)", dataOra: "2024-12-05T07:00", 
-    status: "Aprobat", prioritate: "Scazut", avansPlata: "20% achitat", punctDescarcare: "Centura Nord km 5",
-    observatii: "Poate aștepta", fereastraIncarcare: "07:00 - 17:00",
-    atasamente: [],
-    timeline: [
-      { data: "29/11/2024 11:00", eveniment: "Comandă creată", user: "Mihai Radu" },
-      { data: "30/11/2024 09:00", eveniment: "Comandă aprobată", user: "Maria Ionescu" }
-    ]
-  },
-  { 
-    id: 6, nr: "CMD-2024-006", client: "Infrastructură Plus SRL", produs: "Asfalt MASF16", 
-    cantitate: 300, unitateMasura: "tone", planta: "Asfalt + Emulsie", dataOra: "2024-11-28T08:00", 
-    status: "Livrat", prioritate: "Ridicata", avansPlata: "100% achitat", punctDescarcare: "Șantier Central",
-    observatii: "Finalizat cu succes", fereastraIncarcare: "08:00 - 12:00",
-    atasamente: ["aviz_livrare.pdf"],
-    timeline: [
-      { data: "20/11/2024 10:00", eveniment: "Comandă creată", user: "Ana Maria" },
-      { data: "20/11/2024 14:00", eveniment: "Comandă aprobată", user: "Director" },
-      { data: "25/11/2024 08:00", eveniment: "Planificat", user: "Sistem" },
-      { data: "27/11/2024 06:00", eveniment: "Început producție", user: "Operator" },
-      { data: "28/11/2024 12:00", eveniment: "Livrat", user: "Șofer Transport" }
-    ]
-  },
-  { 
-    id: 7, nr: "CMD-2024-007", client: "Construcții Modern SRL", produs: "Beton C25/30", 
-    cantitate: 150, unitateMasura: "mc", planta: "Betoane", dataOra: "2024-11-25T09:00", 
-    status: "Livrat", prioritate: "Normala", avansPlata: "100% achitat", punctDescarcare: "Șantier Residence",
-    observatii: "Facturat și încasat", fereastraIncarcare: "09:00 - 15:00",
-    atasamente: ["factura_finala.pdf"],
-    timeline: [
-      { data: "15/11/2024 09:00", eveniment: "Comandă creată", user: "Ion Popescu" },
-      { data: "15/11/2024 11:00", eveniment: "Comandă aprobată", user: "Director" },
-      { data: "20/11/2024 08:00", eveniment: "Planificat", user: "Sistem" },
-      { data: "24/11/2024 06:00", eveniment: "Început producție", user: "Operator" },
-      { data: "25/11/2024 15:00", eveniment: "Livrat", user: "Șofer" },
-      { data: "28/11/2024 10:00", eveniment: "Finalizat", user: "Contabilitate" }
-    ]
-  },
-];
+const initialComenzi: ComandaClient[] = [];
 
 const statusColors: Record<OrderStatus, string> = {
+  "Preaprobat": "bg-amber-500/20 text-amber-600 dark:text-amber-400",
   "Aprobat": "bg-blue-500/20 text-blue-600 dark:text-blue-400",
   "Planificat": "bg-purple-500/20 text-purple-600 dark:text-purple-400",
   "In Productie": "bg-orange-500/20 text-orange-600 dark:text-orange-400",
@@ -150,7 +64,7 @@ const priorityColors: Record<Priority, string> = {
   "Urgenta": "bg-red-500/20 text-red-600 dark:text-red-400",
 };
 
-const kanbanStatuses: OrderStatus[] = ["Aprobat", "Planificat", "In Productie", "Livrat"];
+const kanbanStatuses: OrderStatus[] = ["Preaprobat", "Aprobat", "Planificat", "In Productie", "Livrat"];
 
 const ComenziClient = () => {
   const { toast } = useToast();
@@ -337,7 +251,7 @@ const ComenziClient = () => {
         unitateMasura: form.unitateMasura,
         planta: form.planta,
         dataOra: form.dataOra,
-        status: "Aprobat",
+        status: "Preaprobat",
         prioritate: form.prioritate,
         avansPlata: form.avansPlata,
         punctDescarcare: form.punctDescarcare,
