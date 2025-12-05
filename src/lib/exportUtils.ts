@@ -1,14 +1,16 @@
 export const exportToCSV = <T extends Record<string, any>>(
   data: T[],
   filename: string,
-  columns: { key: keyof T; label: string }[]
+  columns: { key: keyof T; label: string; transform?: (value: any) => string }[]
 ) => {
   if (data.length === 0) return;
 
   const headers = columns.map(col => col.label).join(',');
   const rows = data.map(row =>
     columns.map(col => {
-      const value = row[col.key];
+      const rawValue = row[col.key];
+      // Apply transform if provided
+      const value = col.transform ? col.transform(rawValue) : rawValue;
       // Handle null/undefined
       if (value === null || value === undefined) return '';
       // Handle numbers
