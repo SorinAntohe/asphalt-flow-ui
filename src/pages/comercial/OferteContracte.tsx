@@ -150,8 +150,11 @@ const OferteContracte = () => {
       const response = await fetch(`${API_BASE_URL}/returneaza_clienti`);
       if (!response.ok) throw new Error("Eroare la încărcarea clienților");
       const data = await response.json();
-      // Extract nume from each client object
-      const clientNames = data.map((item: any) => item.nume || "").filter(Boolean);
+      console.log("API clienti response:", data);
+      // Handle both array and wrapped response formats
+      const clientsArray = Array.isArray(data) ? data : (data.data || data.items || []);
+      const clientNames = clientsArray.map((item: any) => item.nume || "").filter(Boolean);
+      console.log("Extracted client names:", clientNames);
       setClientsList(clientNames);
     } catch (error) {
       console.error("Error fetching clients:", error);
@@ -163,8 +166,11 @@ const OferteContracte = () => {
       const response = await fetch(`${API_BASE_URL}/returneaza_produse_finite`);
       if (!response.ok) throw new Error("Eroare la încărcarea produselor");
       const data = await response.json();
-      // Extract produs from each product object
-      const productNames = data.map((item: any) => item.produs || "").filter(Boolean);
+      console.log("API produse response:", data);
+      // Handle both array and wrapped response formats
+      const produseArray = Array.isArray(data) ? data : (data.data || data.items || []);
+      const productNames = produseArray.map((item: any) => item.produs || "").filter(Boolean);
+      console.log("Extracted product names:", productNames);
       setProduseFiniteList(productNames);
     } catch (error) {
       console.error("Error fetching products:", error);
