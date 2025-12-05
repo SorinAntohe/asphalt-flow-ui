@@ -787,14 +787,9 @@ const OferteContracte = () => {
       }
     } else {
       if (activeTab === "oferte") {
-        // Call API to add oferta
+        // Call API to add oferta - one API call per product
         setIsSaving(true);
         try {
-          // Build produse as comma-separated list of product names
-          const produseList = validProduse.map(p => p.produs).join(", ");
-          // Build preturi_produse as comma-separated list of prices
-          const preturiProduse = validProduse.map(p => String(p.pret)).join(", ");
-          
           // Determine tip_transport value for backend
           let tipTransport = "inclus";
           if (form.transport.tipTransport === "fara_transport") {
@@ -815,35 +810,49 @@ const OferteContracte = () => {
           
           const termenPlataNumber = parseFloat(form.termenPlata.replace(/[^0-9]/g, '')) || 0;
           
-          const payload = {
-            client: form.client,
-            proiect_santier: form.proiect,
-            produse: produseList,
-            preturi_produse: preturiProduse,
-            tip_transport: tipTransport,
-            pret_transport: pretTransport,
-            valabilitate: form.valabilitate,
-            termen_de_plata: termenPlataNumber,
-            avans_de_plata: form.avansPlata || 0,
-            observatii: form.observatii || "",
-            status: "In curs de aprobare",
-            locatie_bilet_ordin_cec: biletOrdinUploadUrl || "",
-            locatie_proces_verbal_predare_primire: procesVerbalUploadUrl || "",
-          };
+          // Call API for each product separately
+          let successCount = 0;
+          for (const produs of validProduse) {
+            const payload = {
+              client: form.client,
+              proiect_santier: form.proiect,
+              produs: produs.produs,
+              pret_produs: produs.pret,
+              tip_transport: tipTransport,
+              pret_transport: pretTransport,
+              valabilitate: form.valabilitate,
+              termen_de_plata: termenPlataNumber,
+              avans_de_plata: form.avansPlata || 0,
+              observatii: form.observatii || "",
+              status: "In curs de aprobare",
+              locatie_bilet_ordin_cec: biletOrdinUploadUrl || "",
+              locatie_proces_verbal_predare_primire: procesVerbalUploadUrl || "",
+            };
+            
+            console.log("Sending oferta payload for product:", produs.produs, payload);
+            
+            const response = await fetch(`${API_BASE_URL}/comercial/adauga/oferta`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+            
+            if (!response.ok) {
+              console.error(`Eroare la salvarea produsului ${produs.produs}`);
+              continue;
+            }
+            
+            successCount++;
+          }
           
-          console.log("Sending oferta payload:", payload);
+          if (successCount === 0) {
+            throw new Error("Nu s-a putut salva nicio ofertă");
+          }
           
-          const response = await fetch(`${API_BASE_URL}/comercial/adauga/oferta`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
+          toast({ 
+            title: "Succes", 
+            description: `${successCount} ${successCount === 1 ? 'ofertă a fost adăugată' : 'oferte au fost adăugate'}.` 
           });
-          
-          if (!response.ok) throw new Error("Eroare la salvarea ofertei");
-          
-          const result = await response.json();
-          
-          toast({ title: "Succes", description: "Oferta a fost adăugată." });
           
           // Refresh oferte list
           fetchOferte();
