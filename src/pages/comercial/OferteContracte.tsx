@@ -242,6 +242,7 @@ const OferteContracte = () => {
     indexareCombustibil: "",
     garantie: { biletOrdin: null as File | null, procesVerbal: null as File | null },
     avansPlata: 0,
+    status: "In curs de aprobare" as "In curs de aprobare" | "Aprobata" | "Respinsa",
   });
   
   // File input refs
@@ -465,6 +466,7 @@ const OferteContracte = () => {
       indexareCombustibil: "",
       garantie: { biletOrdin: null, procesVerbal: null },
       avansPlata: 0,
+      status: "In curs de aprobare",
     });
     setOpenAddEdit(true);
   };
@@ -489,6 +491,7 @@ const OferteContracte = () => {
       indexareCombustibil: item.tip === "contract" ? (item as Contract).indexareCombustibil : "",
       garantie: { biletOrdin: null, procesVerbal: null },
       avansPlata: 0,
+      status: item.status,
     });
     setOpenAddEdit(true);
   };
@@ -1381,6 +1384,23 @@ const OferteContracte = () => {
                 />
               </div>
             </div>
+            {editing && (
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <Select value={form.status} onValueChange={(v: "In curs de aprobare" | "Aprobata" | "Respinsa") => setForm({ ...form, status: v })}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Selectează status" />
+                  </SelectTrigger>
+                  <SelectContent className="z-[200] pointer-events-auto">
+                    {statusOptions.map(status => (
+                      <SelectItem key={status} value={status}>
+                        <Badge className={cn(statusColors[status], "px-2 py-0.5")}>{status}</Badge>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             {(activeTab === "contracte" || editing?.tip === "contract") && (
               <div className="space-y-2">
                 <Label>Indexare combustibil</Label>
