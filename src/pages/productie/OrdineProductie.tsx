@@ -484,51 +484,96 @@ const OrdineProductie = () => {
     return wizardForm.produse.reduce((sum, p) => sum + (parseFloat(p.cantitate) || 0), 0);
   }, [wizardForm.produse]);
 
-  const handleWizardNext = () => {
+  const handleWizardNext = async () => {
     if (wizardStep < 2) {
       setWizardStep(wizardStep + 1);
     } else {
-      // Submit
+      // Submit to API
       const validProduse = wizardForm.produse.filter(p => p.produs && p.cantitate && p.reteta);
       if (validProduse.length === 0) {
         toast.error("Adăugați cel puțin un produs cu cantitate și rețetă");
         return;
       }
 
-      const newOrdin: OrdinProductie = {
-        id: ordine.length + 1,
-        numar: `OP-2024-${String(ordine.length + 1).padStart(3, '0')}`,
-        produse: validProduse.map(p => ({
-          produs: p.produs,
-          cantitate: parseFloat(p.cantitate) || 0,
-          reteta: p.reteta
-        })),
-        cantitateTotala: validProduse.reduce((sum, p) => sum + (parseFloat(p.cantitate) || 0), 0),
-        unitateMasura: wizardForm.unitateMasura,
-        startPlanificat: wizardForm.startPlanificat,
-        operator: wizardForm.operator,
-        sefSchimb: wizardForm.sefSchimb,
-        status: "Planificat" as const,
-        observatii: wizardForm.observatii,
-        consumEstimat: [],
-        rezervariStoc: [],
-        loturiAsociate: [],
-        atasamente: [],
-        comenziAsociate: wizardForm.comenziAsociate
+      // Format date from datetime-local to dd/mm/yyyy HH:mm
+      const formatDateForApi = (dateTimeLocal: string) => {
+        if (!dateTimeLocal) return "";
+        const date = new Date(dateTimeLocal);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${day}/${month}/${year} ${hours}:${minutes}`;
       };
-      setOrdine(prev => [...prev, newOrdin]);
-      toast.success(`Ordinul ${newOrdin.numar} a fost creat`);
-      setWizardOpen(false);
-      setWizardStep(1);
-      setWizardForm({
-        produse: [{ produs: "", cantitate: "", reteta: "" }],
-        unitateMasura: "tone",
-        startPlanificat: "",
-        operator: "",
-        sefSchimb: "",
-        observatii: "",
-        comenziAsociate: []
-      });
+
+      // Prepare API payload - comma-separated values
+      const payload = {
+        produse: validProduse.map(p => p.produs).join(","),
+        cantitati: validProduse.map(p => p.cantitate).join(","),
+        retete: validProduse.map(p => p.reteta).join(","),
+        masa_totala: String(validProduse.reduce((sum, p) => sum + (parseFloat(p.cantitate) || 0), 0)),
+        start_planificat: formatDateForApi(wizardForm.startPlanificat),
+        unitate_masura: wizardForm.unitateMasura,
+        operator: wizardForm.operator,
+        sef_schimb: wizardForm.sefSchimb,
+        comenzi_asociate: wizardForm.comenziAsociate.join(","),
+        observatii: wizardForm.observatii || ""
+      };
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/productie/adauga/ordine`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error("Eroare la adăugarea ordinului");
+        }
+
+        const result = await response.json();
+        
+        // Add to local state with the generated code
+        const newOrdin: OrdinProductie = {
+          id: ordine.length + 1,
+          numar: result.cod_ordin || `OP-${Date.now()}`,
+          produse: validProduse.map(p => ({
+            produs: p.produs,
+            cantitate: parseFloat(p.cantitate) || 0,
+            reteta: p.reteta
+          })),
+          cantitateTotala: validProduse.reduce((sum, p) => sum + (parseFloat(p.cantitate) || 0), 0),
+          unitateMasura: wizardForm.unitateMasura,
+          startPlanificat: formatDateForApi(wizardForm.startPlanificat),
+          operator: wizardForm.operator,
+          sefSchimb: wizardForm.sefSchimb,
+          status: "Planificat" as const,
+          observatii: wizardForm.observatii,
+          consumEstimat: [],
+          rezervariStoc: [],
+          loturiAsociate: [],
+          atasamente: [],
+          comenziAsociate: wizardForm.comenziAsociate
+        };
+        
+        setOrdine(prev => [...prev, newOrdin]);
+        toast.success(`Ordinul ${result.cod_ordin} a fost creat cu succes`);
+        setWizardOpen(false);
+        setWizardStep(1);
+        setWizardForm({
+          produse: [{ produs: "", cantitate: "", reteta: "" }],
+          unitateMasura: "tone",
+          startPlanificat: "",
+          operator: "",
+          sefSchimb: "",
+          observatii: "",
+          comenziAsociate: []
+        });
+      } catch (error) {
+        console.error("Error adding order:", error);
+        toast.error("Eroare la adăugarea ordinului de producție");
+      }
     }
   };
 
