@@ -143,7 +143,7 @@ const OferteContracte = () => {
         
         return {
           id: item.id || index + 1,
-          nr: item.cod_ferta || `OF-${index + 1}`,
+          nr: item.cod_oferta || `OF-${index + 1}`,
           client: item.client || "",
           proiect: item.proiect_santier || "",
           produs: item.produse || "",
