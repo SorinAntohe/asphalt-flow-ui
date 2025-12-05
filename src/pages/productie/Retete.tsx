@@ -74,7 +74,7 @@ interface Reteta {
   cod: string;
   denumire: string;
   versiuneActiva: string;
-  tip: "Asfalt" | "Beton" | "Balast";
+  tip: "Asfalt" | "Emulsie";
   densitateTinta: number;
   status: "Activ" | "Arhivat";
   ultimaModificare: string;
@@ -165,10 +165,10 @@ const reteteInitiale: Reteta[] = [
   },
   {
     id: 3,
-    cod: "BSC-25",
-    denumire: "Beton Stabilizat cu Ciment",
+    cod: "EMU-CSS",
+    denumire: "Emulsie Cationică CSS-1",
     versiuneActiva: "v3.0",
-    tip: "Beton",
+    tip: "Emulsie",
     densitateTinta: 2.20,
     status: "Activ",
     ultimaModificare: "20/11/2024",
@@ -192,10 +192,10 @@ const reteteInitiale: Reteta[] = [
   },
   {
     id: 4,
-    cod: "BAL-0/63",
-    denumire: "Balast Natural 0/63",
+    cod: "EMU-RS2",
+    denumire: "Emulsie Rapid Set RS-2",
     versiuneActiva: "v1.0",
-    tip: "Balast",
+    tip: "Emulsie",
     densitateTinta: 1.85,
     status: "Arhivat",
     ultimaModificare: "01/10/2024",
@@ -227,10 +227,8 @@ const getTipBadge = (tip: Reteta["tip"]) => {
   switch (tip) {
     case "Asfalt":
       return <Badge variant="outline" className="border-orange-500 text-orange-600">Asfalt</Badge>;
-    case "Beton":
-      return <Badge variant="outline" className="border-blue-500 text-blue-600">Beton</Badge>;
-    case "Balast":
-      return <Badge variant="outline" className="border-amber-500 text-amber-600">Balast</Badge>;
+    case "Emulsie":
+      return <Badge variant="outline" className="border-blue-500 text-blue-600">Emulsie</Badge>;
   }
 };
 
@@ -280,9 +278,8 @@ const Retete = () => {
   // Stats
   const stats = useMemo(() => ({
     total: retete.length,
-    active: retete.filter(r => r.status === "Activ").length,
     asfalt: retete.filter(r => r.tip === "Asfalt").length,
-    beton: retete.filter(r => r.tip === "Beton").length,
+    emulsie: retete.filter(r => r.tip === "Emulsie").length,
   }), [retete]);
 
   const handleDuplicate = (reteta: Reteta) => {
@@ -330,7 +327,7 @@ const Retete = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
           <CardContent className="pt-4">
             <div className="flex items-center justify-between">
@@ -339,17 +336,6 @@ const Retete = () => {
                 <p className="text-2xl font-bold">{stats.total}</p>
               </div>
               <FlaskConical className="h-8 w-8 text-muted-foreground/50" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Active</p>
-                <p className="text-2xl font-bold">{stats.active}</p>
-              </div>
-              <CheckCircle2 className="h-8 w-8 text-green-600" />
             </div>
           </CardContent>
         </Card>
@@ -370,11 +356,11 @@ const Retete = () => {
           <CardContent className="pt-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Beton</p>
-                <p className="text-2xl font-bold">{stats.beton}</p>
+                <p className="text-sm text-muted-foreground">Emulsie</p>
+                <p className="text-2xl font-bold">{stats.emulsie}</p>
               </div>
               <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                <span className="text-blue-600 font-bold text-sm">B</span>
+                <span className="text-blue-600 font-bold text-sm">E</span>
               </div>
             </div>
           </CardContent>
@@ -414,17 +400,15 @@ const Retete = () => {
                       filterPlaceholder="Caută denumire..."
                     />
                   </TableHead>
-                  <TableHead>Versiune</TableHead>
                   <TableHead>Tip</TableHead>
                   <TableHead className="text-right">Densitate</TableHead>
-                  <TableHead>Status</TableHead>
                   <TableHead>Modificat</TableHead>
                   <TableHead className="text-right">Acțiuni</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {paginatedRetete.length === 0 ? (
-                  <DataTableEmpty colSpan={8} message="Nu există rețete." />
+                  <DataTableEmpty colSpan={6} message="Nu există rețete." />
                 ) : (
                   paginatedRetete.map((reteta) => (
                     <TableRow
@@ -434,12 +418,8 @@ const Retete = () => {
                     >
                       <TableCell className="font-medium font-mono">{reteta.cod}</TableCell>
                       <TableCell>{reteta.denumire}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{reteta.versiuneActiva}</Badge>
-                      </TableCell>
                       <TableCell>{getTipBadge(reteta.tip)}</TableCell>
                       <TableCell className="text-right">{reteta.densitateTinta} g/cm³</TableCell>
-                      <TableCell>{getStatusBadge(reteta.status)}</TableCell>
                       <TableCell className="text-muted-foreground">{reteta.ultimaModificare}</TableCell>
                       <TableCell className="text-right">
                         <TooltipProvider>
@@ -672,8 +652,7 @@ const Retete = () => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="Asfalt">Asfalt</SelectItem>
-                        <SelectItem value="Beton">Beton</SelectItem>
-                        <SelectItem value="Balast">Balast</SelectItem>
+                        <SelectItem value="Emulsie">Emulsie</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
