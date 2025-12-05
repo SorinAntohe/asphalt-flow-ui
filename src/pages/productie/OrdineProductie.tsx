@@ -1098,7 +1098,7 @@ const OrdineProductie = () => {
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
                       <span className="ml-2 text-sm text-muted-foreground">Se încarcă estimarea...</span>
                     </div>
-                  ) : estimareData && estimareData.materiale.length > 0 ? (
+                  ) : estimareData && estimareData.materiale && estimareData.materiale.length > 0 ? (
                     <Table>
                       <TableHeader>
                         <TableRow>
