@@ -302,13 +302,20 @@ const OrdineProductie = () => {
           return;
         }
 
-        // Send all recipes and quantities as comma-separated strings in single API call
-        const codReteteStr = codRetete.join(",");
-        const cantitatiStr = cantitati.join(",");
-        
-        console.log(`Fetching estimare for cod_retete: ${codReteteStr}, cantitati: ${cantitatiStr}`);
+        // POST request with body
+        console.log(`Fetching estimare for cod_retete: ${codRetete}, cantitati: ${cantitati}`);
         const response = await fetch(
-          `${API_BASE_URL}/productie/returneaza/estimare/${encodeURIComponent(codReteteStr)}/${encodeURIComponent(cantitatiStr)}`
+          `${API_BASE_URL}/productie/returneaza/estimare`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              coduri_reteta: codRetete,
+              cantitate_finala: cantitati
+            })
+          }
         );
         
         if (response.ok) {
