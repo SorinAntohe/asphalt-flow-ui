@@ -530,6 +530,8 @@ const OferteContracte = () => {
         try {
           // Build produse as comma-separated list of product names
           const produseList = validProduse.map(p => p.produs).join(", ");
+          // Build preturi_produse as comma-separated list of prices
+          const preturiProduse = validProduse.map(p => String(p.pret)).join(", ");
           
           // Determine tip_transport value for backend
           let tipTransport = "inclus";
@@ -551,6 +553,7 @@ const OferteContracte = () => {
             client: form.client,
             proiect_santier: form.proiect,
             produse: produseList,
+            preturi_produse: preturiProduse,
             tip_transport: tipTransport,
             pret_transport: pretTransport,
             valabilitate: form.valabilitate,
