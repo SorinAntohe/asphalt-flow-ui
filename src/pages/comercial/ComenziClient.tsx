@@ -68,10 +68,14 @@ const ComenziClient = () => {
   
   // Data state
   const [comenzi, setComenzi] = useState<ComandaClient[]>([]);
+  const [clientsList, setClientsList] = useState<{ id: number; denumire: string }[]>([]);
+  const [produseList, setProduseList] = useState<{ id: number; denumire: string }[]>([]);
   
   // Fetch data on mount
   useEffect(() => {
     fetchComenzi();
+    fetchClienti();
+    fetchProduse();
   }, []);
 
   const fetchComenzi = async () => {
@@ -86,6 +90,28 @@ const ComenziClient = () => {
       toast({ title: "Eroare", description: "Nu s-au putut încărca comenzile.", variant: "destructive" });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchClienti = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/returneaza_clienti`);
+      if (!response.ok) throw new Error("Eroare la încărcarea clienților");
+      const data = await response.json();
+      setClientsList(data || []);
+    } catch (error) {
+      console.error("Error fetching clienti:", error);
+    }
+  };
+
+  const fetchProduse = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/returneaza_produse_finite`);
+      if (!response.ok) throw new Error("Eroare la încărcarea produselor");
+      const data = await response.json();
+      setProduseList(data || []);
+    } catch (error) {
+      console.error("Error fetching produse:", error);
     }
   };
   
@@ -711,9 +737,9 @@ const ComenziClient = () => {
                 <Select value={form.client} onValueChange={(v) => setForm({ ...form, client: v })}>
                   <SelectTrigger><SelectValue placeholder="Selectează client" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Client 1">Client 1</SelectItem>
-                    <SelectItem value="Client 2">Client 2</SelectItem>
-                    <SelectItem value="Client 3">Client 3</SelectItem>
+                    {clientsList.map((client) => (
+                      <SelectItem key={client.id} value={client.denumire}>{client.denumire}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -722,11 +748,9 @@ const ComenziClient = () => {
                 <Select value={form.produs} onValueChange={(v) => setForm({ ...form, produs: v })}>
                   <SelectTrigger><SelectValue placeholder="Selectează produs" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Asfalt BA16">Asfalt BA16</SelectItem>
-                    <SelectItem value="Asfalt BA8">Asfalt BA8</SelectItem>
-                    <SelectItem value="Asfalt MASF16">Asfalt MASF16</SelectItem>
-                    <SelectItem value="Emulsie cationică">Emulsie cationică</SelectItem>
-                    <SelectItem value="Beton C25/30">Beton C25/30</SelectItem>
+                    {produseList.map((produs) => (
+                      <SelectItem key={produs.id} value={produs.denumire}>{produs.denumire}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
