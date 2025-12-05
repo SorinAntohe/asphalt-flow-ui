@@ -816,8 +816,8 @@ const OferteContracte = () => {
           const payload = {
             client: form.client,
             proiect_santier: form.proiect,
-            produs: produseList,
-            pret_produs: preturiProduse,
+            produse: produseList,
+            preturi_produse: preturiProduse,
             tip_transport: tipTransport,
             pret_transport: pretTransport,
             valabilitate: form.valabilitate,
