@@ -265,21 +265,24 @@ const OrdineProductie = () => {
         return;
       }
 
-      // Get cod_reteta and cantitate from first product (or iterate all)
-      // For now, aggregate all products
+      // Get cod_reteta and cantitate from products
       setEstimareLoading(true);
       try {
         const allMateriale: EstimareMaterial[] = [];
         let statusGeneral: "OK" | "NOT OK" = "OK";
 
         for (const produs of selectedOrdin.produse) {
-          // Extract cod_reteta from reteta string (format: "R001 - Rețetă BA16")
-          const codReteta = produs.reteta.split(" - ")[0];
+          // Use produs as cod_reteta (produse from API are reteta codes)
+          // If reteta is available, extract cod from it, otherwise use produs directly
+          let codReteta = produs.produs;
+          if (produs.reteta && produs.reteta.includes(" - ")) {
+            codReteta = produs.reteta.split(" - ")[0];
+          }
           const cantitate = produs.cantitate;
 
           if (codReteta && cantitate > 0) {
             const response = await fetch(
-              `${API_BASE_URL}/productie/returneaza/estimare/${codReteta}/${cantitate}`
+              `${API_BASE_URL}/productie/returneaza/estimare/${encodeURIComponent(codReteta)}/${cantitate}`
             );
             if (response.ok) {
               const data: EstimareResponse = await response.json();
