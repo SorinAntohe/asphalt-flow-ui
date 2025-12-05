@@ -10,9 +10,6 @@ import {
   Pause,
   CheckCircle2,
   Package,
-  Printer,
-  Split,
-  Merge,
   Clock,
   User,
   Factory,
@@ -184,8 +181,6 @@ const OrdineProductie = () => {
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [wizardOpen, setWizardOpen] = useState(false);
   const [wizardStep, setWizardStep] = useState(1);
-  const [splitMergeDialogOpen, setSplitMergeDialogOpen] = useState(false);
-  const [splitMergeMode, setSplitMergeMode] = useState<"split" | "merge">("split");
 
   // Filters
   const [sortKey, setSortKey] = useState<string | null>(null);
@@ -315,10 +310,6 @@ const OrdineProductie = () => {
     ));
     toast.success(`Ordinul ${ordin.numar} a fost închis`);
     setDetailDialogOpen(false);
-  };
-
-  const handlePrint = (ordin: OrdinProductie) => {
-    toast.info(`Se imprimă biletul de producție pentru ${ordin.numar}`);
   };
 
   // Wizard helpers
@@ -906,31 +897,11 @@ const OrdineProductie = () => {
                     </Button>
                   )}
                   {selectedOrdin.status !== "Închisă" && (
-                    <>
-                      <Button size="sm" variant="outline" onClick={() => handleRezervaStoc(selectedOrdin)}>
-                        <Package className="h-4 w-4 mr-1" />
-                        Rezervă Stoc
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => {
-                        setSplitMergeMode("split");
-                        setSplitMergeDialogOpen(true);
-                      }}>
-                        <Split className="h-4 w-4 mr-1" />
-                        Split
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => {
-                        setSplitMergeMode("merge");
-                        setSplitMergeDialogOpen(true);
-                      }}>
-                        <Merge className="h-4 w-4 mr-1" />
-                        Merge
-                      </Button>
-                    </>
+                    <Button size="sm" variant="outline" onClick={() => handleRezervaStoc(selectedOrdin)}>
+                      <Package className="h-4 w-4 mr-1" />
+                      Rezervă Stoc
+                    </Button>
                   )}
-                  <Button size="sm" variant="outline" onClick={() => handlePrint(selectedOrdin)}>
-                    <Printer className="h-4 w-4 mr-1" />
-                    Imprimă
-                  </Button>
                   {selectedOrdin.status === "În lucru" && (
                     <Button size="sm" variant="destructive" onClick={() => handleInchideOrdin(selectedOrdin)}>
                       <CheckCircle2 className="h-4 w-4 mr-1" />
@@ -1179,36 +1150,6 @@ const OrdineProductie = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Split/Merge Dialog */}
-      <Dialog open={splitMergeDialogOpen} onOpenChange={setSplitMergeDialogOpen}>
-        <DialogContent hideCloseButton>
-          <DialogHeader>
-            <DialogTitle>{splitMergeMode === "split" ? "Split Ordin" : "Merge Ordine"}</DialogTitle>
-            <DialogDescription>
-              {splitMergeMode === "split" 
-                ? "Împărțiți acest ordin în mai multe ordine mai mici"
-                : "Combinați mai multe ordine într-unul singur"
-              }
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <p className="text-sm text-muted-foreground">
-              Funcționalitate în dezvoltare. Aceasta va permite {splitMergeMode === "split" ? "împărțirea" : "combinarea"} ordinelor de producție.
-            </p>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setSplitMergeDialogOpen(false)}>
-              Anulează
-            </Button>
-            <Button onClick={() => {
-              toast.info(`${splitMergeMode === "split" ? "Split" : "Merge"} - funcționalitate în dezvoltare`);
-              setSplitMergeDialogOpen(false);
-            }}>
-              Confirmă
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
