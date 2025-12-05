@@ -79,6 +79,22 @@ interface Operator {
   nume: string;
 }
 
+// Types for estimare API response
+interface EstimareMaterial {
+  material: string;
+  cantitate_originala: number;
+  material_x1000: number;
+  cantitate_cu_factor: number;
+  stoc: number;
+  diferenta: number;
+  status: "OK" | "NOT OK";
+}
+
+interface EstimareResponse {
+  status_general: "OK" | "NOT OK";
+  materiale: EstimareMaterial[];
+}
+
 const statusConfig: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ReactNode; color: string }> = {
   "Planificat": { variant: "secondary", icon: <Clock className="h-3 w-3" />, color: "bg-amber-500 text-white" },
   "În lucru": { variant: "default", icon: <Play className="h-3 w-3" />, color: "bg-blue-500 text-white" },
@@ -196,6 +212,10 @@ const OrdineProductie = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
+  // Estimare data state
+  const [estimareData, setEstimareData] = useState<EstimareResponse | null>(null);
+  const [estimareLoading, setEstimareLoading] = useState(false);
+
   // API data states
   const [operatori, setOperatori] = useState<Operator[]>([]);
   const [sefiSchimb, setSefiSchimb] = useState<SefSchimb[]>([]);
@@ -271,6 +291,55 @@ const OrdineProductie = () => {
     fetchRetete();
     fetchComenzi();
   }, []);
+
+  // Fetch estimare when detail dialog opens
+  useEffect(() => {
+    const fetchEstimare = async () => {
+      if (!detailDialogOpen || !selectedOrdin) {
+        setEstimareData(null);
+        return;
+      }
+
+      // Get cod_reteta and cantitate from first product (or iterate all)
+      // For now, aggregate all products
+      setEstimareLoading(true);
+      try {
+        const allMateriale: EstimareMaterial[] = [];
+        let statusGeneral: "OK" | "NOT OK" = "OK";
+
+        for (const produs of selectedOrdin.produse) {
+          // Extract cod_reteta from reteta string (format: "R001 - Rețetă BA16")
+          const codReteta = produs.reteta.split(" - ")[0];
+          const cantitate = produs.cantitate;
+
+          if (codReteta && cantitate > 0) {
+            const response = await fetch(
+              `${API_BASE_URL}/productie/returneaza/estimare/${codReteta}/${cantitate}`
+            );
+            if (response.ok) {
+              const data: EstimareResponse = await response.json();
+              if (data.status_general === "NOT OK") {
+                statusGeneral = "NOT OK";
+              }
+              allMateriale.push(...data.materiale);
+            }
+          }
+        }
+
+        setEstimareData({
+          status_general: statusGeneral,
+          materiale: allMateriale
+        });
+      } catch (error) {
+        console.error("Error fetching estimare:", error);
+        setEstimareData(null);
+      } finally {
+        setEstimareLoading(false);
+      }
+    };
+
+    fetchEstimare();
+  }, [detailDialogOpen, selectedOrdin]);
 
   // Filters
   const [sortKey, setSortKey] = useState<string | null>(null);
@@ -965,25 +1034,44 @@ const OrdineProductie = () => {
 
                 {/* Consum Estimat */}
                 <div>
-                  <h4 className="text-sm font-medium mb-2">Consum Estimat Materii Prime</h4>
-                  {selectedOrdin.consumEstimat && selectedOrdin.consumEstimat.length > 0 ? (
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm font-medium">Consum Estimat Materii Prime</h4>
+                    {estimareData && (
+                      <Badge 
+                        variant={estimareData.status_general === "OK" ? "outline" : "destructive"}
+                        className={estimareData.status_general === "OK" ? "bg-green-500/10 text-green-600" : ""}
+                      >
+                        {estimareData.status_general === "OK" ? "Stoc Suficient" : "Stoc Insuficient"}
+                      </Badge>
+                    )}
+                  </div>
+                  {estimareLoading ? (
+                    <div className="flex items-center justify-center py-4">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                      <span className="ml-2 text-sm text-muted-foreground">Se încarcă estimarea...</span>
+                    </div>
+                  ) : estimareData && estimareData.materiale.length > 0 ? (
                     <Table>
                       <TableHeader>
                         <TableRow>
                           <TableHead>Material</TableHead>
-                          <TableHead>Necesar</TableHead>
-                          <TableHead>Disponibil</TableHead>
+                          <TableHead className="text-right">Necesar</TableHead>
+                          <TableHead className="text-right">Stoc</TableHead>
+                          <TableHead className="text-right">Diferență</TableHead>
                           <TableHead>Status</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {selectedOrdin.consumEstimat.map((c, idx) => (
+                        {estimareData.materiale.map((m, idx) => (
                           <TableRow key={idx}>
-                            <TableCell>{c.material}</TableCell>
-                            <TableCell>{c.cantitate} t</TableCell>
-                            <TableCell>{c.disponibil} t</TableCell>
+                            <TableCell className="font-medium">{m.material}</TableCell>
+                            <TableCell className="text-right">{m.cantitate_cu_factor.toLocaleString('ro-RO')} kg</TableCell>
+                            <TableCell className="text-right">{m.stoc.toLocaleString('ro-RO')} kg</TableCell>
+                            <TableCell className={`text-right font-medium ${m.diferenta < 0 ? 'text-destructive' : 'text-green-600'}`}>
+                              {m.diferenta.toLocaleString('ro-RO')} kg
+                            </TableCell>
                             <TableCell>
-                              {c.disponibil >= c.cantitate ? (
+                              {m.status === "OK" ? (
                                 <Badge variant="outline" className="bg-green-500/10 text-green-600">OK</Badge>
                               ) : (
                                 <Badge variant="destructive">Insuficient</Badge>
