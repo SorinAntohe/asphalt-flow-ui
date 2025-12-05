@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { FilterableSelect } from "@/components/ui/filterable-select";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { API_BASE_URL } from "@/lib/api";
 import { toast } from "sonner";
@@ -43,7 +43,7 @@ const CalculatorPret = () => {
   const [retete, setRetete] = useState<Reteta[]>([]);
   const [selectedReteta, setSelectedReteta] = useState("");
   const [cantitate, setCantitate] = useState("");
-  const [marjaProfit, setMarjaProfit] = useState("15");
+  const [marjaProfit, setMarjaProfit] = useState(15);
   const [loading, setLoading] = useState(false);
 
   // Calculation result state
@@ -77,14 +77,6 @@ const CalculatorPret = () => {
     [retete]
   );
 
-  const marjaOptions = useMemo(() => 
-    Array.from({ length: 31 }, (_, i) => ({
-      value: String(i),
-      label: `${i}%`
-    })),
-    []
-  );
-
   // Calculate price
   const handleCalculate = () => {
     if (!selectedReteta || !cantitate) {
@@ -97,7 +89,7 @@ const CalculatorPret = () => {
     // Simulate calculation (in real app, this would be an API call)
     setTimeout(() => {
       const qty = parseFloat(cantitate);
-      const marja = parseFloat(marjaProfit) / 100;
+      const marja = marjaProfit / 100;
       
       // Mock cost breakdown based on quantity
       const mockBreakdown: CostBreakdown = {
@@ -220,17 +212,23 @@ const CalculatorPret = () => {
             </div>
 
             <div>
-              <Label>Marjă Profit</Label>
-              <Select value={marjaProfit} onValueChange={setMarjaProfit}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selectează marja..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {marjaOptions.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex items-center justify-between mb-2">
+                <Label>Marjă Profit</Label>
+                <span className="text-sm font-semibold text-primary">{marjaProfit}%</span>
+              </div>
+              <Slider
+                value={[marjaProfit]}
+                onValueChange={(value) => setMarjaProfit(value[0])}
+                min={0}
+                max={30}
+                step={1}
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                <span>0%</span>
+                <span>15%</span>
+                <span>30%</span>
+              </div>
             </div>
 
             <Button 
