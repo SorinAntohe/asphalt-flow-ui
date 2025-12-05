@@ -150,8 +150,8 @@ const OferteContracte = () => {
       const response = await fetch(`${API_BASE_URL}/returneaza_clienti`);
       if (!response.ok) throw new Error("Eroare la încărcarea clienților");
       const data = await response.json();
-      // Extract denumire from each client object
-      const clientNames = data.map((item: any) => item.denumire || item.client || item.name || "").filter(Boolean);
+      // Extract nume from each client object
+      const clientNames = data.map((item: any) => item.nume || "").filter(Boolean);
       setClientsList(clientNames);
     } catch (error) {
       console.error("Error fetching clients:", error);
@@ -163,8 +163,8 @@ const OferteContracte = () => {
       const response = await fetch(`${API_BASE_URL}/returneaza_produse_finite`);
       if (!response.ok) throw new Error("Eroare la încărcarea produselor");
       const data = await response.json();
-      // Extract denumire from each product object
-      const productNames = data.map((item: any) => item.denumire || item.produs || item.name || "").filter(Boolean);
+      // Extract produs from each product object
+      const productNames = data.map((item: any) => item.produs || "").filter(Boolean);
       setProduseFiniteList(productNames);
     } catch (error) {
       console.error("Error fetching products:", error);
