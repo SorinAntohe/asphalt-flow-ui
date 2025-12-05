@@ -128,8 +128,8 @@ const ComenziClient = () => {
 
   const produsOptions = useMemo(() => {
     return produseList.map((produs: any) => ({
-      value: produs.denumire || produs.nume || produs.name || String(produs.id),
-      label: produs.denumire || produs.nume || produs.name || String(produs.id)
+      value: produs.produs || produs.produse || produs.denumire || produs.nume || String(produs.id),
+      label: produs.produs || produs.produse || produs.denumire || produs.nume || String(produs.id)
     }));
   }, [produseList]);
   
