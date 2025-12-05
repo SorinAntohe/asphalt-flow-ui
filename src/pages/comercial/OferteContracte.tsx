@@ -138,6 +138,8 @@ const OferteContracte = () => {
   // File upload state
   const [isUploadingBiletOrdin, setIsUploadingBiletOrdin] = useState(false);
   const [biletOrdinUploadUrl, setBiletOrdinUploadUrl] = useState<string | null>(null);
+  const [isUploadingProcesVerbal, setIsUploadingProcesVerbal] = useState(false);
+  const [procesVerbalUploadUrl, setProcesVerbalUploadUrl] = useState<string | null>(null);
   
   // Upload file to API
   const handleBiletOrdinUpload = async (file: File) => {
@@ -146,7 +148,7 @@ const OferteContracte = () => {
     
     try {
       const formData = new FormData();
-      formData.append("folder", "garantii");
+      formData.append("folder", "bilete_ordin_cec");
       formData.append("file", file);
       formData.append("return_physical_path", "false");
       
@@ -179,6 +181,48 @@ const OferteContracte = () => {
       });
     } finally {
       setIsUploadingBiletOrdin(false);
+    }
+  };
+  
+  const handleProcesVerbalUpload = async (file: File) => {
+    setIsUploadingProcesVerbal(true);
+    setProcesVerbalUploadUrl(null);
+    
+    try {
+      const formData = new FormData();
+      formData.append("folder", "procese_verbale_predare_primire");
+      formData.append("file", file);
+      formData.append("return_physical_path", "false");
+      
+      const response = await fetch(`${API_BASE_URL}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setProcesVerbalUploadUrl(data.public_url);
+        toast({
+          title: "Fișier încărcat cu succes",
+          description: `URL public: ${data.public_url}`,
+        });
+      } else {
+        toast({
+          title: "Eroare la încărcare",
+          description: data.detail || "A apărut o eroare la încărcarea fișierului",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast({
+        title: "Eroare la încărcare",
+        description: "Nu s-a putut conecta la server",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploadingProcesVerbal(false);
     }
   };
   
@@ -284,6 +328,7 @@ const OferteContracte = () => {
   const handleOpenAdd = () => {
     setEditing(null);
     setBiletOrdinUploadUrl(null);
+    setProcesVerbalUploadUrl(null);
     setForm({
       client: "",
       proiect: "",
@@ -302,6 +347,7 @@ const OferteContracte = () => {
   const handleOpenEdit = (item: Item) => {
     setEditing(item);
     setBiletOrdinUploadUrl(null);
+    setProcesVerbalUploadUrl(null);
     const itemTransport = item.transport || { tipTransport: "inclus" as const };
     setForm({
       client: item.client,
@@ -1120,6 +1166,9 @@ const OferteContracte = () => {
                     onChange={(e) => {
                       const file = e.target.files?.[0] || null;
                       setForm({ ...form, garantie: { ...form.garantie, procesVerbal: file } });
+                      if (file) {
+                        handleProcesVerbalUpload(file);
+                      }
                     }}
                   />
                   <Button
@@ -1127,10 +1176,25 @@ const OferteContracte = () => {
                     variant="outline"
                     className="w-full h-12 justify-start"
                     onClick={() => procesVerbalRef.current?.click()}
+                    disabled={isUploadingProcesVerbal}
                   >
-                    <Upload className="mr-2 h-4 w-4" />
-                    {form.garantie.procesVerbal ? form.garantie.procesVerbal.name : "Încarcă document"}
+                    {isUploadingProcesVerbal ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Se încarcă...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="mr-2 h-4 w-4" />
+                        {form.garantie.procesVerbal ? form.garantie.procesVerbal.name : "Încarcă document"}
+                      </>
+                    )}
                   </Button>
+                  {procesVerbalUploadUrl && (
+                    <p className="text-xs text-muted-foreground truncate">
+                      URL: {procesVerbalUploadUrl}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
