@@ -102,16 +102,20 @@ const statusConfig: Record<string, { variant: "default" | "secondary" | "destruc
 };
 
 // API response interface
-// API response interface - matches what aggregate_all_groups returns
-// Only cod_ordin (group by), id, produse, cantitati are concatenated
-// Other fields are NOT returned by this API
+// API response interface - matches what backend returns
 interface OrdinApiResponse {
-  cod_ordin: string;
   id: string;
+  cod_ordin: string;
   produse: string;
   cantitati: string;
-  // Note: start_planificat, operator, sef_schimb, status, observatii 
-  // are NOT returned by current API - would need backend update
+  retete: string;
+  masa_totala: number;
+  start_planificat: string;
+  unitate_masura: string;
+  operator: string;
+  sef_schimb: string;
+  comenzi_asociate: string;
+  observatii: string;
 }
 
 const OrdineProductie = () => {
@@ -208,34 +212,35 @@ const OrdineProductie = () => {
           
           // Transform API data to OrdinProductie format
           const transformedOrdine: OrdinProductie[] = data.map((item, index) => {
-            // Parse concatenated produse and cantitati
+            // Parse produse, cantitati, retete (may be comma-separated if multiple)
             const produseArray = item.produse ? item.produse.split(", ") : [];
             const cantitatiArray = item.cantitati ? item.cantitati.split(", ").map(c => parseFloat(c) || 0) : [];
+            const reteteArray = item.retete ? item.retete.split(", ") : [];
             
             const produse: ProdusOrdin[] = produseArray.map((produs, i) => ({
               produs: produs,
               cantitate: cantitatiArray[i] || 0,
-              reteta: "" // Will be fetched separately if needed
+              reteta: reteteArray[i] || ""
             }));
             
-            const cantitateTotala = cantitatiArray.reduce((sum, c) => sum + c, 0);
+            const cantitateTotala = item.masa_totala || cantitatiArray.reduce((sum, c) => sum + c, 0);
             
             return {
-              id: parseInt(item.id.split(", ")[0]) || index + 1,
+              id: parseInt(item.id) || index + 1,
               numar: item.cod_ordin,
               produse: produse,
               cantitateTotala: cantitateTotala,
-              unitateMasura: "tone",
-              startPlanificat: "", // Not returned by API
-              operator: "", // Not returned by API
-              sefSchimb: "", // Not returned by API
-              status: "Planificat" as const, // Not returned by API - default
-              observatii: "", // Not returned by API
+              unitateMasura: item.unitate_masura || "tone",
+              startPlanificat: item.start_planificat || "",
+              operator: item.operator || "",
+              sefSchimb: item.sef_schimb || "",
+              status: "Planificat" as const, // Status not in API yet
+              observatii: item.observatii || "",
               consumEstimat: [],
               rezervariStoc: [],
               loturiAsociate: [],
               atasamente: [],
-              comenziAsociate: [] // Not returned by API
+              comenziAsociate: item.comenzi_asociate ? item.comenzi_asociate.split(", ").filter(Boolean) : []
             };
           });
           
@@ -638,31 +643,32 @@ const OrdineProductie = () => {
           const transformedOrdine: OrdinProductie[] = data.map((item, index) => {
             const produseArray = item.produse ? item.produse.split(", ") : [];
             const cantitatiArray = item.cantitati ? item.cantitati.split(", ").map(c => parseFloat(c) || 0) : [];
+            const reteteArray = item.retete ? item.retete.split(", ") : [];
             
             const produse: ProdusOrdin[] = produseArray.map((produs, i) => ({
               produs: produs,
               cantitate: cantitatiArray[i] || 0,
-              reteta: ""
+              reteta: reteteArray[i] || ""
             }));
             
-            const cantitateTotala = cantitatiArray.reduce((sum, c) => sum + c, 0);
+            const cantitateTotala = item.masa_totala || cantitatiArray.reduce((sum, c) => sum + c, 0);
             
             return {
-              id: parseInt(item.id.split(", ")[0]) || index + 1,
+              id: parseInt(item.id) || index + 1,
               numar: item.cod_ordin,
               produse: produse,
               cantitateTotala: cantitateTotala,
-              unitateMasura: "tone",
-              startPlanificat: "", // Not returned by API
-              operator: "", // Not returned by API
-              sefSchimb: "", // Not returned by API
-              status: "Planificat" as const, // Not returned by API - default
-              observatii: "", // Not returned by API
+              unitateMasura: item.unitate_masura || "tone",
+              startPlanificat: item.start_planificat || "",
+              operator: item.operator || "",
+              sefSchimb: item.sef_schimb || "",
+              status: "Planificat" as const,
+              observatii: item.observatii || "",
               consumEstimat: [],
               rezervariStoc: [],
               loturiAsociate: [],
               atasamente: [],
-              comenziAsociate: [] // Not returned by API
+              comenziAsociate: item.comenzi_asociate ? item.comenzi_asociate.split(", ").filter(Boolean) : []
             };
           });
           
