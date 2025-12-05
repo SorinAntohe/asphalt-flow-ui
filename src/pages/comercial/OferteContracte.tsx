@@ -74,20 +74,10 @@ interface Contract {
 
 type Item = Oferta | Contract;
 
-// Mock data
-const initialOferte: Oferta[] = [
-  { id: 1, nr: "OF-2024-001", client: "Construcții Modern SRL", proiect: "Autostrada A3 - Lot 2", produs: "Asfalt BA16", pret: 450, produse: [{ produs: "Asfalt BA16", pret: 450 }], transport: { tipTransport: "inclus" }, valabilitate: "31/12/2024", termenPlata: "30 zile", status: "Acceptat", tip: "oferta", dataCreare: "15/11/2024", conditiiComerciale: "Preț franco șantier, inclusiv transport", observatii: "Client prioritar" },
-  { id: 2, nr: "OF-2024-002", client: "Drumuri Naționale SA", proiect: "DN1 - Reparații km 45-60", produs: "Asfalt MASF16", pret: 520, produse: [{ produs: "Asfalt MASF16", pret: 520 }], transport: { tipTransport: "tona_km", pretTonaKm: 0.85 }, valabilitate: "15/01/2025", termenPlata: "45 zile", status: "Trimis", tip: "oferta", dataCreare: "20/11/2024", conditiiComerciale: "Preț EXW, transport separat", observatii: "" },
-  { id: 3, nr: "OF-2024-003", client: "Primăria Sector 3", proiect: "Reabilitare Bd. Decebal", produs: "Asfalt BA8", pret: 380, produse: [{ produs: "Asfalt BA8", pret: 380 }], transport: { tipTransport: "inclus" }, valabilitate: "01/12/2024", termenPlata: "60 zile", status: "Draft", tip: "oferta", dataCreare: "25/11/2024", conditiiComerciale: "Preț franco șantier", observatii: "Așteptare aprobare buget" },
-  { id: 4, nr: "OF-2024-004", client: "Beta Construct SRL", proiect: "Parcare mall", produs: "Asfalt BA16", pret: 440, produse: [{ produs: "Asfalt BA16", pret: 440 }], transport: { tipTransport: "inchiriere", pretInchiriere: 1500 }, valabilitate: "20/11/2024", termenPlata: "30 zile", status: "Expirat", tip: "oferta", dataCreare: "01/11/2024", conditiiComerciale: "Preț franco șantier", observatii: "" },
-  { id: 5, nr: "OF-2024-005", client: "Infrastructură Plus SRL", proiect: "Centura ocolitoare", produs: "Multiple", pret: 3320, produse: [{ produs: "Emulsie cationică", pret: 2800 }, { produs: "Asfalt BA16", pret: 520 }], transport: { tipTransport: "tona_km", pretTonaKm: 0.75 }, valabilitate: "28/02/2025", termenPlata: "30 zile", status: "Trimis", tip: "oferta", dataCreare: "28/11/2024", conditiiComerciale: "Preț per tonă, livrare în cisternă", observatii: "Volum mare estimat" },
-];
+// Initial empty data
+const initialOferte: Oferta[] = [];
 
-const initialContracte: Contract[] = [
-  { id: 1, nr: "CTR-2024-001", client: "Construcții Modern SRL", proiect: "Autostrada A3 - Lot 2", produs: "Asfalt BA16", pret: 445, produse: [{ produs: "Asfalt BA16", pret: 445 }], transport: { tipTransport: "inclus" }, valabilitate: "31/12/2025", termenPlata: "30 zile", status: "Acceptat", tip: "contract", dataCreare: "20/11/2024", conditiiComerciale: "Preț fix pe durata contractului, inclusiv transport", observatii: "Contract cadru anual", indexareCombustibil: "Ajustare trimestrială +/- 5%" },
-  { id: 2, nr: "CTR-2024-002", client: "Drumuri Naționale SA", proiect: "Întreținere DN1 2024-2025", produs: "Multiple", pret: 1320, produse: [{ produs: "Asfalt BA8", pret: 380 }, { produs: "Asfalt BA16", pret: 450 }, { produs: "Asfalt MASF16", pret: 490 }], transport: { tipTransport: "tona_km", pretTonaKm: 0.80 }, valabilitate: "31/03/2025", termenPlata: "45 zile", status: "Acceptat", tip: "contract", dataCreare: "01/10/2024", conditiiComerciale: "Contract cadru cu comenzi lunare", observatii: "Include BA8, BA16, MASF16", indexareCombustibil: "Ajustare lunară conform indicele ANRE" },
-  { id: 3, nr: "CTR-2024-003", client: "Alpha Roads SRL", proiect: "Dezvoltare zonă industrială", produs: "Asfalt BA16", pret: 460, produse: [{ produs: "Asfalt BA16", pret: 460 }], transport: { tipTransport: "inchiriere", pretInchiriere: 1800 }, valabilitate: "30/06/2025", termenPlata: "30 zile", status: "Draft", tip: "contract", dataCreare: "29/11/2024", conditiiComerciale: "În negociere", observatii: "Așteptare semnături", indexareCombustibil: "De stabilit" },
-];
+const initialContracte: Contract[] = [];
 
 const statusColors: Record<string, string> = {
   Draft: "bg-muted text-muted-foreground",
