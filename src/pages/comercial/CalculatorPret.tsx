@@ -309,6 +309,22 @@ const CalculatorPret = () => {
                   </p>
                 </div>
 
+                {/* Marja de Profit */}
+                <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4 text-emerald-500" />
+                      Marjă Profit ({marjaProfit}%)
+                    </span>
+                    <span className="font-semibold text-emerald-600">
+                      {formatCurrency(costBreakdown.pretRecomandat - costBreakdown.costTotal)}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {formatCurrency((costBreakdown.pretRecomandat - costBreakdown.costTotal) / parseFloat(cantitate))}/tonă
+                  </p>
+                </div>
+
                 <Separator />
 
                 {/* Cost Materii Prime */}
