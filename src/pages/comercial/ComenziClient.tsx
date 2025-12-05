@@ -729,15 +729,9 @@ const ComenziClient = () => {
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Dată/Ora</Label>
-                <Input type="datetime-local" value={form.dataOra} onChange={(e) => setForm({ ...form, dataOra: e.target.value })} />
-              </div>
-              <div className="space-y-2">
-                <Label>Fereastră încărcare</Label>
-                <Input placeholder="ex: 08:00 - 12:00" value={form.fereastraIncarcare} onChange={(e) => setForm({ ...form, fereastraIncarcare: e.target.value })} />
-              </div>
+            <div className="space-y-2">
+              <Label>Fereastră încărcare</Label>
+              <Input placeholder="ex: 08:00 - 12:00" value={form.fereastraIncarcare} onChange={(e) => setForm({ ...form, fereastraIncarcare: e.target.value })} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
