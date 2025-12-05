@@ -11,6 +11,19 @@ import { cn } from "@/lib/utils";
 // Hours for the daily view (6:00 - 22:00)
 const hours = Array.from({ length: 17 }, (_, i) => i + 6);
 
+// Color palette for different product types (recipes)
+const recipeColors: Record<string, { bg: string; border: string; text: string }> = {
+  "BA 16 rul 50/70": { bg: "bg-blue-500", border: "border-blue-600", text: "text-white" },
+  "MASF 16": { bg: "bg-emerald-500", border: "border-emerald-600", text: "text-white" },
+  "Emulsie C60B4": { bg: "bg-amber-500", border: "border-amber-600", text: "text-white" },
+  "BSC 0/31.5": { bg: "bg-purple-500", border: "border-purple-600", text: "text-white" },
+  "AB2 22.4": { bg: "bg-rose-500", border: "border-rose-600", text: "text-white" },
+};
+
+const getRecipeColor = (recipe: string) => {
+  return recipeColors[recipe] || { bg: "bg-primary", border: "border-primary", text: "text-primary-foreground" };
+};
+
 // Mock scheduled orders with dates
 const initialScheduledOrders = [
   { id: "OP-001", recipe: "BA 16 rul 50/70", quantity: 200, startHour: 7, duration: 3, status: "in_progress", date: "2025-12-05" },
@@ -279,52 +292,68 @@ const CalendarProductie = () => {
                       ))}
                     </div>
 
-                    {/* Orders row */}
-                    <div className="flex border-b border-border min-h-[80px] relative">
-                      <div className="w-24 shrink-0 p-2 bg-muted/20 border-r border-border flex items-center">
-                        <span className="text-sm font-medium">Ordine</span>
+                    {/* Orders rows - each order on its own row */}
+                    <div className="relative" style={{ minHeight: `${Math.max(selectedDayOrders.length * 56 + 16, 120)}px` }}>
+                      {/* Hour grid lines */}
+                      <div className="absolute inset-0 flex">
+                        <div className="w-24 shrink-0" />
+                        <div className="flex-1 relative">
+                          {hours.map(hour => (
+                            <div 
+                              key={hour} 
+                              className="absolute top-0 bottom-0 border-r border-border/20"
+                              style={{ left: `${((hour - 6) / 17) * 100}%` }}
+                            />
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex-1 relative">
-                        {hours.map(hour => (
-                          <div 
-                            key={hour} 
-                            className="absolute top-0 bottom-0 border-r border-border/30"
-                            style={{ left: `${((hour - 6) / 17) * 100}%`, width: `${100 / 17}%` }}
-                          />
-                        ))}
-                        {selectedDayOrders.map((order, idx) => (
-                          <Tooltip key={order.id}>
-                            <TooltipTrigger asChild>
-                              <div
-                                className={cn(
-                                  "absolute rounded-md p-1.5 transition-all cursor-pointer hover:opacity-90",
-                                  order.status === "in_progress" && "bg-primary text-primary-foreground",
-                                  order.status === "planned" && "bg-secondary text-secondary-foreground",
-                                  order.status === "draft" && "bg-muted border border-dashed border-border",
-                                  order.status === "completed" && "bg-muted/50 text-muted-foreground"
-                                )}
-                                style={{ 
-                                  left: `${((order.startHour - 6) / 17) * 100}%`,
-                                  width: `${(order.duration / 17) * 100}%`,
-                                  top: `${4 + idx * 22}px`,
-                                  height: '20px'
-                                }}
-                              >
-                                <div className="text-xs font-medium truncate">{order.id} - {order.recipe}</div>
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent side="top">
-                              <div className="text-xs space-y-1">
-                                <div className="font-medium">{order.id}</div>
-                                <div>{order.recipe}</div>
-                                <div>{order.quantity} tone</div>
-                                <div>{order.startHour}:00 - {order.startHour + order.duration}:00</div>
-                                {getStatusBadge(order.status)}
-                              </div>
-                            </TooltipContent>
-                          </Tooltip>
-                        ))}
-                      </div>
+                      
+                      {/* Order bars */}
+                      {selectedDayOrders.map((order, idx) => {
+                        const colors = getRecipeColor(order.recipe);
+                        return (
+                          <div key={order.id} className="flex border-b border-border/30 h-14 relative">
+                            <div className="w-24 shrink-0 p-2 bg-muted/10 border-r border-border flex items-center">
+                              <span className="text-xs font-medium text-muted-foreground">{order.id}</span>
+                            </div>
+                            <div className="flex-1 relative py-2">
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div
+                                    className={cn(
+                                      "absolute rounded-lg px-3 py-2 transition-all cursor-pointer shadow-md border-2",
+                                      "hover:scale-[1.02] hover:shadow-lg",
+                                      colors.bg,
+                                      colors.border,
+                                      colors.text,
+                                      order.status === "completed" && "opacity-60",
+                                      order.status === "draft" && "opacity-80 border-dashed"
+                                    )}
+                                    style={{ 
+                                      left: `${((order.startHour - 6) / 17) * 100}%`,
+                                      width: `calc(${(order.duration / 17) * 100}% - 4px)`,
+                                      top: '4px',
+                                      bottom: '4px'
+                                    }}
+                                  >
+                                    <div className="text-sm font-bold truncate">{order.recipe}</div>
+                                    <div className="text-xs opacity-90 truncate">{order.quantity} to • {order.startHour}:00-{order.startHour + order.duration}:00</div>
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent side="top" className="p-3">
+                                  <div className="space-y-2">
+                                    <div className="font-bold text-sm">{order.id}</div>
+                                    <div className="text-sm">{order.recipe}</div>
+                                    <div className="text-sm font-medium">{order.quantity} tone</div>
+                                    <div className="text-sm text-muted-foreground">{order.startHour}:00 - {order.startHour + order.duration}:00</div>
+                                    {getStatusBadge(order.status)}
+                                  </div>
+                                </TooltipContent>
+                              </Tooltip>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 </ScrollArea>
@@ -333,7 +362,7 @@ const CalendarProductie = () => {
 
             {/* Day summary */}
             {selectedDayOrders.length > 0 && (
-              <div className="flex items-center justify-between pt-4 border-t border-border mt-4">
+              <div className="pt-4 border-t border-border mt-4 space-y-3">
                 <div className="flex items-center gap-4 text-sm">
                   <div className="flex items-center gap-2">
                     <Package className="h-4 w-4 text-muted-foreground" />
@@ -343,6 +372,15 @@ const CalendarProductie = () => {
                     <Clock className="h-4 w-4 text-muted-foreground" />
                     <span><strong>{selectedDayOrders.reduce((sum, o) => sum + o.quantity, 0)}</strong> tone planificate</span>
                   </div>
+                </div>
+                {/* Recipe color legend */}
+                <div className="flex flex-wrap items-center gap-3 text-xs">
+                  {Object.entries(recipeColors).map(([recipe, colors]) => (
+                    <div key={recipe} className="flex items-center gap-1.5">
+                      <div className={cn("w-3 h-3 rounded", colors.bg)} />
+                      <span className="text-muted-foreground">{recipe}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
