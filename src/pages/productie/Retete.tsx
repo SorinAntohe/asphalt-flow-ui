@@ -196,9 +196,31 @@ const Retete = () => {
     toast.success(`Imprimare fișa rețetei ${reteta.cod_reteta}`);
   };
 
-  const handleDelete = (reteta: Reteta) => {
-    setRetete(retete.filter(r => r.id !== reteta.id));
-    toast.success(`Rețeta ${reteta.cod_reteta} a fost ștearsă`);
+  const handleDelete = async (reteta: Reteta) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/sterge`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tabel: "retete",
+          id: reteta.id
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to delete reteta');
+
+      toast.success(`Rețeta ${reteta.cod_reteta} a fost ștearsă`);
+      
+      // Refresh list
+      const refreshResponse = await fetch(`${API_BASE_URL}/productie/returneaza/retete`);
+      if (refreshResponse.ok) {
+        const data = await refreshResponse.json();
+        setRetete(Array.isArray(data) ? data : []);
+      }
+    } catch (error) {
+      console.error("Error deleting reteta:", error);
+      toast.error("Nu s-a putut șterge rețeta");
+    }
   };
 
   const handleAutocorrect = (reteta: Reteta) => {
