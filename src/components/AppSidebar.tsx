@@ -1,4 +1,4 @@
-import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog, Users, UserCheck, CalendarClock, Briefcase, Factory, Wrench, FileText, FileCheck, ShoppingCart, CalendarDays, FileBox, FlaskConical, ClipboardCheck, Layers, Calendar, GitBranch, Settings, CalendarRange, HardHat, PieChart, Clock, Scale } from "lucide-react";
+import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog, Users, UserCheck, CalendarClock, Briefcase, Factory, Wrench, FileText, FileCheck, ShoppingCart, CalendarDays, FileBox, FlaskConical, ClipboardCheck, Layers, Calendar, GitBranch, Settings, CalendarRange, HardHat, PieChart, Clock, Scale, Calculator } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -43,6 +43,7 @@ const comercialItems = [
   { title: "Oferte & Contracte", url: "/comercial/oferte-contracte", icon: FileCheck },
   { title: "Comenzi Client", url: "/comercial/comenzi", icon: ShoppingCart },
   { title: "Documente", url: "/comercial/documente", icon: FileBox },
+  { title: "Calculator Preț", url: "/comercial/calculator", icon: Calculator },
 ];
 
 // Productie module items

@@ -22,6 +22,7 @@ import NotFound from "./pages/NotFound";
 import OferteContracte from "./pages/comercial/OferteContracte";
 import ComenziClient from "./pages/comercial/ComenziClient";
 import Documente from "./pages/comercial/Documente";
+import CalculatorPret from "./pages/comercial/CalculatorPret";
 
 // Productie module pages
 import Retete from "./pages/productie/Retete";
@@ -78,6 +79,7 @@ const AppRoutes = () => (
     <Route path="/comercial/oferte-contracte" element={<ProtectedRoute><OferteContracte /></ProtectedRoute>} />
     <Route path="/comercial/comenzi" element={<ProtectedRoute><ComenziClient /></ProtectedRoute>} />
     <Route path="/comercial/documente" element={<ProtectedRoute><Documente /></ProtectedRoute>} />
+    <Route path="/comercial/calculator" element={<ProtectedRoute><CalculatorPret /></ProtectedRoute>} />
     {/* Productie module routes */}
     <Route path="/productie/retete" element={<ProtectedRoute><Retete /></ProtectedRoute>} />
     <Route path="/productie/ordine" element={<ProtectedRoute><OrdineProductie /></ProtectedRoute>} />
