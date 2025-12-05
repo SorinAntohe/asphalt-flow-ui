@@ -146,9 +146,11 @@ const OferteContracte = () => {
     setIsUploadingBiletOrdin(true);
     setBiletOrdinUploadUrl(null);
     
+    const prefix = editing ? editing.tip : activeTab === "oferte" ? "oferte" : "contracte";
+    
     try {
       const formData = new FormData();
-      formData.append("folder", "bilete_ordin_cec");
+      formData.append("folder", `${prefix}/bilete_ordin_cec`);
       formData.append("file", file);
       formData.append("return_physical_path", "false");
       
@@ -188,9 +190,11 @@ const OferteContracte = () => {
     setIsUploadingProcesVerbal(true);
     setProcesVerbalUploadUrl(null);
     
+    const prefix = editing ? editing.tip : activeTab === "oferte" ? "oferte" : "contracte";
+    
     try {
       const formData = new FormData();
-      formData.append("folder", "procese_verbale_predare_primire");
+      formData.append("folder", `${prefix}/procese_verbale_predare_primire`);
       formData.append("file", file);
       formData.append("return_physical_path", "false");
       
