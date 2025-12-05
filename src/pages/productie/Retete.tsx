@@ -41,122 +41,73 @@ interface Component {
 
 interface Reteta {
   id: number;
-  cod: string;
+  cod_reteta: string;
   denumire: string;
-  tip: "Asfalt" | "Emulsie";
-  densitateTinta: number;
-  status: "Activ" | "Arhivat";
-  ultimaModificare: string;
-  componente: Component[];
-  observatii?: string;
-  umiditate?: number;
-  temperatura?: number;
-  marshall?: number;
-  slump?: number;
+  tip: string;
+  materiale: string;
+  cantitati: string;
+  observatii: string;
 }
 
-// Mock data
-const reteteInitiale: Reteta[] = [
-  {
-    id: 1,
-    cod: "BA16-STD",
-    denumire: "Beton Asfaltic BA 16 Standard",
-    tip: "Asfalt",
-    densitateTinta: 2.45,
-    status: "Activ",
-    ultimaModificare: "28/11/2024",
-    umiditate: 4.5,
-    temperatura: 165,
-    marshall: 12,
-    observatii: "Rețetă standard pentru BA 16",
-    componente: [
-      { id: 1, material: "Criblură 8/16", cantitate: 350 },
-      { id: 2, material: "Criblură 4/8", cantitate: 250 },
-      { id: 3, material: "Nisip 0/4", cantitate: 300 },
-      { id: 4, material: "Filler", cantitate: 50 },
-      { id: 5, material: "Bitum 50/70", cantitate: 50 },
-    ],
-  },
-  {
-    id: 2,
-    cod: "BADPC22-MOD",
-    denumire: "BADPC 22.4 Modificat",
-    tip: "Asfalt",
-    densitateTinta: 2.48,
-    status: "Activ",
-    ultimaModificare: "25/11/2024",
-    umiditate: 4.0,
-    temperatura: 170,
-    marshall: 14,
-    observatii: "Rețetă modificată cu PMB",
-    componente: [
-      { id: 1, material: "Criblură 16/22", cantitate: 300 },
-      { id: 2, material: "Criblură 8/16", cantitate: 250 },
-      { id: 3, material: "Nisip 0/4", cantitate: 350 },
-      { id: 4, material: "Filler", cantitate: 40 },
-      { id: 5, material: "Bitum modificat", cantitate: 60 },
-    ],
-  },
-  {
-    id: 3,
-    cod: "EMU-CSS",
-    denumire: "Emulsie Cationică CSS-1",
-    tip: "Emulsie",
-    densitateTinta: 2.20,
-    status: "Activ",
-    ultimaModificare: "20/11/2024",
-    umiditate: 8.0,
-    slump: 5,
-    observatii: "Emulsie pentru tratamente superficiale",
-    componente: [
-      { id: 1, material: "Agregat 0/31.5", cantitate: 850 },
-      { id: 2, material: "Ciment", cantitate: 50 },
-      { id: 3, material: "Apă", cantitate: 100 },
-    ],
-  },
-  {
-    id: 4,
-    cod: "EMU-RS2",
-    denumire: "Emulsie Rapid Set RS-2",
-    tip: "Emulsie",
-    densitateTinta: 1.85,
-    status: "Arhivat",
-    ultimaModificare: "01/10/2024",
-    componente: [
-      { id: 1, material: "Pietriș 31.5/63", cantitate: 400 },
-      { id: 2, material: "Pietriș 8/31.5", cantitate: 350 },
-      { id: 3, material: "Nisip 0/8", cantitate: 250 },
-    ],
-  },
-];
-
-const getStatusBadge = (status: Reteta["status"]) => {
-  switch (status) {
-    case "Activ":
-      return <Badge className="gap-1 bg-green-600 hover:bg-green-700"><CheckCircle2 className="h-3 w-3" />Activ</Badge>;
-    case "Arhivat":
-      return <Badge variant="secondary" className="gap-1"><Archive className="h-3 w-3" />Arhivat</Badge>;
-  }
+// Helper to parse API data into components for display
+const parseComponents = (materiale: string, cantitati: string): Component[] => {
+  if (!materiale || !cantitati) return [];
+  const materials = materiale.split(",").map(m => m.trim());
+  const quantities = cantitati.split(",").map(q => parseFloat(q.trim()) || 0);
+  return materials.map((material, idx) => ({
+    id: idx + 1,
+    material,
+    cantitate: quantities[idx] || 0
+  }));
 };
 
-const getTipBadge = (tip: Reteta["tip"]) => {
+const getTipBadge = (tip: string) => {
   switch (tip) {
     case "Asfalt":
       return <Badge variant="outline" className="border-orange-500 text-orange-600">Asfalt</Badge>;
     case "Emulsie":
       return <Badge variant="outline" className="border-blue-500 text-blue-600">Emulsie</Badge>;
+    default:
+      return <Badge variant="outline">{tip}</Badge>;
   }
 };
 
 const Retete = () => {
-  const [retete, setRetete] = useState<Reteta[]>(reteteInitiale);
-  const [filters, setFilters] = useState({ cod: "", denumire: "", tip: "all", status: "all" });
+  const [retete, setRetete] = useState<Reteta[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({ cod: "", denumire: "", tip: "all" });
   const [sort, setSort] = useState<{ key: string; direction: "asc" | "desc" | null }>({ key: "", direction: null });
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
+  // Editor form state
+  const [editorForm, setEditorForm] = useState({
+    denumire: "",
+    tip: "Asfalt",
+    observatii: ""
+  });
+  
   // Materii prime list
   const [materiiPrimeList, setMateriiPrimeList] = useState<{ id: number; denumire: string }[]>([]);
+  
+  // Fetch retete on mount
+  useEffect(() => {
+    const fetchRetete = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${API_BASE_URL}/productie/returneaza/retete`);
+        if (!response.ok) throw new Error("Eroare la încărcarea rețetelor");
+        const data = await response.json();
+        setRetete(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Error fetching retete:", error);
+        toast.error("Nu s-au putut încărca rețetele");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRetete();
+  }, []);
   
   // Fetch materii prime on mount
   useEffect(() => {
@@ -192,10 +143,9 @@ const Retete = () => {
   // Filtered and sorted
   const filteredRetete = useMemo(() => {
     let result = retete.filter(r => {
-      if (filters.cod && !r.cod.toLowerCase().includes(filters.cod.toLowerCase())) return false;
-      if (filters.denumire && !r.denumire.toLowerCase().includes(filters.denumire.toLowerCase())) return false;
+      if (filters.cod && !r.cod_reteta?.toLowerCase().includes(filters.cod.toLowerCase())) return false;
+      if (filters.denumire && !r.denumire?.toLowerCase().includes(filters.denumire.toLowerCase())) return false;
       if (filters.tip !== "all" && r.tip !== filters.tip) return false;
-      if (filters.status !== "all" && r.status !== filters.status) return false;
       return true;
     });
 
@@ -226,16 +176,16 @@ const Retete = () => {
   }), [retete]);
 
   const handleDuplicate = (reteta: Reteta) => {
-    toast.success(`Rețeta ${reteta.cod} duplicată cu succes`);
+    toast.success(`Rețeta ${reteta.cod_reteta} duplicată cu succes`);
   };
 
   const handlePrint = (reteta: Reteta) => {
-    toast.success(`Imprimare fișa rețetei ${reteta.cod}`);
+    toast.success(`Imprimare fișa rețetei ${reteta.cod_reteta}`);
   };
 
   const handleDelete = (reteta: Reteta) => {
     setRetete(retete.filter(r => r.id !== reteta.id));
-    toast.success(`Rețeta ${reteta.cod} a fost ștearsă`);
+    toast.success(`Rețeta ${reteta.cod_reteta} a fost ștearsă`);
   };
 
   const handleAutocorrect = (reteta: Reteta) => {
@@ -244,8 +194,67 @@ const Retete = () => {
 
   // Open editor dialog with initialized state
   const openEditorDialog = (reteta: Reteta | null, isNew: boolean) => {
-    setEditorComponents(reteta?.componente || []);
+    if (reteta) {
+      setEditorComponents(parseComponents(reteta.materiale, reteta.cantitati));
+      setEditorForm({
+        denumire: reteta.denumire || "",
+        tip: reteta.tip || "Asfalt",
+        observatii: reteta.observatii || ""
+      });
+    } else {
+      setEditorComponents([]);
+      setEditorForm({
+        denumire: "",
+        tip: "Asfalt",
+        observatii: ""
+      });
+    }
     setEditorDialog({ reteta, isNew });
+  };
+
+  // Save reteta to API
+  const handleSaveReteta = async () => {
+    if (!editorForm.denumire.trim()) {
+      toast.error("Denumirea este obligatorie");
+      return;
+    }
+    if (editorComponents.length === 0) {
+      toast.error("Adăugați cel puțin un material");
+      return;
+    }
+
+    const materiale = editorComponents.map(c => c.material).join(",");
+    const cantitati = editorComponents.map(c => c.cantitate).join(",");
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/productie/adauga/reteta`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          denumire: editorForm.denumire,
+          tip: editorForm.tip,
+          materiale,
+          cantitati,
+          observatii: editorForm.observatii
+        })
+      });
+
+      if (!response.ok) throw new Error("Eroare la salvarea rețetei");
+      
+      const result = await response.json();
+      toast.success("Rețetă salvată cu succes");
+      setEditorDialog(null);
+      
+      // Refresh list
+      const refreshResponse = await fetch(`${API_BASE_URL}/productie/returneaza/retete`);
+      if (refreshResponse.ok) {
+        const data = await refreshResponse.json();
+        setRetete(Array.isArray(data) ? data : []);
+      }
+    } catch (error) {
+      console.error("Error saving reteta:", error);
+      toast.error("Eroare la salvarea rețetei");
+    }
   };
 
   // Add new component
@@ -353,7 +362,7 @@ const Retete = () => {
                   <TableHead>
                     <DataTableColumnHeader
                       title="Cod"
-                      sortKey="cod"
+                      sortKey="cod_reteta"
                       currentSort={sort}
                       onSort={(key, dir) => setSort({ key, direction: dir })}
                       filterValue={filters.cod}
@@ -378,7 +387,15 @@ const Retete = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedRetete.length === 0 ? (
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8">
+                      <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                        Se încarcă...
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : paginatedRetete.length === 0 ? (
                   <DataTableEmpty colSpan={5} message="Nu există rețete." />
                 ) : (
                   paginatedRetete.map((reteta) => (
@@ -387,7 +404,7 @@ const Retete = () => {
                       className="cursor-pointer hover:bg-muted/50"
                       onClick={() => setPeekDrawer(reteta)}
                     >
-                      <TableCell className="font-medium font-mono">{reteta.cod}</TableCell>
+                      <TableCell className="font-medium font-mono">{reteta.cod_reteta}</TableCell>
                       <TableCell>{reteta.denumire}</TableCell>
                       <TableCell>{getTipBadge(reteta.tip)}</TableCell>
                       <TableCell className="text-muted-foreground max-w-[200px] truncate">{reteta.observatii || "-"}</TableCell>
@@ -447,7 +464,7 @@ const Retete = () => {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="p-3 rounded-lg bg-muted/50">
                   <div className="text-sm text-muted-foreground">Cod Rețetă</div>
-                  <p className="font-semibold mt-1">{peekDrawer.cod}</p>
+                  <p className="font-semibold mt-1">{peekDrawer.cod_reteta}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-muted/50">
                   <div className="text-sm text-muted-foreground">Denumire</div>
@@ -481,14 +498,14 @@ const Retete = () => {
                       <TableHead>Material</TableHead>
                       <TableHead className="text-right">
                         <div>Cantitate (kg/tonă)</div>
-                        <div className={`text-xs font-medium mt-1 ${getTotalCantitate(peekDrawer.componente) === 1000 ? 'text-green-600' : 'text-destructive'}`}>
-                          Total: {getTotalCantitate(peekDrawer.componente)} kg
+                        <div className={`text-xs font-medium mt-1 ${getTotalCantitate(parseComponents(peekDrawer.materiale, peekDrawer.cantitati)) === 1000 ? 'text-green-600' : 'text-destructive'}`}>
+                          Total: {getTotalCantitate(parseComponents(peekDrawer.materiale, peekDrawer.cantitati))} kg
                         </div>
                       </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {peekDrawer.componente.map((comp) => (
+                    {parseComponents(peekDrawer.materiale, peekDrawer.cantitati).map((comp) => (
                       <TableRow key={comp.id}>
                         <TableCell>{comp.material}</TableCell>
                         <TableCell className="text-right font-medium">{comp.cantitate} kg</TableCell>
@@ -519,7 +536,7 @@ const Retete = () => {
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col" hideCloseButton>
           <DialogHeader>
             <DialogTitle>
-              {editorDialog?.isNew ? "Adaugă Rețetă Nouă" : `Editează ${editorDialog?.reteta?.cod}`}
+              {editorDialog?.isNew ? "Adaugă Rețetă Nouă" : `Editează ${editorDialog?.reteta?.cod_reteta}`}
             </DialogTitle>
             <DialogDescription>
               Configurați componența rețetei
@@ -528,18 +545,21 @@ const Retete = () => {
 
           <ScrollArea className="flex-1 mt-4">
             <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label>Cod Rețetă</Label>
-                  <Input defaultValue={editorDialog?.reteta?.cod || ""} placeholder="ex: BA16-STD" />
-                </div>
-                <div>
-                  <Label>Denumire</Label>
-                  <Input defaultValue={editorDialog?.reteta?.denumire || ""} placeholder="Denumire completă" />
+                  <Label>Denumire *</Label>
+                  <Input 
+                    value={editorForm.denumire} 
+                    onChange={(e) => setEditorForm(prev => ({ ...prev, denumire: e.target.value }))}
+                    placeholder="Denumire completă" 
+                  />
                 </div>
                 <div>
                   <Label>Tip</Label>
-                  <Select defaultValue={editorDialog?.reteta?.tip || "Asfalt"}>
+                  <Select 
+                    value={editorForm.tip} 
+                    onValueChange={(v) => setEditorForm(prev => ({ ...prev, tip: v }))}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -628,7 +648,8 @@ const Retete = () => {
               <div>
                 <Label>Observații</Label>
                 <textarea 
-                  defaultValue={editorDialog?.reteta?.observatii || ""} 
+                  value={editorForm.observatii} 
+                  onChange={(e) => setEditorForm(prev => ({ ...prev, observatii: e.target.value }))}
                   placeholder="Observații generale pentru această rețetă..."
                   className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 mt-1"
                 />
@@ -638,7 +659,7 @@ const Retete = () => {
 
           <DialogFooter className="mt-4">
             <Button variant="outline" onClick={() => setEditorDialog(null)}>Anulează</Button>
-            <Button onClick={() => { toast.success("Rețetă salvată"); setEditorDialog(null); }}>
+            <Button onClick={handleSaveReteta}>
               Salvează
             </Button>
           </DialogFooter>
@@ -654,7 +675,7 @@ const Retete = () => {
               Autocorecție Umiditate
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Ajustări propuse pentru rețeta {autocorrectDialog?.cod} bazate pe umiditatea curentă a agregatelor:
+              Ajustări propuse pentru rețeta {autocorrectDialog?.cod_reteta} bazate pe umiditatea curentă a agregatelor:
             </AlertDialogDescription>
           </AlertDialogHeader>
           
