@@ -318,20 +318,18 @@ const ComenziClient = () => {
         if (!response.ok) throw new Error("Eroare la editare");
         toast({ title: "Succes", description: "Comanda a fost actualizată." });
       } else {
-        // Add new - match backend Pydantic model
+        // Add new - match backend ComenziClient Pydantic model
         const payload = {
           client: form.client,
           produs: form.produs,
           cantitate: form.cantitate,
-          tip_transport: "",
-          pret_transport: "",
-          valabilitate: "",
-          termen_de_plata: 0,
-          avans_de_plata: form.avans_plata,
+          avans: form.avans_plata,
+          unitate_masura: form.unitate_masura,
+          fereastra_incarcare: form.fereastra_incarcare,
+          prioritate: form.prioritate,
+          punct_descarcare: form.punct_descarcare,
           observatii: form.observatii,
           status: form.status,
-          locatie_bilet_ordin_cec: "",
-          locatie_proces_verbal_predare_primire: "",
         };
         const response = await fetch(`${API_BASE_URL}/comercial/adauga/comanda`, {
           method: "POST",
