@@ -113,12 +113,14 @@ const Retete = () => {
   useEffect(() => {
     const fetchMateriiPrime = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/returneaza_materii_prime`);
-        if (!response.ok) throw new Error("Eroare la încărcarea materiilor prime");
+        const response = await fetch(`${API_BASE_URL}/returneaza_materiale`);
+        if (!response.ok) throw new Error("Eroare la încărcarea materialelor");
         const data = await response.json();
-        setMateriiPrimeList(data || []);
+        // Use materiale_prime from response
+        const materiale = data?.materiale_prime || [];
+        setMateriiPrimeList(materiale);
       } catch (error) {
-        console.error("Error fetching materii prime:", error);
+        console.error("Error fetching materiale:", error);
       }
     };
     fetchMateriiPrime();
