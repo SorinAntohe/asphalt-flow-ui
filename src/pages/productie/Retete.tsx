@@ -262,22 +262,44 @@ const Retete = () => {
     const cantitati = editorComponents.map(c => c.cantitate).join(",");
 
     try {
-      const response = await fetch(`${API_BASE_URL}/productie/adauga/reteta`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          denumire: editorForm.denumire,
-          tip: editorForm.tip,
-          materiale,
-          cantitati,
-          observatii: editorForm.observatii
-        })
-      });
+      if (editorDialog?.reteta && !editorDialog.isNew) {
+        // Edit existing reteta
+        const response = await fetch(`${API_BASE_URL}/editeaza`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            tabel: "retete",
+            id: editorDialog.reteta.id,
+            update: {
+              denumire: editorForm.denumire,
+              tip: editorForm.tip,
+              materiale,
+              cantitati,
+              observatii: editorForm.observatii
+            }
+          })
+        });
 
-      if (!response.ok) throw new Error("Eroare la salvarea rețetei");
+        if (!response.ok) throw new Error("Eroare la editarea rețetei");
+        toast.success("Rețetă actualizată cu succes");
+      } else {
+        // Add new reteta
+        const response = await fetch(`${API_BASE_URL}/productie/adauga/reteta`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            denumire: editorForm.denumire,
+            tip: editorForm.tip,
+            materiale,
+            cantitati,
+            observatii: editorForm.observatii
+          })
+        });
+
+        if (!response.ok) throw new Error("Eroare la salvarea rețetei");
+        toast.success("Rețetă adăugată cu succes");
+      }
       
-      const result = await response.json();
-      toast.success("Rețetă salvată cu succes");
       setEditorDialog(null);
       
       // Refresh list
