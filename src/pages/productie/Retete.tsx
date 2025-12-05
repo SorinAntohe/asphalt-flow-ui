@@ -622,12 +622,12 @@ const Retete = () => {
                                 className="h-8 min-w-[180px]"
                               />
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="text-right">
                               <Input 
                                 type="number" 
                                 value={comp.cantitate} 
                                 onChange={(e) => handleUpdateComponent(comp.id, "cantitate", parseFloat(e.target.value) || 0)}
-                                className="h-8 w-24 text-right" 
+                                className="h-8 w-24 text-right ml-auto" 
                                 placeholder="kg"
                               />
                             </TableCell>
