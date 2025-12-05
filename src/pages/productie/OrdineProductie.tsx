@@ -101,109 +101,24 @@ const statusConfig: Record<string, { variant: "default" | "secondary" | "destruc
   "Finalizat": { variant: "outline", icon: <CheckCircle2 className="h-3 w-3" />, color: "bg-emerald-500 text-white" }
 };
 
-// Mock data for display
-const mockOrdine: OrdinProductie[] = [
-  {
-    id: 1,
-    numar: "OP-2024-001",
-    produse: [
-      { produs: "BA16 - Beton Asfaltic", cantitate: 300, reteta: "R001 - Rețetă BA16" },
-      { produs: "MASF16 - Mixtură Asfaltică", cantitate: 200, reteta: "R002 - Rețetă MASF16" }
-    ],
-    cantitateTotala: 500,
-    unitateMasura: "tone",
-    startPlanificat: "15/01/2024 08:00",
-    operator: "Ion Popescu",
-    sefSchimb: "Gheorghe Ionescu",
-    status: "În lucru" as const,
-    observatii: "Comandă urgentă pentru autostradă",
-    consumEstimat: [
-      { material: "Bitum 50/70", cantitate: 25, disponibil: 100 },
-      { material: "Agregat 0/4", cantitate: 200, disponibil: 250 },
-      { material: "Agregat 4/8", cantitate: 150, disponibil: 180 },
-      { material: "Filler", cantitate: 40, disponibil: 60 }
-    ],
-    rezervariStoc: [],
-    loturiAsociate: ["LOT-001", "LOT-002"],
-    atasamente: [],
-    comenziAsociate: ["CMD-2024-001"]
-  },
-  {
-    id: 2,
-    numar: "OP-2024-002",
-    produse: [
-      { produs: "MASF16 - Mixtură Asfaltică", cantitate: 300, reteta: "R002 - Rețetă MASF16" }
-    ],
-    cantitateTotala: 300,
-    unitateMasura: "tone",
-    startPlanificat: "15/01/2024 14:00",
-    operator: "Maria Dumitrescu",
-    sefSchimb: "Gheorghe Ionescu",
-    status: "Planificat" as const,
-    observatii: "",
-    consumEstimat: [
-      { material: "Bitum 50/70", cantitate: 15, disponibil: 100 },
-      { material: "Agregat 0/4", cantitate: 120, disponibil: 250 },
-      { material: "Agregat 4/8", cantitate: 90, disponibil: 180 },
-      { material: "Filler", cantitate: 24, disponibil: 60 }
-    ],
-    rezervariStoc: [],
-    loturiAsociate: [],
-    atasamente: [],
-    comenziAsociate: ["CMD-2024-003"]
-  },
-  {
-    id: 3,
-    numar: "OP-2024-003",
-    produse: [
-      { produs: "BSC - Beton Stabilizat", cantitate: 500, reteta: "R003 - Rețetă BSC" }
-    ],
-    cantitateTotala: 500,
-    unitateMasura: "tone",
-    startPlanificat: "16/01/2024 06:00",
-    operator: "Andrei Vasilescu",
-    sefSchimb: "Mihai Constantinescu",
-    status: "Planificat" as const,
-    observatii: "Așteaptă aprobare tehnică",
-    consumEstimat: [
-      { material: "Ciment", cantitate: 75, disponibil: 200 },
-      { material: "Nisip", cantitate: 250, disponibil: 400 },
-      { material: "Pietriș", cantitate: 175, disponibil: 300 }
-    ],
-    rezervariStoc: [],
-    loturiAsociate: [],
-    atasamente: [],
-    comenziAsociate: []
-  },
-  {
-    id: 4,
-    numar: "OP-2024-004",
-    produse: [
-      { produs: "BA16 - Beton Asfaltic", cantitate: 250, reteta: "R001 - Rețetă BA16" }
-    ],
-    cantitateTotala: 250,
-    unitateMasura: "tone",
-    startPlanificat: "14/01/2024 08:00",
-    operator: "Elena Stanciu",
-    sefSchimb: "Gheorghe Ionescu",
-    status: "Finalizat" as const,
-    observatii: "Finalizat conform planului",
-    consumEstimat: [
-      { material: "Bitum 50/70", cantitate: 12.5, disponibil: 100 },
-      { material: "Agregat 0/4", cantitate: 100, disponibil: 250 },
-      { material: "Agregat 4/8", cantitate: 75, disponibil: 180 },
-      { material: "Filler", cantitate: 20, disponibil: 60 }
-    ],
-    rezervariStoc: [],
-    loturiAsociate: ["LOT-003", "LOT-004"],
-    atasamente: [],
-    comenziAsociate: ["CMD-2024-004"]
-  }
-];
+// API response interface
+interface OrdinApiResponse {
+  cod_ordin: string;
+  id: string;
+  produse: string;
+  cantitati: string;
+  operator?: string;
+  sef_schimb?: string;
+  status?: string;
+  data_start?: string;
+  observatii?: string;
+  comenzi_asociate?: string;
+}
 
 const OrdineProductie = () => {
   const navigate = useNavigate();
-  const [ordine, setOrdine] = useState<OrdinProductie[]>(mockOrdine);
+  const [ordine, setOrdine] = useState<OrdinProductie[]>([]);
+  const [ordineLoading, setOrdineLoading] = useState(true);
   const [activeView, setActiveView] = useState<"list" | "kanban" | "calendar">("list");
   const [selectedOrdin, setSelectedOrdin] = useState<OrdinProductie | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
@@ -285,11 +200,61 @@ const OrdineProductie = () => {
       }
     };
 
+    const fetchOrdine = async () => {
+      setOrdineLoading(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/productie/returneaza/ordine`);
+        if (response.ok) {
+          const data: OrdinApiResponse[] = await response.json();
+          
+          // Transform API data to OrdinProductie format
+          const transformedOrdine: OrdinProductie[] = data.map((item, index) => {
+            // Parse concatenated produse and cantitati
+            const produseArray = item.produse ? item.produse.split(", ") : [];
+            const cantitatiArray = item.cantitati ? item.cantitati.split(", ").map(c => parseFloat(c) || 0) : [];
+            
+            const produse: ProdusOrdin[] = produseArray.map((produs, i) => ({
+              produs: produs,
+              cantitate: cantitatiArray[i] || 0,
+              reteta: "" // Will be fetched separately if needed
+            }));
+            
+            const cantitateTotala = cantitatiArray.reduce((sum, c) => sum + c, 0);
+            
+            return {
+              id: parseInt(item.id.split(", ")[0]) || index + 1,
+              numar: item.cod_ordin,
+              produse: produse,
+              cantitateTotala: cantitateTotala,
+              unitateMasura: "tone",
+              startPlanificat: item.data_start || "",
+              operator: item.operator || "",
+              sefSchimb: item.sef_schimb || "",
+              status: (item.status as "Planificat" | "În lucru" | "Finalizat") || "Planificat",
+              observatii: item.observatii || "",
+              consumEstimat: [],
+              rezervariStoc: [],
+              loturiAsociate: [],
+              atasamente: [],
+              comenziAsociate: item.comenzi_asociate ? item.comenzi_asociate.split(", ").filter(Boolean) : []
+            };
+          });
+          
+          setOrdine(transformedOrdine);
+        }
+      } catch (error) {
+        console.error("Error fetching ordine:", error);
+      } finally {
+        setOrdineLoading(false);
+      }
+    };
+
     fetchOperatori();
     fetchSefiSchimb();
     fetchProduseFinite();
     fetchRetete();
     fetchComenzi();
+    fetchOrdine();
   }, []);
 
   // Fetch estimare when detail dialog opens
@@ -825,7 +790,16 @@ const OrdineProductie = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {paginatedOrdine.length === 0 ? (
+                    {ordineLoading ? (
+                      <TableRow>
+                        <TableCell colSpan={7} className="h-24 text-center">
+                          <div className="flex items-center justify-center">
+                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                            <span className="ml-2 text-muted-foreground">Se încarcă...</span>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ) : paginatedOrdine.length === 0 ? (
                       <DataTableEmpty colSpan={7} message="Nu există ordine de producție" />
                     ) : (
                       paginatedOrdine.map((ordin) => (
@@ -851,7 +825,7 @@ const OrdineProductie = () => {
                                     {ordin.produse.map((p, idx) => (
                                       <div key={idx} className="text-xs">
                                         <span className="font-medium">{p.produs}</span>
-                                        <span className="text-muted-foreground"> - {p.cantitate}t ({p.reteta})</span>
+                                        <span className="text-muted-foreground"> - {p.cantitate}t ({p.reteta || "fără rețetă"})</span>
                                       </div>
                                     ))}
                                   </div>
@@ -860,16 +834,16 @@ const OrdineProductie = () => {
                             </TooltipProvider>
                           </TableCell>
                           <TableCell className="font-semibold">{ordin.cantitateTotala} {ordin.unitateMasura}</TableCell>
-                          <TableCell>{ordin.startPlanificat}</TableCell>
+                          <TableCell>{ordin.startPlanificat || "-"}</TableCell>
                           <TableCell>
                             <div className="flex flex-col">
-                              <span>{ordin.operator}</span>
-                              <span className="text-xs text-muted-foreground">{ordin.sefSchimb}</span>
+                              <span>{ordin.operator || "-"}</span>
+                              <span className="text-xs text-muted-foreground">{ordin.sefSchimb || "-"}</span>
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Badge variant={statusConfig[ordin.status].variant} className="gap-1">
-                              {statusConfig[ordin.status].icon}
+                            <Badge variant={statusConfig[ordin.status]?.variant || "secondary"} className="gap-1">
+                              {statusConfig[ordin.status]?.icon}
                               {ordin.status}
                             </Badge>
                           </TableCell>
