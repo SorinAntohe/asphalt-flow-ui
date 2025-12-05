@@ -689,11 +689,27 @@ const ComenziClient = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Client *</Label>
-                <Input placeholder="Nume client" value={form.client} onChange={(e) => setForm({ ...form, client: e.target.value })} />
+                <Select value={form.client} onValueChange={(v) => setForm({ ...form, client: v })}>
+                  <SelectTrigger><SelectValue placeholder="Selectează client" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Client 1">Client 1</SelectItem>
+                    <SelectItem value="Client 2">Client 2</SelectItem>
+                    <SelectItem value="Client 3">Client 3</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label>Produs *</Label>
-                <Input placeholder="Nume produs" value={form.produs} onChange={(e) => setForm({ ...form, produs: e.target.value })} />
+                <Select value={form.produs} onValueChange={(v) => setForm({ ...form, produs: v })}>
+                  <SelectTrigger><SelectValue placeholder="Selectează produs" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Asfalt BA16">Asfalt BA16</SelectItem>
+                    <SelectItem value="Asfalt BA8">Asfalt BA8</SelectItem>
+                    <SelectItem value="Asfalt MASF16">Asfalt MASF16</SelectItem>
+                    <SelectItem value="Emulsie cationică">Emulsie cationică</SelectItem>
+                    <SelectItem value="Beton C25/30">Beton C25/30</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div className="grid grid-cols-3 gap-4">
