@@ -283,24 +283,51 @@ const Retete = () => {
         if (!response.ok) throw new Error("Eroare la editarea rețetei");
         toast.success("Rețetă actualizată cu succes");
       } else {
-        // Add new reteta
-        const response = await fetch(`${API_BASE_URL}/productie/adauga/reteta`, {
+        // Add new reteta - send each material separately
+        const basePayload = {
+          denumire: editorForm.denumire,
+          tip: editorForm.tip,
+          observatii: editorForm.observatii
+        };
+        
+        // First call without cod_reteta to get the generated code
+        const firstComponent = editorComponents[0];
+        const firstPayload = {
+          ...basePayload,
+          materiale: firstComponent.material,
+          cantitati: String(firstComponent.cantitate),
+        };
+        
+        console.log("Sending first reteta payload:", firstPayload);
+        
+        const firstResponse = await fetch(`${API_BASE_URL}/productie/adauga/reteta`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            denumire: editorForm.denumire,
-            tip: editorForm.tip,
-            materiale,
-            cantitati,
-            observatii: editorForm.observatii
-          })
+          body: JSON.stringify(firstPayload)
         });
 
-        if (!response.ok) throw new Error("Eroare la salvarea rețetei");
+        if (!firstResponse.ok) throw new Error("Eroare la salvarea rețetei");
         
-        const result = await response.json();
-        const codReteta = result.cod_reteta;
+        const firstResult = await firstResponse.json();
+        const codReteta = firstResult.cod_reteta;
         console.log("Cod reteta generat:", codReteta);
+        
+        // For remaining components, use the same cod_reteta
+        for (let i = 1; i < editorComponents.length; i++) {
+          const component = editorComponents[i];
+          const payload = {
+            ...basePayload,
+            cod_reteta: codReteta,
+            materiale: component.material,
+            cantitati: String(component.cantitate),
+          };
+          
+          await fetch(`${API_BASE_URL}/productie/adauga/reteta`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+        }
         
         toast.success(`Rețetă ${codReteta || ''} adăugată cu succes`);
       }
