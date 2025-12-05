@@ -569,7 +569,7 @@ const OferteContracte = () => {
           const payload = {
             tabel: "lista_oferte",
             id: editing.id,
-            data: {
+            update: {
               client: form.client,
               proiect_santier: form.proiect,
               produse: produseList,
