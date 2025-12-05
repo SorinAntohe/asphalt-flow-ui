@@ -128,10 +128,11 @@ const Retete = () => {
   
   // Transform to options for FilterableSelect
   const materiiPrimeOptions = useMemo(() => {
-    return materiiPrimeList.map((mp: any) => ({
-      value: mp.denumire || mp.material || mp.nume || String(mp.id),
-      label: mp.denumire || mp.material || mp.nume || String(mp.id)
-    }));
+    return materiiPrimeList.map((mp: any) => {
+      // Handle both string array and object array
+      const value = typeof mp === 'string' ? mp : (mp.denumire || mp.material || mp.nume || String(mp.id));
+      return { value, label: value };
+    });
   }, [materiiPrimeList]);
   
   // Dialogs & Drawers
