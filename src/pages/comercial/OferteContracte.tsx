@@ -809,11 +809,13 @@ const OferteContracte = () => {
           
           const termenPlataNumber = parseFloat(form.termenPlata.replace(/[^0-9]/g, '')) || 0;
           
-          // Build payload with all products
-          const payload = {
-            oferta: {
+          // Call API for each product
+          for (const produs of validProduse) {
+            const payload = {
               client: form.client,
               proiect_santier: form.proiect,
+              produs: produs.produs,
+              pret_produs: produs.pret,
               tip_transport: tipTransport,
               pret_transport: pretTransport,
               valabilitate: form.valabilitate,
@@ -823,18 +825,14 @@ const OferteContracte = () => {
               status: "In curs de aprobare",
               locatie_bilet_ordin_cec: biletOrdinUploadUrl || "",
               locatie_proces_verbal_predare_primire: procesVerbalUploadUrl || "",
-            },
-            produse: validProduse.map(p => ({
-              produs: p.produs,
-              pret: p.pret
-            }))
-          };
-          
-          await fetch(`${API_BASE_URL}/comercial/adauga/oferta`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
+            };
+            
+            await fetch(`${API_BASE_URL}/comercial/adauga/oferta`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+          }
           
           toast({ title: "Succes", description: "Oferta a fost adăugată." });
           fetchOferte();
