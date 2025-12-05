@@ -1,8 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { 
   ShoppingCart, Plus, Download, Calendar as CalendarIcon, List, Columns3, 
-  Package, FileText, Clock, Paperclip,
-  ChevronLeft, ChevronRight, Pencil, Trash2, TrendingUp
+  Package, FileText, Clock, Paperclip, Pencil, Trash2, TrendingUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,8 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { exportToCSV } from "@/lib/exportUtils";
-import { format, addDays, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay, parseISO } from "date-fns";
-import { ro } from "date-fns/locale";
+import { format } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
@@ -65,7 +63,7 @@ const kanbanStatuses: OrderStatus[] = ["Preaprobat", "Aprobat", "Planificat", "I
 
 const ComenziClient = () => {
   const { toast } = useToast();
-  const [activeView, setActiveView] = useState<"lista" | "kanban" | "calendar">("lista");
+  const [activeView, setActiveView] = useState<"lista" | "kanban">("lista");
   const [loading, setLoading] = useState(false);
   
   // Data state
@@ -145,10 +143,6 @@ const ComenziClient = () => {
   const [editing, setEditing] = useState<ComandaClient | null>(null);
   const [openPlanificare, setOpenPlanificare] = useState(false);
   
-  // Calendar state
-  const [calendarView, setCalendarView] = useState<"zi" | "saptamana">("saptamana");
-  const [currentDate, setCurrentDate] = useState(new Date());
-  
   // Form state
   const [form, setForm] = useState({
     client: "",
@@ -218,23 +212,6 @@ const ComenziClient = () => {
   // Pagination
   const totalPages = Math.ceil(filteredComenzi.length / itemsPerPage);
   const paginatedComenzi = filteredComenzi.slice((page - 1) * itemsPerPage, page * itemsPerPage);
-
-  // Calendar helpers
-  const getWeekDays = () => {
-    const start = startOfWeek(currentDate, { weekStartsOn: 1 });
-    const end = endOfWeek(currentDate, { weekStartsOn: 1 });
-    return eachDayOfInterval({ start, end });
-  };
-
-  const getComenziForDate = (date: Date) => {
-    return filteredComenzi.filter(c => {
-      if (!c.data) return false;
-      // data is in DD/MM/YYYY format
-      const [day, month, year] = c.data.split('/');
-      const comandaDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-      return isSameDay(comandaDate, date);
-    });
-  };
 
   const handleExport = () => {
     const columns = [
@@ -464,11 +441,10 @@ const ComenziClient = () => {
 
 
       {/* Views Tabs */}
-      <Tabs value={activeView} onValueChange={(v) => setActiveView(v as "lista" | "kanban" | "calendar")}>
+      <Tabs value={activeView} onValueChange={(v) => setActiveView(v as "lista" | "kanban")}>
         <TabsList>
           <TabsTrigger value="lista"><List className="h-4 w-4 mr-2" />Listă</TabsTrigger>
           <TabsTrigger value="kanban"><Columns3 className="h-4 w-4 mr-2" />Kanban</TabsTrigger>
-          <TabsTrigger value="calendar"><CalendarIcon className="h-4 w-4 mr-2" />Calendar</TabsTrigger>
         </TabsList>
 
         {/* List View */}
@@ -598,86 +574,6 @@ const ComenziClient = () => {
               );
             })}
           </div>
-        </TabsContent>
-
-        {/* Calendar View */}
-        <TabsContent value="calendar" className="mt-4">
-          <Card>
-            <CardHeader className="p-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentDate(d => addDays(d, calendarView === "zi" ? -1 : -7))}>
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <span className="font-medium text-sm">
-                    {calendarView === "zi" 
-                      ? format(currentDate, "EEEE, d MMMM yyyy", { locale: ro })
-                      : `${format(startOfWeek(currentDate, { weekStartsOn: 1 }), "d MMM", { locale: ro })} - ${format(endOfWeek(currentDate, { weekStartsOn: 1 }), "d MMM yyyy", { locale: ro })}`
-                    }
-                  </span>
-                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentDate(d => addDays(d, calendarView === "zi" ? 1 : 7))}>
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button variant={calendarView === "zi" ? "default" : "outline"} size="sm" onClick={() => setCalendarView("zi")}>Zi</Button>
-                  <Button variant={calendarView === "saptamana" ? "default" : "outline"} size="sm" onClick={() => setCalendarView("saptamana")}>Săptămână</Button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="p-3">
-              {calendarView === "saptamana" ? (
-                <div className="grid grid-cols-7 gap-2">
-                  {getWeekDays().map((day) => {
-                    const dayComenzi = getComenziForDate(day);
-                    const isToday = isSameDay(day, new Date());
-                    return (
-                      <div key={day.toISOString()} className={`min-h-[200px] border rounded-lg p-2 ${isToday ? 'border-primary bg-primary/5' : 'border-border'}`}>
-                        <div className="text-center mb-2">
-                          <p className="text-xs text-muted-foreground">{format(day, "EEE", { locale: ro })}</p>
-                          <p className={`text-lg font-medium ${isToday ? 'text-primary' : ''}`}>{format(day, "d")}</p>
-                        </div>
-                        <div className="space-y-1">
-                          {dayComenzi.slice(0, 3).map((comanda) => (
-                            <div key={comanda.id} className="text-xs p-1.5 rounded bg-primary/10 cursor-pointer hover:bg-primary/20" onClick={() => setViewingDetails(comanda)}>
-                              <p className="font-medium truncate">{comanda.client}</p>
-                              <p className="text-muted-foreground truncate">{comanda.produs}</p>
-                            </div>
-                          ))}
-                          {dayComenzi.length > 3 && (
-                            <p className="text-xs text-muted-foreground text-center">+{dayComenzi.length - 3} mai mult</p>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {getComenziForDate(currentDate).length === 0 ? (
-                    <p className="text-center text-muted-foreground py-8">Nicio comandă pentru această zi.</p>
-                  ) : (
-                    getComenziForDate(currentDate).map((comanda) => (
-                      <Card key={comanda.id} className="cursor-pointer hover:shadow-md" onClick={() => setViewingDetails(comanda)}>
-                        <CardContent className="p-3 flex items-center gap-4">
-                          <div className="text-center">
-                            <p className="text-lg font-bold">{comanda.data}</p>
-                          </div>
-                          <Separator orientation="vertical" className="h-12" />
-                          <div className="flex-1">
-                            <p className="font-medium">{comanda.client}</p>
-                            <p className="text-sm text-muted-foreground">{comanda.produs} - {comanda.cantitate} {comanda.unitate_masura}</p>
-                          </div>
-                          <Badge className={statusColors[comanda.status]}>{comanda.status}</Badge>
-                          <Badge className={priorityColors[comanda.prioritate]}>{comanda.prioritate}</Badge>
-                        </CardContent>
-                      </Card>
-                    ))
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
 
