@@ -43,7 +43,7 @@ const transportOptions = [
 ] as const;
 
 interface Oferta {
-  id: number;
+  id: string; // comma-separated IDs from aggregation
   nr: string;
   client: string;
   proiect: string;
@@ -61,7 +61,7 @@ interface Oferta {
 }
 
 interface Contract {
-  id: number;
+  id: string; // comma-separated IDs from aggregation
   nr: string;
   client: string;
   proiect: string;
@@ -966,22 +966,30 @@ const OferteContracte = () => {
     
     if (deleting.tip === "oferta") {
       try {
-        const payload = {
-          tabel: "lista_oferte",
-          id: deleting.id
-        };
+        console.log("=== STERGERE OFERTA ===");
+        console.log("Nr oferta:", deleting.nr);
+        console.log("IDs de sters:", deleting.id);
         
-        console.log("Sending delete oferta payload:", payload);
+        // Parse comma-separated IDs and delete each one
+        const ids = String(deleting.id).split(",").map(id => id.trim()).filter(Boolean);
+        console.log("IDs parsate:", ids);
         
-        const response = await fetch(`${API_BASE_URL}/sterge`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+        for (const id of ids) {
+          console.log(`Sterg ID: ${id}`);
+          const response = await fetch(`${API_BASE_URL}/sterge`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              tabel: "lista_oferte",
+              id: parseInt(id)
+            }),
+          });
+          
+          const result = await response.json();
+          console.log(`Raspuns stergere ID ${id}:`, result);
+        }
         
-        if (!response.ok) throw new Error("Eroare la ștergerea ofertei");
-        
-        toast({ title: "Succes", description: "Oferta a fost ștearsă." });
+        toast({ title: "Succes", description: `Oferta ${deleting.nr} a fost ștearsă (${ids.length} înregistrări).` });
         fetchOferte();
       } catch (error) {
         console.error("Error deleting oferta:", error);
@@ -993,22 +1001,30 @@ const OferteContracte = () => {
       }
     } else {
       try {
-        const payload = {
-          tabel: "lista_contracte",
-          id: deleting.id
-        };
+        console.log("=== STERGERE CONTRACT ===");
+        console.log("Nr contract:", deleting.nr);
+        console.log("IDs de sters:", deleting.id);
         
-        console.log("Sending delete contract payload:", payload);
+        // Parse comma-separated IDs and delete each one
+        const ids = String(deleting.id).split(",").map(id => id.trim()).filter(Boolean);
+        console.log("IDs parsate:", ids);
         
-        const response = await fetch(`${API_BASE_URL}/sterge`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+        for (const id of ids) {
+          console.log(`Sterg ID: ${id}`);
+          const response = await fetch(`${API_BASE_URL}/sterge`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              tabel: "lista_contracte",
+              id: parseInt(id)
+            }),
+          });
+          
+          const result = await response.json();
+          console.log(`Raspuns stergere ID ${id}:`, result);
+        }
         
-        if (!response.ok) throw new Error("Eroare la ștergerea contractului");
-        
-        toast({ title: "Succes", description: "Contractul a fost șters." });
+        toast({ title: "Succes", description: `Contractul ${deleting.nr} a fost șters (${ids.length} înregistrări).` });
         fetchContracte();
       } catch (error) {
         console.error("Error deleting contract:", error);
@@ -1045,7 +1061,7 @@ const OferteContracte = () => {
       const sourceOferta = viewingDetails as Oferta;
       const newOferta: Oferta = {
         ...sourceOferta,
-        id: Math.max(...oferte.map(o => o.id), 0) + 1,
+        id: String(Date.now()), // Temporary ID for local state
         nr: `OF-2024-${String(oferte.length + 1).padStart(3, '0')}`,
         status: "In curs de aprobare",
         dataCreare: currentDate,
@@ -1057,7 +1073,7 @@ const OferteContracte = () => {
       const sourceContract = viewingDetails as Contract;
       const newContract: Contract = {
         ...sourceContract,
-        id: Math.max(...contracte.map(c => c.id), 0) + 1,
+        id: String(Date.now()), // Temporary ID for local state
         nr: `CTR-2024-${String(contracte.length + 1).padStart(3, '0')}`,
         status: "In curs de aprobare",
         dataCreare: currentDate,
@@ -1081,7 +1097,7 @@ const OferteContracte = () => {
     if (viewingDetails && viewingDetails.tip === "oferta") {
       const oferta = viewingDetails as Oferta;
       const newContract: Contract = {
-        id: Math.max(...contracte.map(c => c.id), 0) + 1,
+        id: String(Date.now()), // Temporary ID for local state
         nr: `CTR-2024-${String(contracte.length + 1).padStart(3, '0')}`,
         client: oferta.client,
         proiect: oferta.proiect,
