@@ -23,6 +23,7 @@ import {
   Pencil,
   Trash2
 } from "lucide-react";
+import CalendarProductie from "./CalendarProductie";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -230,9 +231,6 @@ const OrdineProductie = () => {
     observatii: "",
     comenziAsociate: []
   });
-
-  // Calendar state
-  const [calendarWeek, setCalendarWeek] = useState(0);
 
   // Stats
   const stats = useMemo(() => {
@@ -490,21 +488,6 @@ const OrdineProductie = () => {
       items: ordine.filter(o => o.status === status)
     }));
   }, [ordine]);
-
-  // Calendar data
-  const calendarData = useMemo(() => {
-    const hours = Array.from({ length: 12 }, (_, i) => `${6 + i}:00`);
-    const days = ["Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă", "Duminică"];
-    
-    return { hours, days };
-  }, []);
-
-  const getCapacityColor = (load: number) => {
-    if (load === 0) return "bg-muted";
-    if (load < 50) return "bg-green-500/30";
-    if (load < 80) return "bg-yellow-500/30";
-    return "bg-red-500/30";
-  };
 
   // Helper to format products for display
   const formatProduseDisplay = (produse: ProdusOrdin[]) => {
@@ -789,76 +772,7 @@ const OrdineProductie = () => {
 
         {/* Calendar View */}
         <TabsContent value="calendar" className="mt-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-medium">Heatmap Capacitate</CardTitle>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="icon" onClick={() => setCalendarWeek(w => w - 1)}>
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <span className="text-sm">Săptămâna {calendarWeek >= 0 ? `+${calendarWeek}` : calendarWeek}</span>
-                <Button variant="outline" size="icon" onClick={() => setCalendarWeek(w => w + 1)}>
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-20">Ora</TableHead>
-                      {calendarData.days.map(day => (
-                        <TableHead key={day} className="text-center">{day}</TableHead>
-                      ))}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {calendarData.hours.map(hour => (
-                      <TableRow key={hour}>
-                        <TableCell className="font-medium">{hour}</TableCell>
-                        {calendarData.days.map(day => {
-                          const load = Math.floor(Math.random() * 100);
-                          return (
-                            <TableCell key={`${day}-${hour}`} className="p-1">
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <div className={`h-8 rounded ${getCapacityColor(load)} cursor-pointer`} />
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>{day} {hour} - Încărcare: {load}%</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-              <div className="flex items-center gap-4 mt-4 text-xs text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded bg-muted" />
-                  <span>Liber</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded bg-green-500/30" />
-                  <span>&lt;50%</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded bg-yellow-500/30" />
-                  <span>50-80%</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded bg-red-500/30" />
-                  <span>&gt;80%</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <CalendarProductie />
         </TabsContent>
       </Tabs>
 
