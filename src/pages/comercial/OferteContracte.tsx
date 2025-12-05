@@ -871,9 +871,6 @@ const OferteContracte = () => {
         // Call API to add contract
         setIsSaving(true);
         try {
-          const produseList = validProduse.map(p => p.produs).join(", ");
-          const preturiProduse = validProduse.map(p => String(p.pret)).join(", ");
-          
           let tipTransport = "Inclus în preț";
           if (form.transport.tipTransport === "fara_transport") {
             tipTransport = "Fără transport";
@@ -893,11 +890,9 @@ const OferteContracte = () => {
           
           const termenPlataNumber = parseFloat(form.termenPlata.replace(/[^0-9]/g, '')) || 0;
           
-          const payload = {
+          const basePayload = {
             client: form.client,
             proiect_santier: form.proiect,
-            produse: produseList,
-            preturi_produse: preturiProduse,
             tip_transport: tipTransport,
             pret_transport: pretTransport,
             valabilitate: form.valabilitate,
@@ -910,15 +905,43 @@ const OferteContracte = () => {
             locatie_proces_verbal_predare_primire: procesVerbalUploadUrl || "",
           };
           
-          console.log("Sending contract payload:", payload);
+          // First call without cod_contract to get the generated code
+          const firstProduct = validProduse[0];
+          const firstPayload = {
+            ...basePayload,
+            produse: firstProduct.produs,
+            preturi_produse: String(firstProduct.pret),
+          };
           
-          const response = await fetch(`${API_BASE_URL}/comercial/adauga/contract`, {
+          console.log("Sending first contract payload:", firstPayload);
+          
+          const firstResponse = await fetch(`${API_BASE_URL}/comercial/adauga/contract`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
+            body: JSON.stringify(firstPayload),
           });
           
-          if (!response.ok) throw new Error("Eroare la salvarea contractului");
+          if (!firstResponse.ok) throw new Error("Eroare la salvarea contractului");
+          
+          const firstResult = await firstResponse.json();
+          const codContract = firstResult.cod_contract;
+          
+          // For remaining products, use the same cod_contract
+          for (let i = 1; i < validProduse.length; i++) {
+            const produs = validProduse[i];
+            const payload = {
+              ...basePayload,
+              cod_contract: codContract,
+              produse: produs.produs,
+              preturi_produse: String(produs.pret),
+            };
+            
+            await fetch(`${API_BASE_URL}/comercial/adauga/contract`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+          }
           
           toast({ title: "Succes", description: "Contractul a fost adăugat." });
           fetchContracte();
