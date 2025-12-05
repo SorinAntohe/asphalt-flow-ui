@@ -1591,7 +1591,7 @@ const OferteContracte = () => {
                 </Select>
               </div>
             )}
-            {(activeTab === "contracte" || editing?.tip === "contract") && (
+            {editing?.tip === "contract" && (
               <div className="space-y-2">
                 <Label>Indexare combustibil</Label>
                 <Input placeholder="ex: Ajustare trimestrială +/- 5%" value={form.indexareCombustibil} onChange={(e) => setForm({ ...form, indexareCombustibil: e.target.value })} />
