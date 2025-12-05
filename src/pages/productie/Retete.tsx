@@ -3,7 +3,6 @@ import {
   FlaskConical,
   Plus,
   Copy,
-  Printer,
   Droplets,
   Pencil,
   CheckCircle2,
@@ -11,7 +10,9 @@ import {
   AlertTriangle,
   Scale,
   Beaker,
-  ListChecks
+  ListChecks,
+  Trash2,
+  Download
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -148,7 +149,7 @@ const getTipBadge = (tip: Reteta["tip"]) => {
 };
 
 const Retete = () => {
-  const [retete] = useState<Reteta[]>(reteteInitiale);
+  const [retete, setRetete] = useState<Reteta[]>(reteteInitiale);
   const [filters, setFilters] = useState({ cod: "", denumire: "", tip: "all", status: "all" });
   const [sort, setSort] = useState<{ key: string; direction: "asc" | "desc" | null }>({ key: "", direction: null });
   const [page, setPage] = useState(1);
@@ -232,6 +233,11 @@ const Retete = () => {
     toast.success(`Imprimare fișa rețetei ${reteta.cod}`);
   };
 
+  const handleDelete = (reteta: Reteta) => {
+    setRetete(retete.filter(r => r.id !== reteta.id));
+    toast.success(`Rețeta ${reteta.cod} a fost ștearsă`);
+  };
+
   const handleAutocorrect = (reteta: Reteta) => {
     setAutocorrectDialog(reteta);
   };
@@ -282,7 +288,7 @@ const Retete = () => {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => toast.info("Export în dezvoltare")}>
-            <Printer className="h-4 w-4 mr-2" />
+            <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
           <Button onClick={() => openEditorDialog(null, true)}>
@@ -426,69 +432,40 @@ const Retete = () => {
 
       {/* Detail Dialog */}
       <Dialog open={!!peekDrawer} onOpenChange={() => setPeekDrawer(null)}>
-        <DialogContent className="max-w-2xl" hideCloseButton>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto" hideCloseButton>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <FlaskConical className="h-5 w-5" />
-              {peekDrawer?.cod}
+              Detalii Rețetă
             </DialogTitle>
             <DialogDescription>{peekDrawer?.denumire}</DialogDescription>
           </DialogHeader>
           
           {peekDrawer && (
             <div className="space-y-6">
-              {/* Quick Info */}
-              <div className="flex flex-wrap gap-2">
-                {getTipBadge(peekDrawer.tip)}
-                {getStatusBadge(peekDrawer.status)}
+              {/* Basic Info */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="p-3 rounded-lg bg-muted/50">
+                  <div className="text-sm text-muted-foreground">Cod Rețetă</div>
+                  <p className="font-semibold mt-1">{peekDrawer.cod}</p>
+                </div>
+                <div className="p-3 rounded-lg bg-muted/50">
+                  <div className="text-sm text-muted-foreground">Denumire</div>
+                  <p className="font-semibold mt-1">{peekDrawer.denumire}</p>
+                </div>
+                <div className="p-3 rounded-lg bg-muted/50">
+                  <div className="text-sm text-muted-foreground">Tip</div>
+                  <div className="mt-1">{getTipBadge(peekDrawer.tip)}</div>
+                </div>
               </div>
 
-              {/* Parameters */}
-              <div className="grid grid-cols-2 gap-4">
+              {/* Observații */}
+              {peekDrawer.observatii && (
                 <div className="p-3 rounded-lg bg-muted/50">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Scale className="h-4 w-4" />
-                    Densitate țintă
-                  </div>
-                  <p className="text-lg font-semibold mt-1">{peekDrawer.densitateTinta} g/cm³</p>
+                  <div className="text-sm text-muted-foreground">Observații</div>
+                  <p className="mt-1">{peekDrawer.observatii}</p>
                 </div>
-                {peekDrawer.umiditate && (
-                  <div className="p-3 rounded-lg bg-muted/50">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Droplets className="h-4 w-4" />
-                      Umiditate
-                    </div>
-                    <p className="text-lg font-semibold mt-1">{peekDrawer.umiditate}%</p>
-                  </div>
-                )}
-                {peekDrawer.temperatura && (
-                  <div className="p-3 rounded-lg bg-muted/50">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Beaker className="h-4 w-4" />
-                      Temperatură
-                    </div>
-                    <p className="text-lg font-semibold mt-1">{peekDrawer.temperatura}°C</p>
-                  </div>
-                )}
-                {peekDrawer.marshall && (
-                  <div className="p-3 rounded-lg bg-muted/50">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Beaker className="h-4 w-4" />
-                      Marshall
-                    </div>
-                    <p className="text-lg font-semibold mt-1">{peekDrawer.marshall} kN</p>
-                  </div>
-                )}
-                {peekDrawer.slump && (
-                  <div className="p-3 rounded-lg bg-muted/50">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Beaker className="h-4 w-4" />
-                      Slump
-                    </div>
-                    <p className="text-lg font-semibold mt-1">{peekDrawer.slump} cm</p>
-                  </div>
-                )}
-              </div>
+              )}
 
               <Separator />
 
@@ -496,28 +473,37 @@ const Retete = () => {
               <div>
                 <h4 className="font-semibold mb-3 flex items-center gap-2">
                   <ListChecks className="h-4 w-4" />
-                  Componente ({getTotalCantitate(peekDrawer.componente)} kg/tonă)
+                  Componente
                 </h4>
-                <div className="space-y-2 max-h-[150px] overflow-y-auto">
-                  {peekDrawer.componente.map((comp) => (
-                    <div key={comp.id} className="flex items-center justify-between p-2 rounded bg-muted/30">
-                      <span className="text-sm">{comp.material}</span>
-                      <span className="font-medium">{comp.cantitate} kg</span>
-                    </div>
-                  ))}
-                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Material</TableHead>
+                      <TableHead className="text-right">
+                        <div>Cantitate (kg/tonă)</div>
+                        <div className={`text-xs font-medium mt-1 ${getTotalCantitate(peekDrawer.componente) === 1000 ? 'text-green-600' : 'text-destructive'}`}>
+                          Total: {getTotalCantitate(peekDrawer.componente)} kg
+                        </div>
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {peekDrawer.componente.map((comp) => (
+                      <TableRow key={comp.id}>
+                        <TableCell>{comp.material}</TableCell>
+                        <TableCell className="text-right font-medium">{comp.cantitate} kg</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             </div>
           )}
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => handleDuplicate(peekDrawer!)}>
-              <Copy className="h-4 w-4 mr-2" />
-              Duplică
-            </Button>
-            <Button variant="outline" onClick={() => handlePrint(peekDrawer!)}>
-              <Printer className="h-4 w-4 mr-2" />
-              Imprimă
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="destructive" onClick={() => { setPeekDrawer(null); handleDelete(peekDrawer!); }}>
+              <Trash2 className="h-4 w-4 mr-2" />
+              Șterge
             </Button>
             <Button onClick={() => { setPeekDrawer(null); openEditorDialog(peekDrawer!, false); }}>
               <Pencil className="h-4 w-4 mr-2" />
