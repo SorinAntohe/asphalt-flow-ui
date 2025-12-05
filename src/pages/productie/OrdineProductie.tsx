@@ -565,12 +565,15 @@ const OrdineProductie = () => {
         console.log("Total produse:", validProduse.length);
         console.log("Produse:", validProduse);
 
+        const masaTotala = validProduse.reduce((sum, p) => sum + (parseFloat(p.cantitate) || 0), 0);
+
         const basePayload = {
+          masa_totala: String(masaTotala),
           start_planificat: formatDateForApi(wizardForm.startPlanificat),
           unitate_masura: wizardForm.unitateMasura,
           operator: wizardForm.operator,
           sef_schimb: wizardForm.sefSchimb,
-          comenzi_asociate: wizardForm.comenziAsociate.join(","),
+          comenzi_asociate: wizardForm.comenziAsociate.join(",") || "",
           observatii: wizardForm.observatii || ""
         };
 
@@ -580,6 +583,7 @@ const OrdineProductie = () => {
           ...basePayload,
           produse: firstProduct.produs,
           cantitati: String(firstProduct.cantitate),
+          retete: firstProduct.reteta || "",
         };
 
         console.log("=== PRIMA CERERE (fara cod_ordin) ===");
@@ -611,6 +615,7 @@ const OrdineProductie = () => {
             cod_ordin: codOrdin,
             produse: product.produs,
             cantitati: String(product.cantitate),
+            retete: product.reteta || "",
           };
 
           console.log(`Cerere ${i}/${validProduse.length - 1}:`, JSON.stringify(payload, null, 2));
