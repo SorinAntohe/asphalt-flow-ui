@@ -625,25 +625,32 @@ export default function Comenzi() {
     return tabParam === "materie-prima" || tabParam === "produs-finit" ? tabParam : "materie-prima";
   });
 
-  // Handle URL search params for deep linking
+  // Handle URL search params for deep linking - open detail dialog directly
   useEffect(() => {
-    const searchParam = searchParams.get("search");
+    const openCod = searchParams.get("open");
     const tabParam = searchParams.get("tab");
     
     if (tabParam) {
       setActiveTab(tabParam === "produs-finit" ? "produs-finit" : "materie-prima");
     }
     
-    if (searchParam) {
+    if (openCod) {
+      // Find and open the comanda with matching cod
       if (tabParam === "produs-finit") {
-        setFiltersPF(prev => ({ ...prev, cod: searchParam }));
+        const comanda = comenziProduseFinite.find(c => c.cod === openCod);
+        if (comanda) {
+          setViewingDetailsPF(comanda);
+          setSearchParams({});
+        }
       } else {
-        setFiltersMP(prev => ({ ...prev, cod: searchParam }));
+        const comanda = comenziMateriePrima.find(c => c.cod === openCod);
+        if (comanda) {
+          setViewingDetailsMP(comanda);
+          setSearchParams({});
+        }
       }
-      // Clear URL params after applying
-      setSearchParams({});
     }
-  }, []);
+  }, [comenziMateriePrima, comenziProduseFinite, searchParams]);
 
   const handleExport = () => {
     if (activeTab === "materie-prima") {
