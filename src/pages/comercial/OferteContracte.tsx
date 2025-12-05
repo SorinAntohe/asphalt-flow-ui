@@ -107,26 +107,37 @@ const OferteContracte = () => {
       const data = await response.json();
       
       // Map API data to Oferta type
-      const mappedOferte: Oferta[] = data.map((item: any, index: number) => ({
-        id: item.id || index + 1,
-        nr: item.nr || `OF-${index + 1}`,
-        client: item.client || "",
-        proiect: item.proiect_santier || "",
-        produs: item.produse || "",
-        pret: 0,
-        produse: [{ produs: item.produse || "", pret: 0 }],
-        transport: { 
-          tipTransport: "tona_km" as const,
-          pretTonaKm: parseFloat(item.pret_transport) || 0
-        },
-        valabilitate: item.valabilitate || "",
-        termenPlata: `${item.termen_de_plata || 0} zile`,
-        status: (item.status as "Draft" | "Trimis" | "Acceptat" | "Expirat") || "Draft",
-        tip: "oferta" as const,
-        dataCreare: "",
-        conditiiComerciale: "",
-        observatii: item.observatii || "",
-      }));
+      const mappedOferte: Oferta[] = data.map((item: any, index: number) => {
+        // Parse tip_transport to our format
+        let tipTransport: "inchiriere" | "tona_km" | "inclus" = "inclus";
+        if (item.tip_transport === "inchiriere" || item.tip_transport === "chirie") {
+          tipTransport = "inchiriere";
+        } else if (item.tip_transport === "tona_km" || item.tip_transport === "tonă/km") {
+          tipTransport = "tona_km";
+        }
+        
+        return {
+          id: item.id || index + 1,
+          nr: item.cod_ferta || `OF-${index + 1}`,
+          client: item.client || "",
+          proiect: item.proiect_santier || "",
+          produs: item.produse || "",
+          pret: parseFloat(item.pret_transport) || 0,
+          produse: [{ produs: item.produse || "", pret: parseFloat(item.pret_transport) || 0 }],
+          transport: { 
+            tipTransport,
+            ...(tipTransport === "inchiriere" && { pretInchiriere: parseFloat(item.pret_transport) || 0 }),
+            ...(tipTransport === "tona_km" && { pretTonaKm: parseFloat(item.pret_transport) || 0 }),
+          },
+          valabilitate: item.valabilitate || "",
+          termenPlata: `${item.termen_de_plata || 0} zile`,
+          status: (item.status as "Draft" | "Trimis" | "Acceptat" | "Expirat") || "Draft",
+          tip: "oferta" as const,
+          dataCreare: item.data || "",
+          conditiiComerciale: "",
+          observatii: item.observatii || "",
+        };
+      });
       
       setOferte(mappedOferte);
     } catch (error) {
@@ -517,6 +528,17 @@ const OferteContracte = () => {
         // Call API to add oferta
         setIsSaving(true);
         try {
+          // Build produse as comma-separated list of product names
+          const produseList = validProduse.map(p => p.produs).join(", ");
+          
+          // Determine tip_transport value for backend
+          let tipTransport = "inclus";
+          if (form.transport.tipTransport === "inchiriere") {
+            tipTransport = "chirie";
+          } else if (form.transport.tipTransport === "tona_km") {
+            tipTransport = "tonă/km";
+          }
+          
           const pretTransport = form.transport.tipTransport === "tona_km" 
             ? String(form.transport.pretTonaKm || 0)
             : form.transport.tipTransport === "inchiriere"
@@ -528,7 +550,8 @@ const OferteContracte = () => {
           const payload = {
             client: form.client,
             proiect_santier: form.proiect,
-            produse: produsDisplay,
+            produse: produseList,
+            tip_transport: tipTransport,
             pret_transport: pretTransport,
             valabilitate: form.valabilitate,
             termen_de_plata: termenPlataNumber,
