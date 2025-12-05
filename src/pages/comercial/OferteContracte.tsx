@@ -499,7 +499,13 @@ const OferteContracte = () => {
     }
 
     const currentDate = new Date().toLocaleDateString('ro-RO');
-    const totalPret = validProduse.reduce((sum, p) => sum + p.pret, 0);
+    const sumaProduse = validProduse.reduce((sum, p) => sum + p.pret, 0);
+    const pretTransportValue = form.transport.tipTransport === "tona_km" 
+      ? (form.transport.pretTonaKm || 0)
+      : form.transport.tipTransport === "inchiriere"
+      ? (form.transport.pretInchiriere || 0)
+      : 0;
+    const totalPret = sumaProduse + pretTransportValue;
     const produsDisplay = validProduse.length === 1 ? validProduse[0].produs : "Multiple";
     const transport: TransportPricing = {
       tipTransport: form.transport.tipTransport,
