@@ -578,27 +578,27 @@ const Retete = () => {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <Label>Componente</Label>
-                  <div className="flex items-center gap-2">
-                    {editorComponents.length > 0 && (
-                      <span className={`text-sm font-medium ${getTotalCantitate(editorComponents) === 1000 ? 'text-green-600' : 'text-destructive'}`}>
-                        Total: {getTotalCantitate(editorComponents)} kg
-                        {getTotalCantitate(editorComponents) !== 1000 && (
-                          <AlertTriangle className="inline h-4 w-4 ml-1" />
-                        )}
-                      </span>
-                    )}
-                    <Button size="sm" variant="outline" onClick={handleAddComponent}>
-                      <Plus className="h-4 w-4 mr-1" />
-                      Adaugă
-                    </Button>
-                  </div>
+                  <Button size="sm" variant="outline" onClick={handleAddComponent}>
+                    <Plus className="h-4 w-4 mr-1" />
+                    Adaugă
+                  </Button>
                 </div>
                 <div className="rounded-md border overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead>Material</TableHead>
-                        <TableHead className="text-right">Cantitate (kg/tonă)</TableHead>
+                        <TableHead className="text-right">
+                          <div>Cantitate (kg/tonă)</div>
+                          {editorComponents.length > 0 && (
+                            <div className={`text-xs font-medium mt-1 ${getTotalCantitate(editorComponents) === 1000 ? 'text-green-600' : 'text-destructive'}`}>
+                              Total: {getTotalCantitate(editorComponents)} kg
+                              {getTotalCantitate(editorComponents) !== 1000 && (
+                                <AlertTriangle className="inline h-3 w-3 ml-1" />
+                              )}
+                            </div>
+                          )}
+                        </TableHead>
                         <TableHead className="w-10"></TableHead>
                       </TableRow>
                     </TableHeader>
