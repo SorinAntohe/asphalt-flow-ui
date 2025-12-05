@@ -740,8 +740,9 @@ const Retete = () => {
                             <TableCell className="text-right">
                               <Input 
                                 type="number" 
+                                step="0.001"
                                 value={comp.cantitate} 
-                                onChange={(e) => handleUpdateComponent(comp.id, "cantitate", parseFloat(e.target.value) || 0)}
+                                onChange={(e) => handleUpdateComponent(comp.id, "cantitate", parseFloat(parseFloat(e.target.value).toFixed(3)) || 0)}
                                 className="h-8 w-24 text-right ml-auto" 
                                 placeholder="kg"
                               />
