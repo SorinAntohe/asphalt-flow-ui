@@ -398,7 +398,13 @@ const Retete = () => {
 
   // Calculate total cantitate for validation
   const getTotalCantitate = (componente: Component[]) => {
-    return componente.reduce((sum, c) => sum + c.cantitate, 0);
+    const total = componente.reduce((sum, c) => sum + c.cantitate, 0);
+    return parseFloat(total.toFixed(3));
+  };
+
+  // Format total for display (3 decimals if has decimals)
+  const formatTotal = (total: number) => {
+    return total % 1 === 0 ? total.toString() : total.toFixed(3);
   };
 
   return (
@@ -707,7 +713,7 @@ const Retete = () => {
                           <div>Cantitate (kg/tonă)</div>
                           {editorComponents.length > 0 && (
                             <div className={`text-xs font-medium mt-1 ${getTotalCantitate(editorComponents) === 1000 ? 'text-green-600' : 'text-destructive'}`}>
-                              Total: {getTotalCantitate(editorComponents)} kg
+                              Total: {formatTotal(getTotalCantitate(editorComponents))} kg
                               {getTotalCantitate(editorComponents) !== 1000 && (
                                 <AlertTriangle className="inline h-3 w-3 ml-1" />
                               )}
