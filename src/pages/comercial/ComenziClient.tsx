@@ -792,7 +792,18 @@ const ComenziClient = () => {
             </div>
             <div className="space-y-2">
               <Label>Fereastră încărcare</Label>
-              <Input placeholder="ex: 08:00 - 12:00" value={form.fereastra_incarcare} onChange={(e) => setForm({ ...form, fereastra_incarcare: e.target.value })} />
+              <Select value={form.fereastra_incarcare} onValueChange={(v) => setForm({ ...form, fereastra_incarcare: v })}>
+                <SelectTrigger><SelectValue placeholder="Selectează interval" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="06:00 - 08:00">06:00 - 08:00</SelectItem>
+                  <SelectItem value="08:00 - 10:00">08:00 - 10:00</SelectItem>
+                  <SelectItem value="10:00 - 12:00">10:00 - 12:00</SelectItem>
+                  <SelectItem value="12:00 - 14:00">12:00 - 14:00</SelectItem>
+                  <SelectItem value="14:00 - 16:00">14:00 - 16:00</SelectItem>
+                  <SelectItem value="16:00 - 18:00">16:00 - 18:00</SelectItem>
+                  <SelectItem value="18:00 - 20:00">18:00 - 20:00</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
