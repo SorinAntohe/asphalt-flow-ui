@@ -787,10 +787,9 @@ const OferteContracte = () => {
       }
     } else {
       if (activeTab === "oferte") {
-        // Call API to add oferta - one API call per product
+        // Call API for each product
         setIsSaving(true);
         try {
-          // Determine tip_transport value for backend
           let tipTransport = "inclus";
           if (form.transport.tipTransport === "fara_transport") {
             tipTransport = "Fără transport";
@@ -810,8 +809,7 @@ const OferteContracte = () => {
           
           const termenPlataNumber = parseFloat(form.termenPlata.replace(/[^0-9]/g, '')) || 0;
           
-          // Call API for each product separately
-          let successCount = 0;
+          // Call API for each product
           for (const produs of validProduse) {
             const payload = {
               client: form.client,
@@ -829,41 +827,19 @@ const OferteContracte = () => {
               locatie_proces_verbal_predare_primire: procesVerbalUploadUrl || "",
             };
             
-            console.log("Sending oferta payload for product:", produs.produs, payload);
-            
-            const response = await fetch(`${API_BASE_URL}/comercial/adauga/oferta`, {
+            await fetch(`${API_BASE_URL}/comercial/adauga/oferta`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(payload),
             });
-            
-            if (!response.ok) {
-              console.error(`Eroare la salvarea produsului ${produs.produs}`);
-              continue;
-            }
-            
-            successCount++;
           }
           
-          if (successCount === 0) {
-            throw new Error("Nu s-a putut salva nicio ofertă");
-          }
-          
-          toast({ 
-            title: "Succes", 
-            description: `${successCount} ${successCount === 1 ? 'ofertă a fost adăugată' : 'oferte au fost adăugate'}.` 
-          });
-          
-          // Refresh oferte list
+          toast({ title: "Succes", description: "Oferta a fost adăugată." });
           fetchOferte();
           setOpenAddEdit(false);
         } catch (error) {
           console.error("Error saving oferta:", error);
-          toast({ 
-            title: "Eroare", 
-            description: "Nu s-a putut salva oferta.", 
-            variant: "destructive" 
-          });
+          toast({ title: "Eroare", description: "Nu s-a putut salva oferta.", variant: "destructive" });
           return;
         } finally {
           setIsSaving(false);
