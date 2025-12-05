@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   FlaskConical,
   Plus,
@@ -33,6 +33,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
+import { FilterableSelect } from "@/components/ui/filterable-select";
+import { API_BASE_URL } from "@/lib/api";
 
 // Types
 interface Component {
@@ -238,6 +240,32 @@ const Retete = () => {
   const [sort, setSort] = useState<{ key: string; direction: "asc" | "desc" | null }>({ key: "", direction: null });
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  
+  // Materii prime list
+  const [materiiPrimeList, setMateriiPrimeList] = useState<{ id: number; denumire: string }[]>([]);
+  
+  // Fetch materii prime on mount
+  useEffect(() => {
+    const fetchMateriiPrime = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/returneaza_materii_prime`);
+        if (!response.ok) throw new Error("Eroare la încărcarea materiilor prime");
+        const data = await response.json();
+        setMateriiPrimeList(data || []);
+      } catch (error) {
+        console.error("Error fetching materii prime:", error);
+      }
+    };
+    fetchMateriiPrime();
+  }, []);
+  
+  // Transform to options for FilterableSelect
+  const materiiPrimeOptions = useMemo(() => {
+    return materiiPrimeList.map((mp: any) => ({
+      value: mp.denumire || mp.material || mp.nume || String(mp.id),
+      label: mp.denumire || mp.material || mp.nume || String(mp.id)
+    }));
+  }, [materiiPrimeList]);
   
   // Dialogs & Drawers
   const [peekDrawer, setPeekDrawer] = useState<Reteta | null>(null);
@@ -733,11 +761,13 @@ const Retete = () => {
                           editorComponents.map((comp) => (
                             <TableRow key={comp.id}>
                               <TableCell>
-                                <Input 
-                                  value={comp.material} 
-                                  onChange={(e) => handleUpdateComponent(comp.id, "material", e.target.value)}
-                                  className="h-8" 
-                                  placeholder="Material..."
+                                <FilterableSelect
+                                  value={comp.material}
+                                  onValueChange={(value) => handleUpdateComponent(comp.id, "material", value)}
+                                  options={materiiPrimeOptions}
+                                  placeholder="Selectează material..."
+                                  searchPlaceholder="Caută material..."
+                                  className="h-8 min-w-[180px]"
                                 />
                               </TableCell>
                               <TableCell>
