@@ -689,21 +689,11 @@ const ComenziClient = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Client *</Label>
-                <Select value={form.client} onValueChange={(v) => setForm({ ...form, client: v })}>
-                  <SelectTrigger><SelectValue placeholder="Selectează client" /></SelectTrigger>
-                  <SelectContent>
-                    {clients.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <Input placeholder="Nume client" value={form.client} onChange={(e) => setForm({ ...form, client: e.target.value })} />
               </div>
               <div className="space-y-2">
                 <Label>Produs *</Label>
-                <Select value={form.produs} onValueChange={(v) => setForm({ ...form, produs: v })}>
-                  <SelectTrigger><SelectValue placeholder="Selectează produs" /></SelectTrigger>
-                  <SelectContent>
-                    {produse.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <Input placeholder="Nume produs" value={form.produs} onChange={(e) => setForm({ ...form, produs: e.target.value })} />
               </div>
             </div>
             <div className="grid grid-cols-3 gap-4">
@@ -739,10 +729,10 @@ const ComenziClient = () => {
                 <Select value={form.prioritate} onValueChange={(v) => setForm({ ...form, prioritate: v as Priority })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Scăzută">Scăzută</SelectItem>
-                    <SelectItem value="Normală">Normală</SelectItem>
-                    <SelectItem value="Ridicată">Ridicată</SelectItem>
-                    <SelectItem value="Urgentă">Urgentă</SelectItem>
+                    <SelectItem value="Scazut">Scazut</SelectItem>
+                    <SelectItem value="Normala">Normala</SelectItem>
+                    <SelectItem value="Ridicata">Ridicata</SelectItem>
+                    <SelectItem value="Urgenta">Urgenta</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
