@@ -752,13 +752,12 @@ const OrdineProductie = () => {
                           onFilterChange={(value) => handleFilter("status", value)}
                         />
                       </TableHead>
-                      <TableHead>Consum Estimat</TableHead>
                       <TableHead>Observații</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {paginatedOrdine.length === 0 ? (
-                      <DataTableEmpty colSpan={8} message="Nu există ordine de producție" />
+                      <DataTableEmpty colSpan={7} message="Nu există ordine de producție" />
                     ) : (
                       paginatedOrdine.map((ordin) => (
                         <TableRow
@@ -804,47 +803,6 @@ const OrdineProductie = () => {
                               {statusConfig[ordin.status].icon}
                               {ordin.status}
                             </Badge>
-                          </TableCell>
-                          <TableCell>
-                            {ordin.consumEstimat.length > 0 ? (
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <div className="flex flex-col gap-0.5 cursor-help">
-                                      {ordin.consumEstimat.slice(0, 2).map((c, idx) => (
-                                        <div key={idx} className="text-xs flex items-center gap-1">
-                                          <span className="text-muted-foreground">{c.material}:</span>
-                                          <span className={c.cantitate > c.disponibil ? "text-destructive font-medium" : ""}>
-                                            {c.cantitate}t
-                                          </span>
-                                          {c.cantitate > c.disponibil && (
-                                            <AlertTriangle className="h-3 w-3 text-destructive" />
-                                          )}
-                                        </div>
-                                      ))}
-                                      {ordin.consumEstimat.length > 2 && (
-                                        <span className="text-xs text-muted-foreground">+{ordin.consumEstimat.length - 2} mai mult</span>
-                                      )}
-                                    </div>
-                                  </TooltipTrigger>
-                                  <TooltipContent side="left" className="max-w-xs">
-                                    <div className="space-y-1">
-                                      <p className="font-medium text-xs mb-2">Consum Estimat Materii Prime:</p>
-                                      {ordin.consumEstimat.map((c, idx) => (
-                                        <div key={idx} className="text-xs flex justify-between gap-4">
-                                          <span>{c.material}</span>
-                                          <span className={c.cantitate > c.disponibil ? "text-destructive" : "text-emerald-500"}>
-                                            {c.cantitate}t / {c.disponibil}t disp.
-                                          </span>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            ) : (
-                              <span className="text-xs text-muted-foreground">-</span>
-                            )}
                           </TableCell>
                           <TableCell className="max-w-[200px] truncate">{ordin.observatii || "-"}</TableCell>
                         </TableRow>
