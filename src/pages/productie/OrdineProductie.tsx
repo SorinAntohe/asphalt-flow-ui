@@ -1005,22 +1005,16 @@ const OrdineProductie = () => {
                       Planifică
                     </Button>
                   )}
-                  {selectedOrdin.status !== "Închisă" && (
-                    <Button size="sm" variant="outline" onClick={() => handleRezervaStoc(selectedOrdin)}>
-                      <Package className="h-4 w-4 mr-1" />
-                      Rezervă Stoc
-                    </Button>
-                  )}
-                  {selectedOrdin.status === "În lucru" && (
-                    <Button size="sm" variant="destructive" onClick={() => handleInchideOrdin(selectedOrdin)}>
-                      <CheckCircle2 className="h-4 w-4 mr-1" />
-                      Închide
-                    </Button>
-                  )}
                   <Button size="sm" variant="outline" onClick={() => handleOpenEdit(selectedOrdin)}>
                     <Pencil className="h-4 w-4 mr-1" />
                     Editează
                   </Button>
+                  {selectedOrdin.status === "În lucru" && (
+                    <Button size="sm" variant="outline" onClick={() => handleInchideOrdin(selectedOrdin)}>
+                      <CheckCircle2 className="h-4 w-4 mr-1" />
+                      Închide
+                    </Button>
+                  )}
                   <Button size="sm" variant="destructive" onClick={() => setDeleteDialogOpen(true)}>
                     <Trash2 className="h-4 w-4 mr-1" />
                     Șterge
@@ -1181,14 +1175,6 @@ const OrdineProductie = () => {
                   </Select>
                 </div>
                 <div className="col-span-2">
-                  <Label>Observații</Label>
-                  <Textarea
-                    value={wizardForm.observatii}
-                    onChange={(e) => setWizardForm(prev => ({ ...prev, observatii: e.target.value }))}
-                    placeholder="Observații suplimentare..."
-                  />
-                </div>
-                <div className="col-span-2">
                   <Label>Comenzi Asociate</Label>
                   <div className="flex flex-wrap gap-2 mt-2 p-3 border rounded-md min-h-[40px]">
                     {wizardForm.comenziAsociate.map((cmd) => (
@@ -1221,6 +1207,14 @@ const OrdineProductie = () => {
                       ))}
                     </SelectContent>
                   </Select>
+                </div>
+                <div className="col-span-2">
+                  <Label>Observații</Label>
+                  <Textarea
+                    value={wizardForm.observatii}
+                    onChange={(e) => setWizardForm(prev => ({ ...prev, observatii: e.target.value }))}
+                    placeholder="Observații suplimentare..."
+                  />
                 </div>
               </div>
             </div>
@@ -1443,14 +1437,6 @@ const OrdineProductie = () => {
                 </Select>
               </div>
               <div className="col-span-2">
-                <Label>Observații</Label>
-                <Textarea
-                  value={wizardForm.observatii}
-                  onChange={(e) => setWizardForm(prev => ({ ...prev, observatii: e.target.value }))}
-                  placeholder="Observații suplimentare..."
-                />
-              </div>
-              <div className="col-span-2">
                 <Label>Comenzi Asociate</Label>
                 <div className="flex flex-wrap gap-2 mt-2 p-3 border rounded-md min-h-[40px]">
                   {wizardForm.comenziAsociate.map((cmd) => (
@@ -1483,6 +1469,14 @@ const OrdineProductie = () => {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+              <div className="col-span-2">
+                <Label>Observații</Label>
+                <Textarea
+                  value={wizardForm.observatii}
+                  onChange={(e) => setWizardForm(prev => ({ ...prev, observatii: e.target.value }))}
+                  placeholder="Observații suplimentare..."
+                />
               </div>
             </div>
           </div>
