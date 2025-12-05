@@ -980,7 +980,7 @@ const OrdineProductie = () => {
                           className="gap-1 cursor-pointer hover:bg-secondary/80"
                           onClick={() => {
                             setDetailDialogOpen(false);
-                            navigate(`/comenzi?tab=materie-prima&search=${cmd}`);
+                            navigate(`/comenzi?tab=materie-prima&open=${cmd}`);
                           }}
                         >
                           <FileText className="h-3 w-3" />
