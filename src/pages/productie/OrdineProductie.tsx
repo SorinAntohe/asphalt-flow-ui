@@ -767,15 +767,29 @@ const OrdineProductie = () => {
                           onClick={() => handleRowClick(ordin)}
                         >
                           <TableCell className="font-medium">{ordin.numar}</TableCell>
-                          <TableCell>
-                            <div className="flex flex-col gap-0.5">
-                              {ordin.produse.map((p, idx) => (
-                                <div key={idx} className="text-xs">
-                                  <span className="font-medium">{p.produs}</span>
-                                  <span className="text-muted-foreground"> - {p.cantitate}t ({p.reteta})</span>
-                                </div>
-                              ))}
-                            </div>
+                          <TableCell className="max-w-[200px]">
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div className="truncate text-xs cursor-help">
+                                    <span className="font-medium">{ordin.produse[0]?.produs}</span>
+                                    {ordin.produse.length > 1 && (
+                                      <span className="text-muted-foreground"> +{ordin.produse.length - 1}</span>
+                                    )}
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent side="bottom" className="max-w-xs">
+                                  <div className="space-y-1">
+                                    {ordin.produse.map((p, idx) => (
+                                      <div key={idx} className="text-xs">
+                                        <span className="font-medium">{p.produs}</span>
+                                        <span className="text-muted-foreground"> - {p.cantitate}t ({p.reteta})</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                           </TableCell>
                           <TableCell className="font-semibold">{ordin.cantitateTotala} {ordin.unitateMasura}</TableCell>
                           <TableCell>{ordin.startPlanificat}</TableCell>
