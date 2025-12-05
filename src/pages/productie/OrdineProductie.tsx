@@ -966,21 +966,6 @@ const OrdineProductie = () => {
                   </div>
                 )}
 
-                {/* Loturi Asociate */}
-                {selectedOrdin.loturiAsociate.length > 0 && (
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">Loturi Asociate</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedOrdin.loturiAsociate.map((lot) => (
-                        <Badge key={lot} variant="outline" className="gap-1">
-                          <Link2 className="h-3 w-3" />
-                          {lot}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
                 {/* Comenzi Asociate */}
                 {selectedOrdin.comenziAsociate.length > 0 && (
                   <div>
