@@ -141,8 +141,40 @@ const OferteContracte = () => {
     }
   };
   
+  // Clients and Products lists from API
+  const [clientsList, setClientsList] = useState<string[]>([]);
+  const [produseFiniteList, setProduseFiniteList] = useState<string[]>([]);
+  
+  const fetchClienti = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/returneaza_clienti`);
+      if (!response.ok) throw new Error("Eroare la încărcarea clienților");
+      const data = await response.json();
+      // Extract denumire from each client object
+      const clientNames = data.map((item: any) => item.denumire || item.client || item.name || "").filter(Boolean);
+      setClientsList(clientNames);
+    } catch (error) {
+      console.error("Error fetching clients:", error);
+    }
+  };
+  
+  const fetchProduseFinite = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/returneaza_produse_finite`);
+      if (!response.ok) throw new Error("Eroare la încărcarea produselor");
+      const data = await response.json();
+      // Extract denumire from each product object
+      const productNames = data.map((item: any) => item.denumire || item.produs || item.name || "").filter(Boolean);
+      setProduseFiniteList(productNames);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+  
   useEffect(() => {
     fetchOferte();
+    fetchClienti();
+    fetchProduseFinite();
   }, []);
   
   // Pagination
@@ -281,16 +313,18 @@ const OferteContracte = () => {
   const [oferteSort, setOferteSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
   const [contracteSort, setContracteSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
 
-  // Get unique values for dropdowns
+  // Get unique values for dropdowns - combine API data with existing data
   const clients = useMemo(() => {
-    const allClients = [...oferte, ...contracte].map(item => item.client);
-    return [...new Set(allClients)];
-  }, [oferte, contracte]);
+    const existingClients = [...oferte, ...contracte].map(item => item.client);
+    const allClients = [...new Set([...clientsList, ...existingClients])];
+    return allClients.filter(Boolean);
+  }, [oferte, contracte, clientsList]);
 
   const produse = useMemo(() => {
-    const allProduse = [...oferte, ...contracte].map(item => item.produs);
-    return [...new Set(allProduse)];
-  }, [oferte, contracte]);
+    const existingProduse = [...oferte, ...contracte].map(item => item.produs);
+    const allProduse = [...new Set([...produseFiniteList, ...existingProduse])];
+    return allProduse.filter(Boolean);
+  }, [oferte, contracte, produseFiniteList]);
 
   // Filter and sort oferte
   const filteredOferte = useMemo(() => {
