@@ -271,15 +271,12 @@ const OrdineProductie = () => {
         let statusGeneral: "OK" | "NOT OK" = "OK";
 
         for (const produs of selectedOrdin.produse) {
-          // Use produs as cod_reteta (produse from API are reteta codes)
-          // If reteta is available, extract cod from it, otherwise use produs directly
-          let codReteta = produs.produs;
-          if (produs.reteta && produs.reteta.includes(" - ")) {
-            codReteta = produs.reteta.split(" - ")[0];
-          }
+          // Use reteta field as cod_reteta for the estimare API
+          const codReteta = produs.reteta || produs.produs;
           const cantitate = produs.cantitate;
 
           if (codReteta && cantitate > 0) {
+            console.log(`Fetching estimare for cod_reteta: ${codReteta}, cantitate: ${cantitate}`);
             const response = await fetch(
               `${API_BASE_URL}/productie/returneaza/estimare/${encodeURIComponent(codReteta)}/${cantitate}`
             );
