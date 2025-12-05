@@ -8,31 +8,23 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-// Production lines
-const productionLines = [
-  { id: "L1", name: "Linia 1 - Asfalt", capacity: 120 },
-  { id: "L2", name: "Linia 2 - Asfalt", capacity: 100 },
-  { id: "L3", name: "Linia 3 - Emulsie", capacity: 80 },
-  { id: "L4", name: "Linia 4 - BSC", capacity: 60 },
-];
-
 // Hours for the daily view (6:00 - 22:00)
 const hours = Array.from({ length: 17 }, (_, i) => i + 6);
 
 // Mock scheduled orders with dates
 const initialScheduledOrders = [
-  { id: "OP-001", recipe: "BA 16 rul 50/70", quantity: 200, line: "L1", startHour: 7, duration: 3, status: "in_progress", date: "2025-12-05" },
-  { id: "OP-002", recipe: "MASF 16", quantity: 150, line: "L1", startHour: 11, duration: 2, status: "planned", date: "2025-12-05" },
-  { id: "OP-003", recipe: "Emulsie C60B4", quantity: 80, line: "L3", startHour: 8, duration: 2, status: "planned", date: "2025-12-05" },
-  { id: "OP-004", recipe: "BSC 0/31.5", quantity: 100, line: "L4", startHour: 9, duration: 4, status: "planned", date: "2025-12-06" },
-  { id: "OP-005", recipe: "BA 16 rul 50/70", quantity: 180, line: "L2", startHour: 6, duration: 3, status: "completed", date: "2025-12-04" },
-  { id: "OP-006", recipe: "AB2 22.4", quantity: 120, line: "L2", startHour: 14, duration: 2, status: "draft", date: "2025-12-07" },
-  { id: "OP-007", recipe: "BA 16 rul 50/70", quantity: 250, line: "L1", startHour: 8, duration: 4, status: "planned", date: "2025-12-10" },
-  { id: "OP-008", recipe: "MASF 16", quantity: 180, line: "L2", startHour: 10, duration: 3, status: "planned", date: "2025-12-12" },
-  { id: "OP-009", recipe: "Emulsie C60B4", quantity: 90, line: "L3", startHour: 7, duration: 2, status: "draft", date: "2025-12-15" },
-  { id: "OP-010", recipe: "BSC 0/31.5", quantity: 150, line: "L4", startHour: 12, duration: 5, status: "planned", date: "2025-12-18" },
-  { id: "OP-011", recipe: "BA 16 rul 50/70", quantity: 300, line: "L1", startHour: 6, duration: 5, status: "planned", date: "2025-12-20" },
-  { id: "OP-012", recipe: "AB2 22.4", quantity: 200, line: "L2", startHour: 8, duration: 3, status: "draft", date: "2025-12-22" },
+  { id: "OP-001", recipe: "BA 16 rul 50/70", quantity: 200, startHour: 7, duration: 3, status: "in_progress", date: "2025-12-05" },
+  { id: "OP-002", recipe: "MASF 16", quantity: 150, startHour: 11, duration: 2, status: "planned", date: "2025-12-05" },
+  { id: "OP-003", recipe: "Emulsie C60B4", quantity: 80, startHour: 8, duration: 2, status: "planned", date: "2025-12-05" },
+  { id: "OP-004", recipe: "BSC 0/31.5", quantity: 100, startHour: 9, duration: 4, status: "planned", date: "2025-12-06" },
+  { id: "OP-005", recipe: "BA 16 rul 50/70", quantity: 180, startHour: 6, duration: 3, status: "completed", date: "2025-12-04" },
+  { id: "OP-006", recipe: "AB2 22.4", quantity: 120, startHour: 14, duration: 2, status: "draft", date: "2025-12-07" },
+  { id: "OP-007", recipe: "BA 16 rul 50/70", quantity: 250, startHour: 8, duration: 4, status: "planned", date: "2025-12-10" },
+  { id: "OP-008", recipe: "MASF 16", quantity: 180, startHour: 10, duration: 3, status: "planned", date: "2025-12-12" },
+  { id: "OP-009", recipe: "Emulsie C60B4", quantity: 90, startHour: 7, duration: 2, status: "draft", date: "2025-12-15" },
+  { id: "OP-010", recipe: "BSC 0/31.5", quantity: 150, startHour: 12, duration: 5, status: "planned", date: "2025-12-18" },
+  { id: "OP-011", recipe: "BA 16 rul 50/70", quantity: 300, startHour: 6, duration: 5, status: "planned", date: "2025-12-20" },
+  { id: "OP-012", recipe: "AB2 22.4", quantity: 200, startHour: 8, duration: 3, status: "draft", date: "2025-12-22" },
 ];
 
 type ScheduledOrder = typeof initialScheduledOrders[0];
@@ -82,38 +74,6 @@ const CalendarProductie = () => {
     if (!selectedDay) return [];
     return getOrdersForDate(selectedDay);
   }, [selectedDay, scheduledOrders]);
-
-  // Calculate capacity utilization for daily view
-  const capacityMap = useMemo(() => {
-    const map: Record<string, Record<number, number>> = {};
-    
-    productionLines.forEach(line => {
-      map[line.id] = {};
-      hours.forEach(hour => {
-        map[line.id][hour] = 0;
-      });
-    });
-
-    selectedDayOrders.forEach(order => {
-      for (let h = order.startHour; h < order.startHour + order.duration; h++) {
-        if (map[order.line] && map[order.line][h] !== undefined) {
-          const line = productionLines.find(l => l.id === order.line);
-          if (line) {
-            map[order.line][h] += (order.quantity / order.duration) / line.capacity * 100;
-          }
-        }
-      }
-    });
-
-    return map;
-  }, [selectedDayOrders]);
-
-  const getCapacityColor = (utilization: number) => {
-    if (utilization === 0) return "bg-muted/30";
-    if (utilization < 50) return "bg-emerald-500/20 dark:bg-emerald-500/30";
-    if (utilization < 80) return "bg-amber-500/30 dark:bg-amber-500/40";
-    return "bg-red-500/30 dark:bg-red-500/40";
-  };
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; label: string }> = {
@@ -303,78 +263,69 @@ const CalendarProductie = () => {
                 </div>
               ) : (
                 <ScrollArea className="h-[60vh]">
-                  <div className="min-w-[800px]">
+                  <div className="min-w-[700px]">
                     {/* Time header */}
                     <div className="flex border-b border-border sticky top-0 bg-background z-10">
-                      <div className="w-32 shrink-0 p-2 bg-muted/30 border-r border-border">
-                        <span className="text-xs font-medium text-muted-foreground">Linie / Ora</span>
+                      <div className="w-24 shrink-0 p-2 bg-muted/30 border-r border-border">
+                        <span className="text-xs font-medium text-muted-foreground">Ora</span>
                       </div>
                       {hours.map(hour => (
                         <div 
                           key={hour} 
-                          className="flex-1 min-w-[50px] p-2 text-center border-r border-border last:border-r-0 bg-muted/30"
+                          className="flex-1 min-w-[40px] p-2 text-center border-r border-border last:border-r-0 bg-muted/30"
                         >
                           <span className="text-xs font-medium text-muted-foreground">{hour}:00</span>
                         </div>
                       ))}
                     </div>
 
-                    {/* Lines rows */}
-                    {productionLines.map(line => (
-                      <div key={line.id} className="flex border-b border-border last:border-b-0">
-                        <div className="w-32 shrink-0 p-2 bg-muted/20 border-r border-border flex flex-col justify-center">
-                          <span className="text-sm font-medium">{line.name}</span>
-                          <span className="text-xs text-muted-foreground">{line.capacity} to/h</span>
-                        </div>
-                        
-                        {hours.map(hour => {
-                          const utilization = capacityMap[line.id]?.[hour] || 0;
-                          const ordersInSlot = selectedDayOrders.filter(
-                            o => o.line === line.id && hour >= o.startHour && hour < o.startHour + o.duration
-                          );
-                          const isSlotStart = ordersInSlot.find(o => o.startHour === hour);
-
-                          return (
-                            <div
-                              key={hour}
-                              className={cn(
-                                "flex-1 min-w-[50px] min-h-[60px] border-r border-border last:border-r-0 relative transition-colors",
-                                getCapacityColor(utilization)
-                              )}
-                            >
-                              {isSlotStart && (
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <div
-                                      className={cn(
-                                        "absolute inset-1 rounded-md p-1 transition-all",
-                                        isSlotStart.status === "in_progress" && "bg-primary text-primary-foreground",
-                                        isSlotStart.status === "planned" && "bg-secondary text-secondary-foreground",
-                                        isSlotStart.status === "draft" && "bg-muted border border-dashed border-border",
-                                        isSlotStart.status === "completed" && "bg-muted/50 text-muted-foreground"
-                                      )}
-                                      style={{ width: `calc(${isSlotStart.duration * 100}% - 0.5rem)` }}
-                                    >
-                                      <div className="text-xs font-medium truncate">{isSlotStart.id}</div>
-                                      <div className="text-[10px] opacity-80 truncate">{isSlotStart.recipe}</div>
-                                    </div>
-                                  </TooltipTrigger>
-                                  <TooltipContent side="top">
-                                    <div className="text-xs space-y-1">
-                                      <div className="font-medium">{isSlotStart.id}</div>
-                                      <div>{isSlotStart.recipe}</div>
-                                      <div>{isSlotStart.quantity} tone</div>
-                                      <div>{isSlotStart.startHour}:00 - {isSlotStart.startHour + isSlotStart.duration}:00</div>
-                                      {getStatusBadge(isSlotStart.status)}
-                                    </div>
-                                  </TooltipContent>
-                                </Tooltip>
-                              )}
-                            </div>
-                          );
-                        })}
+                    {/* Orders row */}
+                    <div className="flex border-b border-border min-h-[80px] relative">
+                      <div className="w-24 shrink-0 p-2 bg-muted/20 border-r border-border flex items-center">
+                        <span className="text-sm font-medium">Ordine</span>
                       </div>
-                    ))}
+                      <div className="flex-1 relative">
+                        {hours.map(hour => (
+                          <div 
+                            key={hour} 
+                            className="absolute top-0 bottom-0 border-r border-border/30"
+                            style={{ left: `${((hour - 6) / 17) * 100}%`, width: `${100 / 17}%` }}
+                          />
+                        ))}
+                        {selectedDayOrders.map((order, idx) => (
+                          <Tooltip key={order.id}>
+                            <TooltipTrigger asChild>
+                              <div
+                                className={cn(
+                                  "absolute rounded-md p-1.5 transition-all cursor-pointer hover:opacity-90",
+                                  order.status === "in_progress" && "bg-primary text-primary-foreground",
+                                  order.status === "planned" && "bg-secondary text-secondary-foreground",
+                                  order.status === "draft" && "bg-muted border border-dashed border-border",
+                                  order.status === "completed" && "bg-muted/50 text-muted-foreground"
+                                )}
+                                style={{ 
+                                  left: `${((order.startHour - 6) / 17) * 100}%`,
+                                  width: `${(order.duration / 17) * 100}%`,
+                                  top: `${4 + idx * 22}px`,
+                                  height: '20px'
+                                }}
+                              >
+                                <div className="text-xs font-medium truncate">{order.id} - {order.recipe}</div>
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent side="top">
+                              <div className="text-xs space-y-1">
+                                <div className="font-medium">{order.id}</div>
+                                <div>{order.recipe}</div>
+                                <div>{order.quantity} tone</div>
+                                <div>{order.startHour}:00 - {order.startHour + order.duration}:00</div>
+                                {getStatusBadge(order.status)}
+                              </div>
+                            </TooltipContent>
+                          </Tooltip>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </ScrollArea>
               )}
@@ -391,20 +342,6 @@ const CalendarProductie = () => {
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-muted-foreground" />
                     <span><strong>{selectedDayOrders.reduce((sum, o) => sum + o.quantity, 0)}</strong> tone planificate</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 text-xs">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded bg-emerald-500/30" />
-                    <span className="text-muted-foreground">&lt;50%</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded bg-amber-500/40" />
-                    <span className="text-muted-foreground">50-80%</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded bg-red-500/40" />
-                    <span className="text-muted-foreground">&gt;80%</span>
                   </div>
                 </div>
               </div>
