@@ -7,7 +7,6 @@ import {
   XCircle, 
   AlertTriangle,
   Thermometer,
-  Droplets,
   Gauge,
   Clock,
   User,
@@ -90,7 +89,6 @@ const mockLoturi: Lot[] = [
     operator: "Ion Popescu",
     linie: "Linia 1",
     parametri: [
-      { nume: "Umiditate", valoare: 4.2, unitate: "%", tinta: 4.0, tolerantaMinus: 0.5, tolerantaPlus: 0.5, status: "ok" },
       { nume: "Temperatură", valoare: 165, unitate: "°C", tinta: 160, tolerantaMinus: 10, tolerantaPlus: 15, status: "ok" },
       { nume: "Marshall", valoare: 12.5, unitate: "kN", tinta: 12, tolerantaMinus: 1.5, tolerantaPlus: 2, status: "ok" }
     ],
@@ -115,12 +113,11 @@ const mockLoturi: Lot[] = [
     operator: "Ion Popescu",
     linie: "Linia 1",
     parametri: [
-      { nume: "Umiditate", valoare: 4.8, unitate: "%", tinta: 4.0, tolerantaMinus: 0.5, tolerantaPlus: 0.5, status: "warning" },
       { nume: "Temperatură", valoare: 158, unitate: "°C", tinta: 160, tolerantaMinus: 10, tolerantaPlus: 15, status: "ok" },
       { nume: "Marshall", valoare: 11.8, unitate: "kN", tinta: 12, tolerantaMinus: 1.5, tolerantaPlus: 2, status: "ok" }
     ],
     verdictQC: "Conform",
-    observatii: "Umiditate la limita superioară",
+    observatii: "",
     atasamente: [
       { id: 3, nume: "foto_lot_002.jpg", tip: "foto", dataAdaugare: "15/01/2024" }
     ],
@@ -139,12 +136,11 @@ const mockLoturi: Lot[] = [
     operator: "Maria Dumitrescu",
     linie: "Linia 2",
     parametri: [
-      { nume: "Umiditate", valoare: 5.2, unitate: "%", tinta: 4.0, tolerantaMinus: 0.5, tolerantaPlus: 0.5, status: "error" },
       { nume: "Temperatură", valoare: 145, unitate: "°C", tinta: 160, tolerantaMinus: 10, tolerantaPlus: 15, status: "error" },
       { nume: "Marshall", valoare: 10.2, unitate: "kN", tinta: 12, tolerantaMinus: 1.5, tolerantaPlus: 2, status: "warning" }
     ],
     verdictQC: "Neconform",
-    observatii: "Depășiri multiple - temperatură și umiditate în afara limitelor",
+    observatii: "Depășiri multiple - temperatură în afara limitelor",
     atasamente: [
       { id: 4, nume: "raport_neconformitate.pdf", tip: "document", dataAdaugare: "15/01/2024" }
     ],
@@ -163,7 +159,6 @@ const mockLoturi: Lot[] = [
     operator: "Maria Dumitrescu",
     linie: "Linia 2",
     parametri: [
-      { nume: "Umiditate", valoare: 4.1, unitate: "%", tinta: 4.0, tolerantaMinus: 0.5, tolerantaPlus: 0.5, status: "ok" },
       { nume: "Temperatură", valoare: 162, unitate: "°C", tinta: 160, tolerantaMinus: 10, tolerantaPlus: 15, status: "ok" },
       { nume: "Marshall", valoare: 12.3, unitate: "kN", tinta: 12, tolerantaMinus: 1.5, tolerantaPlus: 2, status: "ok" }
     ],
@@ -184,7 +179,6 @@ const mockLoturi: Lot[] = [
     operator: "Andrei Vasilescu",
     linie: "Linia 1",
     parametri: [
-      { nume: "Umiditate", valoare: 6.5, unitate: "%", tinta: 6.0, tolerantaMinus: 1, tolerantaPlus: 1, status: "ok" },
       { nume: "Temperatură", valoare: 22, unitate: "°C", tinta: 20, tolerantaMinus: 5, tolerantaPlus: 10, status: "ok" },
       { nume: "Slump", valoare: 85, unitate: "mm", tinta: 80, tolerantaMinus: 20, tolerantaPlus: 20, status: "ok" }
     ],
@@ -275,7 +269,6 @@ const Loturi = () => {
   const handleExportCSV = () => {
     const exportData = loturi.map(l => ({
       ...l,
-      umiditate: l.parametri.find(p => p.nume === "Umiditate")?.valoare || "-",
       temperatura: l.parametri.find(p => p.nume === "Temperatură")?.valoare || "-",
       marshall: l.parametri.find(p => p.nume === "Marshall")?.valoare || "-",
       slump: l.parametri.find(p => p.nume === "Slump")?.valoare || "-"
@@ -286,7 +279,6 @@ const Loturi = () => {
       { key: "cantitate", label: "Cantitate" },
       { key: "dataOra", label: "Data/Ora" },
       { key: "operator", label: "Operator" },
-      { key: "umiditate", label: "Umiditate %" },
       { key: "temperatura", label: "Temperatură °C" },
       { key: "marshall", label: "Marshall kN" },
       { key: "verdictQC", label: "Verdict QC" }
@@ -552,7 +544,6 @@ const Loturi = () => {
                                     variant={param.status === "ok" ? "outline" : param.status === "warning" ? "secondary" : "destructive"}
                                     className="text-xs"
                                   >
-                                    {param.nume === "Umiditate" && <Droplets className="h-3 w-3 mr-1" />}
                                     {param.nume === "Temperatură" && <Thermometer className="h-3 w-3 mr-1" />}
                                     {(param.nume === "Marshall" || param.nume === "Slump") && <Gauge className="h-3 w-3 mr-1" />}
                                     {param.valoare}
@@ -636,7 +627,6 @@ const Loturi = () => {
                             <CardContent className="p-3">
                               <div className="flex items-center justify-between mb-1">
                                 <div className="flex items-center gap-2">
-                                  {param.nume === "Umiditate" && <Droplets className="h-4 w-4 text-blue-500" />}
                                   {param.nume === "Temperatură" && <Thermometer className="h-4 w-4 text-orange-500" />}
                                   {(param.nume === "Marshall" || param.nume === "Slump") && <Gauge className="h-4 w-4 text-purple-500" />}
                                   <span className="font-medium text-sm">{param.nume}</span>
@@ -958,11 +948,7 @@ const Loturi = () => {
 
             <div className="space-y-3">
               <Label>Parametri Măsurați</Label>
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <Label className="text-xs">Umiditate (%)</Label>
-                  <Input type="number" step="0.1" placeholder="Ex: 4.0" />
-                </div>
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label className="text-xs">Temperatură (°C)</Label>
                   <Input type="number" placeholder="Ex: 160" />
