@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
+
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
@@ -30,10 +30,17 @@ interface ProdusItem {
 }
 
 interface TransportPricing {
-  tipTransport: "inchiriere" | "tona_km" | "inclus";
+  tipTransport: "fara_transport" | "inclus" | "inchiriere" | "tona_km";
   pretInchiriere?: number;
   pretTonaKm?: number;
 }
+
+const transportOptions = [
+  { value: "fara_transport", label: "Fără transport" },
+  { value: "inclus", label: "Inclus în preț" },
+  { value: "inchiriere", label: "Preț chirie transport" },
+  { value: "tona_km", label: "Preț tonă/km" },
+] as const;
 
 interface Oferta {
   id: number;
@@ -109,10 +116,14 @@ const OferteContracte = () => {
       // Map API data to Oferta type
       const mappedOferte: Oferta[] = data.map((item: any, index: number) => {
         // Parse tip_transport to our format
-        let tipTransport: "inchiriere" | "tona_km" | "inclus" = "inclus";
-        if (item.tip_transport === "inchiriere" || item.tip_transport === "chirie") {
+        let tipTransport: "fara_transport" | "inclus" | "inchiriere" | "tona_km" = "inclus";
+        if (item.tip_transport === "fara_transport" || item.tip_transport === "Fără transport") {
+          tipTransport = "fara_transport";
+        } else if (item.tip_transport === "inclus" || item.tip_transport === "Inclus în preț") {
+          tipTransport = "inclus";
+        } else if (item.tip_transport === "inchiriere" || item.tip_transport === "chirie" || item.tip_transport === "Preț chirie transport") {
           tipTransport = "inchiriere";
-        } else if (item.tip_transport === "tona_km" || item.tip_transport === "tonă/km") {
+        } else if (item.tip_transport === "tona_km" || item.tip_transport === "tonă/km" || item.tip_transport === "Preț tonă/km") {
           tipTransport = "tona_km";
         }
         
@@ -556,10 +567,14 @@ const OferteContracte = () => {
           
           // Determine tip_transport value for backend
           let tipTransport = "inclus";
-          if (form.transport.tipTransport === "inchiriere") {
-            tipTransport = "chirie";
+          if (form.transport.tipTransport === "fara_transport") {
+            tipTransport = "Fără transport";
+          } else if (form.transport.tipTransport === "inclus") {
+            tipTransport = "Inclus în preț";
+          } else if (form.transport.tipTransport === "inchiriere") {
+            tipTransport = "Preț chirie transport";
           } else if (form.transport.tipTransport === "tona_km") {
-            tipTransport = "tonă/km";
+            tipTransport = "Preț tonă/km";
           }
           
           const pretTransport = form.transport.tipTransport === "tona_km" 
@@ -737,8 +752,9 @@ const OferteContracte = () => {
   
   const getTransportLabel = (transport: TransportPricing) => {
     switch (transport.tipTransport) {
+      case "fara_transport": return "Fără transport";
       case "inclus": return "Inclus în preț";
-      case "inchiriere": return `Închiriere: ${transport.pretInchiriere?.toLocaleString()} RON`;
+      case "inchiriere": return `Preț chirie: ${transport.pretInchiriere?.toLocaleString()} RON`;
       case "tona_km": return `${transport.pretTonaKm?.toFixed(2)} RON/tonă·km`;
       default: return "-";
     }
@@ -1166,64 +1182,66 @@ const OferteContracte = () => {
             {/* Transport Pricing Section */}
             <div className="space-y-3 p-3 border rounded-lg bg-muted/30">
               <Label className="text-base font-medium">Preț Transport</Label>
-              <div className="flex items-center gap-3">
-                <span className={`text-sm ${form.transport.tipTransport === "inchiriere" ? "text-foreground font-medium" : "text-muted-foreground"}`}>
-                  Preț chirie transport
-                </span>
-                <Switch
-                  checked={form.transport.tipTransport === "tona_km"}
-                  onCheckedChange={(checked) => setForm({
-                    ...form,
-                    transport: {
-                      ...form.transport,
-                      tipTransport: checked ? "tona_km" : "inchiriere",
-                      pretInchiriere: checked ? 0 : form.transport.pretInchiriere,
-                      pretTonaKm: checked ? form.transport.pretTonaKm : 0
-                    }
-                  })}
-                />
-                <span className={`text-sm ${form.transport.tipTransport === "tona_km" ? "text-foreground font-medium" : "text-muted-foreground"}`}>
-                  Preț tonă/km
-                </span>
-              </div>
-              <div className="mt-2">
-                {form.transport.tipTransport === "inchiriere" ? (
-                  <div className="space-y-1">
-                    <Label className="text-xs">Preț chirie transport (RON)</Label>
-                    <Input 
-                      type="number" 
-                      className="h-9"
-                      placeholder="ex: 1500"
-                      value={form.transport.pretInchiriere || ""} 
-                      onChange={(e) => setForm({ 
-                        ...form, 
-                        transport: { 
-                          ...form.transport, 
-                          pretInchiriere: Number(e.target.value)
-                        } 
-                      })} 
-                    />
-                  </div>
-                ) : (
-                  <div className="space-y-1">
-                    <Label className="text-xs">Preț tonă/km (RON)</Label>
-                    <Input 
-                      type="number" 
-                      step="0.01"
-                      className="h-9"
-                      placeholder="ex: 0.85"
-                      value={form.transport.pretTonaKm || ""} 
-                      onChange={(e) => setForm({ 
-                        ...form, 
-                        transport: { 
-                          ...form.transport, 
-                          pretTonaKm: Number(e.target.value)
-                        } 
-                      })} 
-                    />
-                  </div>
-                )}
-              </div>
+              <Select 
+                value={form.transport.tipTransport} 
+                onValueChange={(v: TransportPricing["tipTransport"]) => setForm({
+                  ...form,
+                  transport: {
+                    ...form.transport,
+                    tipTransport: v,
+                    pretInchiriere: v === "inchiriere" ? form.transport.pretInchiriere : 0,
+                    pretTonaKm: v === "tona_km" ? form.transport.pretTonaKm : 0
+                  }
+                })}
+              >
+                <SelectTrigger className="h-10">
+                  <SelectValue placeholder="Selectează tip transport" />
+                </SelectTrigger>
+                <SelectContent className="z-[200] pointer-events-auto">
+                  {transportOptions.map(opt => (
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              {form.transport.tipTransport === "inchiriere" && (
+                <div className="space-y-1 mt-2">
+                  <Label className="text-xs">Preț chirie transport (RON)</Label>
+                  <Input 
+                    type="number" 
+                    className="h-9"
+                    placeholder="ex: 1500"
+                    value={form.transport.pretInchiriere || ""} 
+                    onChange={(e) => setForm({ 
+                      ...form, 
+                      transport: { 
+                        ...form.transport, 
+                        pretInchiriere: Number(e.target.value)
+                      } 
+                    })} 
+                  />
+                </div>
+              )}
+              
+              {form.transport.tipTransport === "tona_km" && (
+                <div className="space-y-1 mt-2">
+                  <Label className="text-xs">Preț tonă/km (RON)</Label>
+                  <Input 
+                    type="number" 
+                    step="0.01"
+                    className="h-9"
+                    placeholder="ex: 0.85"
+                    value={form.transport.pretTonaKm || ""} 
+                    onChange={(e) => setForm({ 
+                      ...form, 
+                      transport: { 
+                        ...form.transport, 
+                        pretTonaKm: Number(e.target.value)
+                      } 
+                    })} 
+                  />
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
