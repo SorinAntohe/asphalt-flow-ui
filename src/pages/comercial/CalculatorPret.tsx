@@ -1,104 +1,167 @@
 import { useState, useEffect, useMemo } from "react";
-import { Calculator, Plus, Trash2, Package } from "lucide-react";
+import { Calculator, Plus, Trash2, TrendingUp, TrendingDown, Minus, BarChart3, Users, Zap, Package } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FilterableSelect } from "@/components/ui/filterable-select";
 import { Separator } from "@/components/ui/separator";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { API_BASE_URL } from "@/lib/api";
+import { toast } from "sonner";
 
-interface ProdusFinit {
-  id: number;
+interface Reteta {
+  cod_reteta: string;
   denumire: string;
+  tip: string;
 }
 
-interface ProdusSelectat {
+interface CostBreakdown {
+  materiale: { material: string; cantitate: number; pretUnitar: number; total: number }[];
+  curent: number;
+  costuriIndirecte: {
+    manopera: number;
+    amortizare: number;
+    mentenanta: number;
+    administrative: number;
+  };
+  costTotal: number;
+  pretRecomandat: number;
+}
+
+interface PretConcurent {
   id: string;
-  produs_id: string;
-  denumire: string;
-  cantitate: number;
-  pret_unitar: number;
-  pret_transport: number;
+  concurent: string;
+  produs: string;
+  pret: number;
 }
 
 const CalculatorPret = () => {
-  const [produseFinite, setProduseFinite] = useState<ProdusFinit[]>([]);
-  const [produseSelectate, setProduseSelectate] = useState<ProdusSelectat[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Input parameters state
+  const [retete, setRetete] = useState<Reteta[]>([]);
+  const [selectedReteta, setSelectedReteta] = useState("");
+  const [cantitate, setCantitate] = useState("");
+  const [marjaProfit, setMarjaProfit] = useState("15");
+  const [loading, setLoading] = useState(false);
 
-  // Fetch produse finite
+  // Calculation result state
+  const [costBreakdown, setCostBreakdown] = useState<CostBreakdown | null>(null);
+
+  // Competitor prices state
+  const [preturiConcurenti, setPreturiConcurenti] = useState<PretConcurent[]>([]);
+  const [newConcurent, setNewConcurent] = useState({ concurent: "", produs: "", pret: "" });
+
+  // Fetch retete
   useEffect(() => {
-    const fetchProduse = async () => {
+    const fetchRetete = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/liste/returneaza/produse_finite`);
+        const response = await fetch(`${API_BASE_URL}/productie/returneaza/retete`);
         if (response.ok) {
           const data = await response.json();
-          setProduseFinite(data);
+          setRetete(data);
         }
       } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching retete:", error);
       }
     };
-    fetchProduse();
+    fetchRetete();
   }, []);
 
-  const produseOptions = useMemo(() => 
-    produseFinite.map(p => ({ value: p.id.toString(), label: p.denumire })),
-    [produseFinite]
+  const retetaOptions = useMemo(() => 
+    retete.map(r => ({ 
+      value: r.cod_reteta, 
+      label: `${r.cod_reteta} - ${r.denumire}` 
+    })),
+    [retete]
   );
 
-  const addProdus = () => {
-    setProduseSelectate(prev => [...prev, {
-      id: crypto.randomUUID(),
-      produs_id: "",
-      denumire: "",
-      cantitate: 0,
-      pret_unitar: 0,
-      pret_transport: 0,
-    }]);
+  const marjaOptions = useMemo(() => 
+    Array.from({ length: 31 }, (_, i) => ({
+      value: String(i),
+      label: `${i}%`
+    })),
+    []
+  );
+
+  // Calculate price
+  const handleCalculate = () => {
+    if (!selectedReteta || !cantitate) {
+      toast.error("Selectați o rețetă și introduceți cantitatea");
+      return;
+    }
+
+    setLoading(true);
+    
+    // Simulate calculation (in real app, this would be an API call)
+    setTimeout(() => {
+      const qty = parseFloat(cantitate);
+      const marja = parseFloat(marjaProfit) / 100;
+      
+      // Mock cost breakdown based on quantity
+      const mockBreakdown: CostBreakdown = {
+        materiale: [
+          { material: "Bitum 50/70", cantitate: qty * 0.05, pretUnitar: 3500, total: qty * 0.05 * 3500 },
+          { material: "Agregat 0/4", cantitate: qty * 0.35, pretUnitar: 45, total: qty * 0.35 * 45 },
+          { material: "Agregat 4/8", cantitate: qty * 0.25, pretUnitar: 50, total: qty * 0.25 * 50 },
+          { material: "Filler", cantitate: qty * 0.08, pretUnitar: 120, total: qty * 0.08 * 120 },
+          { material: "Agregat 8/16", cantitate: qty * 0.27, pretUnitar: 55, total: qty * 0.27 * 55 },
+        ],
+        curent: qty * 15, // 15 RON/tonă pentru curent
+        costuriIndirecte: {
+          manopera: qty * 25,
+          amortizare: qty * 18,
+          mentenanta: qty * 12,
+          administrative: qty * 8,
+        },
+        costTotal: 0,
+        pretRecomandat: 0
+      };
+
+      const costMateriale = mockBreakdown.materiale.reduce((sum, m) => sum + m.total, 0);
+      const costIndirecte = Object.values(mockBreakdown.costuriIndirecte).reduce((sum, c) => sum + c, 0);
+      mockBreakdown.costTotal = costMateriale + mockBreakdown.curent + costIndirecte;
+      mockBreakdown.pretRecomandat = mockBreakdown.costTotal * (1 + marja);
+
+      setCostBreakdown(mockBreakdown);
+      setLoading(false);
+      toast.success("Calculul a fost realizat cu succes");
+    }, 500);
   };
 
-  const removeProdus = (id: string) => {
-    setProduseSelectate(prev => prev.filter(p => p.id !== id));
-  };
-
-  const updateProdus = (id: string, field: keyof ProdusSelectat, value: string | number) => {
-    setProduseSelectate(prev => prev.map(p => {
-      if (p.id === id) {
-        if (field === "produs_id") {
-          const selected = produseFinite.find(pf => pf.id.toString() === value);
-          return { ...p, produs_id: value as string, denumire: selected?.denumire || "" };
-        }
-        return { ...p, [field]: value };
-      }
-      return p;
-    }));
-  };
-
-  // Calculate totals
-  const totals = useMemo(() => {
-    let totalProduse = 0;
-    let totalTransport = 0;
-    let totalCantitate = 0;
-
-    produseSelectate.forEach(p => {
-      const subtotalProdus = p.cantitate * p.pret_unitar;
-      const subtotalTransport = p.cantitate * p.pret_transport;
-      totalProduse += subtotalProdus;
-      totalTransport += subtotalTransport;
-      totalCantitate += p.cantitate;
-    });
-
+  // Competitor price stats
+  const competitorStats = useMemo(() => {
+    if (preturiConcurenti.length === 0) {
+      return { mediu: 0, minim: 0, maxim: 0 };
+    }
+    const preturi = preturiConcurenti.map(p => p.pret);
     return {
-      totalProduse,
-      totalTransport,
-      totalCantitate,
-      totalGeneral: totalProduse + totalTransport,
+      mediu: preturi.reduce((a, b) => a + b, 0) / preturi.length,
+      minim: Math.min(...preturi),
+      maxim: Math.max(...preturi)
     };
-  }, [produseSelectate]);
+  }, [preturiConcurenti]);
+
+  // Add competitor price
+  const handleAddConcurent = () => {
+    if (!newConcurent.concurent || !newConcurent.produs || !newConcurent.pret) {
+      toast.error("Completați toate câmpurile");
+      return;
+    }
+    setPreturiConcurenti(prev => [...prev, {
+      id: crypto.randomUUID(),
+      concurent: newConcurent.concurent,
+      produs: newConcurent.produs,
+      pret: parseFloat(newConcurent.pret)
+    }]);
+    setNewConcurent({ concurent: "", produs: "", pret: "" });
+  };
+
+  // Remove competitor price
+  const handleRemoveConcurent = (id: string) => {
+    setPreturiConcurenti(prev => prev.filter(p => p.id !== id));
+  };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("ro-RO", {
@@ -111,173 +174,276 @@ const CalculatorPret = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-2">
-            <Calculator className="h-7 w-7 text-primary" />
-            Calculator Preț
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Calculează prețul total pentru produse finite
-          </p>
-        </div>
-        <Button onClick={addProdus} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Adaugă Produs
-        </Button>
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-2">
+          <Calculator className="h-7 w-7 text-primary" />
+          Calculator Preț
+        </h1>
+        <p className="text-muted-foreground mt-1">
+          Calculează prețul recomandat pe baza costurilor și analizează concurența
+        </p>
       </div>
 
-      {/* Products List */}
-      <Card variant="elevated">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Package className="h-5 w-5" />
-            Produse Selectate
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {produseSelectate.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Niciun produs adăugat</p>
-              <p className="text-sm">Apasă "Adaugă Produs" pentru a începe calculul</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {produseSelectate.map((produs, index) => (
-                <div key={produs.id} className="p-4 border border-border rounded-lg bg-muted/30">
-                  <div className="flex items-start justify-between gap-4 mb-4">
-                    <span className="text-sm font-medium text-muted-foreground">
-                      Produs #{index + 1}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeProdus(produs.id)}
-                      className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="sm:col-span-2 lg:col-span-1">
-                      <Label>Produs</Label>
-                      <FilterableSelect
-                        value={produs.produs_id}
-                        onValueChange={(value) => updateProdus(produs.id, "produs_id", value)}
-                        options={produseOptions}
-                        placeholder="Selectează produs..."
-                        searchPlaceholder="Caută produs..."
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label>Cantitate (tone)</Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        value={produs.cantitate || ""}
-                        onChange={(e) => updateProdus(produs.id, "cantitate", parseFloat(e.target.value) || 0)}
-                        placeholder="0"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label>Preț Unitar (RON/tonă)</Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        value={produs.pret_unitar || ""}
-                        onChange={(e) => updateProdus(produs.id, "pret_unitar", parseFloat(e.target.value) || 0)}
-                        placeholder="0.00"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label>Preț Transport (RON/tonă)</Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        value={produs.pret_transport || ""}
-                        onChange={(e) => updateProdus(produs.id, "pret_transport", parseFloat(e.target.value) || 0)}
-                        placeholder="0.00"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Row subtotal */}
-                  <div className="mt-4 pt-4 border-t border-border/50 flex flex-wrap gap-4 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Subtotal Produs: </span>
-                      <span className="font-medium">{formatCurrency(produs.cantitate * produs.pret_unitar)}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Subtotal Transport: </span>
-                      <span className="font-medium">{formatCurrency(produs.cantitate * produs.pret_transport)}</span>
-                    </div>
-                    <div className="ml-auto">
-                      <span className="text-muted-foreground">Total Rând: </span>
-                      <span className="font-semibold text-primary">
-                        {formatCurrency(produs.cantitate * (produs.pret_unitar + produs.pret_transport))}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Totals Summary */}
-      {produseSelectate.length > 0 && (
-        <Card variant="elevated" className="border-primary/20">
+      {/* Three Cards Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Card 1: Parametrii de Intrare */}
+        <Card variant="elevated">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calculator className="h-5 w-5" />
-              Sumar Calcul
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Package className="h-5 w-5" />
+              Parametrii de Intrare
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label>Rețetă</Label>
+              <FilterableSelect
+                value={selectedReteta}
+                onValueChange={setSelectedReteta}
+                options={retetaOptions}
+                placeholder="Selectează rețeta..."
+                searchPlaceholder="Caută rețetă..."
+              />
+            </div>
+
+            <div>
+              <Label>Cantitate (tone)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+                value={cantitate}
+                onChange={(e) => setCantitate(e.target.value)}
+                placeholder="Ex: 100"
+              />
+            </div>
+
+            <div>
+              <Label>Marjă Profit</Label>
+              <Select value={marjaProfit} onValueChange={setMarjaProfit}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selectează marja..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {marjaOptions.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button 
+              className="w-full" 
+              onClick={handleCalculate}
+              disabled={loading || !selectedReteta || !cantitate}
+            >
+              <Calculator className="h-4 w-4 mr-2" />
+              {loading ? "Se calculează..." : "Calculează Preț Recomandat"}
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Card 2: Rezultat Calcul */}
+        <Card variant="elevated">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <BarChart3 className="h-5 w-5" />
+              Rezultat Calcul
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="p-4 rounded-lg bg-muted/50">
-                <p className="text-sm text-muted-foreground">Cantitate Totală</p>
-                <p className="text-2xl font-bold">{totals.totalCantitate.toFixed(2)} tone</p>
+            {!costBreakdown ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Calculator className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>Completați parametrii și apăsați "Calculează"</p>
               </div>
-              
-              <div className="p-4 rounded-lg bg-muted/50">
-                <p className="text-sm text-muted-foreground">Total Produse</p>
-                <p className="text-2xl font-bold">{formatCurrency(totals.totalProduse)}</p>
-              </div>
-              
-              <div className="p-4 rounded-lg bg-muted/50">
-                <p className="text-sm text-muted-foreground">Total Transport</p>
-                <p className="text-2xl font-bold">{formatCurrency(totals.totalTransport)}</p>
-              </div>
-              
-              <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
-                <p className="text-sm text-muted-foreground">Total General</p>
-                <p className="text-2xl font-bold text-primary">{formatCurrency(totals.totalGeneral)}</p>
-              </div>
-            </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Preț Recomandat */}
+                <div className="p-4 rounded-lg bg-primary/10 border border-primary/20 text-center">
+                  <p className="text-sm text-muted-foreground">Preț Recomandat</p>
+                  <p className="text-3xl font-bold text-primary">
+                    {formatCurrency(costBreakdown.pretRecomandat / parseFloat(cantitate))}
+                    <span className="text-sm font-normal text-muted-foreground">/tonă</span>
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Total: {formatCurrency(costBreakdown.pretRecomandat)}
+                  </p>
+                </div>
 
-            <Separator className="my-6" />
+                <Separator />
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-end">
-              <Button 
-                variant="outline" 
-                onClick={() => setProduseSelectate([])}
-              >
-                Resetează
-              </Button>
-            </div>
+                {/* Cost Materii Prime */}
+                <div>
+                  <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                    <Package className="h-4 w-4" />
+                    Cost Materii Prime (FIFO)
+                  </h4>
+                  <div className="space-y-1 text-sm">
+                    {costBreakdown.materiale.map((m, idx) => (
+                      <div key={idx} className="flex justify-between">
+                        <span className="text-muted-foreground">{m.material}</span>
+                        <span>{formatCurrency(m.total)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Curent */}
+                <div className="flex justify-between text-sm">
+                  <span className="flex items-center gap-2">
+                    <Zap className="h-4 w-4 text-yellow-500" />
+                    Curent Electric
+                  </span>
+                  <span>{formatCurrency(costBreakdown.curent)}</span>
+                </div>
+
+                <Separator />
+
+                {/* Costuri Indirecte */}
+                <div>
+                  <h4 className="text-sm font-medium mb-2">Costuri Indirecte</h4>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Manoperă</span>
+                      <span>{formatCurrency(costBreakdown.costuriIndirecte.manopera)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Amortizare echipamente</span>
+                      <span>{formatCurrency(costBreakdown.costuriIndirecte.amortizare)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Mentenanță</span>
+                      <span>{formatCurrency(costBreakdown.costuriIndirecte.mentenanta)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Administrative</span>
+                      <span>{formatCurrency(costBreakdown.costuriIndirecte.administrative)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Total */}
+                <div className="flex justify-between font-semibold">
+                  <span>Cost Total Producție</span>
+                  <span>{formatCurrency(costBreakdown.costTotal)}</span>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
-      )}
+
+        {/* Card 3: Prețuri Concurență */}
+        <Card variant="elevated">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Users className="h-5 w-5" />
+              Prețuri Concurență
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Stats */}
+            {preturiConcurenti.length > 0 && (
+              <div className="grid grid-cols-3 gap-2">
+                <div className="p-2 rounded-lg bg-muted/50 text-center">
+                  <p className="text-xs text-muted-foreground">Preț Mediu</p>
+                  <p className="font-semibold text-sm flex items-center justify-center gap-1">
+                    <Minus className="h-3 w-3 text-blue-500" />
+                    {formatCurrency(competitorStats.mediu)}
+                  </p>
+                </div>
+                <div className="p-2 rounded-lg bg-muted/50 text-center">
+                  <p className="text-xs text-muted-foreground">Preț Minim</p>
+                  <p className="font-semibold text-sm flex items-center justify-center gap-1">
+                    <TrendingDown className="h-3 w-3 text-green-500" />
+                    {formatCurrency(competitorStats.minim)}
+                  </p>
+                </div>
+                <div className="p-2 rounded-lg bg-muted/50 text-center">
+                  <p className="text-xs text-muted-foreground">Preț Maxim</p>
+                  <p className="font-semibold text-sm flex items-center justify-center gap-1">
+                    <TrendingUp className="h-3 w-3 text-red-500" />
+                    {formatCurrency(competitorStats.maxim)}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Add form */}
+            <div className="space-y-2">
+              <div className="grid grid-cols-3 gap-2">
+                <Input
+                  placeholder="Concurent"
+                  value={newConcurent.concurent}
+                  onChange={(e) => setNewConcurent(prev => ({ ...prev, concurent: e.target.value }))}
+                />
+                <Input
+                  placeholder="Produs"
+                  value={newConcurent.produs}
+                  onChange={(e) => setNewConcurent(prev => ({ ...prev, produs: e.target.value }))}
+                />
+                <Input
+                  type="number"
+                  placeholder="Preț"
+                  value={newConcurent.pret}
+                  onChange={(e) => setNewConcurent(prev => ({ ...prev, pret: e.target.value }))}
+                />
+              </div>
+              <Button variant="outline" size="sm" className="w-full" onClick={handleAddConcurent}>
+                <Plus className="h-4 w-4 mr-1" />
+                Adaugă Preț Concurent
+              </Button>
+            </div>
+
+            <Separator />
+
+            {/* Table */}
+            {preturiConcurenti.length === 0 ? (
+              <div className="text-center py-6 text-muted-foreground">
+                <Users className="h-10 w-10 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">Niciun preț de concurență adăugat</p>
+              </div>
+            ) : (
+              <div className="max-h-[250px] overflow-y-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-xs">Concurent</TableHead>
+                      <TableHead className="text-xs">Produs</TableHead>
+                      <TableHead className="text-xs text-right">Preț</TableHead>
+                      <TableHead className="w-8"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {preturiConcurenti.map((pret) => (
+                      <TableRow key={pret.id}>
+                        <TableCell className="text-sm py-2">{pret.concurent}</TableCell>
+                        <TableCell className="text-sm py-2">{pret.produs}</TableCell>
+                        <TableCell className="text-sm py-2 text-right font-medium">
+                          {formatCurrency(pret.pret)}
+                        </TableCell>
+                        <TableCell className="py-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-destructive hover:text-destructive"
+                            onClick={() => handleRemoveConcurent(pret.id)}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
