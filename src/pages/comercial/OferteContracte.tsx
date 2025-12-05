@@ -503,20 +503,50 @@ const OferteContracte = () => {
   const paginatedContracte = filteredContracte.slice((contractePage - 1) * itemsPerPage, contractePage * itemsPerPage);
 
   const handleExport = () => {
-    const columns = [
-      { key: "nr" as const, label: "Nr." },
-      { key: "client" as const, label: "Client" },
-      { key: "proiect" as const, label: "Proiect/Șantier" },
-      { key: "produs" as const, label: "Produs" },
-      { key: "pret" as const, label: "Preț" },
-      { key: "valabilitate" as const, label: "Valabilitate" },
-      { key: "termenPlata" as const, label: "Termen Plată" },
-      { key: "status" as const, label: "Status" },
-    ];
-    
     if (activeTab === "oferte") {
+      const columns = [
+        { key: "nr" as const, label: "Nr." },
+        { key: "dataCreare" as const, label: "Data Creare" },
+        { key: "client" as const, label: "Client" },
+        { key: "proiect" as const, label: "Proiect/Șantier" },
+        { key: "produse" as const, label: "Produse", transform: (val: ProdusItem[]) => val?.map(p => `${p.produs}: ${p.pret} RON`).join("; ") || "" },
+        { key: "pret" as const, label: "Preț Total" },
+        { key: "transport" as const, label: "Transport", transform: (val: TransportPricing) => {
+          if (!val) return "-";
+          if (val.tipTransport === "fara_transport") return "Fără transport";
+          if (val.tipTransport === "inclus") return "Inclus în preț";
+          if (val.tipTransport === "inchiriere") return `Chirie: ${val.pretInchiriere} RON`;
+          if (val.tipTransport === "tona_km") return `${val.pretTonaKm} RON/tonă/km`;
+          return "-";
+        }},
+        { key: "valabilitate" as const, label: "Valabilitate" },
+        { key: "termenPlata" as const, label: "Termen Plată" },
+        { key: "status" as const, label: "Status" },
+        { key: "observatii" as const, label: "Observații" },
+      ];
       exportToCSV(filteredOferte, `oferte_${new Date().toISOString().split('T')[0]}`, columns);
     } else {
+      const columns = [
+        { key: "nr" as const, label: "Nr." },
+        { key: "dataCreare" as const, label: "Data Creare" },
+        { key: "client" as const, label: "Client" },
+        { key: "proiect" as const, label: "Proiect/Șantier" },
+        { key: "produse" as const, label: "Produse", transform: (val: ProdusItem[]) => val?.map(p => `${p.produs}: ${p.pret} RON`).join("; ") || "" },
+        { key: "pret" as const, label: "Preț Total" },
+        { key: "transport" as const, label: "Transport", transform: (val: TransportPricing) => {
+          if (!val) return "-";
+          if (val.tipTransport === "fara_transport") return "Fără transport";
+          if (val.tipTransport === "inclus") return "Inclus în preț";
+          if (val.tipTransport === "inchiriere") return `Chirie: ${val.pretInchiriere} RON`;
+          if (val.tipTransport === "tona_km") return `${val.pretTonaKm} RON/tonă/km`;
+          return "-";
+        }},
+        { key: "valabilitate" as const, label: "Valabilitate" },
+        { key: "termenPlata" as const, label: "Termen Plată" },
+        { key: "indexareCombustibil" as const, label: "Indexare Combustibil" },
+        { key: "status" as const, label: "Status" },
+        { key: "observatii" as const, label: "Observații" },
+      ];
       exportToCSV(filteredContracte, `contracte_${new Date().toISOString().split('T')[0]}`, columns);
     }
     toast({ title: "Export realizat", description: `Fișierul ${activeTab}.csv a fost descărcat.` });
