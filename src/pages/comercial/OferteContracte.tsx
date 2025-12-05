@@ -541,20 +541,83 @@ const OferteContracte = () => {
 
     if (editing) {
       if (editing.tip === "oferta") {
-        setOferte(prev => prev.map(item => 
-          item.id === editing.id 
-            ? { ...item, client: form.client, proiect: form.proiect, produs: produsDisplay, pret: totalPret, produse: validProduse, transport, valabilitate: form.valabilitate || item.valabilitate, termenPlata: form.termenPlata, observatii: form.observatii }
-            : item
-        ));
+        // Call API to edit oferta
+        setIsSaving(true);
+        try {
+          const produseList = validProduse.map(p => p.produs).join(", ");
+          const preturiProduse = validProduse.map(p => String(p.pret)).join(", ");
+          
+          let tipTransport = "Inclus în preț";
+          if (form.transport.tipTransport === "fara_transport") {
+            tipTransport = "Fără transport";
+          } else if (form.transport.tipTransport === "inclus") {
+            tipTransport = "Inclus în preț";
+          } else if (form.transport.tipTransport === "inchiriere") {
+            tipTransport = "Preț chirie transport";
+          } else if (form.transport.tipTransport === "tona_km") {
+            tipTransport = "Preț tonă/km";
+          }
+          
+          const pretTransport = form.transport.tipTransport === "tona_km" 
+            ? String(form.transport.pretTonaKm || 0)
+            : form.transport.tipTransport === "inchiriere"
+            ? String(form.transport.pretInchiriere || 0)
+            : "0";
+          
+          const termenPlataNumber = parseFloat(form.termenPlata.replace(/[^0-9]/g, '')) || 0;
+          
+          const payload = {
+            table: "oferte",
+            id: editing.id,
+            data: {
+              client: form.client,
+              proiect_santier: form.proiect,
+              produse: produseList,
+              preturi_produse: preturiProduse,
+              tip_transport: tipTransport,
+              pret_transport: pretTransport,
+              valabilitate: form.valabilitate,
+              termen_de_plata: termenPlataNumber,
+              avans_de_plata: form.avansPlata || 0,
+              observatii: form.observatii || "",
+              ...(biletOrdinUploadUrl && { locatie_bilet_ordin_cec: biletOrdinUploadUrl }),
+              ...(procesVerbalUploadUrl && { locatie_proces_verbal_predare_primire: procesVerbalUploadUrl }),
+            }
+          };
+          
+          console.log("Sending edit oferta payload:", payload);
+          
+          const response = await fetch(`${API_BASE_URL}/editeaza`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          
+          if (!response.ok) throw new Error("Eroare la editarea ofertei");
+          
+          toast({ title: "Succes", description: "Oferta a fost actualizată." });
+          fetchOferte();
+          setOpenAddEdit(false);
+        } catch (error) {
+          console.error("Error editing oferta:", error);
+          toast({ 
+            title: "Eroare", 
+            description: "Nu s-a putut edita oferta.", 
+            variant: "destructive" 
+          });
+          return;
+        } finally {
+          setIsSaving(false);
+        }
       } else {
         setContracte(prev => prev.map(item => 
           item.id === editing.id 
             ? { ...item, client: form.client, proiect: form.proiect, produs: produsDisplay, pret: totalPret, produse: validProduse, transport, valabilitate: form.valabilitate || item.valabilitate, termenPlata: form.termenPlata, observatii: form.observatii, indexareCombustibil: form.indexareCombustibil }
             : item
         ));
+        toast({ title: "Succes", description: "Contractul a fost actualizat." });
+        setOpenAddEdit(false);
       }
-      toast({ title: "Succes", description: `${editing.tip === "oferta" ? "Oferta" : "Contractul"} a fost actualizat.` });
-      setOpenAddEdit(false);
     } else {
       if (activeTab === "oferte") {
         // Call API to add oferta
@@ -655,16 +718,41 @@ const OferteContracte = () => {
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!deleting) return;
     
     if (deleting.tip === "oferta") {
-      setOferte(prev => prev.filter(item => item.id !== deleting.id));
+      try {
+        const payload = {
+          table: "oferte",
+          id: deleting.id
+        };
+        
+        console.log("Sending delete oferta payload:", payload);
+        
+        const response = await fetch(`${API_BASE_URL}/sterge`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        
+        if (!response.ok) throw new Error("Eroare la ștergerea ofertei");
+        
+        toast({ title: "Succes", description: "Oferta a fost ștearsă." });
+        fetchOferte();
+      } catch (error) {
+        console.error("Error deleting oferta:", error);
+        toast({ 
+          title: "Eroare", 
+          description: "Nu s-a putut șterge oferta.", 
+          variant: "destructive" 
+        });
+      }
     } else {
       setContracte(prev => prev.filter(item => item.id !== deleting.id));
+      toast({ title: "Succes", description: "Contractul a fost șters." });
     }
     
-    toast({ title: "Succes", description: `${deleting.tip === "oferta" ? "Oferta" : "Contractul"} a fost șters.` });
     setDeleting(null);
   };
 
