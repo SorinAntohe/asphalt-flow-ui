@@ -116,18 +116,33 @@ const OferteContracte = () => {
           tipTransport = "tona_km";
         }
         
+        // Parse produse and preturi_produse from comma-separated strings
+        const produseNames = item.produse ? item.produse.split(",").map((p: string) => p.trim()) : [];
+        const preturiProduse = item.preturi_produse ? item.preturi_produse.split(",").map((p: string) => parseFloat(p.trim()) || 0) : [];
+        
+        // Build produse array with prices
+        const produseArray = produseNames.map((name: string, i: number) => ({
+          produs: name,
+          pret: preturiProduse[i] || 0
+        }));
+        
+        // Calculate total: sum of product prices + transport price
+        const sumaProduse = preturiProduse.reduce((sum: number, p: number) => sum + p, 0);
+        const pretTransportValue = parseFloat(item.pret_transport) || 0;
+        const totalPret = sumaProduse + pretTransportValue;
+        
         return {
           id: item.id || index + 1,
           nr: item.cod_ferta || `OF-${index + 1}`,
           client: item.client || "",
           proiect: item.proiect_santier || "",
           produs: item.produse || "",
-          pret: parseFloat(item.pret_transport) || 0,
-          produse: [{ produs: item.produse || "", pret: parseFloat(item.pret_transport) || 0 }],
+          pret: totalPret,
+          produse: produseArray.length > 0 ? produseArray : [{ produs: "", pret: 0 }],
           transport: { 
             tipTransport,
-            ...(tipTransport === "inchiriere" && { pretInchiriere: parseFloat(item.pret_transport) || 0 }),
-            ...(tipTransport === "tona_km" && { pretTonaKm: parseFloat(item.pret_transport) || 0 }),
+            ...(tipTransport === "inchiriere" && { pretInchiriere: pretTransportValue }),
+            ...(tipTransport === "tona_km" && { pretTonaKm: pretTransportValue }),
           },
           valabilitate: item.valabilitate || "",
           termenPlata: `${item.termen_de_plata || 0} zile`,
