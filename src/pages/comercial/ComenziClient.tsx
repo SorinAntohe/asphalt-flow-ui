@@ -314,7 +314,12 @@ const ComenziClient = () => {
           body: JSON.stringify(payload)
         });
         if (!response.ok) throw new Error("Eroare la adăugare");
-        toast({ title: "Succes", description: "Comanda a fost adăugată." });
+        
+        const result = await response.json();
+        const codComanda = result.cod_comanda;
+        console.log("Cod comanda generat:", codComanda);
+        
+        toast({ title: "Succes", description: `Comanda ${codComanda || ''} a fost adăugată.` });
       }
       setOpenAddEdit(false);
       fetchComenzi(); // Refresh data
