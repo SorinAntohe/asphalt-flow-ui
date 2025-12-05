@@ -812,19 +812,23 @@ const OferteContracte = () => {
           // Call API for each product
           for (const produs of validProduse) {
             const payload = {
-              client: form.client,
-              proiect_santier: form.proiect,
-              produs: produs.produs,
-              pret_produs: produs.pret,
-              tip_transport: tipTransport,
-              pret_transport: pretTransport,
-              valabilitate: form.valabilitate,
-              termen_de_plata: termenPlataNumber,
-              avans_de_plata: form.avansPlata || 0,
-              observatii: form.observatii || "",
-              status: "In curs de aprobare",
-              locatie_bilet_ordin_cec: biletOrdinUploadUrl || "",
-              locatie_proces_verbal_predare_primire: procesVerbalUploadUrl || "",
+              oferta: {
+                client: form.client,
+                proiect_santier: form.proiect,
+                produse: produs.produs,
+                tip_transport: tipTransport,
+                pret_transport: pretTransport,
+                valabilitate: form.valabilitate,
+                termen_de_plata: termenPlataNumber,
+                avans_de_plata: form.avansPlata || 0,
+                observatii: form.observatii || "",
+              },
+              extra: {
+                pret_produs: String(produs.pret),
+                status: "In curs de aprobare",
+                locatie_bilet_ordin_cec: biletOrdinUploadUrl || "",
+                locatie_proces_verbal_predare_primire: procesVerbalUploadUrl || "",
+              }
             };
             
             await fetch(`${API_BASE_URL}/comercial/adauga/oferta`, {
