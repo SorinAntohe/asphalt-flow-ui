@@ -66,14 +66,29 @@ const CalendarProductie = ({ ordine = [] }: CalendarProductieProps) => {
   const scheduledOrders = useMemo((): CalendarOrder[] => {
     return ordine.flatMap(ordin => {
       // Parse date from startPlanificat (format: "DD/MM/YYYY HH:mm")
-      const dateParts = ordin.startPlanificat.split(" ");
-      const [day, month, year] = dateParts[0].split("/");
-      const timePart = dateParts[1] || "08:00";
-      const [hourStr] = timePart.split(":");
-      const startHour = parseInt(hourStr) || 8;
+      let dateStr = new Date().toISOString().split('T')[0]; // Default to today
+      let startHour = 8;
       
-      // Convert DD/MM/YYYY to YYYY-MM-DD
-      const dateStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      try {
+        if (ordin.startPlanificat) {
+          const dateParts = ordin.startPlanificat.split(" ");
+          if (dateParts[0]) {
+            const dateComponents = dateParts[0].split("/");
+            if (dateComponents.length === 3) {
+              const [day, month, year] = dateComponents;
+              if (day && month && year) {
+                dateStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+              }
+            }
+          }
+          if (dateParts[1]) {
+            const [hourStr] = dateParts[1].split(":");
+            startHour = parseInt(hourStr) || 8;
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to parse date:', ordin.startPlanificat);
+      }
       
       // Map status
       const statusMap: Record<string, string> = {
@@ -87,7 +102,7 @@ const CalendarProductie = ({ ordine = [] }: CalendarProductieProps) => {
         id: `${ordin.numar}${idx > 0 ? `-${idx + 1}` : ''}`,
         produs: p.produs,
         quantity: p.cantitate,
-        startHour: startHour + idx * 2, // Stagger multiple products
+        startHour: Math.min(22, Math.max(6, startHour + idx * 2)), // Keep within bounds 6-22
         duration: Math.max(2, Math.ceil(p.cantitate / 100)), // Duration based on quantity
         status: statusMap[ordin.status] || "planificat",
         date: dateStr
