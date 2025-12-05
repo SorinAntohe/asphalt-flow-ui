@@ -634,7 +634,7 @@ const OrdineProductie = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
@@ -670,19 +670,6 @@ const OrdineProductie = () => {
               </div>
               <div className="h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center">
                 <Clock className="h-6 w-6 text-amber-500" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Masă Totală Activă</p>
-                <p className="text-2xl font-bold">{stats.cantitateTotal.toLocaleString()} t</p>
-              </div>
-              <div className="h-12 w-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                <Package className="h-6 w-6 text-emerald-500" />
               </div>
             </div>
           </CardContent>
