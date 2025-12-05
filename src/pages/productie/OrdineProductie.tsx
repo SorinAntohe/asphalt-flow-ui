@@ -131,7 +131,7 @@ const OrdineProductie = () => {
 
     const fetchProduseFinite = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/liste/returneaza/produse_finite`);
+        const response = await fetch(`${API_BASE_URL}/returneaza_produse_finite`);
         if (response.ok) {
           const data = await response.json();
           setProduseFinite(data.map((p: { denumire: string }) => p.denumire));
