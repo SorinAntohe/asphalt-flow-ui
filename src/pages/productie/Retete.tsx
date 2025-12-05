@@ -40,9 +40,7 @@ import { API_BASE_URL } from "@/lib/api";
 interface Component {
   id: number;
   material: string;
-  procent: number;
-  toleranta: number;
-  substituent: string;
+  cantitate: number;
   observatii: string;
 }
 
@@ -105,11 +103,11 @@ const reteteInitiale: Reteta[] = [
     temperatura: 165,
     marshall: 12,
     componente: [
-      { id: 1, material: "Criblură 8/16", procent: 35, toleranta: 2, substituent: "Criblură 4/8", observatii: "" },
-      { id: 2, material: "Criblură 4/8", procent: 25, toleranta: 2, substituent: "-", observatii: "" },
-      { id: 3, material: "Nisip 0/4", procent: 30, toleranta: 3, substituent: "Nisip concasat", observatii: "" },
-      { id: 4, material: "Filler", procent: 5, toleranta: 1, substituent: "-", observatii: "Calcar" },
-      { id: 5, material: "Bitum 50/70", procent: 5, toleranta: 0.3, substituent: "Bitum 70/100", observatii: "" },
+      { id: 1, material: "Criblură 8/16", cantitate: 350, observatii: "" },
+      { id: 2, material: "Criblură 4/8", cantitate: 250, observatii: "" },
+      { id: 3, material: "Nisip 0/4", cantitate: 300, observatii: "" },
+      { id: 4, material: "Filler", cantitate: 50, observatii: "Calcar" },
+      { id: 5, material: "Bitum 50/70", cantitate: 50, observatii: "" },
     ],
     parametriProces: [
       { id: 1, parametru: "Temperatura agregat", valoare: "180-200", unitate: "°C" },
@@ -144,11 +142,11 @@ const reteteInitiale: Reteta[] = [
     temperatura: 170,
     marshall: 14,
     componente: [
-      { id: 1, material: "Criblură 16/22", procent: 30, toleranta: 2, substituent: "-", observatii: "" },
-      { id: 2, material: "Criblură 8/16", procent: 25, toleranta: 2, substituent: "-", observatii: "" },
-      { id: 3, material: "Nisip 0/4", procent: 35, toleranta: 3, substituent: "-", observatii: "" },
-      { id: 4, material: "Filler", procent: 4, toleranta: 1, substituent: "-", observatii: "" },
-      { id: 5, material: "Bitum modificat", procent: 6, toleranta: 0.3, substituent: "-", observatii: "PMB 45/80" },
+      { id: 1, material: "Criblură 16/22", cantitate: 300, observatii: "" },
+      { id: 2, material: "Criblură 8/16", cantitate: 250, observatii: "" },
+      { id: 3, material: "Nisip 0/4", cantitate: 350, observatii: "" },
+      { id: 4, material: "Filler", cantitate: 40, observatii: "" },
+      { id: 5, material: "Bitum modificat", cantitate: 60, observatii: "PMB 45/80" },
     ],
     parametriProces: [
       { id: 1, parametru: "Temperatura agregat", valoare: "185-205", unitate: "°C" },
@@ -177,9 +175,9 @@ const reteteInitiale: Reteta[] = [
     umiditate: 8.0,
     slump: 5,
     componente: [
-      { id: 1, material: "Agregat 0/31.5", procent: 85, toleranta: 3, substituent: "-", observatii: "" },
-      { id: 2, material: "Ciment", procent: 5, toleranta: 0.5, substituent: "-", observatii: "CEM II" },
-      { id: 3, material: "Apă", procent: 10, toleranta: 2, substituent: "-", observatii: "" },
+      { id: 1, material: "Agregat 0/31.5", cantitate: 850, observatii: "" },
+      { id: 2, material: "Ciment", cantitate: 50, observatii: "CEM II" },
+      { id: 3, material: "Apă", cantitate: 100, observatii: "" },
     ],
     parametriProces: [
       { id: 1, parametru: "Timp malaxare", valoare: "45", unitate: "sec" },
@@ -202,9 +200,9 @@ const reteteInitiale: Reteta[] = [
     status: "Arhivat",
     ultimaModificare: "01/10/2024",
     componente: [
-      { id: 1, material: "Pietriș 31.5/63", procent: 40, toleranta: 5, substituent: "-", observatii: "" },
-      { id: 2, material: "Pietriș 8/31.5", procent: 35, toleranta: 5, substituent: "-", observatii: "" },
-      { id: 3, material: "Nisip 0/8", procent: 25, toleranta: 5, substituent: "-", observatii: "" },
+      { id: 1, material: "Pietriș 31.5/63", cantitate: 400, observatii: "" },
+      { id: 2, material: "Pietriș 8/31.5", cantitate: 350, observatii: "" },
+      { id: 3, material: "Nisip 0/8", cantitate: 250, observatii: "" },
     ],
     parametriProces: [],
     limiteCalitate: [
@@ -340,9 +338,7 @@ const Retete = () => {
     const newComponent: Component = {
       id: Date.now(),
       material: "",
-      procent: 0,
-      toleranta: 0,
-      substituent: "-",
+      cantitate: 0,
       observatii: ""
     };
     setEditorComponents([...editorComponents, newComponent]);
@@ -360,9 +356,9 @@ const Retete = () => {
     setEditorComponents(editorComponents.filter(c => c.id !== id));
   };
 
-  // Calculate total percentage for validation
-  const getTotalPercent = (componente: Component[]) => {
-    return componente.reduce((sum, c) => sum + c.procent, 0);
+  // Calculate total cantitate for validation
+  const getTotalCantitate = (componente: Component[]) => {
+    return componente.reduce((sum, c) => sum + c.cantitate, 0);
   };
 
   return (
@@ -603,16 +599,13 @@ const Retete = () => {
               <div>
                 <h4 className="font-semibold mb-3 flex items-center gap-2">
                   <ListChecks className="h-4 w-4" />
-                  Componente ({getTotalPercent(peekDrawer.componente)}%)
+                  Componente ({getTotalCantitate(peekDrawer.componente)} kg/tonă)
                 </h4>
                 <div className="space-y-2 max-h-[150px] overflow-y-auto">
                   {peekDrawer.componente.map((comp) => (
                     <div key={comp.id} className="flex items-center justify-between p-2 rounded bg-muted/30">
                       <span className="text-sm">{comp.material}</span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{comp.procent}%</span>
-                        <span className="text-xs text-muted-foreground">±{comp.toleranta}%</span>
-                      </div>
+                      <span className="font-medium">{comp.cantitate} kg</span>
                     </div>
                   ))}
                 </div>
@@ -725,9 +718,9 @@ const Retete = () => {
                     <Label>Componente</Label>
                     <div className="flex items-center gap-2">
                       {editorComponents.length > 0 && (
-                        <span className={`text-sm font-medium ${getTotalPercent(editorComponents) === 100 ? 'text-green-600' : 'text-destructive'}`}>
-                          Total: {getTotalPercent(editorComponents)}%
-                          {getTotalPercent(editorComponents) !== 100 && (
+                        <span className={`text-sm font-medium ${getTotalCantitate(editorComponents) === 1000 ? 'text-green-600' : 'text-destructive'}`}>
+                          Total: {getTotalCantitate(editorComponents)} kg
+                          {getTotalCantitate(editorComponents) !== 1000 && (
                             <AlertTriangle className="inline h-4 w-4 ml-1" />
                           )}
                         </span>
@@ -743,9 +736,7 @@ const Retete = () => {
                       <TableHeader>
                         <TableRow>
                           <TableHead>Material</TableHead>
-                          <TableHead className="text-right">% sau kg/t</TableHead>
-                          <TableHead className="text-right">Toleranță ±</TableHead>
-                          <TableHead>Substituent admis</TableHead>
+                          <TableHead className="text-right">Cantitate (kg/tonă)</TableHead>
                           <TableHead>Observații</TableHead>
                           <TableHead className="w-10"></TableHead>
                         </TableRow>
@@ -753,7 +744,7 @@ const Retete = () => {
                       <TableBody>
                         {editorComponents.length === 0 ? (
                           <TableRow>
-                            <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                            <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
                               Nu există componente. Apasă "Adaugă" pentru a adăuga materiale.
                             </TableCell>
                           </TableRow>
@@ -773,24 +764,10 @@ const Retete = () => {
                               <TableCell>
                                 <Input 
                                   type="number" 
-                                  value={comp.procent} 
-                                  onChange={(e) => handleUpdateComponent(comp.id, "procent", parseFloat(e.target.value) || 0)}
-                                  className="h-8 w-20 text-right" 
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <Input 
-                                  type="number" 
-                                  value={comp.toleranta} 
-                                  onChange={(e) => handleUpdateComponent(comp.id, "toleranta", parseFloat(e.target.value) || 0)}
-                                  className="h-8 w-16 text-right" 
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <Input 
-                                  value={comp.substituent} 
-                                  onChange={(e) => handleUpdateComponent(comp.id, "substituent", e.target.value)}
-                                  className="h-8" 
+                                  value={comp.cantitate} 
+                                  onChange={(e) => handleUpdateComponent(comp.id, "cantitate", parseFloat(e.target.value) || 0)}
+                                  className="h-8 w-24 text-right" 
+                                  placeholder="kg"
                                 />
                               </TableCell>
                               <TableCell>
