@@ -53,7 +53,7 @@ interface Oferta {
   transport: TransportPricing;
   valabilitate: string;
   termenPlata: string;
-  status: "Draft" | "Trimis" | "Acceptat" | "Expirat";
+  status: "In curs de aprobare" | "Aprobata" | "Respinsa";
   tip: "oferta";
   dataCreare: string;
   conditiiComerciale: string;
@@ -71,7 +71,7 @@ interface Contract {
   transport: TransportPricing;
   valabilitate: string;
   termenPlata: string;
-  status: "Draft" | "Trimis" | "Acceptat" | "Expirat";
+  status: "In curs de aprobare" | "Aprobata" | "Respinsa";
   tip: "contract";
   dataCreare: string;
   conditiiComerciale: string;
@@ -87,13 +87,12 @@ const initialOferte: Oferta[] = [];
 const initialContracte: Contract[] = [];
 
 const statusColors: Record<string, string> = {
-  Draft: "bg-muted text-muted-foreground",
-  Trimis: "bg-blue-500/20 text-blue-600 dark:text-blue-400",
-  Acceptat: "bg-green-500/20 text-green-600 dark:text-green-400",
-  Expirat: "bg-red-500/20 text-red-600 dark:text-red-400",
+  "In curs de aprobare": "bg-amber-500/20 text-amber-600 dark:text-amber-400",
+  "Aprobata": "bg-green-500/20 text-green-600 dark:text-green-400",
+  "Respinsa": "bg-red-500/20 text-red-600 dark:text-red-400",
 };
 
-const statusOptions = ["Draft", "Trimis", "Acceptat", "Expirat"] as const;
+const statusOptions = ["In curs de aprobare", "Aprobata", "Respinsa"] as const;
 
 const OferteContracte = () => {
   const { toast } = useToast();
@@ -157,7 +156,7 @@ const OferteContracte = () => {
           },
           valabilitate: item.valabilitate || "",
           termenPlata: `${item.termen_de_plata || 0} zile`,
-          status: (item.status as "Draft" | "Trimis" | "Acceptat" | "Expirat") || "Draft",
+          status: (item.status as "In curs de aprobare" | "Aprobata" | "Respinsa") || "In curs de aprobare",
           tip: "oferta" as const,
           dataCreare: item.data || "",
           conditiiComerciale: "",
@@ -659,7 +658,7 @@ const OferteContracte = () => {
             termen_de_plata: termenPlataNumber,
             avans_de_plata: form.avansPlata || 0,
             observatii: form.observatii || "",
-            status: "Draft",
+            status: "In curs de aprobare",
             locatie_bilet_ordin_cec: biletOrdinUploadUrl || "",
             locatie_proces_verbal_predare_primire: procesVerbalUploadUrl || "",
           };
@@ -704,7 +703,7 @@ const OferteContracte = () => {
           transport,
           valabilitate: form.valabilitate,
           termenPlata: form.termenPlata,
-          status: "Draft",
+          status: "In curs de aprobare",
           tip: "contract",
           dataCreare: currentDate,
           conditiiComerciale: "",
@@ -756,7 +755,7 @@ const OferteContracte = () => {
     setDeleting(null);
   };
 
-  const handleStatusChange = (item: Item, newStatus: "Draft" | "Trimis" | "Acceptat" | "Expirat") => {
+  const handleStatusChange = (item: Item, newStatus: "In curs de aprobare" | "Aprobata" | "Respinsa") => {
     if (item.tip === "oferta") {
       setOferte(prev => prev.map(o => o.id === item.id ? { ...o, status: newStatus } : o));
     } else {
@@ -780,7 +779,7 @@ const OferteContracte = () => {
         ...sourceOferta,
         id: Math.max(...oferte.map(o => o.id), 0) + 1,
         nr: `OF-2024-${String(oferte.length + 1).padStart(3, '0')}`,
-        status: "Draft",
+        status: "In curs de aprobare",
         dataCreare: currentDate,
         produse: [...sourceOferta.produse],
         transport: { ...sourceOferta.transport },
@@ -792,7 +791,7 @@ const OferteContracte = () => {
         ...sourceContract,
         id: Math.max(...contracte.map(c => c.id), 0) + 1,
         nr: `CTR-2024-${String(contracte.length + 1).padStart(3, '0')}`,
-        status: "Draft",
+        status: "In curs de aprobare",
         dataCreare: currentDate,
         produse: [...sourceContract.produse],
         transport: { ...sourceContract.transport },
@@ -824,7 +823,7 @@ const OferteContracte = () => {
         transport: { ...oferta.transport },
         valabilitate: oferta.valabilitate,
         termenPlata: oferta.termenPlata,
-        status: "Draft",
+        status: "In curs de aprobare",
         tip: "contract",
         dataCreare: new Date().toLocaleDateString('ro-RO'),
         conditiiComerciale: oferta.conditiiComerciale,
@@ -1102,7 +1101,7 @@ const OferteContracte = () => {
               {viewingDetails && (
                 <Select 
                   value={viewingDetails.status} 
-                  onValueChange={(v) => handleStatusChange(viewingDetails, v as "Draft" | "Trimis" | "Acceptat" | "Expirat")}
+                  onValueChange={(v) => handleStatusChange(viewingDetails, v as "In curs de aprobare" | "Aprobata" | "Respinsa")}
                 >
                   <SelectTrigger className="w-32 h-8">
                     <Badge className={cn(statusColors[viewingDetails.status], "px-2 py-0.5")}>{viewingDetails.status}</Badge>
@@ -1177,7 +1176,7 @@ const OferteContracte = () => {
             <Button variant="outline" size="sm" onClick={handleSendEmail}>
               <Mail className="w-4 h-4 mr-1" />Trimite pe email
             </Button>
-            {viewingDetails?.tip === "oferta" && viewingDetails?.status === "Acceptat" && (
+            {viewingDetails?.tip === "oferta" && viewingDetails?.status === "Aprobata" && (
               <Button variant="outline" size="sm" onClick={handleGenerateContract}>
                 <FileText className="w-4 h-4 mr-1" />Generează contract
               </Button>
