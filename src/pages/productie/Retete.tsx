@@ -36,7 +36,6 @@ interface Component {
   id: number;
   material: string;
   cantitate: number;
-  observatii: string;
 }
 
 interface Reteta {
@@ -48,6 +47,7 @@ interface Reteta {
   status: "Activ" | "Arhivat";
   ultimaModificare: string;
   componente: Component[];
+  observatii?: string;
   umiditate?: number;
   temperatura?: number;
   marshall?: number;
@@ -67,12 +67,13 @@ const reteteInitiale: Reteta[] = [
     umiditate: 4.5,
     temperatura: 165,
     marshall: 12,
+    observatii: "Rețetă standard pentru BA 16",
     componente: [
-      { id: 1, material: "Criblură 8/16", cantitate: 350, observatii: "" },
-      { id: 2, material: "Criblură 4/8", cantitate: 250, observatii: "" },
-      { id: 3, material: "Nisip 0/4", cantitate: 300, observatii: "" },
-      { id: 4, material: "Filler", cantitate: 50, observatii: "Calcar" },
-      { id: 5, material: "Bitum 50/70", cantitate: 50, observatii: "" },
+      { id: 1, material: "Criblură 8/16", cantitate: 350 },
+      { id: 2, material: "Criblură 4/8", cantitate: 250 },
+      { id: 3, material: "Nisip 0/4", cantitate: 300 },
+      { id: 4, material: "Filler", cantitate: 50 },
+      { id: 5, material: "Bitum 50/70", cantitate: 50 },
     ],
   },
   {
@@ -86,12 +87,13 @@ const reteteInitiale: Reteta[] = [
     umiditate: 4.0,
     temperatura: 170,
     marshall: 14,
+    observatii: "Rețetă modificată cu PMB",
     componente: [
-      { id: 1, material: "Criblură 16/22", cantitate: 300, observatii: "" },
-      { id: 2, material: "Criblură 8/16", cantitate: 250, observatii: "" },
-      { id: 3, material: "Nisip 0/4", cantitate: 350, observatii: "" },
-      { id: 4, material: "Filler", cantitate: 40, observatii: "" },
-      { id: 5, material: "Bitum modificat", cantitate: 60, observatii: "PMB 45/80" },
+      { id: 1, material: "Criblură 16/22", cantitate: 300 },
+      { id: 2, material: "Criblură 8/16", cantitate: 250 },
+      { id: 3, material: "Nisip 0/4", cantitate: 350 },
+      { id: 4, material: "Filler", cantitate: 40 },
+      { id: 5, material: "Bitum modificat", cantitate: 60 },
     ],
   },
   {
@@ -104,10 +106,11 @@ const reteteInitiale: Reteta[] = [
     ultimaModificare: "20/11/2024",
     umiditate: 8.0,
     slump: 5,
+    observatii: "Emulsie pentru tratamente superficiale",
     componente: [
-      { id: 1, material: "Agregat 0/31.5", cantitate: 850, observatii: "" },
-      { id: 2, material: "Ciment", cantitate: 50, observatii: "CEM II" },
-      { id: 3, material: "Apă", cantitate: 100, observatii: "" },
+      { id: 1, material: "Agregat 0/31.5", cantitate: 850 },
+      { id: 2, material: "Ciment", cantitate: 50 },
+      { id: 3, material: "Apă", cantitate: 100 },
     ],
   },
   {
@@ -119,9 +122,9 @@ const reteteInitiale: Reteta[] = [
     status: "Arhivat",
     ultimaModificare: "01/10/2024",
     componente: [
-      { id: 1, material: "Pietriș 31.5/63", cantitate: 400, observatii: "" },
-      { id: 2, material: "Pietriș 8/31.5", cantitate: 350, observatii: "" },
-      { id: 3, material: "Nisip 0/8", cantitate: 250, observatii: "" },
+      { id: 1, material: "Pietriș 31.5/63", cantitate: 400 },
+      { id: 2, material: "Pietriș 8/31.5", cantitate: 350 },
+      { id: 3, material: "Nisip 0/8", cantitate: 250 },
     ],
   },
 ];
@@ -244,8 +247,7 @@ const Retete = () => {
     const newComponent: Component = {
       id: Date.now(),
       material: "",
-      cantitate: 0,
-      observatii: ""
+      cantitate: 0
     };
     setEditorComponents([...editorComponents, newComponent]);
   };
@@ -597,14 +599,13 @@ const Retete = () => {
                       <TableRow>
                         <TableHead>Material</TableHead>
                         <TableHead className="text-right">Cantitate (kg/tonă)</TableHead>
-                        <TableHead>Observații</TableHead>
                         <TableHead className="w-10"></TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {editorComponents.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                          <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
                             Nu există componente. Apasă "Adaugă" pentru a adăuga materiale.
                           </TableCell>
                         </TableRow>
@@ -631,13 +632,6 @@ const Retete = () => {
                               />
                             </TableCell>
                             <TableCell>
-                              <Input 
-                                value={comp.observatii} 
-                                onChange={(e) => handleUpdateComponent(comp.id, "observatii", e.target.value)}
-                                className="h-8" 
-                              />
-                            </TableCell>
-                            <TableCell>
                               <Button 
                                 variant="ghost" 
                                 size="icon" 
@@ -653,6 +647,15 @@ const Retete = () => {
                     </TableBody>
                   </Table>
                 </div>
+              </div>
+
+              <div>
+                <Label>Observații</Label>
+                <textarea 
+                  defaultValue={editorDialog?.reteta?.observatii || ""} 
+                  placeholder="Observații generale pentru această rețetă..."
+                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 mt-1"
+                />
               </div>
             </div>
           </ScrollArea>
