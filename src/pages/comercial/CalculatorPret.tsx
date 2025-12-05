@@ -21,12 +21,14 @@ interface Reteta {
 
 interface CostBreakdown {
   materiale: { material: string; cantitate: number; pretUnitar: number; total: number }[];
-  curent: number;
+  curentActiv: number;
+  consumCTL: number;
   costuriIndirecte: {
-    manopera: number;
-    amortizare: number;
+    curentPasiv: number;
+    salarii: number;
+    amortizari: number;
     mentenanta: number;
-    administrative: number;
+    chirie: number;
   };
   costTotal: number;
   pretRecomandat: number;
@@ -64,15 +66,17 @@ const mockCostBreakdown: CostBreakdown = {
     { material: "Filler", cantitate: 8, pretUnitar: 120, total: 960 },
     { material: "Agregat 8/16", cantitate: 27, pretUnitar: 55, total: 1485 },
   ],
-  curent: 1500,
+  curentActiv: 1200,
+  consumCTL: 800,
   costuriIndirecte: {
-    manopera: 2500,
-    amortizare: 1800,
+    curentPasiv: 300,
+    salarii: 2500,
+    amortizari: 1800,
     mentenanta: 1200,
-    administrative: 800,
+    chirie: 600,
   },
-  costTotal: 30570,
-  pretRecomandat: 35155.5
+  costTotal: 31770,
+  pretRecomandat: 36535.5
 };
 
 const CalculatorPret = () => {
@@ -143,12 +147,14 @@ const CalculatorPret = () => {
           { material: "Filler", cantitate: qty * 0.08, pretUnitar: 120, total: qty * 0.08 * 120 },
           { material: "Agregat 8/16", cantitate: qty * 0.27, pretUnitar: 55, total: qty * 0.27 * 55 },
         ],
-        curent: qty * 15, // 15 RON/tonă pentru curent
+        curentActiv: qty * 12, // 12 RON/tonă pentru curent activ
+        consumCTL: qty * 8, // 8 RON/tonă pentru consum CTL
         costuriIndirecte: {
-          manopera: qty * 25,
-          amortizare: qty * 18,
+          curentPasiv: qty * 3, // 3 RON/tonă pentru curent pasiv
+          salarii: qty * 25,
+          amortizari: qty * 18,
           mentenanta: qty * 12,
-          administrative: qty * 8,
+          chirie: qty * 6,
         },
         costTotal: 0,
         pretRecomandat: 0
@@ -156,7 +162,7 @@ const CalculatorPret = () => {
 
       const costMateriale = mockBreakdown.materiale.reduce((sum, m) => sum + m.total, 0);
       const costIndirecte = Object.values(mockBreakdown.costuriIndirecte).reduce((sum, c) => sum + c, 0);
-      mockBreakdown.costTotal = costMateriale + mockBreakdown.curent + costIndirecte;
+      mockBreakdown.costTotal = costMateriale + mockBreakdown.curentActiv + mockBreakdown.consumCTL + costIndirecte;
       mockBreakdown.pretRecomandat = mockBreakdown.costTotal * (1 + marja);
 
       setCostBreakdown(mockBreakdown);
@@ -534,13 +540,26 @@ const CalculatorPret = () => {
 
               <Separator />
 
-              {/* Curent */}
-              <div className="flex justify-between text-sm">
-                <span className="flex items-center gap-2">
+              {/* Curent Electric */}
+              <div>
+                <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
                   <Zap className="h-4 w-4 text-yellow-500" />
-                  Curent Electric
-                </span>
-                <span>{formatCurrency(costBreakdown.curent)}</span>
+                  Curent Electric & Consum CTL
+                </h4>
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Curent Electric Activ</span>
+                    <span>{formatCurrency(costBreakdown.curentActiv)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Consum CTL</span>
+                    <span>{formatCurrency(costBreakdown.consumCTL)}</span>
+                  </div>
+                  <div className="flex justify-between font-medium pt-1 border-t border-border">
+                    <span>Subtotal</span>
+                    <span>{formatCurrency(costBreakdown.curentActiv + costBreakdown.consumCTL)}</span>
+                  </div>
+                </div>
               </div>
 
               <Separator />
@@ -550,20 +569,24 @@ const CalculatorPret = () => {
                 <h4 className="text-sm font-medium mb-2">Costuri Indirecte</h4>
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Manoperă</span>
-                    <span>{formatCurrency(costBreakdown.costuriIndirecte.manopera)}</span>
+                    <span className="text-muted-foreground">Curent Electric Pasiv</span>
+                    <span>{formatCurrency(costBreakdown.costuriIndirecte.curentPasiv)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Amortizare echipamente</span>
-                    <span>{formatCurrency(costBreakdown.costuriIndirecte.amortizare)}</span>
+                    <span className="text-muted-foreground">Salarii</span>
+                    <span>{formatCurrency(costBreakdown.costuriIndirecte.salarii)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Amortizări</span>
+                    <span>{formatCurrency(costBreakdown.costuriIndirecte.amortizari)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Mentenanță</span>
                     <span>{formatCurrency(costBreakdown.costuriIndirecte.mentenanta)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Administrative</span>
-                    <span>{formatCurrency(costBreakdown.costuriIndirecte.administrative)}</span>
+                    <span className="text-muted-foreground">Chirie</span>
+                    <span>{formatCurrency(costBreakdown.costuriIndirecte.chirie)}</span>
                   </div>
                   <div className="flex justify-between font-medium pt-1 border-t border-border">
                     <span>Subtotal Indirecte</span>
