@@ -102,17 +102,16 @@ const statusConfig: Record<string, { variant: "default" | "secondary" | "destruc
 };
 
 // API response interface
+// API response interface - matches what aggregate_all_groups returns
+// Only cod_ordin (group by), id, produse, cantitati are concatenated
+// Other fields are NOT returned by this API
 interface OrdinApiResponse {
   cod_ordin: string;
   id: string;
   produse: string;
   cantitati: string;
-  operator?: string;
-  sef_schimb?: string;
-  status?: string;
-  data_start?: string;
-  observatii?: string;
-  comenzi_asociate?: string;
+  // Note: start_planificat, operator, sef_schimb, status, observatii 
+  // are NOT returned by current API - would need backend update
 }
 
 const OrdineProductie = () => {
@@ -227,16 +226,16 @@ const OrdineProductie = () => {
               produse: produse,
               cantitateTotala: cantitateTotala,
               unitateMasura: "tone",
-              startPlanificat: item.data_start || "",
-              operator: item.operator || "",
-              sefSchimb: item.sef_schimb || "",
-              status: (item.status as "Planificat" | "În lucru" | "Finalizat") || "Planificat",
-              observatii: item.observatii || "",
+              startPlanificat: "", // Not returned by API
+              operator: "", // Not returned by API
+              sefSchimb: "", // Not returned by API
+              status: "Planificat" as const, // Not returned by API - default
+              observatii: "", // Not returned by API
               consumEstimat: [],
               rezervariStoc: [],
               loturiAsociate: [],
               atasamente: [],
-              comenziAsociate: item.comenzi_asociate ? item.comenzi_asociate.split(", ").filter(Boolean) : []
+              comenziAsociate: [] // Not returned by API
             };
           });
           
@@ -657,16 +656,16 @@ const OrdineProductie = () => {
               produse: produse,
               cantitateTotala: cantitateTotala,
               unitateMasura: "tone",
-              startPlanificat: item.data_start || "",
-              operator: item.operator || "",
-              sefSchimb: item.sef_schimb || "",
-              status: (item.status as "Planificat" | "În lucru" | "Finalizat") || "Planificat",
-              observatii: item.observatii || "",
+              startPlanificat: "", // Not returned by API
+              operator: "", // Not returned by API
+              sefSchimb: "", // Not returned by API
+              status: "Planificat" as const, // Not returned by API - default
+              observatii: "", // Not returned by API
               consumEstimat: [],
               rezervariStoc: [],
               loturiAsociate: [],
               atasamente: [],
-              comenziAsociate: item.comenzi_asociate ? item.comenzi_asociate.split(", ").filter(Boolean) : []
+              comenziAsociate: [] // Not returned by API
             };
           });
           
