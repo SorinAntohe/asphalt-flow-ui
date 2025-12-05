@@ -1,18 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Bell, User, Moon, Sun, LogOut } from "lucide-react";
+import { Search, Bell, User, Moon, Sun, LogOut, Command } from "lucide-react";
+import { GlobalSearch } from "@/components/GlobalSearch";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 
 export function TopBar() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [searchOpen, setSearchOpen] = useState(false);
   const { logout, user } = useAuth();
   const navigate = useNavigate();
+
+  // Global keyboard shortcut for search (Cmd/Ctrl + K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
   
   const toggleTheme = () => {
     // Add transitioning class for smooth color transitions
@@ -51,14 +63,29 @@ export function TopBar() {
             </SelectContent>
           </Select>
 
-          <div className="relative flex-1 max-w-md hidden md:block">
+          <div 
+            className="relative flex-1 max-w-md hidden md:block cursor-pointer"
+            onClick={() => setSearchOpen(true)}
+          >
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/70" />
-            <Input 
-              type="search" 
-              placeholder="Căutare globală..." 
-              className="pl-10 bg-background border-2 border-foreground/20 placeholder:text-foreground/60 placeholder:font-medium hover:border-foreground/40 focus:border-primary transition-all shadow-sm" 
-            />
+            <div className="pl-10 pr-16 py-2 bg-background border-2 border-foreground/20 placeholder:text-foreground/60 rounded-md hover:border-foreground/40 transition-all shadow-sm text-sm text-muted-foreground">
+              Căutare globală...
+            </div>
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs text-muted-foreground border border-border rounded px-1.5 py-0.5">
+              <Command className="w-3 h-3" />
+              <span>K</span>
+            </div>
           </div>
+
+          {/* Mobile search button */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="md:hidden rounded-full h-9 w-9"
+            onClick={() => setSearchOpen(true)}
+          >
+            <Search className="w-4 h-4" />
+          </Button>
         </div>
 
         <div className="flex items-center gap-1 sm:gap-2">
@@ -125,6 +152,9 @@ export function TopBar() {
           </DropdownMenu>
         </div>
       </div>
+
+      {/* Global Search Dialog */}
+      <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
     </header>
   );
 }
