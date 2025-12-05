@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef } from "react";
-import { FileCheck, Plus, Download, Copy, Mail, FileText, Pencil, Trash2, X, CalendarIcon, Upload } from "lucide-react";
+import { FileCheck, Plus, Download, Copy, Mail, FileText, Pencil, Trash2, X, CalendarIcon, Upload, Loader2 } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -134,6 +135,53 @@ const OferteContracte = () => {
   const biletOrdinRef = useRef<HTMLInputElement>(null);
   const procesVerbalRef = useRef<HTMLInputElement>(null);
   
+  // File upload state
+  const [isUploadingBiletOrdin, setIsUploadingBiletOrdin] = useState(false);
+  const [biletOrdinUploadUrl, setBiletOrdinUploadUrl] = useState<string | null>(null);
+  
+  // Upload file to API
+  const handleBiletOrdinUpload = async (file: File) => {
+    setIsUploadingBiletOrdin(true);
+    setBiletOrdinUploadUrl(null);
+    
+    try {
+      const formData = new FormData();
+      formData.append("folder", "garantii");
+      formData.append("file", file);
+      formData.append("return_physical_path", "false");
+      
+      const response = await fetch(`${API_BASE_URL}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setBiletOrdinUploadUrl(data.public_url);
+        toast({
+          title: "Fișier încărcat cu succes",
+          description: `URL public: ${data.public_url}`,
+        });
+      } else {
+        toast({
+          title: "Eroare la încărcare",
+          description: data.detail || "A apărut o eroare la încărcarea fișierului",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast({
+        title: "Eroare la încărcare",
+        description: "Nu s-a putut conecta la server",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploadingBiletOrdin(false);
+    }
+  };
+  
   // Column filters
   const [oferteFilters, setOferteFilters] = useState<Record<string, string>>({
     nr: "", client: "", proiect: "", produs: "", pret: "", valabilitate: "", termenPlata: "", status: ""
@@ -235,6 +283,7 @@ const OferteContracte = () => {
 
   const handleOpenAdd = () => {
     setEditing(null);
+    setBiletOrdinUploadUrl(null);
     setForm({
       client: "",
       proiect: "",
@@ -252,6 +301,7 @@ const OferteContracte = () => {
 
   const handleOpenEdit = (item: Item) => {
     setEditing(item);
+    setBiletOrdinUploadUrl(null);
     const itemTransport = item.transport || { tipTransport: "inclus" as const };
     setForm({
       client: item.client,
@@ -259,7 +309,7 @@ const OferteContracte = () => {
       produse: item.produse && item.produse.length > 0 ? item.produse : [{ produs: item.produs, pret: item.pret }],
       transport: { 
         tipTransport: itemTransport.tipTransport, 
-        pretInchiriere: itemTransport.pretInchiriere || 0, 
+        pretInchiriere: itemTransport.pretInchiriere || 0,
         pretTonaKm: itemTransport.pretTonaKm || 0 
       },
       valabilitate: item.valabilitate,
@@ -1030,6 +1080,9 @@ const OferteContracte = () => {
                     onChange={(e) => {
                       const file = e.target.files?.[0] || null;
                       setForm({ ...form, garantie: { ...form.garantie, biletOrdin: file } });
+                      if (file) {
+                        handleBiletOrdinUpload(file);
+                      }
                     }}
                   />
                   <Button
@@ -1037,10 +1090,25 @@ const OferteContracte = () => {
                     variant="outline"
                     className="w-full h-12 justify-start"
                     onClick={() => biletOrdinRef.current?.click()}
+                    disabled={isUploadingBiletOrdin}
                   >
-                    <Upload className="mr-2 h-4 w-4" />
-                    {form.garantie.biletOrdin ? form.garantie.biletOrdin.name : "Încarcă document"}
+                    {isUploadingBiletOrdin ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Se încarcă...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="mr-2 h-4 w-4" />
+                        {form.garantie.biletOrdin ? form.garantie.biletOrdin.name : "Încarcă document"}
+                      </>
+                    )}
                   </Button>
+                  {biletOrdinUploadUrl && (
+                    <p className="text-xs text-muted-foreground truncate">
+                      URL: {biletOrdinUploadUrl}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label className="text-xs">Proces verbal predare-primire (document scanat)</Label>
