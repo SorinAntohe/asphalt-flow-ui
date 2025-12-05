@@ -264,7 +264,7 @@ const ComenziClient = () => {
       punct_descarcare: "",
       observatii: "",
       fereastra_incarcare: "",
-      status: "Preaprobat",
+      status: "Planificat",
     });
     setOpenAddEdit(true);
   };
@@ -818,6 +818,21 @@ const ComenziClient = () => {
               <Label>Punct descărcare</Label>
               <Input placeholder="Adresa/locația de descărcare" value={form.punct_descarcare} onChange={(e) => setForm({ ...form, punct_descarcare: e.target.value })} />
             </div>
+            {editing && (
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v as OrderStatus })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Preaprobat">Preaprobat</SelectItem>
+                    <SelectItem value="Aprobat">Aprobat</SelectItem>
+                    <SelectItem value="Planificat">Planificat</SelectItem>
+                    <SelectItem value="In Productie">In Productie</SelectItem>
+                    <SelectItem value="Livrat">Livrat</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <div className="space-y-2">
               <Label>Observații</Label>
               <Textarea placeholder="Observații suplimentare..." value={form.observatii} onChange={(e) => setForm({ ...form, observatii: e.target.value })} />
