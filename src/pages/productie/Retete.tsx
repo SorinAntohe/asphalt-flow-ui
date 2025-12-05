@@ -245,6 +245,9 @@ const Retete = () => {
   const [editorTab, setEditorTab] = useState("componenta");
   const [compareDialog, setCompareDialog] = useState<{ reteta: Reteta; v1: string; v2: string } | null>(null);
   const [autocorrectDialog, setAutocorrectDialog] = useState<Reteta | null>(null);
+  
+  // Editor form state
+  const [editorComponents, setEditorComponents] = useState<Component[]>([]);
 
   // Filtered and sorted
   const filteredRetete = useMemo(() => {
@@ -298,6 +301,37 @@ const Retete = () => {
     toast.success(`Versiunea ${versiune} activată pentru ${reteta.cod}`);
   };
 
+  // Open editor dialog with initialized state
+  const openEditorDialog = (reteta: Reteta | null, isNew: boolean) => {
+    setEditorComponents(reteta?.componente || []);
+    setEditorDialog({ reteta, isNew });
+  };
+
+  // Add new component
+  const handleAddComponent = () => {
+    const newComponent: Component = {
+      id: Date.now(),
+      material: "",
+      procent: 0,
+      toleranta: 0,
+      substituent: "-",
+      observatii: ""
+    };
+    setEditorComponents([...editorComponents, newComponent]);
+  };
+
+  // Update component field
+  const handleUpdateComponent = (id: number, field: keyof Component, value: string | number) => {
+    setEditorComponents(editorComponents.map(c => 
+      c.id === id ? { ...c, [field]: value } : c
+    ));
+  };
+
+  // Remove component
+  const handleRemoveComponent = (id: number) => {
+    setEditorComponents(editorComponents.filter(c => c.id !== id));
+  };
+
   // Calculate total percentage for validation
   const getTotalPercent = (componente: Component[]) => {
     return componente.reduce((sum, c) => sum + c.procent, 0);
@@ -319,7 +353,7 @@ const Retete = () => {
             <Printer className="h-4 w-4 mr-2" />
             Export
           </Button>
-          <Button onClick={() => setEditorDialog({ reteta: null, isNew: true })}>
+          <Button onClick={() => openEditorDialog(null, true)}>
             <Plus className="h-4 w-4 mr-2" />
             Adaugă Rețetă
           </Button>
@@ -426,7 +460,7 @@ const Retete = () => {
                           <div className="flex justify-end gap-1">
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); setEditorDialog({ reteta, isNew: false }); }}>
+                                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); openEditorDialog(reteta, false); }}>
                                   <Pencil className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
@@ -591,7 +625,7 @@ const Retete = () => {
               <Printer className="h-4 w-4 mr-2" />
               Imprimă
             </Button>
-            <Button onClick={() => { setPeekDrawer(null); setEditorDialog({ reteta: peekDrawer!, isNew: false }); }}>
+            <Button onClick={() => { setPeekDrawer(null); openEditorDialog(peekDrawer!, false); }}>
               <Pencil className="h-4 w-4 mr-2" />
               Editează
             </Button>
@@ -662,15 +696,15 @@ const Retete = () => {
                   <div className="flex items-center justify-between mb-2">
                     <Label>Componente</Label>
                     <div className="flex items-center gap-2">
-                      {editorDialog?.reteta && (
-                        <span className={`text-sm font-medium ${getTotalPercent(editorDialog.reteta.componente) === 100 ? 'text-green-600' : 'text-destructive'}`}>
-                          Total: {getTotalPercent(editorDialog.reteta.componente)}%
-                          {getTotalPercent(editorDialog.reteta.componente) !== 100 && (
+                      {editorComponents.length > 0 && (
+                        <span className={`text-sm font-medium ${getTotalPercent(editorComponents) === 100 ? 'text-green-600' : 'text-destructive'}`}>
+                          Total: {getTotalPercent(editorComponents)}%
+                          {getTotalPercent(editorComponents) !== 100 && (
                             <AlertTriangle className="inline h-4 w-4 ml-1" />
                           )}
                         </span>
                       )}
-                      <Button size="sm" variant="outline">
+                      <Button size="sm" variant="outline" onClick={handleAddComponent}>
                         <Plus className="h-4 w-4 mr-1" />
                         Adaugă
                       </Button>
@@ -685,28 +719,70 @@ const Retete = () => {
                           <TableHead className="text-right">Toleranță ±</TableHead>
                           <TableHead>Substituent admis</TableHead>
                           <TableHead>Observații</TableHead>
+                          <TableHead className="w-10"></TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {(editorDialog?.reteta?.componente || []).map((comp) => (
-                          <TableRow key={comp.id}>
-                            <TableCell>
-                              <Input defaultValue={comp.material} className="h-8" />
-                            </TableCell>
-                            <TableCell>
-                              <Input type="number" defaultValue={comp.procent} className="h-8 w-20 text-right" />
-                            </TableCell>
-                            <TableCell>
-                              <Input type="number" defaultValue={comp.toleranta} className="h-8 w-16 text-right" />
-                            </TableCell>
-                            <TableCell>
-                              <Input defaultValue={comp.substituent} className="h-8" />
-                            </TableCell>
-                            <TableCell>
-                              <Input defaultValue={comp.observatii} className="h-8" />
+                        {editorComponents.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                              Nu există componente. Apasă "Adaugă" pentru a adăuga materiale.
                             </TableCell>
                           </TableRow>
-                        ))}
+                        ) : (
+                          editorComponents.map((comp) => (
+                            <TableRow key={comp.id}>
+                              <TableCell>
+                                <Input 
+                                  value={comp.material} 
+                                  onChange={(e) => handleUpdateComponent(comp.id, "material", e.target.value)}
+                                  className="h-8" 
+                                  placeholder="Material..."
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <Input 
+                                  type="number" 
+                                  value={comp.procent} 
+                                  onChange={(e) => handleUpdateComponent(comp.id, "procent", parseFloat(e.target.value) || 0)}
+                                  className="h-8 w-20 text-right" 
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <Input 
+                                  type="number" 
+                                  value={comp.toleranta} 
+                                  onChange={(e) => handleUpdateComponent(comp.id, "toleranta", parseFloat(e.target.value) || 0)}
+                                  className="h-8 w-16 text-right" 
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <Input 
+                                  value={comp.substituent} 
+                                  onChange={(e) => handleUpdateComponent(comp.id, "substituent", e.target.value)}
+                                  className="h-8" 
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <Input 
+                                  value={comp.observatii} 
+                                  onChange={(e) => handleUpdateComponent(comp.id, "observatii", e.target.value)}
+                                  className="h-8" 
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-8 w-8 text-destructive hover:text-destructive"
+                                  onClick={() => handleRemoveComponent(comp.id)}
+                                >
+                                  ×
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        )}
                       </TableBody>
                     </Table>
                   </div>
