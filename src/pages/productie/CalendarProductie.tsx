@@ -26,18 +26,18 @@ const getRecipeColor = (recipe: string) => {
 
 // Mock scheduled orders with dates
 const initialScheduledOrders = [
-  { id: "OP-001", recipe: "BA 16 rul 50/70", quantity: 200, startHour: 7, duration: 3, status: "in_progress", date: "2025-12-05" },
-  { id: "OP-002", recipe: "MASF 16", quantity: 150, startHour: 11, duration: 2, status: "planned", date: "2025-12-05" },
-  { id: "OP-003", recipe: "Emulsie C60B4", quantity: 80, startHour: 8, duration: 2, status: "planned", date: "2025-12-05" },
-  { id: "OP-004", recipe: "BSC 0/31.5", quantity: 100, startHour: 9, duration: 4, status: "planned", date: "2025-12-06" },
-  { id: "OP-005", recipe: "BA 16 rul 50/70", quantity: 180, startHour: 6, duration: 3, status: "completed", date: "2025-12-04" },
-  { id: "OP-006", recipe: "AB2 22.4", quantity: 120, startHour: 14, duration: 2, status: "draft", date: "2025-12-07" },
-  { id: "OP-007", recipe: "BA 16 rul 50/70", quantity: 250, startHour: 8, duration: 4, status: "planned", date: "2025-12-10" },
-  { id: "OP-008", recipe: "MASF 16", quantity: 180, startHour: 10, duration: 3, status: "planned", date: "2025-12-12" },
-  { id: "OP-009", recipe: "Emulsie C60B4", quantity: 90, startHour: 7, duration: 2, status: "draft", date: "2025-12-15" },
-  { id: "OP-010", recipe: "BSC 0/31.5", quantity: 150, startHour: 12, duration: 5, status: "planned", date: "2025-12-18" },
-  { id: "OP-011", recipe: "BA 16 rul 50/70", quantity: 300, startHour: 6, duration: 5, status: "planned", date: "2025-12-20" },
-  { id: "OP-012", recipe: "AB2 22.4", quantity: 200, startHour: 8, duration: 3, status: "draft", date: "2025-12-22" },
+  { id: "OP-001", recipe: "BA 16 rul 50/70", quantity: 200, startHour: 7, duration: 3, status: "in_lucru", date: "2025-12-05" },
+  { id: "OP-002", recipe: "MASF 16", quantity: 150, startHour: 11, duration: 2, status: "planificat", date: "2025-12-05" },
+  { id: "OP-003", recipe: "Emulsie C60B4", quantity: 80, startHour: 8, duration: 2, status: "planificat", date: "2025-12-05" },
+  { id: "OP-004", recipe: "BSC 0/31.5", quantity: 100, startHour: 9, duration: 4, status: "planificat", date: "2025-12-06" },
+  { id: "OP-005", recipe: "BA 16 rul 50/70", quantity: 180, startHour: 6, duration: 3, status: "finalizat", date: "2025-12-04" },
+  { id: "OP-006", recipe: "AB2 22.4", quantity: 120, startHour: 14, duration: 2, status: "planificat", date: "2025-12-07" },
+  { id: "OP-007", recipe: "BA 16 rul 50/70", quantity: 250, startHour: 8, duration: 4, status: "planificat", date: "2025-12-10" },
+  { id: "OP-008", recipe: "MASF 16", quantity: 180, startHour: 10, duration: 3, status: "planificat", date: "2025-12-12" },
+  { id: "OP-009", recipe: "Emulsie C60B4", quantity: 90, startHour: 7, duration: 2, status: "in_lucru", date: "2025-12-15" },
+  { id: "OP-010", recipe: "BSC 0/31.5", quantity: 150, startHour: 12, duration: 5, status: "planificat", date: "2025-12-18" },
+  { id: "OP-011", recipe: "BA 16 rul 50/70", quantity: 300, startHour: 6, duration: 5, status: "planificat", date: "2025-12-20" },
+  { id: "OP-012", recipe: "AB2 22.4", quantity: 200, startHour: 8, duration: 3, status: "finalizat", date: "2025-12-22" },
 ];
 
 type ScheduledOrder = typeof initialScheduledOrders[0];
@@ -90,12 +90,11 @@ const CalendarProductie = () => {
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; label: string }> = {
-      draft: { variant: "outline", label: "Draft" },
-      planned: { variant: "secondary", label: "Planificat" },
-      in_progress: { variant: "default", label: "În lucru" },
-      completed: { variant: "outline", label: "Finalizat" },
+      planificat: { variant: "secondary", label: "Planificat" },
+      in_lucru: { variant: "default", label: "În lucru" },
+      finalizat: { variant: "outline", label: "Finalizat" },
     };
-    const config = variants[status] || variants.draft;
+    const config = variants[status] || variants.planificat;
     return <Badge variant={config.variant} className="text-xs">{config.label}</Badge>;
   };
 
@@ -212,10 +211,9 @@ const CalendarProductie = () => {
                               <TooltipTrigger asChild>
                                 <div className={cn(
                                   "w-2 h-2 rounded-full",
-                                  order.status === "in_progress" && "bg-primary",
-                                  order.status === "planned" && "bg-secondary-foreground",
-                                  order.status === "draft" && "bg-muted-foreground",
-                                  order.status === "completed" && "bg-emerald-500"
+                                  order.status === "in_lucru" && "bg-primary",
+                                  order.status === "planificat" && "bg-secondary-foreground",
+                                  order.status === "finalizat" && "bg-emerald-500"
                                 )} />
                               </TooltipTrigger>
                               <TooltipContent side="top" className="text-xs">
@@ -244,10 +242,6 @@ const CalendarProductie = () => {
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-secondary-foreground" />
                 <span className="text-muted-foreground">Planificat</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-muted-foreground" />
-                <span className="text-muted-foreground">Draft</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-emerald-500" />
@@ -319,17 +313,16 @@ const CalendarProductie = () => {
                             <div className="flex-1 relative py-2">
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <div
+                              <div
                                     className={cn(
                                       "absolute rounded-lg px-3 py-2 transition-all cursor-pointer shadow-md border-2",
                                       "hover:scale-[1.02] hover:shadow-lg",
                                       colors.bg,
                                       colors.border,
                                       colors.text,
-                                      order.status === "completed" && "opacity-60",
-                                      order.status === "draft" && "opacity-80 border-dashed"
+                                      order.status === "finalizat" && "opacity-60"
                                     )}
-                                    style={{ 
+                                    style={{
                                       left: `${((order.startHour - 6) / 17) * 100}%`,
                                       width: `calc(${(order.duration / 17) * 100}% - 4px)`,
                                       top: '4px',
