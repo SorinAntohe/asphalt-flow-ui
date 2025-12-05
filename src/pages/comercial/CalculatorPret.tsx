@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Calculator, Plus, Trash2, TrendingUp, TrendingDown, Minus, BarChart3, Users, Zap, Package } from "lucide-react";
+import { Calculator, Plus, Trash2, TrendingUp, TrendingDown, Minus, BarChart3, Users, Zap, Package, Info } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { API_BASE_URL } from "@/lib/api";
 import { toast } from "sonner";
 
@@ -88,6 +89,9 @@ const CalculatorPret = () => {
   // Competitor prices state
   const [preturiConcurenti, setPreturiConcurenti] = useState<PretConcurent[]>(mockPreturiConcurenti);
   const [newConcurent, setNewConcurent] = useState({ concurent: "", produs: "", pret: "" });
+  
+  // Details dialog state
+  const [showDetails, setShowDetails] = useState(false);
 
   // Fetch retete (keeping for when API is available)
   useEffect(() => {
@@ -366,65 +370,22 @@ const CalculatorPret = () => {
                   </div>
                 )}
 
-                <Separator />
-
-                {/* Cost Materii Prime */}
-                <div>
-                  <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
-                    <Package className="h-4 w-4" />
-                    Cost Materii Prime (FIFO)
-                  </h4>
-                  <div className="space-y-1 text-sm">
-                    {costBreakdown.materiale.map((m, idx) => (
-                      <div key={idx} className="flex justify-between">
-                        <span className="text-muted-foreground">{m.material}</span>
-                        <span>{formatCurrency(m.total)}</span>
-                      </div>
-                    ))}
-                  </div>
+                {/* Cost Total Summary */}
+                <div className="flex justify-between text-sm pt-2 border-t border-border">
+                  <span className="text-muted-foreground">Cost Total Producție</span>
+                  <span className="font-medium">{formatCurrency(costBreakdown.costTotal)}</span>
                 </div>
 
-                {/* Curent */}
-                <div className="flex justify-between text-sm">
-                  <span className="flex items-center gap-2">
-                    <Zap className="h-4 w-4 text-yellow-500" />
-                    Curent Electric
-                  </span>
-                  <span>{formatCurrency(costBreakdown.curent)}</span>
-                </div>
-
-                <Separator />
-
-                {/* Costuri Indirecte */}
-                <div>
-                  <h4 className="text-sm font-medium mb-2">Costuri Indirecte</h4>
-                  <div className="space-y-1 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Manoperă</span>
-                      <span>{formatCurrency(costBreakdown.costuriIndirecte.manopera)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Amortizare echipamente</span>
-                      <span>{formatCurrency(costBreakdown.costuriIndirecte.amortizare)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Mentenanță</span>
-                      <span>{formatCurrency(costBreakdown.costuriIndirecte.mentenanta)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Administrative</span>
-                      <span>{formatCurrency(costBreakdown.costuriIndirecte.administrative)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Total */}
-                <div className="flex justify-between font-semibold">
-                  <span>Cost Total Producție</span>
-                  <span>{formatCurrency(costBreakdown.costTotal)}</span>
-                </div>
+                {/* Detalii Button */}
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => setShowDetails(true)}
+                >
+                  <Info className="h-4 w-4 mr-2" />
+                  Vezi Detalii Costuri
+                </Button>
               </div>
             )}
           </CardContent>
@@ -538,6 +499,93 @@ const CalculatorPret = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Details Dialog */}
+      <Dialog open={showDetails} onOpenChange={setShowDetails}>
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Detalii Costuri
+            </DialogTitle>
+          </DialogHeader>
+          
+          {costBreakdown && (
+            <div className="space-y-4">
+              {/* Cost Materii Prime */}
+              <div>
+                <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  Cost Materii Prime (FIFO)
+                </h4>
+                <div className="space-y-1 text-sm">
+                  {costBreakdown.materiale.map((m, idx) => (
+                    <div key={idx} className="flex justify-between">
+                      <span className="text-muted-foreground">{m.material}</span>
+                      <span>{formatCurrency(m.total)}</span>
+                    </div>
+                  ))}
+                  <div className="flex justify-between font-medium pt-1 border-t border-border">
+                    <span>Subtotal Materiale</span>
+                    <span>{formatCurrency(costBreakdown.materiale.reduce((sum, m) => sum + m.total, 0))}</span>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Curent */}
+              <div className="flex justify-between text-sm">
+                <span className="flex items-center gap-2">
+                  <Zap className="h-4 w-4 text-yellow-500" />
+                  Curent Electric
+                </span>
+                <span>{formatCurrency(costBreakdown.curent)}</span>
+              </div>
+
+              <Separator />
+
+              {/* Costuri Indirecte */}
+              <div>
+                <h4 className="text-sm font-medium mb-2">Costuri Indirecte</h4>
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Manoperă</span>
+                    <span>{formatCurrency(costBreakdown.costuriIndirecte.manopera)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Amortizare echipamente</span>
+                    <span>{formatCurrency(costBreakdown.costuriIndirecte.amortizare)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Mentenanță</span>
+                    <span>{formatCurrency(costBreakdown.costuriIndirecte.mentenanta)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Administrative</span>
+                    <span>{formatCurrency(costBreakdown.costuriIndirecte.administrative)}</span>
+                  </div>
+                  <div className="flex justify-between font-medium pt-1 border-t border-border">
+                    <span>Subtotal Indirecte</span>
+                    <span>{formatCurrency(Object.values(costBreakdown.costuriIndirecte).reduce((a, b) => a + b, 0))}</span>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Total */}
+              <div className="flex justify-between font-semibold text-lg">
+                <span>Cost Total Producție</span>
+                <span>{formatCurrency(costBreakdown.costTotal)}</span>
+              </div>
+              <p className="text-xs text-muted-foreground text-center">
+                {formatCurrency(costBreakdown.costTotal / parseFloat(cantitate))}/tonă
+              </p>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
