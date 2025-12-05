@@ -215,7 +215,7 @@ const OferteContracte = () => {
           nr: item.cod || `CTR-${item.id}`,
           client: item.client || "",
           proiect: item.proiect_santier || "",
-          produs: produseList.length === 1 ? produseList[0].produs : "Multiple",
+          produs: produseList.map(p => p.produs).join(", "),
           pret: totalPret,
           produse: produseList,
           transport: {
