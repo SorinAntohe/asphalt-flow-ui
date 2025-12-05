@@ -177,6 +177,76 @@ const OferteContracte = () => {
     }
   };
   
+  const [isLoadingContracte, setIsLoadingContracte] = useState(false);
+  
+  const fetchContracte = async () => {
+    setIsLoadingContracte(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/comercial/returneaza/contracte`);
+      if (!response.ok) throw new Error("Eroare la încărcarea contractelor");
+      const data = await response.json();
+      console.log("API contracte response:", data);
+      
+      const contracteArray = Array.isArray(data) ? data : (data.data || data.items || []);
+      
+      const mappedContracte: Contract[] = contracteArray.map((item: any) => {
+        const produseStr = item.produse || "";
+        const preturiStr = item.preturi_produse || "";
+        const produseArr = produseStr.split(",").map((p: string) => p.trim()).filter(Boolean);
+        const preturiArr = preturiStr.split(",").map((p: string) => parseFloat(p.trim()) || 0);
+        
+        const produseList: ProdusItem[] = produseArr.map((produs: string, idx: number) => ({
+          produs,
+          pret: preturiArr[idx] || 0
+        }));
+        
+        const totalPret = produseList.reduce((sum, p) => sum + p.pret, 0);
+        
+        let tipTransport: TransportPricing["tipTransport"] = "inclus";
+        if (item.tip_transport === "Fără transport") tipTransport = "fara_transport";
+        else if (item.tip_transport === "Inclus în preț") tipTransport = "inclus";
+        else if (item.tip_transport === "Preț chirie transport") tipTransport = "inchiriere";
+        else if (item.tip_transport === "Preț tonă/km") tipTransport = "tona_km";
+        
+        const pretTransportVal = parseFloat(item.pret_transport) || 0;
+        
+        return {
+          id: item.id,
+          nr: item.cod || `CTR-${item.id}`,
+          client: item.client || "",
+          proiect: item.proiect_santier || "",
+          produs: produseList.length === 1 ? produseList[0].produs : "Multiple",
+          pret: totalPret,
+          produse: produseList,
+          transport: {
+            tipTransport,
+            pretInchiriere: tipTransport === "inchiriere" ? pretTransportVal : 0,
+            pretTonaKm: tipTransport === "tona_km" ? pretTransportVal : 0,
+          },
+          valabilitate: item.valabilitate || "",
+          termenPlata: item.termen_de_plata ? `${item.termen_de_plata} zile` : "30 zile",
+          status: (item.status === "Aprobata" || item.status === "Respinsa") ? item.status : "In curs de aprobare",
+          tip: "contract" as const,
+          dataCreare: item.data || "",
+          conditiiComerciale: "",
+          observatii: item.observatii || "",
+          indexareCombustibil: item.indexare_combustibil || "",
+        };
+      });
+      
+      setContracte(mappedContracte);
+    } catch (error) {
+      console.error("Error fetching contracte:", error);
+      toast({
+        title: "Eroare",
+        description: "Nu s-au putut încărca contractele.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingContracte(false);
+    }
+  };
+  
   // Clients and Products lists from API
   const [clientsList, setClientsList] = useState<string[]>([]);
   const [produseFiniteList, setProduseFiniteList] = useState<string[]>([]);
@@ -215,6 +285,7 @@ const OferteContracte = () => {
   
   useEffect(() => {
     fetchOferte();
+    fetchContracte();
     fetchClienti();
     fetchProduseFinite();
   }, []);
@@ -613,13 +684,76 @@ const OferteContracte = () => {
           setIsSaving(false);
         }
       } else {
-        setContracte(prev => prev.map(item => 
-          item.id === editing.id 
-            ? { ...item, client: form.client, proiect: form.proiect, produs: produsDisplay, pret: totalPret, produse: validProduse, transport, valabilitate: form.valabilitate || item.valabilitate, termenPlata: form.termenPlata, observatii: form.observatii, indexareCombustibil: form.indexareCombustibil }
-            : item
-        ));
-        toast({ title: "Succes", description: "Contractul a fost actualizat." });
-        setOpenAddEdit(false);
+        // Call API to edit contract
+        setIsSaving(true);
+        try {
+          const produseList = validProduse.map(p => p.produs).join(", ");
+          const preturiProduse = validProduse.map(p => String(p.pret)).join(", ");
+          
+          let tipTransport = "Inclus în preț";
+          if (form.transport.tipTransport === "fara_transport") {
+            tipTransport = "Fără transport";
+          } else if (form.transport.tipTransport === "inclus") {
+            tipTransport = "Inclus în preț";
+          } else if (form.transport.tipTransport === "inchiriere") {
+            tipTransport = "Preț chirie transport";
+          } else if (form.transport.tipTransport === "tona_km") {
+            tipTransport = "Preț tonă/km";
+          }
+          
+          const pretTransport = form.transport.tipTransport === "tona_km" 
+            ? String(form.transport.pretTonaKm || 0)
+            : form.transport.tipTransport === "inchiriere"
+            ? String(form.transport.pretInchiriere || 0)
+            : "0";
+          
+          const termenPlataNumber = parseFloat(form.termenPlata.replace(/[^0-9]/g, '')) || 0;
+          
+          const payload = {
+            tabel: "lista_contracte",
+            id: editing.id,
+            update: {
+              client: form.client,
+              proiect_santier: form.proiect,
+              produse: produseList,
+              preturi_produse: preturiProduse,
+              tip_transport: tipTransport,
+              pret_transport: pretTransport,
+              valabilitate: form.valabilitate,
+              termen_de_plata: termenPlataNumber,
+              avans_de_plata: form.avansPlata || 0,
+              observatii: form.observatii || "",
+              status: form.status,
+              indexare_combustibil: form.indexareCombustibil || "",
+              ...(biletOrdinUploadUrl && { locatie_bilet_ordin_cec: biletOrdinUploadUrl }),
+              ...(procesVerbalUploadUrl && { locatie_proces_verbal_predare_primire: procesVerbalUploadUrl }),
+            }
+          };
+          
+          console.log("Sending edit contract payload:", payload);
+          
+          const response = await fetch(`${API_BASE_URL}/editeaza`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          
+          if (!response.ok) throw new Error("Eroare la editarea contractului");
+          
+          toast({ title: "Succes", description: "Contractul a fost actualizat." });
+          fetchContracte();
+          setOpenAddEdit(false);
+        } catch (error) {
+          console.error("Error editing contract:", error);
+          toast({ 
+            title: "Eroare", 
+            description: "Nu s-a putut edita contractul.", 
+            variant: "destructive" 
+          });
+          return;
+        } finally {
+          setIsSaving(false);
+        }
       }
     } else {
       if (activeTab === "oferte") {
@@ -696,27 +830,72 @@ const OferteContracte = () => {
           setIsSaving(false);
         }
       } else {
-        const newContract: Contract = {
-          id: Math.max(...contracte.map(c => c.id), 0) + 1,
-          nr: `CTR-2024-${String(contracte.length + 1).padStart(3, '0')}`,
-          client: form.client,
-          proiect: form.proiect,
-          produs: produsDisplay,
-          pret: totalPret,
-          produse: validProduse,
-          transport,
-          valabilitate: form.valabilitate,
-          termenPlata: form.termenPlata,
-          status: "In curs de aprobare",
-          tip: "contract",
-          dataCreare: currentDate,
-          conditiiComerciale: "",
-          observatii: form.observatii,
-          indexareCombustibil: form.indexareCombustibil,
-        };
-        setContracte(prev => [...prev, newContract]);
-        toast({ title: "Succes", description: "Contractul a fost adăugat." });
-        setOpenAddEdit(false);
+        // Call API to add contract
+        setIsSaving(true);
+        try {
+          const produseList = validProduse.map(p => p.produs).join(", ");
+          const preturiProduse = validProduse.map(p => String(p.pret)).join(", ");
+          
+          let tipTransport = "Inclus în preț";
+          if (form.transport.tipTransport === "fara_transport") {
+            tipTransport = "Fără transport";
+          } else if (form.transport.tipTransport === "inclus") {
+            tipTransport = "Inclus în preț";
+          } else if (form.transport.tipTransport === "inchiriere") {
+            tipTransport = "Preț chirie transport";
+          } else if (form.transport.tipTransport === "tona_km") {
+            tipTransport = "Preț tonă/km";
+          }
+          
+          const pretTransport = form.transport.tipTransport === "tona_km" 
+            ? String(form.transport.pretTonaKm || 0)
+            : form.transport.tipTransport === "inchiriere"
+            ? String(form.transport.pretInchiriere || 0)
+            : "0";
+          
+          const termenPlataNumber = parseFloat(form.termenPlata.replace(/[^0-9]/g, '')) || 0;
+          
+          const payload = {
+            client: form.client,
+            proiect_santier: form.proiect,
+            produse: produseList,
+            preturi_produse: preturiProduse,
+            tip_transport: tipTransport,
+            pret_transport: pretTransport,
+            valabilitate: form.valabilitate,
+            termen_de_plata: termenPlataNumber,
+            avans_de_plata: form.avansPlata || 0,
+            observatii: form.observatii || "",
+            status: "In curs de aprobare",
+            indexare_combustibil: form.indexareCombustibil || "",
+            locatie_bilet_ordin_cec: biletOrdinUploadUrl || "",
+            locatie_proces_verbal_predare_primire: procesVerbalUploadUrl || "",
+          };
+          
+          console.log("Sending contract payload:", payload);
+          
+          const response = await fetch(`${API_BASE_URL}/comercial/adauga/contract`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          
+          if (!response.ok) throw new Error("Eroare la salvarea contractului");
+          
+          toast({ title: "Succes", description: "Contractul a fost adăugat." });
+          fetchContracte();
+          setOpenAddEdit(false);
+        } catch (error) {
+          console.error("Error saving contract:", error);
+          toast({ 
+            title: "Eroare", 
+            description: "Nu s-a putut salva contractul.", 
+            variant: "destructive" 
+          });
+          return;
+        } finally {
+          setIsSaving(false);
+        }
       }
     }
   };
@@ -752,8 +931,32 @@ const OferteContracte = () => {
         });
       }
     } else {
-      setContracte(prev => prev.filter(item => item.id !== deleting.id));
-      toast({ title: "Succes", description: "Contractul a fost șters." });
+      try {
+        const payload = {
+          tabel: "lista_contracte",
+          id: deleting.id
+        };
+        
+        console.log("Sending delete contract payload:", payload);
+        
+        const response = await fetch(`${API_BASE_URL}/sterge`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        
+        if (!response.ok) throw new Error("Eroare la ștergerea contractului");
+        
+        toast({ title: "Succes", description: "Contractul a fost șters." });
+        fetchContracte();
+      } catch (error) {
+        console.error("Error deleting contract:", error);
+        toast({ 
+          title: "Eroare", 
+          description: "Nu s-a putut șterge contractul.", 
+          variant: "destructive" 
+        });
+      }
     }
     
     setDeleting(null);
