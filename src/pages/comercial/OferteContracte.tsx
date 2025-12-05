@@ -1103,21 +1103,7 @@ const OferteContracte = () => {
                 </DialogDescription>
               </div>
               {viewingDetails && (
-                <Select 
-                  value={viewingDetails.status} 
-                  onValueChange={(v) => handleStatusChange(viewingDetails, v as "In curs de aprobare" | "Aprobata" | "Respinsa")}
-                >
-                  <SelectTrigger className="w-32 h-8">
-                    <Badge className={cn(statusColors[viewingDetails.status], "px-2 py-0.5")}>{viewingDetails.status}</Badge>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {statusOptions.map(status => (
-                      <SelectItem key={status} value={status}>
-                        <Badge className={cn(statusColors[status], "px-2 py-0.5")}>{status}</Badge>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Badge className={cn(statusColors[viewingDetails.status], "px-2 py-0.5")}>{viewingDetails.status}</Badge>
               )}
             </div>
           </DialogHeader>
