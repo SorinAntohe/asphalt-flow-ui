@@ -58,7 +58,7 @@ interface OrdinProductie {
   startPlanificat: string;
   operator: string;
   sefSchimb: string;
-  status: "Draft" | "Planificată" | "În lucru" | "Închisă";
+  status: "Planificat" | "În lucru" | "Finalizat";
   observatii: string;
   consumEstimat: { material: string; cantitate: number; disponibil: number }[];
   rezervariStoc: { material: string; cantitate: number; dataRezervare: string }[];
@@ -81,7 +81,7 @@ const mockOrdine: OrdinProductie[] = [
     startPlanificat: "15/01/2024 08:00",
     operator: "Ion Popescu",
     sefSchimb: "Gheorghe Ionescu",
-    status: "În lucru",
+    status: "În lucru" as const,
     observatii: "Comandă urgentă pentru autostradă",
     consumEstimat: [
       { material: "Bitum 50/70", cantitate: 25, disponibil: 100 },
@@ -107,7 +107,7 @@ const mockOrdine: OrdinProductie[] = [
     startPlanificat: "15/01/2024 14:00",
     operator: "Maria Dumitrescu",
     sefSchimb: "Gheorghe Ionescu",
-    status: "Planificată",
+    status: "Planificat" as const,
     observatii: "",
     consumEstimat: [
       { material: "Bitum 50/70", cantitate: 18, disponibil: 75 },
@@ -130,7 +130,7 @@ const mockOrdine: OrdinProductie[] = [
     startPlanificat: "16/01/2024 06:00",
     operator: "Andrei Vasilescu",
     sefSchimb: "Mihai Constantinescu",
-    status: "Draft",
+    status: "Planificat" as const,
     observatii: "Așteaptă aprobare tehnică",
     consumEstimat: [
       { material: "Ciment", cantitate: 40, disponibil: 60 },
@@ -152,7 +152,7 @@ const mockOrdine: OrdinProductie[] = [
     startPlanificat: "14/01/2024 08:00",
     operator: "Elena Stanciu",
     sefSchimb: "Gheorghe Ionescu",
-    status: "Închisă",
+    status: "Finalizat" as const,
     observatii: "Finalizat conform planului",
     consumEstimat: [
       { material: "Bitum 50/70", cantitate: 12.5, disponibil: 0 },
@@ -186,11 +186,10 @@ const mockProduseFinite = ["BA16 - Beton Asfaltic", "MASF16 - Mixtură Asfaltic�
 const mockOperatori = ["Ion Popescu", "Maria Dumitrescu", "Andrei Vasilescu", "Elena Stanciu"];
 const mockSefiSchimb = ["Gheorghe Ionescu", "Mihai Constantinescu"];
 
-const statusConfig: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ReactNode }> = {
-  "Draft": { variant: "secondary", icon: <FileText className="h-3 w-3" /> },
-  "Planificată": { variant: "outline", icon: <Clock className="h-3 w-3" /> },
-  "În lucru": { variant: "default", icon: <Play className="h-3 w-3" /> },
-  "Închisă": { variant: "destructive", icon: <CheckCircle2 className="h-3 w-3" /> }
+const statusConfig: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ReactNode; color: string }> = {
+  "Planificat": { variant: "secondary", icon: <Clock className="h-3 w-3" />, color: "bg-amber-500 text-white" },
+  "În lucru": { variant: "default", icon: <Play className="h-3 w-3" />, color: "bg-blue-500 text-white" },
+  "Finalizat": { variant: "outline", icon: <CheckCircle2 className="h-3 w-3" />, color: "bg-emerald-500 text-white" }
 };
 
 const OrdineProductie = () => {
@@ -236,8 +235,8 @@ const OrdineProductie = () => {
   const stats = useMemo(() => {
     const total = ordine.length;
     const inLucru = ordine.filter(o => o.status === "În lucru").length;
-    const planificate = ordine.filter(o => o.status === "Planificată").length;
-    const cantitateTotal = ordine.filter(o => o.status !== "Închisă").reduce((sum, o) => sum + o.cantitateTotala, 0);
+    const planificate = ordine.filter(o => o.status === "Planificat").length;
+    const cantitateTotal = ordine.filter(o => o.status !== "Finalizat").reduce((sum, o) => sum + o.cantitateTotala, 0);
     return { total, inLucru, planificate, cantitateTotal };
   }, [ordine]);
 
@@ -315,7 +314,7 @@ const OrdineProductie = () => {
 
   const handlePlanifica = (ordin: OrdinProductie) => {
     setOrdine(prev => prev.map(o => 
-      o.id === ordin.id ? { ...o, status: "Planificată" as const } : o
+      o.id === ordin.id ? { ...o, status: "Planificat" as const } : o
     ));
     toast.success(`Ordinul ${ordin.numar} a fost planificat`);
     setDetailDialogOpen(false);
@@ -327,9 +326,9 @@ const OrdineProductie = () => {
 
   const handleInchideOrdin = (ordin: OrdinProductie) => {
     setOrdine(prev => prev.map(o => 
-      o.id === ordin.id ? { ...o, status: "Închisă" as const } : o
+      o.id === ordin.id ? { ...o, status: "Finalizat" as const } : o
     ));
-    toast.success(`Ordinul ${ordin.numar} a fost închis`);
+    toast.success(`Ordinul ${ordin.numar} a fost finalizat`);
     setDetailDialogOpen(false);
   };
 
@@ -456,7 +455,7 @@ const OrdineProductie = () => {
         startPlanificat: wizardForm.startPlanificat,
         operator: wizardForm.operator,
         sefSchimb: wizardForm.sefSchimb,
-        status: "Draft",
+        status: "Planificat" as const,
         observatii: wizardForm.observatii,
         consumEstimat: [],
         rezervariStoc: [],
@@ -482,7 +481,7 @@ const OrdineProductie = () => {
 
   // Kanban grouped data
   const kanbanColumns = useMemo(() => {
-    const statuses = ["Draft", "Planificată", "În lucru", "Închisă"] as const;
+    const statuses = ["Planificat", "În lucru", "Finalizat"] as const;
     return statuses.map(status => ({
       status,
       items: ordine.filter(o => o.status === status)
@@ -908,10 +907,16 @@ const OrdineProductie = () => {
 
               <DialogFooter className="flex-col sm:flex-row gap-2">
                 <div className="flex flex-wrap gap-2">
-                  {selectedOrdin.status === "Draft" && (
-                    <Button size="sm" onClick={() => handlePlanifica(selectedOrdin)}>
-                      <Clock className="h-4 w-4 mr-1" />
-                      Planifică
+                  {selectedOrdin.status === "Planificat" && (
+                    <Button size="sm" onClick={() => {
+                      setOrdine(prev => prev.map(o => 
+                        o.id === selectedOrdin.id ? { ...o, status: "În lucru" as const } : o
+                      ));
+                      toast.success(`Ordinul ${selectedOrdin.numar} a fost pornit`);
+                      setDetailDialogOpen(false);
+                    }}>
+                      <Play className="h-4 w-4 mr-1" />
+                      Pornește
                     </Button>
                   )}
                   <Button size="sm" variant="outline" onClick={() => handleOpenEdit(selectedOrdin)}>
@@ -1185,7 +1190,7 @@ const OrdineProductie = () => {
               </div>
               <div className="flex items-center gap-2 p-3 bg-yellow-500/10 rounded-lg">
                 <AlertTriangle className="h-5 w-5 text-yellow-600" />
-                <span className="text-sm">Verificați datele înainte de confirmare. Ordinul va fi creat în status Draft.</span>
+                <span className="text-sm">Verificați datele înainte de confirmare. Ordinul va fi creat în status Planificat.</span>
               </div>
             </div>
           )}
