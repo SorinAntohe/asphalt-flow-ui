@@ -964,9 +964,9 @@ const OrdineProductie = () => {
                 <Separator />
 
                 {/* Consum Estimat */}
-                {selectedOrdin.consumEstimat.length > 0 && (
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">Consum Estimat Materii Prime</h4>
+                <div>
+                  <h4 className="text-sm font-medium mb-2">Consum Estimat Materii Prime</h4>
+                  {selectedOrdin.consumEstimat && selectedOrdin.consumEstimat.length > 0 ? (
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -993,8 +993,10 @@ const OrdineProductie = () => {
                         ))}
                       </TableBody>
                     </Table>
-                  </div>
-                )}
+                  ) : (
+                    <p className="text-sm text-muted-foreground">Nu există date de consum estimat</p>
+                  )}
+                </div>
 
                 {/* Comenzi Asociate */}
                 {selectedOrdin.comenziAsociate.length > 0 && (
