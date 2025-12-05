@@ -22,6 +22,7 @@ import { ro } from "date-fns/locale";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
+import { FilterableSelect } from "@/components/ui/filterable-select";
 import { API_BASE_URL } from "@/lib/api";
 
 // Types
@@ -98,6 +99,7 @@ const ComenziClient = () => {
       const response = await fetch(`${API_BASE_URL}/returneaza_clienti`);
       if (!response.ok) throw new Error("Eroare la încărcarea clienților");
       const data = await response.json();
+      console.log("Clienti data:", data);
       setClientsList(data || []);
     } catch (error) {
       console.error("Error fetching clienti:", error);
@@ -109,11 +111,27 @@ const ComenziClient = () => {
       const response = await fetch(`${API_BASE_URL}/returneaza_produse_finite`);
       if (!response.ok) throw new Error("Eroare la încărcarea produselor");
       const data = await response.json();
+      console.log("Produse data:", data);
       setProduseList(data || []);
     } catch (error) {
       console.error("Error fetching produse:", error);
     }
   };
+
+  // Transform API data to options format for FilterableSelect
+  const clientOptions = useMemo(() => {
+    return clientsList.map((client: any) => ({
+      value: client.denumire || client.nume || client.name || String(client.id),
+      label: client.denumire || client.nume || client.name || String(client.id)
+    }));
+  }, [clientsList]);
+
+  const produsOptions = useMemo(() => {
+    return produseList.map((produs: any) => ({
+      value: produs.denumire || produs.nume || produs.name || String(produs.id),
+      label: produs.denumire || produs.nume || produs.name || String(produs.id)
+    }));
+  }, [produseList]);
   
   // Pagination
   const [page, setPage] = useState(1);
@@ -734,25 +752,25 @@ const ComenziClient = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Client *</Label>
-                <Select value={form.client} onValueChange={(v) => setForm({ ...form, client: v })}>
-                  <SelectTrigger><SelectValue placeholder="Selectează client" /></SelectTrigger>
-                  <SelectContent>
-                    {clientsList.map((client) => (
-                      <SelectItem key={client.id} value={client.denumire}>{client.denumire}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FilterableSelect
+                  value={form.client}
+                  onValueChange={(v) => setForm({ ...form, client: v })}
+                  options={clientOptions}
+                  placeholder="Selectează client"
+                  searchPlaceholder="Caută client..."
+                  emptyText="Nu s-au găsit clienți"
+                />
               </div>
               <div className="space-y-2">
                 <Label>Produs *</Label>
-                <Select value={form.produs} onValueChange={(v) => setForm({ ...form, produs: v })}>
-                  <SelectTrigger><SelectValue placeholder="Selectează produs" /></SelectTrigger>
-                  <SelectContent>
-                    {produseList.map((produs) => (
-                      <SelectItem key={produs.id} value={produs.denumire}>{produs.denumire}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FilterableSelect
+                  value={form.produs}
+                  onValueChange={(v) => setForm({ ...form, produs: v })}
+                  options={produsOptions}
+                  placeholder="Selectează produs"
+                  searchPlaceholder="Caută produs..."
+                  emptyText="Nu s-au găsit produse"
+                />
               </div>
             </div>
             <div className="grid grid-cols-3 gap-4">
