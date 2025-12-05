@@ -82,7 +82,7 @@ interface Operator {
 // Types for estimare API response
 interface EstimareMaterial {
   material: string;
-  cantitate_originala: number;
+  cantitate_sumata: number;
   material_x1000: number;
   cantitate_cu_factor: number;
   stoc: number;
@@ -90,6 +90,17 @@ interface EstimareMaterial {
   status: "OK" | "NOT OK";
 }
 
+interface EstimareRecipeResult {
+  status_general: "OK" | "NOT OK";
+  materiale: EstimareMaterial[];
+}
+
+// API returns dictionary with recipe codes as keys
+interface EstimareApiResponse {
+  [codReteta: string]: EstimareRecipeResult;
+}
+
+// Aggregated response for UI display
 interface EstimareResponse {
   status_general: "OK" | "NOT OK";
   materiale: EstimareMaterial[];
@@ -301,8 +312,35 @@ const OrdineProductie = () => {
         );
         
         if (response.ok) {
-          const data: EstimareResponse = await response.json();
-          setEstimareData(data);
+          const data: EstimareApiResponse = await response.json();
+          
+          // Check for error in response
+          if ('error' in data) {
+            console.error("API error:", data.error);
+            setEstimareData(null);
+            return;
+          }
+          
+          // Aggregate results from all recipes
+          const allMateriale: EstimareMaterial[] = [];
+          let overallStatus: "OK" | "NOT OK" = "OK";
+          
+          for (const codReteta of Object.keys(data)) {
+            const recipeResult = data[codReteta];
+            if (recipeResult) {
+              if (recipeResult.status_general === "NOT OK") {
+                overallStatus = "NOT OK";
+              }
+              if (recipeResult.materiale) {
+                allMateriale.push(...recipeResult.materiale);
+              }
+            }
+          }
+          
+          setEstimareData({
+            status_general: overallStatus,
+            materiale: allMateriale
+          });
         } else {
           console.error("Error fetching estimare:", response.status);
           setEstimareData(null);
