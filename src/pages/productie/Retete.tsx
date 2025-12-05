@@ -471,6 +471,7 @@ const Retete = () => {
                     />
                   </TableHead>
                   <TableHead>Tip</TableHead>
+                  <TableHead>Materiale</TableHead>
                   <TableHead>Observații</TableHead>
                   <TableHead className="text-right">Acțiuni</TableHead>
                 </TableRow>
@@ -478,14 +479,14 @@ const Retete = () => {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8">
+                    <TableCell colSpan={6} className="text-center py-8">
                       <div className="flex items-center justify-center gap-2 text-muted-foreground">
                         Se încarcă...
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : paginatedRetete.length === 0 ? (
-                  <DataTableEmpty colSpan={5} message="Nu există rețete." />
+                  <DataTableEmpty colSpan={6} message="Nu există rețete." />
                 ) : (
                   paginatedRetete.map((reteta) => (
                     <TableRow
@@ -496,6 +497,7 @@ const Retete = () => {
                       <TableCell className="font-medium font-mono">{reteta.cod_reteta}</TableCell>
                       <TableCell>{reteta.denumire}</TableCell>
                       <TableCell>{getTipBadge(reteta.tip)}</TableCell>
+                      <TableCell className="text-muted-foreground max-w-[300px] truncate">{reteta.materiale || "-"}</TableCell>
                       <TableCell className="text-muted-foreground max-w-[200px] truncate">{reteta.observatii || "-"}</TableCell>
                       <TableCell className="text-right">
                         <TooltipProvider>
