@@ -59,6 +59,7 @@ interface OrdinProductie {
   rezervariStoc: { material: string; cantitate: number; dataRezervare: string }[];
   loturiAsociate: string[];
   atasamente: string[];
+  comenziAsociate: string[];
 }
 
 // Mock data
@@ -87,7 +88,8 @@ const mockOrdine: OrdinProductie[] = [
       { material: "Filler", cantitate: 30, dataRezervare: "14/01/2024" }
     ],
     loturiAsociate: ["LOT-001", "LOT-002"],
-    atasamente: ["specificatie_tehnica.pdf", "plan_calitate.pdf"]
+    atasamente: ["specificatie_tehnica.pdf", "plan_calitate.pdf"],
+    comenziAsociate: ["CMD-2024-001", "CMD-2024-002"]
   },
   {
     id: 2,
@@ -108,7 +110,8 @@ const mockOrdine: OrdinProductie[] = [
     ],
     rezervariStoc: [],
     loturiAsociate: [],
-    atasamente: []
+    atasamente: [],
+    comenziAsociate: ["CMD-2024-003"]
   },
   {
     id: 3,
@@ -130,7 +133,8 @@ const mockOrdine: OrdinProductie[] = [
     ],
     rezervariStoc: [],
     loturiAsociate: [],
-    atasamente: ["caiet_sarcini.pdf"]
+    atasamente: ["caiet_sarcini.pdf"],
+    comenziAsociate: []
   },
   {
     id: 4,
@@ -151,8 +155,18 @@ const mockOrdine: OrdinProductie[] = [
     ],
     rezervariStoc: [],
     loturiAsociate: ["LOT-003", "LOT-004", "LOT-005"],
-    atasamente: ["raport_final.pdf"]
+    atasamente: ["raport_final.pdf"],
+    comenziAsociate: ["CMD-2024-004"]
   }
+];
+
+const mockComenzi = [
+  "CMD-2024-001",
+  "CMD-2024-002", 
+  "CMD-2024-003",
+  "CMD-2024-004",
+  "CMD-2024-005",
+  "CMD-2024-006"
 ];
 
 const mockRetete = [
@@ -199,13 +213,15 @@ const OrdineProductie = () => {
     operator: string;
     sefSchimb: string;
     observatii: string;
+    comenziAsociate: string[];
   }>({
     produse: [{ produs: "", cantitate: "", reteta: "" }],
     unitateMasura: "tone",
     startPlanificat: "",
     operator: "",
     sefSchimb: "",
-    observatii: ""
+    observatii: "",
+    comenziAsociate: []
   });
 
   // Calendar state
@@ -369,7 +385,8 @@ const OrdineProductie = () => {
         consumEstimat: [],
         rezervariStoc: [],
         loturiAsociate: [],
-        atasamente: []
+        atasamente: [],
+        comenziAsociate: wizardForm.comenziAsociate
       };
       setOrdine(prev => [...prev, newOrdin]);
       toast.success(`Ordinul ${newOrdin.numar} a fost creat`);
@@ -381,7 +398,8 @@ const OrdineProductie = () => {
         startPlanificat: "",
         operator: "",
         sefSchimb: "",
-        observatii: ""
+        observatii: "",
+        comenziAsociate: []
       });
     }
   };
@@ -886,6 +904,21 @@ const OrdineProductie = () => {
                     </div>
                   </div>
                 )}
+
+                {/* Comenzi Asociate */}
+                {selectedOrdin.comenziAsociate.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-medium mb-2">Comenzi Asociate</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedOrdin.comenziAsociate.map((cmd) => (
+                        <Badge key={cmd} variant="secondary" className="gap-1">
+                          <FileText className="h-3 w-3" />
+                          {cmd}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <DialogFooter className="flex-col sm:flex-row gap-2">
@@ -1071,6 +1104,40 @@ const OrdineProductie = () => {
                     placeholder="Observații suplimentare..."
                   />
                 </div>
+                <div className="col-span-2">
+                  <Label>Comenzi Asociate</Label>
+                  <div className="flex flex-wrap gap-2 mt-2 p-3 border rounded-md min-h-[40px]">
+                    {wizardForm.comenziAsociate.map((cmd) => (
+                      <Badge key={cmd} variant="secondary" className="gap-1">
+                        {cmd}
+                        <X 
+                          className="h-3 w-3 cursor-pointer" 
+                          onClick={() => setWizardForm(prev => ({
+                            ...prev,
+                            comenziAsociate: prev.comenziAsociate.filter(c => c !== cmd)
+                          }))}
+                        />
+                      </Badge>
+                    ))}
+                  </div>
+                  <Select onValueChange={(v) => {
+                    if (!wizardForm.comenziAsociate.includes(v)) {
+                      setWizardForm(prev => ({
+                        ...prev,
+                        comenziAsociate: [...prev.comenziAsociate, v]
+                      }));
+                    }
+                  }}>
+                    <SelectTrigger className="mt-2">
+                      <SelectValue placeholder="Adaugă comandă..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {mockComenzi.filter(c => !wizardForm.comenziAsociate.includes(c)).map((cmd) => (
+                        <SelectItem key={cmd} value={cmd}>{cmd}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
           )}
@@ -1116,6 +1183,16 @@ const OrdineProductie = () => {
                 {wizardForm.observatii && (
                   <div className="text-sm">
                     <span className="text-muted-foreground">Observații:</span> {wizardForm.observatii}
+                  </div>
+                )}
+                {wizardForm.comenziAsociate.length > 0 && (
+                  <div className="text-sm">
+                    <span className="text-muted-foreground">Comenzi Asociate:</span>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {wizardForm.comenziAsociate.map((cmd) => (
+                        <Badge key={cmd} variant="secondary" className="text-xs">{cmd}</Badge>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
