@@ -23,6 +23,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
 import { FilterableSelect } from "@/components/ui/filterable-select";
+import { TimePicker } from "@/components/ui/time-picker";
 import { API_BASE_URL } from "@/lib/api";
 
 // Types
@@ -792,18 +793,23 @@ const ComenziClient = () => {
             </div>
             <div className="space-y-2">
               <Label>Fereastră încărcare</Label>
-              <Select value={form.fereastra_incarcare} onValueChange={(v) => setForm({ ...form, fereastra_incarcare: v })}>
-                <SelectTrigger><SelectValue placeholder="Selectează interval" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="06:00 - 08:00">06:00 - 08:00</SelectItem>
-                  <SelectItem value="08:00 - 10:00">08:00 - 10:00</SelectItem>
-                  <SelectItem value="10:00 - 12:00">10:00 - 12:00</SelectItem>
-                  <SelectItem value="12:00 - 14:00">12:00 - 14:00</SelectItem>
-                  <SelectItem value="14:00 - 16:00">14:00 - 16:00</SelectItem>
-                  <SelectItem value="16:00 - 18:00">16:00 - 18:00</SelectItem>
-                  <SelectItem value="18:00 - 20:00">18:00 - 20:00</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex items-center gap-2">
+                <TimePicker
+                  value={form.fereastra_incarcare?.split(" - ")[0] || "08:00"}
+                  onChange={(startTime) => {
+                    const endTime = form.fereastra_incarcare?.split(" - ")[1] || "12:00";
+                    setForm({ ...form, fereastra_incarcare: `${startTime} - ${endTime}` });
+                  }}
+                />
+                <span className="text-muted-foreground">-</span>
+                <TimePicker
+                  value={form.fereastra_incarcare?.split(" - ")[1] || "12:00"}
+                  onChange={(endTime) => {
+                    const startTime = form.fereastra_incarcare?.split(" - ")[0] || "08:00";
+                    setForm({ ...form, fereastra_incarcare: `${startTime} - ${endTime}` });
+                  }}
+                />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
