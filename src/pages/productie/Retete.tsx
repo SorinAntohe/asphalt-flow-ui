@@ -87,8 +87,8 @@ const Retete = () => {
     observatii: ""
   });
   
-  // Materii prime list
-  const [materiiPrimeList, setMateriiPrimeList] = useState<{ id: number; denumire: string }[]>([]);
+  // Materii prime list - can be string[] or object[]
+  const [materiiPrimeList, setMateriiPrimeList] = useState<any[]>([]);
   
   // Fetch retete on mount
   useEffect(() => {
@@ -113,14 +113,24 @@ const Retete = () => {
   useEffect(() => {
     const fetchMateriiPrime = async () => {
       try {
+        console.log("Fetching materials from:", `${API_BASE_URL}/returneaza_materiale`);
         const response = await fetch(`${API_BASE_URL}/returneaza_materiale`);
         if (!response.ok) throw new Error("Eroare la încărcarea materialelor");
         const data = await response.json();
+        console.log("API response:", data);
         // Use materiale_prime from response
         const materiale = data?.materiale_prime || [];
+        console.log("Parsed materiale:", materiale);
         setMateriiPrimeList(materiale);
       } catch (error) {
         console.error("Error fetching materiale:", error);
+        // Fallback pentru testare când API-ul nu este accesibil
+        console.log("Using fallback materials for testing");
+        setMateriiPrimeList([
+          "0/4 NAT", "0/4 CONC", "0/4 CRIBLURI", "4/8 CONC", "4/8 CRIBLURI",
+          "4/8 NAT", "8/16 CONC", "8/16 CRIBLURI", "16/22.4 CONC", "16/22.4 CRIBLURI",
+          "BITUM 50/70", "FILLER", "CTL", "MOTORINA", "CURENT ELECTRIC"
+        ]);
       }
     };
     fetchMateriiPrime();
