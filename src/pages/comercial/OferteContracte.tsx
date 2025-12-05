@@ -1058,7 +1058,7 @@ const OferteContracte = () => {
                 <Label>Client *</Label>
                 <Select value={form.client} onValueChange={(v) => setForm({ ...form, client: v })}>
                   <SelectTrigger><SelectValue placeholder="Selectează client" /></SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="z-[200] pointer-events-auto">
                     {clients.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                   </SelectContent>
                 </Select>
@@ -1084,7 +1084,7 @@ const OferteContracte = () => {
                       <Label className="text-xs">Produs</Label>
                       <Select value={item.produs} onValueChange={(v) => handleProdusChange(index, "produs", v)}>
                         <SelectTrigger className="h-9"><SelectValue placeholder="Selectează" /></SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="z-[200] pointer-events-auto">
                           {produse.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
                         </SelectContent>
                       </Select>
