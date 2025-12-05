@@ -321,15 +321,21 @@ const OferteContracte = () => {
 
   // Get unique values for dropdowns - combine API data with existing data
   const clients = useMemo(() => {
+    console.log("Computing clients - clientsList:", clientsList);
     const existingClients = [...oferte, ...contracte].map(item => item.client);
     const allClients = [...new Set([...clientsList, ...existingClients])];
-    return allClients.filter(Boolean);
+    const result = allClients.filter(Boolean);
+    console.log("Final clients array:", result);
+    return result;
   }, [oferte, contracte, clientsList]);
 
   const produse = useMemo(() => {
+    console.log("Computing produse - produseFiniteList:", produseFiniteList);
     const existingProduse = [...oferte, ...contracte].map(item => item.produs);
     const allProduse = [...new Set([...produseFiniteList, ...existingProduse])];
-    return allProduse.filter(Boolean);
+    const result = allProduse.filter(Boolean);
+    console.log("Final produse array:", result);
+    return result;
   }, [oferte, contracte, produseFiniteList]);
 
   // Filter and sort oferte
