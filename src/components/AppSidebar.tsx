@@ -50,7 +50,6 @@ const productieItems = [
   { title: "Rețete", url: "/productie/retete", icon: FlaskConical },
   { title: "Ordine Producție", url: "/productie/ordine", icon: ClipboardCheck },
   { title: "Loturi & Telemetrie", url: "/productie/loturi", icon: Layers },
-  { title: "Calendar Producție", url: "/productie/calendar", icon: Calendar },
   { title: "Trasabilitate", url: "/productie/trasabilitate", icon: GitBranch },
 ];
 
