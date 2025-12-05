@@ -315,7 +315,8 @@ const Retete = () => {
         
         const firstResult = await firstResponse.json();
         console.log("Raspuns prima cerere:", firstResult);
-        const codReteta = firstResult.cod_reteta;
+        // Backend returns cod_contract instead of cod_reteta
+        const codReteta = firstResult.cod_reteta || firstResult.cod_contract;
         console.log("Cod reteta generat:", codReteta);
         
         // For remaining components, use the same cod_reteta
