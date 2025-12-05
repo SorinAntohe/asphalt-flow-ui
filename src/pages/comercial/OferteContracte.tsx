@@ -567,7 +567,7 @@ const OferteContracte = () => {
           const termenPlataNumber = parseFloat(form.termenPlata.replace(/[^0-9]/g, '')) || 0;
           
           const payload = {
-            table: "oferte",
+            tabel: "lista_oferte",
             id: editing.id,
             data: {
               client: form.client,
@@ -724,7 +724,7 @@ const OferteContracte = () => {
     if (deleting.tip === "oferta") {
       try {
         const payload = {
-          table: "oferte",
+          tabel: "lista_oferte",
           id: deleting.id
         };
         
