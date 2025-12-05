@@ -169,10 +169,10 @@ const CalendarProductie = () => {
             </div>
 
             {/* Calendar grid */}
-            <div className="grid grid-cols-7 gap-1">
+            <div className="grid grid-cols-7 gap-0 border-2 border-foreground/30 rounded-lg overflow-hidden">
               {calendarDays.map((day, index) => {
                 if (!day) {
-                  return <div key={`empty-${index}`} className="min-h-[100px] bg-muted/10 rounded-lg" />;
+                  return <div key={`empty-${index}`} className="min-h-[100px] bg-muted/10 border border-foreground/20" />;
                 }
 
                 const orders = getOrdersForDate(day);
@@ -184,9 +184,9 @@ const CalendarProductie = () => {
                     key={day.toISOString()}
                     onClick={() => handleDayClick(day)}
                     className={cn(
-                      "min-h-[100px] p-2 rounded-lg border border-border cursor-pointer transition-all",
-                      "hover:border-primary/50 hover:shadow-md",
-                      isToday(day) && "ring-2 ring-primary",
+                      "min-h-[100px] p-2 border border-foreground/20 cursor-pointer transition-all",
+                      "hover:border-primary hover:shadow-md hover:z-10",
+                      isToday(day) && "ring-2 ring-primary ring-inset",
                       hasOrders ? "bg-card" : "bg-muted/20"
                     )}
                   >
@@ -272,16 +272,16 @@ const CalendarProductie = () => {
                 <ScrollArea className="h-[60vh]">
                   <div className="min-w-[700px]">
                     {/* Time header */}
-                    <div className="flex border-b border-border sticky top-0 bg-background z-10">
-                      <div className="w-24 shrink-0 p-2 bg-muted/30 border-r border-border">
+                    <div className="flex border-b-2 border-foreground/40 sticky top-0 bg-background z-10">
+                      <div className="w-24 shrink-0 p-2 bg-muted/50 border-r-2 border-foreground/40">
                         <span className="text-xs font-medium text-muted-foreground">Ora</span>
                       </div>
                       {hours.map(hour => (
                         <div 
                           key={hour} 
-                          className="flex-1 min-w-[40px] p-2 text-center border-r border-border last:border-r-0 bg-muted/30"
+                          className="flex-1 min-w-[40px] p-2 text-center border-r-2 border-foreground/30 last:border-r-0 bg-muted/50"
                         >
-                          <span className="text-xs font-medium text-muted-foreground">{hour}:00</span>
+                          <span className="text-xs font-medium text-foreground">{hour}:00</span>
                         </div>
                       ))}
                     </div>
@@ -295,7 +295,7 @@ const CalendarProductie = () => {
                           {hours.map(hour => (
                             <div 
                               key={hour} 
-                              className="absolute top-0 bottom-0 border-r border-border/20"
+                              className="absolute top-0 bottom-0 border-r-2 border-foreground/20"
                               style={{ left: `${((hour - 6) / 17) * 100}%` }}
                             />
                           ))}
@@ -306,9 +306,9 @@ const CalendarProductie = () => {
                       {selectedDayOrders.map((order, idx) => {
                         const colors = getRecipeColor(order.recipe);
                         return (
-                          <div key={order.id} className="flex border-b border-border/30 h-14 relative">
-                            <div className="w-24 shrink-0 p-2 bg-muted/10 border-r border-border flex items-center">
-                              <span className="text-xs font-medium text-muted-foreground">{order.id}</span>
+                          <div key={order.id} className="flex border-b-2 border-foreground/20 h-14 relative">
+                            <div className="w-24 shrink-0 p-2 bg-muted/20 border-r-2 border-foreground/30 flex items-center">
+                              <span className="text-xs font-medium text-foreground">{order.id}</span>
                             </div>
                             <div className="flex-1 relative py-2">
                               <Tooltip>
