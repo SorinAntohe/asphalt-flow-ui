@@ -134,7 +134,7 @@ const OrdineProductie = () => {
         const response = await fetch(`${API_BASE_URL}/returneaza_produse_finite`);
         if (response.ok) {
           const data = await response.json();
-          setProduseFinite(data.map((p: { denumire: string }) => p.denumire));
+          setProduseFinite(data.map((p: { materiale_prime: string }) => p.materiale_prime).filter(Boolean));
         }
       } catch (error) {
         console.error("Error fetching produse finite:", error);
