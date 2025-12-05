@@ -6,16 +6,13 @@ import {
   Printer,
   Droplets,
   Pencil,
-  History,
   CheckCircle2,
   Archive,
   AlertTriangle,
   ThermometerSun,
   Scale,
   Beaker,
-  ListChecks,
-  GitCompare,
-  Play
+  ListChecks
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -51,37 +48,16 @@ interface ParametruProces {
   unitate: string;
 }
 
-interface LimitaCalitate {
-  id: number;
-  parametru: string;
-  min: number;
-  max: number;
-  unitate: string;
-  frecventaEsantionare: string;
-}
-
-interface Versiune {
-  id: number;
-  versiune: string;
-  data: string;
-  autor: string;
-  modificari: string;
-  activa: boolean;
-}
-
 interface Reteta {
   id: number;
   cod: string;
   denumire: string;
-  versiuneActiva: string;
   tip: "Asfalt" | "Emulsie";
   densitateTinta: number;
   status: "Activ" | "Arhivat";
   ultimaModificare: string;
   componente: Component[];
   parametriProces: ParametruProces[];
-  limiteCalitate: LimitaCalitate[];
-  versiuni: Versiune[];
   umiditate?: number;
   temperatura?: number;
   marshall?: number;
@@ -94,7 +70,6 @@ const reteteInitiale: Reteta[] = [
     id: 1,
     cod: "BA16-STD",
     denumire: "Beton Asfaltic BA 16 Standard",
-    versiuneActiva: "v2.3",
     tip: "Asfalt",
     densitateTinta: 2.45,
     status: "Activ",
@@ -116,24 +91,11 @@ const reteteInitiale: Reteta[] = [
       { id: 4, parametru: "Timp malaxare umedă", valoare: "35", unitate: "sec" },
       { id: 5, parametru: "Temperatura mixtura", valoare: "165±5", unitate: "°C" },
     ],
-    limiteCalitate: [
-      { id: 1, parametru: "Stabilitate Marshall", min: 10, max: 999, unitate: "kN", frecventaEsantionare: "1/500t" },
-      { id: 2, parametru: "Fluaj", min: 2, max: 4, unitate: "mm", frecventaEsantionare: "1/500t" },
-      { id: 3, parametru: "Goluri", min: 3, max: 6, unitate: "%", frecventaEsantionare: "1/500t" },
-      { id: 4, parametru: "Densitate", min: 2.40, max: 2.50, unitate: "g/cm³", frecventaEsantionare: "1/250t" },
-    ],
-    versiuni: [
-      { id: 1, versiune: "v2.3", data: "28/11/2024", autor: "Ing. Popescu", modificari: "Ajustare % filler", activa: true },
-      { id: 2, versiune: "v2.2", data: "15/10/2024", autor: "Ing. Ionescu", modificari: "Modificare temperaturi", activa: false },
-      { id: 3, versiune: "v2.1", data: "01/09/2024", autor: "Ing. Popescu", modificari: "Adăugare substituent", activa: false },
-      { id: 4, versiune: "v2.0", data: "15/06/2024", autor: "Ing. Marin", modificari: "Revizuire majoră", activa: false },
-    ],
   },
   {
     id: 2,
     cod: "BADPC22-MOD",
     denumire: "BADPC 22.4 Modificat",
-    versiuneActiva: "v1.5",
     tip: "Asfalt",
     densitateTinta: 2.48,
     status: "Activ",
@@ -154,20 +116,11 @@ const reteteInitiale: Reteta[] = [
       { id: 3, parametru: "Timp malaxare uscată", valoare: "20", unitate: "sec" },
       { id: 4, parametru: "Timp malaxare umedă", valoare: "40", unitate: "sec" },
     ],
-    limiteCalitate: [
-      { id: 1, parametru: "Stabilitate Marshall", min: 12, max: 999, unitate: "kN", frecventaEsantionare: "1/500t" },
-      { id: 2, parametru: "Goluri", min: 2, max: 5, unitate: "%", frecventaEsantionare: "1/500t" },
-    ],
-    versiuni: [
-      { id: 1, versiune: "v1.5", data: "25/11/2024", autor: "Ing. Stan", modificari: "Optimizare granulometrie", activa: true },
-      { id: 2, versiune: "v1.4", data: "10/11/2024", autor: "Ing. Stan", modificari: "Ajustare bitum", activa: false },
-    ],
   },
   {
     id: 3,
     cod: "EMU-CSS",
     denumire: "Emulsie Cationică CSS-1",
-    versiuneActiva: "v3.0",
     tip: "Emulsie",
     densitateTinta: 2.20,
     status: "Activ",
@@ -183,18 +136,11 @@ const reteteInitiale: Reteta[] = [
       { id: 1, parametru: "Timp malaxare", valoare: "45", unitate: "sec" },
       { id: 2, parametru: "Umiditate optimă", valoare: "8±2", unitate: "%" },
     ],
-    limiteCalitate: [
-      { id: 1, parametru: "Rezistență 7 zile", min: 2.5, max: 999, unitate: "MPa", frecventaEsantionare: "1/1000t" },
-    ],
-    versiuni: [
-      { id: 1, versiune: "v3.0", data: "20/11/2024", autor: "Ing. Popa", modificari: "Versiune nouă", activa: true },
-    ],
   },
   {
     id: 4,
     cod: "EMU-RS2",
     denumire: "Emulsie Rapid Set RS-2",
-    versiuneActiva: "v1.0",
     tip: "Emulsie",
     densitateTinta: 1.85,
     status: "Arhivat",
@@ -205,12 +151,6 @@ const reteteInitiale: Reteta[] = [
       { id: 3, material: "Nisip 0/8", cantitate: 250, observatii: "" },
     ],
     parametriProces: [],
-    limiteCalitate: [
-      { id: 1, parametru: "Granulometrie", min: 0, max: 100, unitate: "%", frecventaEsantionare: "1/2000t" },
-    ],
-    versiuni: [
-      { id: 1, versiune: "v1.0", data: "01/10/2024", autor: "Ing. Dumitrescu", modificari: "Versiune inițială", activa: true },
-    ],
   },
 ];
 
@@ -269,7 +209,6 @@ const Retete = () => {
   const [peekDrawer, setPeekDrawer] = useState<Reteta | null>(null);
   const [editorDialog, setEditorDialog] = useState<{ reteta: Reteta | null; isNew: boolean } | null>(null);
   const [editorTab, setEditorTab] = useState("componenta");
-  const [compareDialog, setCompareDialog] = useState<{ reteta: Reteta; v1: string; v2: string } | null>(null);
   const [autocorrectDialog, setAutocorrectDialog] = useState<Reteta | null>(null);
   
   // Editor form state
@@ -321,10 +260,6 @@ const Retete = () => {
 
   const handleAutocorrect = (reteta: Reteta) => {
     setAutocorrectDialog(reteta);
-  };
-
-  const handleActivateVersion = (reteta: Reteta, versiune: string) => {
-    toast.success(`Versiunea ${versiune} activată pentru ${reteta.cod}`);
   };
 
   // Open editor dialog with initialized state
@@ -543,7 +478,6 @@ const Retete = () => {
               <div className="flex flex-wrap gap-2">
                 {getTipBadge(peekDrawer.tip)}
                 {getStatusBadge(peekDrawer.status)}
-                <Badge variant="outline">{peekDrawer.versiuneActiva}</Badge>
               </div>
 
               {/* Parameters */}
@@ -610,30 +544,6 @@ const Retete = () => {
                   ))}
                 </div>
               </div>
-
-              <Separator />
-
-              {/* Version History */}
-              <div>
-                <h4 className="font-semibold mb-3 flex items-center gap-2">
-                  <History className="h-4 w-4" />
-                  Istoric Versiuni
-                </h4>
-                <div className="space-y-2 max-h-[120px] overflow-y-auto">
-                  {peekDrawer.versiuni.slice(0, 3).map((v) => (
-                    <div key={v.id} className="flex items-center justify-between p-2 rounded bg-muted/30">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{v.versiune}</span>
-                          {v.activa && <Badge className="h-5 bg-green-600">Activă</Badge>}
-                        </div>
-                        <p className="text-xs text-muted-foreground">{v.data} - {v.autor}</p>
-                      </div>
-                      <span className="text-xs text-muted-foreground max-w-[150px] truncate">{v.modificari}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
           )}
 
@@ -663,12 +573,12 @@ const Retete = () => {
               {editorDialog?.isNew ? "Adaugă Rețetă Nouă" : `Editează ${editorDialog?.reteta?.cod}`}
             </DialogTitle>
             <DialogDescription>
-              Configurați componența, parametrii și limitele de calitate
+              Configurați componența și parametrii de proces
             </DialogDescription>
           </DialogHeader>
 
           <Tabs value={editorTab} onValueChange={setEditorTab} className="flex-1 overflow-hidden flex flex-col">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="componenta" className="gap-1">
                 <ListChecks className="h-4 w-4" />
                 <span className="hidden sm:inline">Componență</span>
@@ -676,14 +586,6 @@ const Retete = () => {
               <TabsTrigger value="parametri" className="gap-1">
                 <ThermometerSun className="h-4 w-4" />
                 <span className="hidden sm:inline">Parametri</span>
-              </TabsTrigger>
-              <TabsTrigger value="calitate" className="gap-1">
-                <Beaker className="h-4 w-4" />
-                <span className="hidden sm:inline">Calitate</span>
-              </TabsTrigger>
-              <TabsTrigger value="versiuni" className="gap-1">
-                <History className="h-4 w-4" />
-                <span className="hidden sm:inline">Versiuni</span>
               </TabsTrigger>
             </TabsList>
 
@@ -854,82 +756,6 @@ const Retete = () => {
                 </div>
               </TabsContent>
 
-              {/* Calitate Tab */}
-              <TabsContent value="calitate" className="mt-0 space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label>Limite de Acceptare (QC)</Label>
-                  <Button size="sm" variant="outline">
-                    <Plus className="h-4 w-4 mr-1" />
-                    Adaugă
-                  </Button>
-                </div>
-                <div className="rounded-md border overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Parametru</TableHead>
-                        <TableHead className="text-right">Min</TableHead>
-                        <TableHead className="text-right">Max</TableHead>
-                        <TableHead>Unitate</TableHead>
-                        <TableHead>Frecvență Eșantionare</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {(editorDialog?.reteta?.limiteCalitate || []).map((lim) => (
-                        <TableRow key={lim.id}>
-                          <TableCell>
-                            <Input defaultValue={lim.parametru} className="h-8" />
-                          </TableCell>
-                          <TableCell>
-                            <Input type="number" defaultValue={lim.min} className="h-8 w-20 text-right" />
-                          </TableCell>
-                          <TableCell>
-                            <Input type="number" defaultValue={lim.max} className="h-8 w-20 text-right" />
-                          </TableCell>
-                          <TableCell>
-                            <Input defaultValue={lim.unitate} className="h-8 w-20" />
-                          </TableCell>
-                          <TableCell>
-                            <Input defaultValue={lim.frecventaEsantionare} className="h-8" />
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </TabsContent>
-
-              {/* Versiuni Tab */}
-              <TabsContent value="versiuni" className="mt-0 space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label>Istoric Versiuni</Label>
-                  <Button size="sm" variant="outline" onClick={() => editorDialog?.reteta && setCompareDialog({ reteta: editorDialog.reteta, v1: "", v2: "" })}>
-                    <GitCompare className="h-4 w-4 mr-1" />
-                    Compară
-                  </Button>
-                </div>
-                <div className="space-y-2">
-                  {(editorDialog?.reteta?.versiuni || []).map((v) => (
-                    <div key={v.id} className="flex items-center justify-between p-3 rounded-lg border bg-card">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold">{v.versiune}</span>
-                          {v.activa && <Badge className="bg-green-600">Activă</Badge>}
-                        </div>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {v.data} • {v.autor} • {v.modificari}
-                        </p>
-                      </div>
-                      {!v.activa && (
-                        <Button size="sm" variant="outline" onClick={() => editorDialog?.reteta && handleActivateVersion(editorDialog.reteta, v.versiune)}>
-                          <Play className="h-4 w-4 mr-1" />
-                          Activează
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </TabsContent>
             </ScrollArea>
           </Tabs>
 
@@ -988,52 +814,6 @@ const Retete = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Compare Dialog */}
-      <Dialog open={!!compareDialog} onOpenChange={() => setCompareDialog(null)}>
-        <DialogContent hideCloseButton>
-          <DialogHeader>
-            <DialogTitle>Compară Versiuni</DialogTitle>
-            <DialogDescription>Selectați două versiuni pentru comparare</DialogDescription>
-          </DialogHeader>
-          
-          <div className="grid grid-cols-2 gap-4 py-4">
-            <div>
-              <Label>Versiune 1</Label>
-              <Select value={compareDialog?.v1} onValueChange={(v) => compareDialog && setCompareDialog({ ...compareDialog, v1: v })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selectează" />
-                </SelectTrigger>
-                <SelectContent>
-                  {compareDialog?.reteta.versiuni.map((v) => (
-                    <SelectItem key={v.id} value={v.versiune}>{v.versiune}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Versiune 2</Label>
-              <Select value={compareDialog?.v2} onValueChange={(v) => compareDialog && setCompareDialog({ ...compareDialog, v2: v })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selectează" />
-                </SelectTrigger>
-                <SelectContent>
-                  {compareDialog?.reteta.versiuni.map((v) => (
-                    <SelectItem key={v.id} value={v.versiune}>{v.versiune}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setCompareDialog(null)}>Anulează</Button>
-            <Button onClick={() => { toast.info("Comparare în dezvoltare"); setCompareDialog(null); }}>
-              <GitCompare className="h-4 w-4 mr-2" />
-              Compară
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
