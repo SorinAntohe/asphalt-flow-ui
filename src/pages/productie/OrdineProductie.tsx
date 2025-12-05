@@ -180,7 +180,7 @@ const OrdineProductie = () => {
         const response = await fetch(`${API_BASE_URL}/productie/returneaza/retete`);
         if (response.ok) {
           const data = await response.json();
-          setRetete(data.map((r: { cod_reteta: string; denumire: string }) => `${r.cod_reteta} - ${r.denumire}`));
+          setRetete(data.map((r: { cod_reteta: string; denumire: string }) => r.cod_reteta));
         }
       } catch (error) {
         console.error("Error fetching retete:", error);
