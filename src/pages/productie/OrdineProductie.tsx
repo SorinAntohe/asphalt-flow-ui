@@ -18,12 +18,15 @@ import {
   AlertTriangle,
   ChevronRight,
   ChevronLeft,
-  X
+  X,
+  Pencil,
+  Trash2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -195,6 +198,8 @@ const OrdineProductie = () => {
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [wizardOpen, setWizardOpen] = useState(false);
   const [wizardStep, setWizardStep] = useState(1);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   // Filters
   const [sortKey, setSortKey] = useState<string | null>(null);
@@ -326,6 +331,77 @@ const OrdineProductie = () => {
     ));
     toast.success(`Ordinul ${ordin.numar} a fost închis`);
     setDetailDialogOpen(false);
+  };
+
+  const handleOpenEdit = (ordin: OrdinProductie) => {
+    setWizardForm({
+      produse: ordin.produse.map(p => ({
+        produs: p.produs,
+        cantitate: String(p.cantitate),
+        reteta: p.reteta
+      })),
+      unitateMasura: ordin.unitateMasura,
+      startPlanificat: ordin.startPlanificat,
+      operator: ordin.operator,
+      sefSchimb: ordin.sefSchimb,
+      observatii: ordin.observatii,
+      comenziAsociate: ordin.comenziAsociate
+    });
+    setDetailDialogOpen(false);
+    setEditDialogOpen(true);
+  };
+
+  const handleSaveEdit = () => {
+    if (!selectedOrdin) return;
+    
+    const validProduse = wizardForm.produse.filter(p => p.produs && p.cantitate && p.reteta);
+    if (validProduse.length === 0) {
+      toast.error("Adăugați cel puțin un produs cu cantitate și rețetă");
+      return;
+    }
+
+    setOrdine(prev => prev.map(o => 
+      o.id === selectedOrdin.id ? {
+        ...o,
+        produse: validProduse.map(p => ({
+          produs: p.produs,
+          cantitate: parseFloat(p.cantitate) || 0,
+          reteta: p.reteta
+        })),
+        cantitateTotala: validProduse.reduce((sum, p) => sum + (parseFloat(p.cantitate) || 0), 0),
+        unitateMasura: wizardForm.unitateMasura,
+        startPlanificat: wizardForm.startPlanificat,
+        operator: wizardForm.operator,
+        sefSchimb: wizardForm.sefSchimb,
+        observatii: wizardForm.observatii,
+        comenziAsociate: wizardForm.comenziAsociate
+      } : o
+    ));
+    
+    toast.success(`Ordinul ${selectedOrdin.numar} a fost actualizat`);
+    setEditDialogOpen(false);
+    resetWizardForm();
+  };
+
+  const handleDelete = () => {
+    if (!selectedOrdin) return;
+    setOrdine(prev => prev.filter(o => o.id !== selectedOrdin.id));
+    toast.success(`Ordinul ${selectedOrdin.numar} a fost șters`);
+    setDeleteDialogOpen(false);
+    setDetailDialogOpen(false);
+    setSelectedOrdin(null);
+  };
+
+  const resetWizardForm = () => {
+    setWizardForm({
+      produse: [{ produs: "", cantitate: "", reteta: "" }],
+      unitateMasura: "tone",
+      startPlanificat: "",
+      operator: "",
+      sefSchimb: "",
+      observatii: "",
+      comenziAsociate: []
+    });
   };
 
   // Wizard helpers
@@ -941,6 +1017,14 @@ const OrdineProductie = () => {
                       Închide
                     </Button>
                   )}
+                  <Button size="sm" variant="outline" onClick={() => handleOpenEdit(selectedOrdin)}>
+                    <Pencil className="h-4 w-4 mr-1" />
+                    Editează
+                  </Button>
+                  <Button size="sm" variant="destructive" onClick={() => setDeleteDialogOpen(true)}>
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Șterge
+                  </Button>
                 </div>
               </DialogFooter>
             </>
@@ -1226,6 +1310,215 @@ const OrdineProductie = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Edit Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={(open) => {
+        setEditDialogOpen(open);
+        if (!open) resetWizardForm();
+      }}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle>Editează Ordin de Producție</DialogTitle>
+            <DialogDescription>
+              Modificați datele ordinului {selectedOrdin?.numar}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            {/* Produse */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="text-base font-medium">Produse</Label>
+                <Button variant="outline" size="sm" onClick={addProdus}>
+                  <Plus className="h-4 w-4 mr-1" />
+                  Adaugă Produs
+                </Button>
+              </div>
+              {wizardForm.produse.map((item, index) => (
+                <div key={index} className="p-3 border rounded-lg space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Produs {index + 1}</span>
+                    {wizardForm.produse.length > 1 && (
+                      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeProdus(index)}>
+                        <X className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <Label className="text-xs">Produs Finit</Label>
+                      <Select value={item.produs} onValueChange={(v) => updateProdus(index, "produs", v)}>
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder="Selectează" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mockProduseFinite.map((p) => (
+                            <SelectItem key={p} value={p}>{p}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-xs">Cantitate (tone)</Label>
+                      <Input
+                        type="number"
+                        className="h-9"
+                        placeholder="Ex: 100"
+                        value={item.cantitate}
+                        onChange={(e) => updateProdus(index, "cantitate", e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Rețetă</Label>
+                      <Select value={item.reteta} onValueChange={(v) => updateProdus(index, "reteta", v)}>
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder="Selectează" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mockRetete.map((r) => (
+                            <SelectItem key={r} value={r}>{r}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="p-3 bg-primary/10 rounded-lg">
+              <div className="flex items-center justify-between">
+                <span className="font-medium">Masă Totală:</span>
+                <span className="text-xl font-bold">{cantitateTotalaForm} tone</span>
+              </div>
+            </div>
+
+            <Separator />
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Start Planificat</Label>
+                <Input
+                  type="datetime-local"
+                  value={wizardForm.startPlanificat}
+                  onChange={(e) => setWizardForm(prev => ({ ...prev, startPlanificat: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label>Unitate măsură</Label>
+                <Select value={wizardForm.unitateMasura} onValueChange={(v) => setWizardForm(prev => ({ ...prev, unitateMasura: v }))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="tone">Tone</SelectItem>
+                    <SelectItem value="mc">m³</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Operator</Label>
+                <Select value={wizardForm.operator} onValueChange={(v) => setWizardForm(prev => ({ ...prev, operator: v }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selectează operator" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mockOperatori.map((o) => (
+                      <SelectItem key={o} value={o}>{o}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Șef Schimb</Label>
+                <Select value={wizardForm.sefSchimb} onValueChange={(v) => setWizardForm(prev => ({ ...prev, sefSchimb: v }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selectează șef schimb" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mockSefiSchimb.map((s) => (
+                      <SelectItem key={s} value={s}>{s}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="col-span-2">
+                <Label>Observații</Label>
+                <Textarea
+                  value={wizardForm.observatii}
+                  onChange={(e) => setWizardForm(prev => ({ ...prev, observatii: e.target.value }))}
+                  placeholder="Observații suplimentare..."
+                />
+              </div>
+              <div className="col-span-2">
+                <Label>Comenzi Asociate</Label>
+                <div className="flex flex-wrap gap-2 mt-2 p-3 border rounded-md min-h-[40px]">
+                  {wizardForm.comenziAsociate.map((cmd) => (
+                    <Badge key={cmd} variant="secondary" className="gap-1">
+                      {cmd}
+                      <X 
+                        className="h-3 w-3 cursor-pointer" 
+                        onClick={() => setWizardForm(prev => ({
+                          ...prev,
+                          comenziAsociate: prev.comenziAsociate.filter(c => c !== cmd)
+                        }))}
+                      />
+                    </Badge>
+                  ))}
+                </div>
+                <Select onValueChange={(v) => {
+                  if (!wizardForm.comenziAsociate.includes(v)) {
+                    setWizardForm(prev => ({
+                      ...prev,
+                      comenziAsociate: [...prev.comenziAsociate, v]
+                    }));
+                  }
+                }}>
+                  <SelectTrigger className="mt-2">
+                    <SelectValue placeholder="Adaugă comandă..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mockComenzi.filter(c => !wizardForm.comenziAsociate.includes(c)).map((cmd) => (
+                      <SelectItem key={cmd} value={cmd}>{cmd}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setEditDialogOpen(false);
+              resetWizardForm();
+            }}>
+              Anulează
+            </Button>
+            <Button onClick={handleSaveEdit}>
+              <CheckCircle2 className="h-4 w-4 mr-1" />
+              Salvează
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmați ștergerea</AlertDialogTitle>
+            <AlertDialogDescription>
+              Sunteți sigur că doriți să ștergeți ordinul {selectedOrdin?.numar}? Această acțiune nu poate fi anulată.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Anulează</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Șterge
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
     </div>
   );
