@@ -299,15 +299,15 @@ const ComenziClient = () => {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            table: "comenzi_client",
+            tabel: "comenzi_client",
             id: editing.id,
-            values: {
+            update: {
               client: form.client,
               produs: form.produs,
               cantitate: form.cantitate,
               unitate_masura: form.unitate_masura,
               prioritate: form.prioritate,
-              avans_plata: form.avans_plata,
+              avans: form.avans_plata,
               punct_descarcare: form.punct_descarcare,
               observatii: form.observatii,
               fereastra_incarcare: form.fereastra_incarcare,
