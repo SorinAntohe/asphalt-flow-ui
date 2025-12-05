@@ -269,36 +269,44 @@ const OrdineProductie = () => {
         return;
       }
 
-      // Get cod_reteta and cantitate from products
+      // Collect all recipe codes and quantities
       setEstimareLoading(true);
       try {
-        const allMateriale: EstimareMaterial[] = [];
-        let statusGeneral: "OK" | "NOT OK" = "OK";
+        const codRetete: string[] = [];
+        const cantitati: number[] = [];
 
         for (const produs of selectedOrdin.produse) {
-          // Use reteta field as cod_reteta for the estimare API
           const codReteta = produs.reteta || produs.produs;
           const cantitate = produs.cantitate;
 
           if (codReteta && cantitate > 0) {
-            console.log(`Fetching estimare for cod_reteta: ${codReteta}, cantitate: ${cantitate}`);
-            const response = await fetch(
-              `${API_BASE_URL}/productie/returneaza/estimare/${encodeURIComponent(codReteta)}/${cantitate}`
-            );
-            if (response.ok) {
-              const data: EstimareResponse = await response.json();
-              if (data.status_general === "NOT OK") {
-                statusGeneral = "NOT OK";
-              }
-              allMateriale.push(...data.materiale);
-            }
+            codRetete.push(codReteta);
+            cantitati.push(cantitate);
           }
         }
 
-        setEstimareData({
-          status_general: statusGeneral,
-          materiale: allMateriale
-        });
+        if (codRetete.length === 0) {
+          setEstimareData(null);
+          setEstimareLoading(false);
+          return;
+        }
+
+        // Send all recipes and quantities as comma-separated strings in single API call
+        const codReteteStr = codRetete.join(",");
+        const cantitatiStr = cantitati.join(",");
+        
+        console.log(`Fetching estimare for cod_retete: ${codReteteStr}, cantitati: ${cantitatiStr}`);
+        const response = await fetch(
+          `${API_BASE_URL}/productie/returneaza/estimare/${encodeURIComponent(codReteteStr)}/${encodeURIComponent(cantitatiStr)}`
+        );
+        
+        if (response.ok) {
+          const data: EstimareResponse = await response.json();
+          setEstimareData(data);
+        } else {
+          console.error("Error fetching estimare:", response.status);
+          setEstimareData(null);
+        }
       } catch (error) {
         console.error("Error fetching estimare:", error);
         setEstimareData(null);
