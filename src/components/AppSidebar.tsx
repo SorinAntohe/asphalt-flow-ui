@@ -58,7 +58,6 @@ const productieItems = [
 const mentenantaItems = [
   { title: "Echipamente & Flotă", url: "/mentenanta/echipamente", icon: Settings },
   { title: "Plan Mentenanță", url: "/mentenanta/plan", icon: CalendarRange },
-  { title: "Ordine de Lucru", url: "/mentenanta/interventii", icon: HardHat },
 ];
 
 // Rapoarte - single link to gallery
