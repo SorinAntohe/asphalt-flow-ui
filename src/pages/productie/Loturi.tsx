@@ -199,7 +199,7 @@ const Loturi = () => {
       { key: "operator", label: "Operator" },
       { key: "temperatura", label: "Temperatură °C" },
       { key: "marshall", label: "Marshall kN" },
-      { key: "verdictQC", label: "Verdict QC" }
+      { key: "verdictQC", label: "Verdict Calitate" }
     ]);
     toast.success("Export CSV realizat cu succes");
   };
@@ -236,7 +236,7 @@ const Loturi = () => {
           inspectorQC: "Inspector QC"
         } : l
       ));
-      toast.success(`Verdict QC pentru ${selectedLot.codLot}: ${qcVerdict}`);
+      toast.success(`Verdict Calitate pentru ${selectedLot.codLot}: ${qcVerdict}`);
       setQcDialogOpen(false);
       setDetailDialogOpen(false);
     }
@@ -427,7 +427,7 @@ const Loturi = () => {
                   <TableHead>Parametri</TableHead>
                   <TableHead>
                     <DataTableColumnHeader
-                      title="Verdict QC"
+                      title="Verdict Calitate"
                       sortKey="verdictQC"
                       currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
                       filterValue={filters.verdictQC || ""}
@@ -756,7 +756,7 @@ const Loturi = () => {
       <Dialog open={qcDialogOpen} onOpenChange={setQcDialogOpen}>
         <DialogContent hideCloseButton>
           <DialogHeader>
-            <DialogTitle>Verdict QC</DialogTitle>
+            <DialogTitle>Verdict Calitate</DialogTitle>
             <DialogDescription>
               Introduceți verdictul de calitate pentru {selectedLot?.codLot}
             </DialogDescription>
