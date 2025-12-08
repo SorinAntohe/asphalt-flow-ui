@@ -79,12 +79,16 @@ const Loturi = () => {
   const [operatoriDisponibili, setOperatoriDisponibili] = useState<{ value: string; label: string }[]>([]);
   const [selectedOperator, setSelectedOperator] = useState("");
 
+  // Materials state
+  const [materialeDisponibile, setMaterialeDisponibile] = useState<{ value: string; label: string }[]>([]);
+
   // Add form state
   const [addFormData, setAddFormData] = useState({
     cod_ordin: "",
+    operator: "",
+    material: "",
     cod_reteta: "",
     cantitate: "",
-    operator: "",
     temperatura: "",
     marshall: "",
     verdict_calitate: "În așteptare",
@@ -212,6 +216,28 @@ const Loturi = () => {
     fetchOperatori();
   }, []);
 
+  // Fetch materials
+  useEffect(() => {
+    const fetchMateriale = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/liste/returneaza/materii_prime`);
+        if (response.ok) {
+          const data = await response.json();
+          const options = Array.isArray(data)
+            ? data.map((m: any) => ({
+                value: m.denumire || m.material || m,
+                label: m.denumire || m.material || m
+              }))
+            : [];
+          setMaterialeDisponibile(options);
+        }
+      } catch (error) {
+        console.error("Error fetching materiale:", error);
+      }
+    };
+    fetchMateriale();
+  }, []);
+
 
   // Stats
   const stats = useMemo(() => {
@@ -266,9 +292,10 @@ const Loturi = () => {
 
       const payload = {
         cod_ordin: addFormData.cod_ordin,
+        operator: addFormData.operator,
+        material: addFormData.material,
         cod_reteta: addFormData.cod_reteta,
         cantitate: addFormData.cantitate,
-        operator: addFormData.operator,
         temperatura: parseFloat(addFormData.temperatura) || 0,
         marshall: parseFloat(addFormData.marshall) || 0,
         verdict_calitate: addFormData.verdict_calitate,
@@ -291,9 +318,10 @@ const Loturi = () => {
       setAddDialogOpen(false);
       setAddFormData({
         cod_ordin: "",
+        operator: "",
+        material: "",
         cod_reteta: "",
         cantitate: "",
-        operator: "",
         temperatura: "",
         marshall: "",
         verdict_calitate: "În așteptare",
@@ -892,6 +920,15 @@ const Loturi = () => {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Material *</Label>
+                <FilterableSelect
+                  options={materialeDisponibile}
+                  value={addFormData.material}
+                  onValueChange={(v) => setAddFormData(prev => ({ ...prev, material: v }))}
+                  placeholder="Selectează material"
+                />
+              </div>
               <div>
                 <Label>Rețetă *</Label>
                 <FilterableSelect
