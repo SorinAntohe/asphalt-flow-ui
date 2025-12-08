@@ -253,123 +253,159 @@ const Trasabilitate = () => {
               <CardHeader>
                 <CardTitle className="text-lg">Fluxul Trasabilității</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="flex flex-col lg:flex-row items-stretch gap-4">
-                  {/* Materii Prime */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Package className="h-5 w-5 text-blue-400" />
-                      <span className="font-medium text-foreground">Materii Prime</span>
+              <CardContent className="overflow-x-auto">
+                {/* Flow Diagram */}
+                <div className="flex items-center justify-between min-w-[800px] py-6 px-4">
+                  {/* Step 1: Materii Prime */}
+                  <div className="flex flex-col items-center">
+                    <div className="w-20 h-20 rounded-full bg-blue-500/20 border-2 border-blue-500 flex items-center justify-center mb-3 shadow-lg shadow-blue-500/20">
+                      <Package className="h-8 w-8 text-blue-400" />
                     </div>
-                    <div className="space-y-2">
-                      {trasabilitateResult.receptiiLoturi.map(r => (
-                        <div key={r.id} className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                          <div className="font-medium text-sm">{r.codLot}</div>
-                          <div className="text-xs text-muted-foreground">{r.material}</div>
-                          <div className="text-xs text-muted-foreground">{r.furnizor} • {r.cantitate} to</div>
-                        </div>
-                      ))}
+                    <span className="font-semibold text-foreground text-sm">Materii Prime</span>
+                    <div className="mt-2 text-center">
+                      <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/30">
+                        {trasabilitateResult.receptiiLoturi.length} materiale
+                      </Badge>
                     </div>
                   </div>
 
-                  {/* Arrow */}
-                  <div className="flex items-center justify-center lg:py-8">
-                    <ArrowRight className="h-6 w-6 text-muted-foreground hidden lg:block" />
-                    <ChevronRight className="h-6 w-6 text-muted-foreground rotate-90 lg:hidden" />
+                  {/* Connector 1 */}
+                  <div className="flex-1 flex items-center px-2">
+                    <div className="h-1 flex-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" />
+                    <ChevronRight className="h-6 w-6 text-purple-500 -ml-1" />
                   </div>
 
-                  {/* Rețetă */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-3">
-                      <FileText className="h-5 w-5 text-purple-400" />
-                      <span className="font-medium text-foreground">Rețetă</span>
+                  {/* Step 2: Rețetă */}
+                  <div className="flex flex-col items-center">
+                    <div className="w-20 h-20 rounded-full bg-purple-500/20 border-2 border-purple-500 flex items-center justify-center mb-3 shadow-lg shadow-purple-500/20">
+                      <FileText className="h-8 w-8 text-purple-400" />
                     </div>
-                    <div className="p-4 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                      <div className="font-medium">{trasabilitateResult.reteta.nume}</div>
-                      <div className="text-sm text-muted-foreground">{trasabilitateResult.reteta.produs}</div>
-                    </div>
-                  </div>
-
-                  {/* Arrow */}
-                  <div className="flex items-center justify-center lg:py-8">
-                    <ArrowRight className="h-6 w-6 text-muted-foreground hidden lg:block" />
-                    <ChevronRight className="h-6 w-6 text-muted-foreground rotate-90 lg:hidden" />
-                  </div>
-
-                  {/* Ordin de Producție */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-3">
-                      <ClipboardList className="h-5 w-5 text-orange-400" />
-                      <span className="font-medium text-foreground">Ordin Producție</span>
-                    </div>
-                    <div className="p-4 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                      <div className="font-medium">{trasabilitateResult.ordinProductie.cod}</div>
-                      <div className="text-sm text-muted-foreground">{trasabilitateResult.ordinProductie.produs}</div>
-                      <div className="text-xs text-muted-foreground">{trasabilitateResult.ordinProductie.cantitate} to • {trasabilitateResult.ordinProductie.data}</div>
+                    <span className="font-semibold text-foreground text-sm">Rețetă</span>
+                    <div className="mt-2 text-center max-w-[120px]">
+                      <p className="text-xs text-muted-foreground truncate">{trasabilitateResult.reteta.nume}</p>
                     </div>
                   </div>
 
-                  {/* Arrow */}
-                  <div className="flex items-center justify-center lg:py-8">
-                    <ArrowRight className="h-6 w-6 text-muted-foreground hidden lg:block" />
-                    <ChevronRight className="h-6 w-6 text-muted-foreground rotate-90 lg:hidden" />
+                  {/* Connector 2 */}
+                  <div className="flex-1 flex items-center px-2">
+                    <div className="h-1 flex-1 bg-gradient-to-r from-purple-500 to-orange-500 rounded-full" />
+                    <ChevronRight className="h-6 w-6 text-orange-500 -ml-1" />
                   </div>
 
-                  {/* Lot */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-3">
-                      <GitBranch className="h-5 w-5 text-emerald-400" />
-                      <span className="font-medium text-foreground">Lot</span>
+                  {/* Step 3: Ordin Producție */}
+                  <div className="flex flex-col items-center">
+                    <div className="w-20 h-20 rounded-full bg-orange-500/20 border-2 border-orange-500 flex items-center justify-center mb-3 shadow-lg shadow-orange-500/20">
+                      <ClipboardList className="h-8 w-8 text-orange-400" />
                     </div>
-                    <div className="space-y-2">
+                    <span className="font-semibold text-foreground text-sm">Ordin Producție</span>
+                    <div className="mt-2 text-center max-w-[120px]">
+                      <p className="text-xs text-muted-foreground truncate">{trasabilitateResult.ordinProductie.cod}</p>
+                    </div>
+                  </div>
+
+                  {/* Connector 3 */}
+                  <div className="flex-1 flex items-center px-2">
+                    <div className="h-1 flex-1 bg-gradient-to-r from-orange-500 to-emerald-500 rounded-full" />
+                    <ChevronRight className="h-6 w-6 text-emerald-500 -ml-1" />
+                  </div>
+
+                  {/* Step 4: Lot */}
+                  <div className="flex flex-col items-center">
+                    <div className="w-20 h-20 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center mb-3 shadow-lg shadow-emerald-500/20">
+                      <GitBranch className="h-8 w-8 text-emerald-400" />
+                    </div>
+                    <span className="font-semibold text-foreground text-sm">Lot</span>
+                    <div className="mt-2 text-center">
                       {trasabilitateResult.loturiProductie.map(lp => {
                         const config = statusConfig[lp.status];
-                        const StatusIcon = config.icon;
                         return (
-                          <div key={lp.id} className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                            <div className="flex items-center justify-between">
-                              <div className="font-medium text-sm">{lp.codLot}</div>
-                              <Badge variant="outline" className={config.color}>
-                                <StatusIcon className="h-3 w-3 mr-1" />
-                                {lp.status}
-                              </Badge>
-                            </div>
-                            <div className="text-xs text-muted-foreground">Ordin: {lp.ordin}</div>
-                            <div className="text-xs text-muted-foreground">{lp.cantitate} to • {lp.data}</div>
-                          </div>
+                          <Badge key={lp.id} variant="outline" className={config.color}>
+                            {lp.status}
+                          </Badge>
                         );
                       })}
                     </div>
                   </div>
 
-                  {/* Arrow */}
-                  <div className="flex items-center justify-center lg:py-8">
-                    <ArrowRight className="h-6 w-6 text-muted-foreground hidden lg:block" />
-                    <ChevronRight className="h-6 w-6 text-muted-foreground rotate-90 lg:hidden" />
+                  {/* Connector 4 */}
+                  <div className="flex-1 flex items-center px-2">
+                    <div className="h-1 flex-1 bg-gradient-to-r from-emerald-500 to-amber-500 rounded-full" />
+                    <ChevronRight className="h-6 w-6 text-amber-500 -ml-1" />
                   </div>
 
-                  {/* Produs Finit */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Truck className="h-5 w-5 text-amber-400" />
-                      <span className="font-medium text-foreground">Produs Finit</span>
+                  {/* Step 5: Produs Finit */}
+                  <div className="flex flex-col items-center">
+                    <div className="w-20 h-20 rounded-full bg-amber-500/20 border-2 border-amber-500 flex items-center justify-center mb-3 shadow-lg shadow-amber-500/20">
+                      <Truck className="h-8 w-8 text-amber-400" />
                     </div>
-                    {trasabilitateResult.livrari.length > 0 ? (
-                      <div className="space-y-2">
-                        {trasabilitateResult.livrari.map(l => (
-                          <div key={l.id} className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                            <div className="font-medium text-sm">{l.nrAviz}</div>
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <Users className="h-3 w-3" />
-                              {l.client}
-                            </div>
-                            <div className="text-xs text-muted-foreground">{l.cantitate} to • {l.data}</div>
-                          </div>
-                        ))}
+                    <span className="font-semibold text-foreground text-sm">Produs Finit</span>
+                    <div className="mt-2 text-center">
+                      <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/30">
+                        {trasabilitateResult.livrari.length} livrări
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Details Cards Below */}
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mt-6 pt-6 border-t border-border">
+                  {/* Materii Prime Details */}
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-semibold text-blue-400 uppercase tracking-wide">Materii Prime</h4>
+                    {trasabilitateResult.receptiiLoturi.map(r => (
+                      <div key={r.id} className="p-2 rounded-md bg-blue-500/5 border border-blue-500/20 text-xs">
+                        <div className="font-medium text-foreground">{r.codLot}</div>
+                        <div className="text-muted-foreground">{r.material}</div>
+                        <div className="text-muted-foreground">{r.cantitate} to</div>
                       </div>
+                    ))}
+                  </div>
+
+                  {/* Rețetă Details */}
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-semibold text-purple-400 uppercase tracking-wide">Rețetă</h4>
+                    <div className="p-2 rounded-md bg-purple-500/5 border border-purple-500/20 text-xs">
+                      <div className="font-medium text-foreground">{trasabilitateResult.reteta.nume}</div>
+                      <div className="text-muted-foreground">{trasabilitateResult.reteta.produs}</div>
+                    </div>
+                  </div>
+
+                  {/* Ordin Producție Details */}
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-semibold text-orange-400 uppercase tracking-wide">Ordin Producție</h4>
+                    <div className="p-2 rounded-md bg-orange-500/5 border border-orange-500/20 text-xs">
+                      <div className="font-medium text-foreground">{trasabilitateResult.ordinProductie.cod}</div>
+                      <div className="text-muted-foreground">{trasabilitateResult.ordinProductie.produs}</div>
+                      <div className="text-muted-foreground">{trasabilitateResult.ordinProductie.cantitate} to</div>
+                    </div>
+                  </div>
+
+                  {/* Lot Details */}
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-semibold text-emerald-400 uppercase tracking-wide">Lot</h4>
+                    {trasabilitateResult.loturiProductie.map(lp => (
+                      <div key={lp.id} className="p-2 rounded-md bg-emerald-500/5 border border-emerald-500/20 text-xs">
+                        <div className="font-medium text-foreground">{lp.codLot}</div>
+                        <div className="text-muted-foreground">{lp.ordin}</div>
+                        <div className="text-muted-foreground">{lp.cantitate} to</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Produs Finit Details */}
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-semibold text-amber-400 uppercase tracking-wide">Livrări</h4>
+                    {trasabilitateResult.livrari.length > 0 ? (
+                      trasabilitateResult.livrari.map(l => (
+                        <div key={l.id} className="p-2 rounded-md bg-amber-500/5 border border-amber-500/20 text-xs">
+                          <div className="font-medium text-foreground">{l.nrAviz}</div>
+                          <div className="text-muted-foreground">{l.client}</div>
+                          <div className="text-muted-foreground">{l.cantitate} to</div>
+                        </div>
+                      ))
                     ) : (
-                      <div className="p-4 rounded-lg bg-muted/30 border border-border text-center">
-                        <span className="text-sm text-muted-foreground">Nicio livrare înregistrată</span>
+                      <div className="p-2 rounded-md bg-muted/30 border border-border text-xs text-muted-foreground text-center">
+                        Nicio livrare
                       </div>
                     )}
                   </div>
