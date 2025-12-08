@@ -1,18 +1,13 @@
 import { useState, useMemo } from "react";
-import { Wrench, Plus, Download, Edit, Trash2, Settings } from "lucide-react";
+import { Wrench, Plus, Download, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { exportToCSV } from "@/lib/exportUtils";
-import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
 import { toast } from "@/hooks/use-toast";
-import { FilterableSelect } from "@/components/ui/filterable-select";
 
 interface Mentenanta {
   id: number;
@@ -94,17 +89,8 @@ const PlanMentenanta = () => {
   const [data, setData] = useState<Mentenanta[]>(mockMentenanta);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isServisareDialogOpen, setIsServisareDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Mentenanta | null>(null);
-  
-  // Servisare form state
-  const [servisareFormData, setServisareFormData] = useState({
-    cod: "",
-    pretReparatie: "",
-    observatii: ""
-  });
   
   // Form state
   const [formData, setFormData] = useState({
@@ -118,64 +104,6 @@ const PlanMentenanta = () => {
     servisare: false,
     cost: "",
   });
-
-  // Sorting & Filtering
-  const [currentSort, setCurrentSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
-  const [filters, setFilters] = useState<Record<string, string>>({});
-
-  // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-
-  const handleSort = (key: string, direction: "asc" | "desc") => {
-    setCurrentSort({ key, direction });
-  };
-
-  const handleFilter = (key: string, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-    setCurrentPage(1);
-  };
-
-  const filteredAndSortedData = useMemo(() => {
-    let result = [...data];
-
-    // Apply filters
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value) {
-        result = result.filter(item => {
-          const itemValue = item[key as keyof Mentenanta];
-          return String(itemValue).toLowerCase().includes(value.toLowerCase());
-        });
-      }
-    });
-
-    // Apply sorting
-    if (currentSort) {
-      result.sort((a, b) => {
-        const aVal = a[currentSort.key as keyof Mentenanta];
-        const bVal = b[currentSort.key as keyof Mentenanta];
-        if (aVal === null) return 1;
-        if (bVal === null) return -1;
-        if (aVal < bVal) return currentSort.direction === "asc" ? -1 : 1;
-        if (aVal > bVal) return currentSort.direction === "asc" ? 1 : -1;
-        return 0;
-      });
-    }
-
-    return result;
-  }, [data, filters, currentSort]);
-
-  const paginatedData = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    return filteredAndSortedData.slice(startIndex, startIndex + itemsPerPage);
-  }, [filteredAndSortedData, currentPage, itemsPerPage]);
-
-  const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
-
-  const handleRowClick = (item: Mentenanta) => {
-    setSelectedItem(item);
-    setIsDetailDialogOpen(true);
-  };
 
   const handleExport = () => {
     const exportData = data.map(item => ({
@@ -238,20 +166,19 @@ const PlanMentenanta = () => {
     toast({ title: "Succes", description: "Înregistrare adăugată cu succes." });
   };
 
-  const handleOpenEdit = () => {
-    if (!selectedItem) return;
+  const handleOpenEdit = (item: Mentenanta) => {
+    setSelectedItem(item);
     setFormData({
-      cod: selectedItem.cod,
-      denumire: selectedItem.denumire,
-      serie: selectedItem.serie,
-      producator: selectedItem.producator,
-      oreFunctionare: String(selectedItem.oreFunctionare),
-      oreUltimaRevizie: String(selectedItem.oreUltimaRevizie),
-      dataUrmatoareRevizie: selectedItem.dataUrmatoareRevizie,
-      servisare: selectedItem.servisare,
-      cost: selectedItem.cost !== null ? String(selectedItem.cost) : "",
+      cod: item.cod,
+      denumire: item.denumire,
+      serie: item.serie,
+      producator: item.producator,
+      oreFunctionare: String(item.oreFunctionare),
+      oreUltimaRevizie: String(item.oreUltimaRevizie),
+      dataUrmatoareRevizie: item.dataUrmatoareRevizie,
+      servisare: item.servisare,
+      cost: item.cost !== null ? String(item.cost) : "",
     });
-    setIsDetailDialogOpen(false);
     setIsEditDialogOpen(true);
   };
 
@@ -280,8 +207,8 @@ const PlanMentenanta = () => {
     toast({ title: "Succes", description: "Înregistrare actualizată cu succes." });
   };
 
-  const handleOpenDelete = () => {
-    setIsDetailDialogOpen(false);
+  const handleOpenDelete = (item: Mentenanta) => {
+    setSelectedItem(item);
     setIsDeleteDialogOpen(true);
   };
 
@@ -413,17 +340,6 @@ const PlanMentenanta = () => {
             <Plus className="h-4 w-4" />
             Adaugă
           </Button>
-          <Button 
-            variant="secondary" 
-            onClick={() => { 
-              setServisareFormData({ cod: "", pretReparatie: "", observatii: "" }); 
-              setIsServisareDialogOpen(true); 
-            }} 
-            className="gap-2"
-          >
-            <Settings className="h-4 w-4" />
-            Servisare
-          </Button>
           <Button variant="outline" onClick={handleExport} disabled={data.length === 0} className="gap-2">
             <Download className="h-4 w-4" />
             Export
@@ -431,117 +347,12 @@ const PlanMentenanta = () => {
         </div>
       </div>
 
-      {/* Table */}
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>
-              <DataTableColumnHeader
-                title="Cod"
-                sortKey="cod"
-                currentSort={currentSort}
-                onSort={handleSort}
-                filterValue={filters.cod || ""}
-                onFilterChange={(value) => handleFilter("cod", value)}
-              />
-            </TableHead>
-            <TableHead>
-              <DataTableColumnHeader
-                title="Denumire"
-                sortKey="denumire"
-                currentSort={currentSort}
-                onSort={handleSort}
-                filterValue={filters.denumire || ""}
-                onFilterChange={(value) => handleFilter("denumire", value)}
-              />
-            </TableHead>
-            <TableHead className="hidden md:table-cell">
-              <DataTableColumnHeader
-                title="Serie"
-                sortKey="serie"
-                currentSort={currentSort}
-                onSort={handleSort}
-                filterValue={filters.serie || ""}
-                onFilterChange={(value) => handleFilter("serie", value)}
-              />
-            </TableHead>
-            <TableHead className="hidden lg:table-cell">
-              <DataTableColumnHeader
-                title="Producător"
-                sortKey="producator"
-                currentSort={currentSort}
-                onSort={handleSort}
-                filterValue={filters.producator || ""}
-                onFilterChange={(value) => handleFilter("producator", value)}
-              />
-            </TableHead>
-            <TableHead className="hidden lg:table-cell">
-              <DataTableColumnHeader
-                title="Ore Funcț."
-                sortKey="oreFunctionare"
-                currentSort={currentSort}
-                onSort={handleSort}
-                filterValue={filters.oreFunctionare || ""}
-                onFilterChange={(value) => handleFilter("oreFunctionare", value)}
-              />
-            </TableHead>
-            <TableHead className="hidden xl:table-cell">
-              <DataTableColumnHeader
-                title="Ore Ult. Rev."
-                sortKey="oreUltimaRevizie"
-                currentSort={currentSort}
-                onSort={handleSort}
-                filterValue={filters.oreUltimaRevizie || ""}
-                onFilterChange={(value) => handleFilter("oreUltimaRevizie", value)}
-              />
-            </TableHead>
-            <TableHead className="hidden md:table-cell">
-              <DataTableColumnHeader
-                title="Data Urm. Rev."
-                sortKey="dataUrmatoareRevizie"
-                currentSort={currentSort}
-                onSort={handleSort}
-                filterValue={filters.dataUrmatoareRevizie || ""}
-                onFilterChange={(value) => handleFilter("dataUrmatoareRevizie", value)}
-              />
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {paginatedData.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
-                Nu există înregistrări
-              </TableCell>
-            </TableRow>
-          ) : (
-            paginatedData.map(item => (
-              <TableRow
-                key={item.id}
-                className="cursor-pointer"
-                onClick={() => handleRowClick(item)}
-              >
-                <TableCell className="font-medium">{item.cod}</TableCell>
-                <TableCell>{item.denumire}</TableCell>
-                <TableCell className="hidden md:table-cell">{item.serie}</TableCell>
-                <TableCell className="hidden lg:table-cell">{item.producator}</TableCell>
-                <TableCell className="hidden lg:table-cell">{item.oreFunctionare.toLocaleString()}</TableCell>
-                <TableCell className="hidden xl:table-cell">{item.oreUltimaRevizie.toLocaleString()}</TableCell>
-                <TableCell className="hidden md:table-cell">{item.dataUrmatoareRevizie}</TableCell>
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-
-      <DataTablePagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        totalItems={filteredAndSortedData.length}
-        itemsPerPage={itemsPerPage}
-        onPageChange={setCurrentPage}
-        onItemsPerPageChange={setItemsPerPage}
-      />
+      {/* Empty State / Content Placeholder */}
+      <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed rounded-lg">
+        <Wrench className="h-12 w-12 text-muted-foreground/50 mb-4" />
+        <h3 className="text-lg font-medium text-foreground">Plan Mentenanță</h3>
+        <p className="text-muted-foreground mt-1">Funcționalitate în dezvoltare</p>
+      </div>
 
       {/* Add Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -571,63 +382,6 @@ const PlanMentenanta = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Detail Dialog */}
-      <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
-        <DialogContent className="max-w-lg" hideCloseButton>
-          <DialogHeader>
-            <DialogTitle>Detalii Mentenanță</DialogTitle>
-          </DialogHeader>
-          {selectedItem && (
-            <div className="space-y-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">Cod</p>
-                  <p className="font-medium">{selectedItem.cod}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Denumire</p>
-                  <p className="font-medium">{selectedItem.denumire}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">Serie</p>
-                  <p className="font-medium">{selectedItem.serie}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Producător</p>
-                  <p className="font-medium">{selectedItem.producator}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">Ore Funcționare</p>
-                  <p className="font-medium">{selectedItem.oreFunctionare.toLocaleString()}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Ore Ultimă Revizie</p>
-                  <p className="font-medium">{selectedItem.oreUltimaRevizie.toLocaleString()}</p>
-                </div>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Data Următoare Revizie</p>
-                <p className="font-medium">{selectedItem.dataUrmatoareRevizie}</p>
-              </div>
-            </div>
-          )}
-          <DialogFooter>
-            <Button variant="outline" onClick={handleOpenDelete} className="gap-2 text-destructive hover:text-destructive">
-              <Trash2 className="h-4 w-4" />
-              Șterge
-            </Button>
-            <Button onClick={handleOpenEdit} className="gap-2">
-              <Edit className="h-4 w-4" />
-              Editează
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       {/* Delete Confirmation */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
@@ -645,69 +399,6 @@ const PlanMentenanta = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      {/* Servisare Dialog */}
-      <Dialog open={isServisareDialogOpen} onOpenChange={setIsServisareDialogOpen}>
-        <DialogContent className="max-w-md" hideCloseButton>
-          <DialogHeader>
-            <DialogTitle>Înregistrare Servisare</DialogTitle>
-            <DialogDescription>
-              Completați detaliile reparației pentru echipamentul selectat
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>Cod Echipament *</Label>
-              <FilterableSelect
-                options={data.map(item => ({ value: item.cod, label: `${item.cod} - ${item.denumire}` }))}
-                value={servisareFormData.cod}
-                onValueChange={(v) => setServisareFormData(prev => ({ ...prev, cod: v }))}
-                placeholder="Selectează echipament"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Preț Reparație (RON) *</Label>
-              <Input
-                type="number"
-                value={servisareFormData.pretReparatie}
-                onChange={(e) => setServisareFormData(prev => ({ ...prev, pretReparatie: e.target.value }))}
-                placeholder="Ex: 2500"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Observații</Label>
-              <Textarea
-                value={servisareFormData.observatii}
-                onChange={(e) => setServisareFormData(prev => ({ ...prev, observatii: e.target.value }))}
-                placeholder="Detalii despre reparație..."
-                rows={3}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsServisareDialogOpen(false)}>
-              Anulează
-            </Button>
-            <Button 
-              onClick={() => {
-                if (!servisareFormData.cod || !servisareFormData.pretReparatie) {
-                  toast({ title: "Eroare", description: "Completați codul și prețul reparației.", variant: "destructive" });
-                  return;
-                }
-                setData(prev => prev.map(item => 
-                  item.cod === servisareFormData.cod 
-                    ? { ...item, servisare: true, cost: Number(servisareFormData.pretReparatie) }
-                    : item
-                ));
-                setIsServisareDialogOpen(false);
-                toast({ title: "Succes", description: "Servisare înregistrată cu succes." });
-              }}
-            >
-              Salvează
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
