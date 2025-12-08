@@ -1,5 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Truck, Plus, Download, Settings, Pencil, Trash2 } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,52 +33,24 @@ import { exportToCSV } from "@/lib/exportUtils";
 
 interface Echipament {
   id: number;
-  cod: string;
-  denumire: string;
   serie: string;
+  denumire: string;
   producator: string;
   anFabricatie: number;
   valoareAchizitie: number;
-  durataAmortizare: number; // în luni
+  durataAmortizare: number;
 }
 
-// Mock data
-const mockEchipamente: Echipament[] = [
-  { 
-    id: 1, cod: "ECH-001", denumire: "Stație Asfalt Mobilă 160t/h", serie: "SA-2020-001",
-    producator: "Ammann", anFabricatie: 2020, valoareAchizitie: 850000, durataAmortizare: 120
-  },
-  { 
-    id: 2, cod: "ECH-002", denumire: "Încărcător Frontal Cat 966", serie: "IF-2019-003",
-    producator: "Caterpillar", anFabricatie: 2019, valoareAchizitie: 320000, durataAmortizare: 96
-  },
-  { 
-    id: 3, cod: "VEH-001", denumire: "Camion Basculant MAN TGS 8x4", serie: "CB-2021-005",
-    producator: "MAN", anFabricatie: 2021, valoareAchizitie: 180000, durataAmortizare: 84
-  },
-  { 
-    id: 4, cod: "ECH-003", denumire: "Finisor Asfalt Vögele Super 1900-3", serie: "FA-2018-002",
-    producator: "Vögele", anFabricatie: 2018, valoareAchizitie: 420000, durataAmortizare: 120
-  },
-  { 
-    id: 5, cod: "VEH-002", denumire: "Autobasculantă Volvo FH 6x4", serie: "AB-2022-001",
-    producator: "Volvo", anFabricatie: 2022, valoareAchizitie: 195000, durataAmortizare: 84
-  },
-  { 
-    id: 6, cod: "ECH-004", denumire: "Cilindru Compactor Hamm HD+ 110", serie: "CC-2020-004",
-    producator: "Hamm", anFabricatie: 2020, valoareAchizitie: 145000, durataAmortizare: 96
-  },
-];
-
 const Echipamente = () => {
-  const [echipamente, setEchipamente] = useState<Echipament[]>(mockEchipamente);
+  const [echipamente, setEchipamente] = useState<Echipament[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedEchipament, setSelectedEchipament] = useState<Echipament | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   
-  // Add form state (cod is auto-generated, not included)
+  // Add form state
   const [addFormData, setAddFormData] = useState({
     denumire: "",
     serie: "",
@@ -89,7 +62,6 @@ const Echipamente = () => {
 
   // Edit form state
   const [editFormData, setEditFormData] = useState({
-    cod: "",
     denumire: "",
     serie: "",
     producator: "",
@@ -106,6 +78,35 @@ const Echipamente = () => {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  // Fetch data from API
+  const fetchEchipamente = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`${API_BASE_URL}/mentenanta/returneaza/echipamente_flota`);
+      if (!response.ok) throw new Error("Failed to fetch");
+      const data = await response.json();
+      const mapped: Echipament[] = data.map((item: any) => ({
+        id: item.id,
+        serie: item.serie || "",
+        denumire: item.denumire || "",
+        producator: item.producator || "",
+        anFabricatie: parseInt(item.an_fabricatie) || 0,
+        valoareAchizitie: parseFloat(item.valoare_achizitie) || 0,
+        durataAmortizare: parseInt(item.durata_amortizare) || 0
+      }));
+      setEchipamente(mapped);
+    } catch (error) {
+      console.error("Error fetching echipamente:", error);
+      toast.error("Eroare la încărcarea echipamentelor");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEchipamente();
+  }, []);
 
   // Stats
   const stats = useMemo(() => {
@@ -168,9 +169,9 @@ const Echipamente = () => {
 
   const handleExport = () => {
     exportToCSV(filteredEchipamente, "echipamente_flota", [
-      { key: "cod", label: "Cod" },
-      { key: "denumire", label: "Denumire" },
+      { key: "id", label: "ID" },
       { key: "serie", label: "Serie" },
+      { key: "denumire", label: "Denumire" },
       { key: "producator", label: "Producător" },
       { key: "anFabricatie", label: "An Fabricație" },
       { key: "valoareAchizitie", label: "Valoare Achiziție (RON)" },
@@ -179,27 +180,46 @@ const Echipamente = () => {
     toast.success("Export realizat cu succes");
   };
 
-  const handleAddSubmit = () => {
+  const handleAddSubmit = async () => {
     if (!addFormData.denumire) {
       toast.error("Completați câmpurile obligatorii");
       return;
     }
-    toast.success("Echipament adăugat cu succes");
-    setIsAddDialogOpen(false);
-    setAddFormData({
-      denumire: "",
-      serie: "",
-      producator: "",
-      anFabricatie: "",
-      valoareAchizitie: "",
-      durataAmortizare: ""
-    });
+    try {
+      const payload = {
+        serie: addFormData.serie,
+        denumire: addFormData.denumire,
+        producator: addFormData.producator,
+        an_fabricatie: parseInt(addFormData.anFabricatie) || 0,
+        valoare_achizitie: parseFloat(addFormData.valoareAchizitie) || 0,
+        durata_amortizare: parseInt(addFormData.durataAmortizare) || 0
+      };
+      const response = await fetch(`${API_BASE_URL}/mentenanta/adauga/echipamente_flota`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) throw new Error("Failed to add");
+      toast.success("Echipament adăugat cu succes");
+      setIsAddDialogOpen(false);
+      setAddFormData({
+        denumire: "",
+        serie: "",
+        producator: "",
+        anFabricatie: "",
+        valoareAchizitie: "",
+        durataAmortizare: ""
+      });
+      fetchEchipamente();
+    } catch (error) {
+      console.error("Error adding echipament:", error);
+      toast.error("Eroare la adăugarea echipamentului");
+    }
   };
 
   const handleOpenEdit = () => {
     if (selectedEchipament) {
       setEditFormData({
-        cod: selectedEchipament.cod,
         denumire: selectedEchipament.denumire,
         serie: selectedEchipament.serie,
         producator: selectedEchipament.producator,
@@ -213,7 +233,7 @@ const Echipamente = () => {
   };
 
   const handleEditSubmit = () => {
-    if (!editFormData.cod || !editFormData.denumire) {
+    if (!editFormData.denumire) {
       toast.error("Completați câmpurile obligatorii");
       return;
     }
@@ -222,7 +242,6 @@ const Echipamente = () => {
         e.id === selectedEchipament.id 
           ? {
               ...e,
-              cod: editFormData.cod,
               denumire: editFormData.denumire,
               serie: editFormData.serie,
               producator: editFormData.producator,
@@ -313,12 +332,12 @@ const Echipamente = () => {
                 <TableRow>
                   <TableHead>
                     <DataTableColumnHeader
-                      title="Cod"
-                      sortKey="cod"
+                      title="ID"
+                      sortKey="id"
                       currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
-                      filterValue={columnFilters.cod || ""}
+                      filterValue={columnFilters.id || ""}
                       onSort={handleSort}
-                      onFilterChange={(value) => handleFilter("cod", value)}
+                      onFilterChange={(value) => handleFilter("id", value)}
                     />
                   </TableHead>
                   <TableHead>
@@ -390,7 +409,7 @@ const Echipamente = () => {
                     className="cursor-pointer hover:bg-muted/50"
                     onClick={() => handleRowClick(echipament)}
                   >
-                    <TableCell className="font-medium">{echipament.cod}</TableCell>
+                    <TableCell className="font-medium">{echipament.id}</TableCell>
                     <TableCell>{echipament.denumire}</TableCell>
                     <TableCell>{echipament.serie}</TableCell>
                     <TableCell>{echipament.producator}</TableCell>
@@ -424,15 +443,15 @@ const Echipamente = () => {
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <Settings className="h-5 w-5" />
-                  {selectedEchipament.cod}
+                  {selectedEchipament.denumire}
                 </DialogTitle>
-                <DialogDescription>{selectedEchipament.denumire}</DialogDescription>
+                <DialogDescription>ID: {selectedEchipament.id}</DialogDescription>
               </DialogHeader>
               
               <div className="grid grid-cols-2 gap-4 py-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Cod</p>
-                  <p className="font-medium">{selectedEchipament.cod}</p>
+                  <p className="text-sm text-muted-foreground">ID</p>
+                  <p className="font-medium">{selectedEchipament.id}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Denumire</p>
@@ -561,11 +580,11 @@ const Echipamente = () => {
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Cod *</Label>
+                <Label>Denumire *</Label>
                 <Input 
-                  placeholder="ECH-XXX"
-                  value={editFormData.cod}
-                  onChange={(e) => setEditFormData(prev => ({ ...prev, cod: e.target.value }))}
+                  placeholder="Denumire echipament"
+                  value={editFormData.denumire}
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, denumire: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
@@ -576,14 +595,6 @@ const Echipamente = () => {
                   onChange={(e) => setEditFormData(prev => ({ ...prev, serie: e.target.value }))}
                 />
               </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Denumire *</Label>
-              <Input 
-                placeholder="Denumire echipament"
-                value={editFormData.denumire}
-                onChange={(e) => setEditFormData(prev => ({ ...prev, denumire: e.target.value }))}
-              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
