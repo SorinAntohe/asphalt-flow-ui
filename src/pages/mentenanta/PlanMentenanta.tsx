@@ -484,14 +484,12 @@ const PlanMentenanta = () => {
                 onFilterChange={(value) => handleFilter("dataUrmatoareRevizie", value)}
               />
             </TableHead>
-            <TableHead>Servisare</TableHead>
-            <TableHead className="text-right">Cost</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {paginatedData.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={9} className="text-center py-12 text-muted-foreground">
+              <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
                 Nu există înregistrări
               </TableCell>
             </TableRow>
@@ -509,14 +507,6 @@ const PlanMentenanta = () => {
                 <TableCell className="hidden lg:table-cell">{item.oreFunctionare.toLocaleString()}</TableCell>
                 <TableCell className="hidden xl:table-cell">{item.oreUltimaRevizie.toLocaleString()}</TableCell>
                 <TableCell className="hidden md:table-cell">{item.dataUrmatoareRevizie}</TableCell>
-                <TableCell>
-                  <Badge variant={item.servisare ? "default" : "outline"}>
-                    {item.servisare ? "Da" : "Nu"}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right">
-                  {item.cost !== null ? `${item.cost.toLocaleString()} RON` : "-"}
-                </TableCell>
               </TableRow>
             ))
           )}
@@ -598,24 +588,10 @@ const PlanMentenanta = () => {
                   <p className="font-medium">{selectedItem.oreUltimaRevizie.toLocaleString()}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">Data Următoare Revizie</p>
-                  <p className="font-medium">{selectedItem.dataUrmatoareRevizie}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Servisare</p>
-                  <Badge variant={selectedItem.servisare ? "default" : "outline"}>
-                    {selectedItem.servisare ? "Da" : "Nu"}
-                  </Badge>
-                </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Data Următoare Revizie</p>
+                <p className="font-medium">{selectedItem.dataUrmatoareRevizie}</p>
               </div>
-              {selectedItem.servisare && selectedItem.cost !== null && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Cost Servisare</p>
-                  <p className="font-medium">{selectedItem.cost.toLocaleString()} RON</p>
-                </div>
-              )}
             </div>
           )}
           <DialogFooter>
