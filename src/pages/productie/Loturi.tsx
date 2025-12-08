@@ -79,6 +79,9 @@ const Loturi = () => {
   const [operatoriDisponibili, setOperatoriDisponibili] = useState<{ value: string; label: string }[]>([]);
   const [selectedOperator, setSelectedOperator] = useState("");
 
+  // Comenzi disponibile pentru asociere
+  const [comenziDisponibile, setComenziDisponibile] = useState<{ value: string; label: string }[]>([]);
+
   // Add form state
   const [addFormData, setAddFormData] = useState({
     cod_ordin: "",
@@ -88,7 +91,8 @@ const Loturi = () => {
     temperatura: "",
     marshall: "",
     verdict_calitate: "În așteptare",
-    observatii: ""
+    observatii: "",
+    comenzi_asociate: [{ cod: "" }] as { cod: string }[]
   });
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -212,6 +216,33 @@ const Loturi = () => {
     fetchOperatori();
   }, []);
 
+  // Fetch comenzi disponibile pentru asociere
+  useEffect(() => {
+    const fetchComenzi = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/comercial/returneaza/comenzi_client`);
+        if (response.ok) {
+          const data = await response.json();
+          const uniqueCodes = new Set<string>();
+          const options: { value: string; label: string }[] = [];
+          if (Array.isArray(data)) {
+            data.forEach((c: any) => {
+              const code = c.cod || c.cod_comanda || c;
+              if (code && !uniqueCodes.has(code)) {
+                uniqueCodes.add(code);
+                options.push({ value: code, label: code });
+              }
+            });
+          }
+          setComenziDisponibile(options);
+        }
+      } catch (error) {
+        console.error("Error fetching comenzi:", error);
+      }
+    };
+    fetchComenzi();
+  }, []);
+
   // Stats
   const stats = useMemo(() => {
     const total = loturi.length;
@@ -244,6 +275,30 @@ const Loturi = () => {
     return null;
   };
 
+  // Helper functions for comenzi asociate
+  const handleAddComanda = () => {
+    setAddFormData(prev => ({
+      ...prev,
+      comenzi_asociate: [...prev.comenzi_asociate, { cod: "" }]
+    }));
+  };
+
+  const handleRemoveComanda = (index: number) => {
+    if (addFormData.comenzi_asociate.length > 1) {
+      setAddFormData(prev => ({
+        ...prev,
+        comenzi_asociate: prev.comenzi_asociate.filter((_, i) => i !== index)
+      }));
+    }
+  };
+
+  const handleComandaChange = (index: number, value: string) => {
+    setAddFormData(prev => ({
+      ...prev,
+      comenzi_asociate: prev.comenzi_asociate.map((c, i) => i === index ? { cod: value } : c)
+    }));
+  };
+
   // Handle add lot
   const handleAddLot = async () => {
     if (!addFormData.cod_ordin || !addFormData.cod_reteta || !addFormData.cantitate || !addFormData.operator) {
@@ -263,6 +318,9 @@ const Loturi = () => {
         }
       }
 
+      // Build comenzi_asociate string
+      const validComenzi = addFormData.comenzi_asociate.filter(c => c.cod).map(c => c.cod);
+      
       const payload = {
         cod_ordin: addFormData.cod_ordin,
         cod_reteta: addFormData.cod_reteta,
@@ -272,7 +330,8 @@ const Loturi = () => {
         marshall: parseFloat(addFormData.marshall) || 0,
         verdict_calitate: addFormData.verdict_calitate,
         observatii: addFormData.observatii,
-        cai_fisiere: uploadedPaths.join(",")
+        cai_fisiere: uploadedPaths.join(","),
+        comenzi_asociate: validComenzi.join(",")
       };
 
       const response = await fetch(`${API_BASE_URL}/productie/adauga/loturi_telemetrie`, {
@@ -292,7 +351,8 @@ const Loturi = () => {
           temperatura: "",
           marshall: "",
           verdict_calitate: "În așteptare",
-          observatii: ""
+          observatii: "",
+          comenzi_asociate: [{ cod: "" }]
         });
         setUploadedFiles([]);
         fetchLoturi();
@@ -904,6 +964,44 @@ const Loturi = () => {
                   onValueChange={(v) => setAddFormData(prev => ({ ...prev, operator: v }))}
                   placeholder="Selectează operator"
                 />
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Comenzi Asociate Section */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="text-base font-medium">Comenzi Asociate</Label>
+                <Button type="button" variant="outline" size="sm" onClick={handleAddComanda}>
+                  <Plus className="w-4 h-4 mr-1" />Adaugă comandă
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {addFormData.comenzi_asociate.map((item, index) => (
+                  <div key={index} className="flex gap-2 items-end p-3 border rounded-lg bg-muted/30">
+                    <div className="flex-1">
+                      <Label className="text-xs">Cod Comandă</Label>
+                      <FilterableSelect
+                        options={comenziDisponibile}
+                        value={item.cod}
+                        onValueChange={(v) => handleComandaChange(index, v)}
+                        placeholder="Selectează comandă"
+                      />
+                    </div>
+                    {addFormData.comenzi_asociate.length > 1 && (
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-9 w-9 text-destructive hover:text-destructive"
+                        onClick={() => handleRemoveComanda(index)}
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
 
