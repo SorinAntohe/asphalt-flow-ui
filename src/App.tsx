@@ -34,7 +34,6 @@ import Trasabilitate from "./pages/productie/Trasabilitate";
 // Mentenanta module pages
 import Echipamente from "./pages/mentenanta/Echipamente";
 import PlanMentenanta from "./pages/mentenanta/PlanMentenanta";
-import OrdineLucru from "./pages/mentenanta/OrdineLucru";
 
 // Rapoarte module pages
 import GalerieRapoarte from "./pages/rapoarte/GalerieRapoarte";
@@ -89,7 +88,6 @@ const AppRoutes = () => (
     {/* Mentenanta module routes */}
     <Route path="/mentenanta/echipamente" element={<ProtectedRoute><Echipamente /></ProtectedRoute>} />
     <Route path="/mentenanta/plan" element={<ProtectedRoute><PlanMentenanta /></ProtectedRoute>} />
-    <Route path="/mentenanta/interventii" element={<ProtectedRoute><OrdineLucru /></ProtectedRoute>} />
     {/* Rapoarte module routes */}
     <Route path="/rapoarte" element={<ProtectedRoute><GalerieRapoarte /></ProtectedRoute>} />
     <Route path="/rapoarte/productie" element={<ProtectedRoute><RapoarteProductie /></ProtectedRoute>} />
