@@ -68,6 +68,9 @@ const Loturi = () => {
   const [qcVerdict, setQcVerdict] = useState<"Conform" | "Neconform">("Conform");
   const [qcObservatii, setQcObservatii] = useState("");
 
+  // Ordine state
+  const [ordineDisponibile, setOrdineDisponibile] = useState<{ value: string; label: string }[]>([]);
+
   // Retete state
   const [reteteDisponibile, setReteteDisponibile] = useState<{ value: string; label: string }[]>([]);
   const [selectedReteta, setSelectedReteta] = useState("");
@@ -131,6 +134,33 @@ const Loturi = () => {
 
   useEffect(() => {
     fetchLoturi();
+  }, []);
+
+  // Fetch coduri_ordin
+  useEffect(() => {
+    const fetchOrdine = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/productie/returneaza/coduri_ordin`);
+        if (response.ok) {
+          const data = await response.json();
+          const uniqueCodes = new Set<string>();
+          const options: { value: string; label: string }[] = [];
+          if (Array.isArray(data)) {
+            data.forEach((r: any) => {
+              const code = r.cod_ordin || r;
+              if (code && !uniqueCodes.has(code)) {
+                uniqueCodes.add(code);
+                options.push({ value: code, label: code });
+              }
+            });
+          }
+          setOrdineDisponibile(options);
+        }
+      } catch (error) {
+        console.error("Error fetching ordine:", error);
+      }
+    };
+    fetchOrdine();
   }, []);
 
   // Fetch retete (coduri_retete)
@@ -847,10 +877,11 @@ const Loturi = () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Cod Ordin *</Label>
-                <Input
+                <FilterableSelect
+                  options={ordineDisponibile}
                   value={addFormData.cod_ordin}
-                  onChange={(e) => setAddFormData(prev => ({ ...prev, cod_ordin: e.target.value }))}
-                  placeholder="Ex: OP-2024-001"
+                  onValueChange={(v) => setAddFormData(prev => ({ ...prev, cod_ordin: v }))}
+                  placeholder="Selectează ordin"
                 />
               </div>
               <div>
