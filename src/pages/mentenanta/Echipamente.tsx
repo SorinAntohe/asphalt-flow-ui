@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Truck, Plus, Download, Settings } from "lucide-react";
+import { Truck, Plus, Download, Settings, Pencil, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,16 @@ import {
   DialogFooter,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { DataTablePagination, DataTableColumnHeader } from "@/components/ui/data-table";
 import { toast } from "sonner";
 import { exportToCSV } from "@/lib/exportUtils";
@@ -60,13 +70,26 @@ const mockEchipamente: Echipament[] = [
 ];
 
 const Echipamente = () => {
-  const [echipamente] = useState<Echipament[]>(mockEchipamente);
+  const [echipamente, setEchipamente] = useState<Echipament[]>(mockEchipamente);
   const [selectedEchipament, setSelectedEchipament] = useState<Echipament | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   
   // Add form state
   const [addFormData, setAddFormData] = useState({
+    cod: "",
+    denumire: "",
+    serie: "",
+    producator: "",
+    anFabricatie: "",
+    valoareAchizitie: "",
+    durataAmortizare: ""
+  });
+
+  // Edit form state
+  const [editFormData, setEditFormData] = useState({
     cod: "",
     denumire: "",
     serie: "",
@@ -173,6 +196,61 @@ const Echipamente = () => {
       valoareAchizitie: "",
       durataAmortizare: ""
     });
+  };
+
+  const handleOpenEdit = () => {
+    if (selectedEchipament) {
+      setEditFormData({
+        cod: selectedEchipament.cod,
+        denumire: selectedEchipament.denumire,
+        serie: selectedEchipament.serie,
+        producator: selectedEchipament.producator,
+        anFabricatie: String(selectedEchipament.anFabricatie),
+        valoareAchizitie: String(selectedEchipament.valoareAchizitie),
+        durataAmortizare: String(selectedEchipament.durataAmortizare)
+      });
+      setIsDetailOpen(false);
+      setIsEditDialogOpen(true);
+    }
+  };
+
+  const handleEditSubmit = () => {
+    if (!editFormData.cod || !editFormData.denumire) {
+      toast.error("Completați câmpurile obligatorii");
+      return;
+    }
+    if (selectedEchipament) {
+      setEchipamente(prev => prev.map(e => 
+        e.id === selectedEchipament.id 
+          ? {
+              ...e,
+              cod: editFormData.cod,
+              denumire: editFormData.denumire,
+              serie: editFormData.serie,
+              producator: editFormData.producator,
+              anFabricatie: parseInt(editFormData.anFabricatie) || 0,
+              valoareAchizitie: parseFloat(editFormData.valoareAchizitie) || 0,
+              durataAmortizare: parseInt(editFormData.durataAmortizare) || 0
+            }
+          : e
+      ));
+      toast.success("Echipament actualizat cu succes");
+      setIsEditDialogOpen(false);
+    }
+  };
+
+  const handleOpenDelete = () => {
+    setIsDetailOpen(false);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (selectedEchipament) {
+      setEchipamente(prev => prev.filter(e => e.id !== selectedEchipament.id));
+      toast.success("Echipament șters cu succes");
+      setIsDeleteDialogOpen(false);
+      setSelectedEchipament(null);
+    }
   };
 
   return (
@@ -384,9 +462,17 @@ const Echipamente = () => {
                 </div>
               </div>
 
-              <DialogFooter>
+              <DialogFooter className="gap-2">
                 <Button variant="outline" onClick={() => setIsDetailOpen(false)}>
                   Închide
+                </Button>
+                <Button variant="outline" onClick={handleOpenEdit}>
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Editează
+                </Button>
+                <Button variant="destructive" onClick={handleOpenDelete}>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Șterge
                 </Button>
               </DialogFooter>
             </>
@@ -474,6 +560,106 @@ const Echipamente = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Edit Equipment Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-lg" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle>Editează Echipament</DialogTitle>
+            <DialogDescription>Modificați datele echipamentului</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Cod *</Label>
+                <Input 
+                  placeholder="ECH-XXX"
+                  value={editFormData.cod}
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, cod: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Serie</Label>
+                <Input 
+                  placeholder="Serie echipament"
+                  value={editFormData.serie}
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, serie: e.target.value }))}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Denumire *</Label>
+              <Input 
+                placeholder="Denumire echipament"
+                value={editFormData.denumire}
+                onChange={(e) => setEditFormData(prev => ({ ...prev, denumire: e.target.value }))}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Producător</Label>
+                <Input 
+                  placeholder="Producător"
+                  value={editFormData.producator}
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, producator: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>An Fabricație</Label>
+                <Input 
+                  type="number" 
+                  placeholder="2024"
+                  value={editFormData.anFabricatie}
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, anFabricatie: e.target.value }))}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Valoare Achiziție (RON)</Label>
+                <Input 
+                  type="number" 
+                  placeholder="100000"
+                  value={editFormData.valoareAchizitie}
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, valoareAchizitie: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Durată Amortizare (luni)</Label>
+                <Input 
+                  type="number" 
+                  placeholder="60"
+                  value={editFormData.durataAmortizare}
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, durataAmortizare: e.target.value }))}
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Anulează</Button>
+            <Button onClick={handleEditSubmit}>Salvează</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmați ștergerea?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Sunteți sigur că doriți să ștergeți echipamentul "{selectedEchipament?.denumire}"? 
+              Această acțiune nu poate fi anulată.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Anulează</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Șterge
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
