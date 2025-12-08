@@ -1,534 +1,653 @@
 import { useState, useMemo } from "react";
-import { CalendarRange, Plus, Download, Clock, AlertTriangle, CheckCircle2, Calendar as CalendarIcon } from "lucide-react";
+import { Wrench, Plus, Download, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar } from "@/components/ui/calendar";
+import { Switch } from "@/components/ui/switch";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { exportToCSV } from "@/lib/exportUtils";
-import { DataTablePagination } from "@/components/ui/data-table";
+import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
+import { toast } from "@/hooks/use-toast";
 
-// Mock data for maintenance rules
-const mockMaintenanceRules = [
+interface Mentenanta {
+  id: number;
+  cod: string;
+  denumire: string;
+  serie: string;
+  producator: string;
+  oreFunctionare: number;
+  oreUltimaRevizie: number;
+  dataUrmatoareRevizie: string;
+  servisare: boolean;
+  cost: number | null;
+}
+
+const mockMentenanta: Mentenanta[] = [
   {
     id: 1,
-    cod_utilaj: "EXC-001",
-    nume_utilaj: "Excavator Komatsu PC210",
-    tip_frecventa: "ore",
-    interval_frecventa: 250,
-    ore_curente: 240,
-    ultima_revizie: "15/11/2025",
-    urmatoarea_revizie: "20/12/2025",
-    checklist: ["Schimb ulei motor", "Verificare filtre", "Verificare sistem hidraulic"],
-    timp_estimat: 4,
-    piese_necesare: ["Filtru ulei", "Ulei motor 10W-40"],
-    responsabil: "Ion Popescu",
-    status: "programata",
+    cod: "EXC-001",
+    denumire: "Excavator Komatsu PC210",
+    serie: "KOM2024-1234",
+    producator: "Komatsu",
+    oreFunctionare: 2450,
+    oreUltimaRevizie: 2200,
+    dataUrmatoareRevizie: "15/01/2026",
+    servisare: true,
+    cost: 2500,
   },
   {
     id: 2,
-    cod_utilaj: "MIX-001",
-    nume_utilaj: "Centrală asfalt Ammann 240t/h",
-    tip_frecventa: "zile",
-    interval_frecventa: 30,
-    zile_ramase: 5,
-    ultima_revizie: "28/11/2025",
-    urmatoarea_revizie: "28/12/2025",
-    checklist: ["Curățare arzător", "Verificare benzi transportoare", "Calibrare cântare"],
-    timp_estimat: 8,
-    piese_necesare: ["Bandă transportoare", "Senzor temperatură"],
-    responsabil: "Maria Ionescu",
-    status: "programata",
+    cod: "MIX-001",
+    denumire: "Centrală asfalt Ammann 240t/h",
+    serie: "AMM2023-5678",
+    producator: "Ammann",
+    oreFunctionare: 5200,
+    oreUltimaRevizie: 5000,
+    dataUrmatoareRevizie: "01/02/2026",
+    servisare: false,
+    cost: null,
   },
   {
     id: 3,
-    cod_utilaj: "CAM-003",
-    nume_utilaj: "Camion MAN TGS 8x4",
-    tip_frecventa: "luni",
-    interval_frecventa: 6,
-    ultima_revizie: "01/06/2025",
-    urmatoarea_revizie: "01/12/2025",
-    checklist: ["ITP", "Revizie tehnică completă", "Verificare frâne"],
-    timp_estimat: 6,
-    piese_necesare: ["Plăcuțe frână", "Filtru aer", "Ulei transmisie"],
-    responsabil: "Andrei Dumitrescu",
-    status: "depasita",
+    cod: "CAM-003",
+    denumire: "Camion MAN TGS 8x4",
+    serie: "MAN2022-9012",
+    producator: "MAN",
+    oreFunctionare: 12500,
+    oreUltimaRevizie: 12000,
+    dataUrmatoareRevizie: "20/12/2025",
+    servisare: true,
+    cost: 3800,
   },
   {
     id: 4,
-    cod_utilaj: "FIN-001",
-    nume_utilaj: "Finișer Vogele Super 1800",
-    tip_frecventa: "ore",
-    interval_frecventa: 500,
-    ore_curente: 120,
-    ultima_revizie: "10/10/2025",
-    urmatoarea_revizie: "15/01/2026",
-    checklist: ["Verificare screed", "Ungere articulații", "Verificare senzori nivelare"],
-    timp_estimat: 5,
-    piese_necesare: ["Placă screed", "Unsoare"],
-    responsabil: "Ion Popescu",
-    status: "programata",
+    cod: "FIN-001",
+    denumire: "Finișer Vogele Super 1800",
+    serie: "VOG2024-3456",
+    producator: "Vogele",
+    oreFunctionare: 890,
+    oreUltimaRevizie: 750,
+    dataUrmatoareRevizie: "10/03/2026",
+    servisare: false,
+    cost: null,
   },
   {
     id: 5,
-    cod_utilaj: "COM-001",
-    nume_utilaj: "Compactor Bomag BW219",
-    tip_frecventa: "zile",
-    interval_frecventa: 7,
-    zile_ramase: -2,
-    ultima_revizie: "15/11/2025",
-    urmatoarea_revizie: "22/11/2025",
-    checklist: ["Verificare sistem vibrare", "Schimb ulei hidraulic", "Curățare sistem răcire"],
-    timp_estimat: 3,
-    piese_necesare: ["Ulei hidraulic", "Filtru hidraulic"],
-    responsabil: "Maria Ionescu",
-    status: "depasita",
+    cod: "COM-001",
+    denumire: "Compactor Bomag BW219",
+    serie: "BOM2023-7890",
+    producator: "Bomag",
+    oreFunctionare: 1650,
+    oreUltimaRevizie: 1500,
+    dataUrmatoareRevizie: "05/01/2026",
+    servisare: true,
+    cost: 1200,
   },
 ];
 
 const PlanMentenanta = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [data, setData] = useState<Mentenanta[]>(mockMentenanta);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [selectedRule, setSelectedRule] = useState<typeof mockMaintenanceRules[0] | null>(null);
-  const [activeTab, setActiveTab] = useState<"calendar" | "list">("calendar");
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Mentenanta | null>(null);
   
-  // Pagination state
+  // Form state
+  const [formData, setFormData] = useState({
+    cod: "",
+    denumire: "",
+    serie: "",
+    producator: "",
+    oreFunctionare: "",
+    oreUltimaRevizie: "",
+    dataUrmatoareRevizie: "",
+    servisare: false,
+    cost: "",
+  });
+
+  // Sorting & Filtering
+  const [currentSort, setCurrentSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
+  const [filters, setFilters] = useState<Record<string, string>>({});
+
+  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  // Statistics
-  const stats = useMemo(() => {
-    const total = mockMaintenanceRules.length;
-    const programate = mockMaintenanceRules.filter(r => r.status === "programata").length;
-    const depasita = mockMaintenanceRules.filter(r => r.status === "depasita").length;
-    
-    return { total, programate, depasita };
-  }, []);
+  const handleSort = (key: string, direction: "asc" | "desc") => {
+    setCurrentSort({ key, direction });
+  };
 
-  // Pagination logic
-  const paginatedRules = useMemo(() => {
+  const handleFilter = (key: string, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+    setCurrentPage(1);
+  };
+
+  const filteredAndSortedData = useMemo(() => {
+    let result = [...data];
+
+    // Apply filters
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) {
+        result = result.filter(item => {
+          const itemValue = item[key as keyof Mentenanta];
+          return String(itemValue).toLowerCase().includes(value.toLowerCase());
+        });
+      }
+    });
+
+    // Apply sorting
+    if (currentSort) {
+      result.sort((a, b) => {
+        const aVal = a[currentSort.key as keyof Mentenanta];
+        const bVal = b[currentSort.key as keyof Mentenanta];
+        if (aVal === null) return 1;
+        if (bVal === null) return -1;
+        if (aVal < bVal) return currentSort.direction === "asc" ? -1 : 1;
+        if (aVal > bVal) return currentSort.direction === "asc" ? 1 : -1;
+        return 0;
+      });
+    }
+
+    return result;
+  }, [data, filters, currentSort]);
+
+  const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return mockMaintenanceRules.slice(startIndex, endIndex);
-  }, [currentPage, itemsPerPage]);
+    return filteredAndSortedData.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredAndSortedData, currentPage, itemsPerPage]);
 
-  const totalPages = Math.ceil(mockMaintenanceRules.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
+
+  const handleRowClick = (item: Mentenanta) => {
+    setSelectedItem(item);
+    setIsDetailDialogOpen(true);
+  };
 
   const handleExport = () => {
-    const exportData = mockMaintenanceRules.map(rule => ({
-      cod_utilaj: rule.cod_utilaj,
-      nume_utilaj: rule.nume_utilaj,
-      frecventa: `${rule.interval_frecventa} ${rule.tip_frecventa}`,
-      ultima_revizie: rule.ultima_revizie,
-      urmatoarea_revizie: rule.urmatoarea_revizie,
-      timp_estimat: rule.timp_estimat,
-      responsabil: rule.responsabil,
-      status: rule.status === "depasita" ? "Depășită" : "Programată",
+    const exportData = data.map(item => ({
+      cod: item.cod,
+      denumire: item.denumire,
+      serie: item.serie,
+      producator: item.producator,
+      ore_functionare: item.oreFunctionare,
+      ore_ultima_revizie: item.oreUltimaRevizie,
+      data_urmatoare_revizie: item.dataUrmatoareRevizie,
+      servisare: item.servisare ? "Da" : "Nu",
+      cost: item.cost ?? "",
     }));
 
     const columns = [
-      { key: "cod_utilaj" as const, label: "Cod Utilaj" },
-      { key: "nume_utilaj" as const, label: "Nume Utilaj" },
-      { key: "frecventa" as const, label: "Frecvență" },
-      { key: "ultima_revizie" as const, label: "Ultima Revizie" },
-      { key: "urmatoarea_revizie" as const, label: "Următoarea Revizie" },
-      { key: "timp_estimat" as const, label: "Timp Estimat (ore)" },
-      { key: "responsabil" as const, label: "Responsabil" },
-      { key: "status" as const, label: "Status" },
+      { key: "cod" as const, label: "Cod" },
+      { key: "denumire" as const, label: "Denumire" },
+      { key: "serie" as const, label: "Serie" },
+      { key: "producator" as const, label: "Producător" },
+      { key: "ore_functionare" as const, label: "Ore Funcționare" },
+      { key: "ore_ultima_revizie" as const, label: "Ore Ultimă Revizie" },
+      { key: "data_urmatoare_revizie" as const, label: "Data Următoare Revizie" },
+      { key: "servisare" as const, label: "Servisare" },
+      { key: "cost" as const, label: "Cost" },
     ];
 
     exportToCSV(exportData, "plan_mentenanta", columns);
   };
 
-  const getStatusBadge = (status: string) => {
-    if (status === "depasita") {
-      return <Badge variant="destructive" className="gap-1"><AlertTriangle className="h-3 w-3" />Depășită</Badge>;
-    }
-    return <Badge variant="success" className="gap-1"><CheckCircle2 className="h-3 w-3" />Programată</Badge>;
+  const resetForm = () => {
+    setFormData({
+      cod: "",
+      denumire: "",
+      serie: "",
+      producator: "",
+      oreFunctionare: "",
+      oreUltimaRevizie: "",
+      dataUrmatoareRevizie: "",
+      servisare: false,
+      cost: "",
+    });
   };
 
-  const getFrequencyDisplay = (rule: typeof mockMaintenanceRules[0]) => {
-    if (rule.tip_frecventa === "ore") {
-      return `${rule.ore_curente}/${rule.interval_frecventa} ore`;
-    } else if (rule.tip_frecventa === "zile" && rule.zile_ramase !== undefined) {
-      return rule.zile_ramase < 0 
-        ? `Depășită cu ${Math.abs(rule.zile_ramase)} zile`
-        : `${rule.zile_ramase} zile rămase`;
-    } else if (rule.tip_frecventa === "luni") {
-      return `La ${rule.interval_frecventa} luni`;
-    }
-    return `${rule.interval_frecventa} ${rule.tip_frecventa}`;
+  const handleAddSubmit = () => {
+    const newItem: Mentenanta = {
+      id: Math.max(...data.map(d => d.id)) + 1,
+      cod: formData.cod,
+      denumire: formData.denumire,
+      serie: formData.serie,
+      producator: formData.producator,
+      oreFunctionare: Number(formData.oreFunctionare),
+      oreUltimaRevizie: Number(formData.oreUltimaRevizie),
+      dataUrmatoareRevizie: formData.dataUrmatoareRevizie,
+      servisare: formData.servisare,
+      cost: formData.servisare ? Number(formData.cost) : null,
+    };
+    setData(prev => [...prev, newItem]);
+    setIsAddDialogOpen(false);
+    resetForm();
+    toast({ title: "Succes", description: "Înregistrare adăugată cu succes." });
   };
+
+  const handleOpenEdit = () => {
+    if (!selectedItem) return;
+    setFormData({
+      cod: selectedItem.cod,
+      denumire: selectedItem.denumire,
+      serie: selectedItem.serie,
+      producator: selectedItem.producator,
+      oreFunctionare: String(selectedItem.oreFunctionare),
+      oreUltimaRevizie: String(selectedItem.oreUltimaRevizie),
+      dataUrmatoareRevizie: selectedItem.dataUrmatoareRevizie,
+      servisare: selectedItem.servisare,
+      cost: selectedItem.cost !== null ? String(selectedItem.cost) : "",
+    });
+    setIsDetailDialogOpen(false);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleEditSubmit = () => {
+    if (!selectedItem) return;
+    setData(prev =>
+      prev.map(item =>
+        item.id === selectedItem.id
+          ? {
+              ...item,
+              cod: formData.cod,
+              denumire: formData.denumire,
+              serie: formData.serie,
+              producator: formData.producator,
+              oreFunctionare: Number(formData.oreFunctionare),
+              oreUltimaRevizie: Number(formData.oreUltimaRevizie),
+              dataUrmatoareRevizie: formData.dataUrmatoareRevizie,
+              servisare: formData.servisare,
+              cost: formData.servisare ? Number(formData.cost) : null,
+            }
+          : item
+      )
+    );
+    setIsEditDialogOpen(false);
+    resetForm();
+    toast({ title: "Succes", description: "Înregistrare actualizată cu succes." });
+  };
+
+  const handleOpenDelete = () => {
+    setIsDetailDialogOpen(false);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!selectedItem) return;
+    setData(prev => prev.filter(item => item.id !== selectedItem.id));
+    setIsDeleteDialogOpen(false);
+    setSelectedItem(null);
+    toast({ title: "Succes", description: "Înregistrare ștearsă cu succes." });
+  };
+
+  const renderForm = () => (
+    <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="cod">Cod</Label>
+          <Input
+            id="cod"
+            value={formData.cod}
+            onChange={e => setFormData(prev => ({ ...prev, cod: e.target.value }))}
+            placeholder="ex: EXC-001"
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="denumire">Denumire</Label>
+          <Input
+            id="denumire"
+            value={formData.denumire}
+            onChange={e => setFormData(prev => ({ ...prev, denumire: e.target.value }))}
+            placeholder="ex: Excavator Komatsu PC210"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="serie">Serie</Label>
+          <Input
+            id="serie"
+            value={formData.serie}
+            onChange={e => setFormData(prev => ({ ...prev, serie: e.target.value }))}
+            placeholder="ex: KOM2024-1234"
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="producator">Producător</Label>
+          <Input
+            id="producator"
+            value={formData.producator}
+            onChange={e => setFormData(prev => ({ ...prev, producator: e.target.value }))}
+            placeholder="ex: Komatsu"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="oreFunctionare">Ore Funcționare</Label>
+          <Input
+            id="oreFunctionare"
+            type="number"
+            value={formData.oreFunctionare}
+            onChange={e => setFormData(prev => ({ ...prev, oreFunctionare: e.target.value }))}
+            placeholder="ex: 2450"
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="oreUltimaRevizie">Ore Ultimă Revizie</Label>
+          <Input
+            id="oreUltimaRevizie"
+            type="number"
+            value={formData.oreUltimaRevizie}
+            onChange={e => setFormData(prev => ({ ...prev, oreUltimaRevizie: e.target.value }))}
+            placeholder="ex: 2200"
+          />
+        </div>
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="dataUrmatoareRevizie">Data Următoare Revizie</Label>
+        <Input
+          id="dataUrmatoareRevizie"
+          value={formData.dataUrmatoareRevizie}
+          onChange={e => setFormData(prev => ({ ...prev, dataUrmatoareRevizie: e.target.value }))}
+          placeholder="ex: 15/01/2026"
+        />
+      </div>
+
+      <div className="flex items-center justify-between gap-4 p-4 rounded-lg bg-muted/50">
+        <div className="grid gap-1">
+          <Label htmlFor="servisare">Servisare</Label>
+          <p className="text-sm text-muted-foreground">Activează dacă echipamentul necesită servisare</p>
+        </div>
+        <Switch
+          id="servisare"
+          checked={formData.servisare}
+          onCheckedChange={checked => setFormData(prev => ({ ...prev, servisare: checked }))}
+        />
+      </div>
+
+      {formData.servisare && (
+        <div className="grid gap-2">
+          <Label htmlFor="cost">Cost Servisare (RON)</Label>
+          <Input
+            id="cost"
+            type="number"
+            value={formData.cost}
+            onChange={e => setFormData(prev => ({ ...prev, cost: e.target.value }))}
+            placeholder="ex: 2500"
+          />
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-3">
-          <CalendarRange className="h-8 w-8 text-primary" />
+          <Wrench className="h-8 w-8 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Plan de Mentenanță</h1>
-            <p className="text-muted-foreground">Planificare mentenanță preventivă pe utilaje</p>
+            <h1 className="text-2xl font-bold text-foreground">Plan Mentenanță</h1>
+            <p className="text-muted-foreground">Gestionare mentenanță echipamente și flotă</p>
           </div>
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => setIsAddDialogOpen(true)} className="gap-2">
+          <Button onClick={() => { resetForm(); setIsAddDialogOpen(true); }} className="gap-2">
             <Plus className="h-4 w-4" />
-            Adaugă Regulă
+            Adaugă
           </Button>
-          <Button variant="outline" onClick={handleExport} className="gap-2">
+          <Button variant="outline" onClick={handleExport} disabled={data.length === 0} className="gap-2">
             <Download className="h-4 w-4" />
             Export
           </Button>
         </div>
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Reguli</p>
-                <p className="text-2xl font-bold">{stats.total}</p>
-              </div>
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <CalendarRange className="h-6 w-6 text-primary" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Table */}
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>
+              <DataTableColumnHeader
+                title="Cod"
+                sortKey="cod"
+                currentSort={currentSort}
+                onSort={handleSort}
+                filterValue={filters.cod || ""}
+                onFilterChange={(value) => handleFilter("cod", value)}
+              />
+            </TableHead>
+            <TableHead>
+              <DataTableColumnHeader
+                title="Denumire"
+                sortKey="denumire"
+                currentSort={currentSort}
+                onSort={handleSort}
+                filterValue={filters.denumire || ""}
+                onFilterChange={(value) => handleFilter("denumire", value)}
+              />
+            </TableHead>
+            <TableHead className="hidden md:table-cell">
+              <DataTableColumnHeader
+                title="Serie"
+                sortKey="serie"
+                currentSort={currentSort}
+                onSort={handleSort}
+                filterValue={filters.serie || ""}
+                onFilterChange={(value) => handleFilter("serie", value)}
+              />
+            </TableHead>
+            <TableHead className="hidden lg:table-cell">
+              <DataTableColumnHeader
+                title="Producător"
+                sortKey="producator"
+                currentSort={currentSort}
+                onSort={handleSort}
+                filterValue={filters.producator || ""}
+                onFilterChange={(value) => handleFilter("producator", value)}
+              />
+            </TableHead>
+            <TableHead className="hidden lg:table-cell">
+              <DataTableColumnHeader
+                title="Ore Funcț."
+                sortKey="oreFunctionare"
+                currentSort={currentSort}
+                onSort={handleSort}
+                filterValue={filters.oreFunctionare || ""}
+                onFilterChange={(value) => handleFilter("oreFunctionare", value)}
+              />
+            </TableHead>
+            <TableHead className="hidden xl:table-cell">
+              <DataTableColumnHeader
+                title="Ore Ult. Rev."
+                sortKey="oreUltimaRevizie"
+                currentSort={currentSort}
+                onSort={handleSort}
+                filterValue={filters.oreUltimaRevizie || ""}
+                onFilterChange={(value) => handleFilter("oreUltimaRevizie", value)}
+              />
+            </TableHead>
+            <TableHead className="hidden md:table-cell">
+              <DataTableColumnHeader
+                title="Data Urm. Rev."
+                sortKey="dataUrmatoareRevizie"
+                currentSort={currentSort}
+                onSort={handleSort}
+                filterValue={filters.dataUrmatoareRevizie || ""}
+                onFilterChange={(value) => handleFilter("dataUrmatoareRevizie", value)}
+              />
+            </TableHead>
+            <TableHead>Servisare</TableHead>
+            <TableHead className="text-right">Cost</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {paginatedData.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={9} className="text-center py-12 text-muted-foreground">
+                Nu există înregistrări
+              </TableCell>
+            </TableRow>
+          ) : (
+            paginatedData.map(item => (
+              <TableRow
+                key={item.id}
+                className="cursor-pointer"
+                onClick={() => handleRowClick(item)}
+              >
+                <TableCell className="font-medium">{item.cod}</TableCell>
+                <TableCell>{item.denumire}</TableCell>
+                <TableCell className="hidden md:table-cell">{item.serie}</TableCell>
+                <TableCell className="hidden lg:table-cell">{item.producator}</TableCell>
+                <TableCell className="hidden lg:table-cell">{item.oreFunctionare.toLocaleString()}</TableCell>
+                <TableCell className="hidden xl:table-cell">{item.oreUltimaRevizie.toLocaleString()}</TableCell>
+                <TableCell className="hidden md:table-cell">{item.dataUrmatoareRevizie}</TableCell>
+                <TableCell>
+                  <Badge variant={item.servisare ? "default" : "outline"}>
+                    {item.servisare ? "Da" : "Nu"}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-right">
+                  {item.cost !== null ? `${item.cost.toLocaleString()} RON` : "-"}
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Programate</p>
-                <p className="text-2xl font-bold">{stats.programate}</p>
-              </div>
-              <div className="h-12 w-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                <CheckCircle2 className="h-6 w-6 text-emerald-500" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <DataTablePagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={filteredAndSortedData.length}
+        itemsPerPage={itemsPerPage}
+        onPageChange={setCurrentPage}
+        onItemsPerPageChange={setItemsPerPage}
+      />
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Depășite</p>
-                <p className="text-2xl font-bold text-destructive">{stats.depasita}</p>
-              </div>
-              <div className="h-12 w-12 rounded-full bg-red-500/10 flex items-center justify-center">
-                <AlertTriangle className="h-6 w-6 text-red-500" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Main Content - Tabs */}
-      <Card>
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "calendar" | "list")}>
-          <CardHeader className="border-b border-border">
-            <TabsList className="w-full sm:w-auto">
-              <TabsTrigger value="calendar" className="gap-2">
-                <CalendarIcon className="h-4 w-4" />
-                Calendar
-              </TabsTrigger>
-              <TabsTrigger value="list" className="gap-2">
-                <Clock className="h-4 w-4" />
-                Listă Reguli
-              </TabsTrigger>
-            </TabsList>
-          </CardHeader>
-
-          <CardContent className="p-6">
-            {/* Calendar View */}
-            <TabsContent value="calendar" className="m-0">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Calendar */}
-                <div className="lg:col-span-1">
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={setSelectedDate}
-                    className="rounded-md border border-border"
-                  />
-                </div>
-
-                {/* Tasks for selected date */}
-                <div className="lg:col-span-2 space-y-4">
-                  <h3 className="text-lg font-semibold text-foreground">
-                    Revizii programate pentru {selectedDate?.toLocaleDateString("ro-RO")}
-                  </h3>
-                  
-                  {mockMaintenanceRules
-                    .filter(rule => rule.urmatoarea_revizie === selectedDate?.toLocaleDateString("ro-RO", { day: "2-digit", month: "2-digit", year: "numeric" }))
-                    .map(rule => (
-                      <Card key={rule.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setSelectedRule(rule)}>
-                        <CardContent className="p-4">
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <h4 className="font-semibold text-foreground">{rule.cod_utilaj}</h4>
-                                {getStatusBadge(rule.status)}
-                              </div>
-                              <p className="text-sm text-muted-foreground mb-2">{rule.nume_utilaj}</p>
-                              <div className="flex items-center gap-4 text-sm">
-                                <span className="text-muted-foreground">
-                                  <Clock className="h-3 w-3 inline mr-1" />
-                                  {rule.timp_estimat}h
-                                </span>
-                                <span className="text-muted-foreground">
-                                  Responsabil: {rule.responsabil}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  
-                  {mockMaintenanceRules.filter(rule => rule.urmatoarea_revizie === selectedDate?.toLocaleDateString("ro-RO", { day: "2-digit", month: "2-digit", year: "numeric" })).length === 0 && (
-                    <div className="text-center py-12 text-muted-foreground">
-                      <CalendarRange className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                      <p>Nu există revizii programate pentru această dată</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </TabsContent>
-
-            {/* List View */}
-            <TabsContent value="list" className="m-0">
-              <div className="space-y-4">
-                {paginatedRules.map(rule => (
-                  <Card key={rule.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setSelectedRule(rule)}>
-                    <CardContent className="p-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <h4 className="font-semibold text-foreground">{rule.cod_utilaj}</h4>
-                            {getStatusBadge(rule.status)}
-                            <Badge variant="outline">{rule.tip_frecventa}</Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground mb-2">{rule.nume_utilaj}</p>
-                          <div className="flex flex-wrap items-center gap-4 text-sm">
-                            <span className="text-muted-foreground">
-                              Frecvență: {getFrequencyDisplay(rule)}
-                            </span>
-                            <span className="text-muted-foreground">
-                              <Clock className="h-3 w-3 inline mr-1" />
-                              {rule.timp_estimat}h estimat
-                            </span>
-                            <span className="text-muted-foreground">
-                              Responsabil: {rule.responsabil}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="text-sm text-right">
-                          <p className="text-muted-foreground">Următoarea revizie</p>
-                          <p className="font-semibold text-foreground">{rule.urmatoarea_revizie}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              <div className="mt-6">
-                <DataTablePagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  totalItems={mockMaintenanceRules.length}
-                  itemsPerPage={itemsPerPage}
-                  onPageChange={setCurrentPage}
-                  onItemsPerPageChange={setItemsPerPage}
-                />
-              </div>
-            </TabsContent>
-          </CardContent>
-        </Tabs>
-      </Card>
-
-      {/* Add/Edit Dialog */}
+      {/* Add Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="max-w-2xl" hideCloseButton>
+        <DialogContent className="max-w-lg" hideCloseButton>
           <DialogHeader>
-            <DialogTitle>Adaugă Regulă Preventivă</DialogTitle>
+            <DialogTitle>Adaugă Înregistrare</DialogTitle>
           </DialogHeader>
-
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="utilaj">Utilaj / Echipament</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selectează utilaj" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="EXC-001">EXC-001 - Excavator Komatsu PC210</SelectItem>
-                  <SelectItem value="MIX-001">MIX-001 - Centrală asfalt Ammann 240t/h</SelectItem>
-                  <SelectItem value="CAM-003">CAM-003 - Camion MAN TGS 8x4</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="tip_frecventa">Tip Frecvență</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectează tip" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ore">Ore funcționare</SelectItem>
-                    <SelectItem value="zile">Zile</SelectItem>
-                    <SelectItem value="luni">Luni</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="interval">Interval</Label>
-                <Input id="interval" type="number" placeholder="ex: 250" />
-              </div>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="checklist">Checklist Activități</Label>
-              <Textarea 
-                id="checklist" 
-                placeholder="Introdu activitățile de mentenanță (câte una pe linie)"
-                rows={4}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="timp_estimat">Timp Estimat (ore)</Label>
-                <Input id="timp_estimat" type="number" placeholder="ex: 4" />
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="responsabil">Responsabil</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectează responsabil" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ion">Ion Popescu</SelectItem>
-                    <SelectItem value="maria">Maria Ionescu</SelectItem>
-                    <SelectItem value="andrei">Andrei Dumitrescu</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="piese">Piese Necesare</Label>
-              <Textarea 
-                id="piese" 
-                placeholder="Introdu piesele necesare (câte una pe linie)"
-                rows={3}
-              />
-            </div>
-          </div>
-
+          {renderForm()}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-              Anulează
-            </Button>
-            <Button onClick={() => setIsAddDialogOpen(false)}>
-              Salvează Regulă
-            </Button>
+            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Anulează</Button>
+            <Button onClick={handleAddSubmit}>Adaugă</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-lg" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle>Editează Înregistrare</DialogTitle>
+          </DialogHeader>
+          {renderForm()}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Anulează</Button>
+            <Button onClick={handleEditSubmit}>Salvează</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Detail Dialog */}
-      <Dialog open={!!selectedRule} onOpenChange={(open) => !open && setSelectedRule(null)}>
-        <DialogContent className="max-w-3xl" hideCloseButton>
-          {selectedRule && (
-            <>
-              <DialogHeader>
-                <div className="flex items-center gap-3">
-                  <DialogTitle>{selectedRule.cod_utilaj} - {selectedRule.nume_utilaj}</DialogTitle>
-                  {getStatusBadge(selectedRule.status)}
-                </div>
-              </DialogHeader>
-
-              <div className="grid gap-6 py-4">
-                {/* Info Grid */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Tip Frecvență</p>
-                    <p className="font-medium text-foreground capitalize">{selectedRule.tip_frecventa}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Interval</p>
-                    <p className="font-medium text-foreground">{getFrequencyDisplay(selectedRule)}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Ultima Revizie</p>
-                    <p className="font-medium text-foreground">{selectedRule.ultima_revizie}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Următoarea Revizie</p>
-                    <p className="font-medium text-foreground">{selectedRule.urmatoarea_revizie}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Timp Estimat</p>
-                    <p className="font-medium text-foreground">{selectedRule.timp_estimat} ore</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Responsabil</p>
-                    <p className="font-medium text-foreground">{selectedRule.responsabil}</p>
-                  </div>
-                </div>
-
-                {/* Checklist */}
+      <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
+        <DialogContent className="max-w-lg" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle>Detalii Mentenanță</DialogTitle>
+          </DialogHeader>
+          {selectedItem && (
+            <div className="space-y-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-2">Checklist Activități</p>
-                  <ul className="space-y-1">
-                    {selectedRule.checklist.map((item, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-sm text-foreground">
-                        <CheckCircle2 className="h-4 w-4 text-primary mt-0.5" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="text-sm text-muted-foreground">Cod</p>
+                  <p className="font-medium">{selectedItem.cod}</p>
                 </div>
-
-                {/* Piese necesare */}
                 <div>
-                  <p className="text-sm text-muted-foreground mb-2">Piese Necesare</p>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedRule.piese_necesare.map((piesa, idx) => (
-                      <Badge key={idx} variant="outline">{piesa}</Badge>
-                    ))}
-                  </div>
+                  <p className="text-sm text-muted-foreground">Denumire</p>
+                  <p className="font-medium">{selectedItem.denumire}</p>
                 </div>
               </div>
-
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setSelectedRule(null)}>
-                  Închide
-                </Button>
-                <Button>
-                  Editează Regulă
-                </Button>
-              </DialogFooter>
-            </>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Serie</p>
+                  <p className="font-medium">{selectedItem.serie}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Producător</p>
+                  <p className="font-medium">{selectedItem.producator}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Ore Funcționare</p>
+                  <p className="font-medium">{selectedItem.oreFunctionare.toLocaleString()}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Ore Ultimă Revizie</p>
+                  <p className="font-medium">{selectedItem.oreUltimaRevizie.toLocaleString()}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Data Următoare Revizie</p>
+                  <p className="font-medium">{selectedItem.dataUrmatoareRevizie}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Servisare</p>
+                  <Badge variant={selectedItem.servisare ? "default" : "outline"}>
+                    {selectedItem.servisare ? "Da" : "Nu"}
+                  </Badge>
+                </div>
+              </div>
+              {selectedItem.servisare && selectedItem.cost !== null && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Cost Servisare</p>
+                  <p className="font-medium">{selectedItem.cost.toLocaleString()} RON</p>
+                </div>
+              )}
+            </div>
           )}
+          <DialogFooter>
+            <Button variant="outline" onClick={handleOpenDelete} className="gap-2 text-destructive hover:text-destructive">
+              <Trash2 className="h-4 w-4" />
+              Șterge
+            </Button>
+            <Button onClick={handleOpenEdit} className="gap-2">
+              <Edit className="h-4 w-4" />
+              Editează
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmare ștergere</AlertDialogTitle>
+            <AlertDialogDescription>
+              Ești sigur că vrei să ștergi înregistrarea "{selectedItem?.cod}"? Această acțiune nu poate fi anulată.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Anulează</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Șterge
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
