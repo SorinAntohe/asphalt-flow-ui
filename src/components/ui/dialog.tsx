@@ -40,12 +40,14 @@ const DialogContent = React.forwardRef<
 >(({ className, children, hideCloseButton = false, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay className="flex items-center justify-center" />
-    <div className="fixed inset-0 z-[60] flex items-center justify-center pointer-events-none p-4 sm:p-6">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center pointer-events-none p-2 sm:p-4 md:p-6">
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          "pointer-events-auto z-[60] grid w-full max-w-lg gap-3",
-          "border border-border/30 bg-background p-4 sm:p-5 shadow-2xl rounded-2xl",
+          "pointer-events-auto z-[60] grid w-full gap-3",
+          "max-w-[calc(100vw-1rem)] sm:max-w-lg",
+          "max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3rem)] overflow-y-auto",
+          "border border-border/30 bg-background p-3 sm:p-4 md:p-5 shadow-2xl rounded-xl sm:rounded-2xl",
           "duration-100 ease-out",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
           "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
@@ -56,7 +58,7 @@ const DialogContent = React.forwardRef<
       >
         {children}
         {!hideCloseButton && (
-          <DialogPrimitive.Close className="absolute right-3 top-3 sm:right-4 sm:top-4 rounded-full p-2 opacity-60 ring-offset-background transition-all duration-200 hover:opacity-100 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
+          <DialogPrimitive.Close className="absolute right-2 top-2 sm:right-3 sm:top-3 md:right-4 md:top-4 rounded-full p-1.5 sm:p-2 opacity-60 ring-offset-background transition-all duration-200 hover:opacity-100 hover:bg-muted focus:outline-none disabled:pointer-events-none touch-target-sm">
             <X className="h-4 w-4" />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
@@ -73,7 +75,7 @@ const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivEleme
 DialogHeader.displayName = "DialogHeader";
 
 const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 pt-3", className)} {...props} />
+  <div className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-2 pt-3 mt-2", className)} {...props} />
 );
 DialogFooter.displayName = "DialogFooter";
 

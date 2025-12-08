@@ -284,20 +284,20 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="max-w-2xl p-0 gap-0 overflow-hidden"
+        className="max-w-2xl sm:max-w-2xl max-w-[calc(100vw-1rem)] p-0 gap-0 overflow-hidden"
         hideCloseButton
       >
         <DialogTitle className="sr-only">Căutare Globală</DialogTitle>
         
         {/* Search Input */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
-          <Search className="w-5 h-5 text-muted-foreground shrink-0" />
+        <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 border-b border-border">
+          <Search className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground shrink-0" />
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Caută comenzi, clienți, vehicule, loturi..."
-            className="flex-1 border-0 shadow-none focus-visible:ring-0 text-base placeholder:text-muted-foreground/60 h-10"
+            placeholder="Caută comenzi, clienți, vehicule..."
+            className="flex-1 border-0 shadow-none focus-visible:ring-0 text-sm sm:text-base placeholder:text-muted-foreground/60 h-9 sm:h-10"
             autoFocus
           />
           {query && (
@@ -317,14 +317,14 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex items-center gap-1.5 px-4 py-2 border-b border-border overflow-x-auto">
+        <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-1.5 sm:py-2 border-b border-border overflow-x-auto scrollbar-none">
           {filterTabs.map(tab => (
             <Button
               key={tab.value}
               variant={activeFilter === tab.value ? "default" : "ghost"}
               size="sm"
               className={cn(
-                "h-7 text-xs whitespace-nowrap",
+                "h-6 sm:h-7 text-[10px] sm:text-xs whitespace-nowrap px-2 sm:px-3",
                 activeFilter === tab.value && "bg-primary text-primary-foreground"
               )}
               onClick={() => setActiveFilter(tab.value)}
@@ -335,8 +335,8 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
         </div>
 
         {/* Results */}
-        <ScrollArea className="max-h-[400px]">
-          <div className="p-2">
+        <ScrollArea className="max-h-[50vh] sm:max-h-[400px]">
+          <div className="p-1.5 sm:p-2">
             {query.length < 2 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <Search className="w-8 h-8 mx-auto mb-3 opacity-40" />

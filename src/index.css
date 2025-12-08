@@ -198,6 +198,156 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
+  /* ==========================================
+     RESPONSIVE UTILITIES
+     ========================================== */
+  
+  /* Safe area insets for notched devices */
+  .safe-area-inset-top {
+    padding-top: env(safe-area-inset-top, 0);
+  }
+  
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  /* Touch-friendly targets - minimum 44px for accessibility */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  .touch-target-sm {
+    @apply min-h-[36px] min-w-[36px];
+  }
+
+  /* Responsive text utilities */
+  .text-responsive-xs {
+    @apply text-xs sm:text-sm;
+  }
+
+  .text-responsive-sm {
+    @apply text-sm sm:text-base;
+  }
+
+  .text-responsive-base {
+    @apply text-base sm:text-lg;
+  }
+
+  .text-responsive-lg {
+    @apply text-lg sm:text-xl md:text-2xl;
+  }
+
+  .text-responsive-xl {
+    @apply text-xl sm:text-2xl md:text-3xl;
+  }
+
+  .text-responsive-2xl {
+    @apply text-2xl sm:text-3xl md:text-4xl;
+  }
+
+  /* Responsive spacing */
+  .p-responsive {
+    @apply p-3 sm:p-4 md:p-6;
+  }
+
+  .px-responsive {
+    @apply px-3 sm:px-4 md:px-6;
+  }
+
+  .py-responsive {
+    @apply py-3 sm:py-4 md:py-6;
+  }
+
+  .gap-responsive {
+    @apply gap-3 sm:gap-4 md:gap-6;
+  }
+
+  /* Mobile-first container */
+  .container-responsive {
+    @apply w-full px-3 sm:px-4 md:px-6 lg:px-8 mx-auto max-w-7xl;
+  }
+
+  /* Card responsive padding */
+  .card-responsive {
+    @apply p-3 sm:p-4 md:p-6;
+  }
+
+  /* Responsive grid layouts */
+  .grid-responsive-2 {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4;
+  }
+
+  .grid-responsive-3 {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4;
+  }
+
+  .grid-responsive-4 {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4;
+  }
+
+  /* Stack to row pattern */
+  .stack-to-row {
+    @apply flex flex-col sm:flex-row;
+  }
+
+  .stack-to-row-md {
+    @apply flex flex-col md:flex-row;
+  }
+
+  /* Hide/show utilities */
+  .hide-mobile {
+    @apply hidden sm:block;
+  }
+
+  .show-mobile {
+    @apply block sm:hidden;
+  }
+
+  .hide-tablet {
+    @apply hidden md:block;
+  }
+
+  .show-tablet {
+    @apply block md:hidden;
+  }
+
+  /* Table responsive wrapper */
+  .table-responsive {
+    @apply w-full overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0;
+  }
+
+  /* Dialog/Modal responsive */
+  .dialog-responsive {
+    @apply w-[calc(100vw-2rem)] max-w-lg max-h-[85vh] overflow-y-auto;
+  }
+
+  .dialog-responsive-lg {
+    @apply w-[calc(100vw-2rem)] max-w-2xl max-h-[85vh] overflow-y-auto;
+  }
+
+  .dialog-responsive-xl {
+    @apply w-[calc(100vw-2rem)] max-w-4xl max-h-[85vh] overflow-y-auto;
+  }
+
+  /* Form input responsive sizes */
+  .input-responsive {
+    @apply h-10 sm:h-9 text-base sm:text-sm;
+  }
+
+  /* Button responsive */
+  .btn-responsive {
+    @apply h-10 sm:h-9 px-4 sm:px-3 text-sm;
+  }
+
+  /* Truncate text with ellipsis for table cells */
+  .truncate-responsive {
+    @apply truncate max-w-[120px] sm:max-w-[180px] md:max-w-[240px] lg:max-w-none;
+  }
+
+  /* ==========================================
+     EXISTING UTILITIES
+     ========================================== */
+
   /* Glass morphism effect */
   .glass {
     @apply bg-card/80 backdrop-blur-xl border border-white/10;
@@ -423,5 +573,37 @@ All colors MUST be HSL.
   @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+  }
+}
+
+/* ==========================================
+   MOBILE-SPECIFIC OVERRIDES
+   ========================================== */
+
+@media (max-width: 639px) {
+  /* Larger touch targets on mobile */
+  button, 
+  [role="button"],
+  a,
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: 44px;
+  }
+
+  /* Better form inputs on mobile */
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+  }
+
+  /* Adjust card padding on mobile */
+  .card-content {
+    @apply p-3;
+  }
+
+  /* Table cells padding adjustment */
+  td, th {
+    @apply px-2 py-2;
   }
 }
