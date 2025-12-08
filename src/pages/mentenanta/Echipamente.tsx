@@ -244,8 +244,6 @@ const Echipamente = () => {
       { key: "cod", label: "Cod" },
       { key: "tip", label: "Tip" },
       { key: "serie", label: "Serie" },
-      { key: "planta", label: "Plantă" },
-      { key: "oreFunctionare", label: "Ore Funcționare" },
       { key: "ultimaRevizie", label: "Ultima Revizie" },
       { key: "urmatoareaRevizie", label: "Următoarea Revizie" },
       { key: "status", label: "Status" },
@@ -351,8 +349,6 @@ const Echipamente = () => {
                   <TableHead>Cod</TableHead>
                   <TableHead>Tip</TableHead>
                   <TableHead>Serie</TableHead>
-                  <TableHead>Plantă</TableHead>
-                  <TableHead className="text-right">Ore Funcț.</TableHead>
                   <TableHead>Ultima Revizie</TableHead>
                   <TableHead>Următoarea Revizie</TableHead>
                   <TableHead>Status</TableHead>
@@ -371,8 +367,6 @@ const Echipamente = () => {
                       <TableCell className="font-medium">{echipament.cod}</TableCell>
                       <TableCell>{echipament.tip}</TableCell>
                       <TableCell>{echipament.serie}</TableCell>
-                      <TableCell>{echipament.planta}</TableCell>
-                      <TableCell className="text-right">{echipament.oreFunctionare.toLocaleString()}</TableCell>
                       <TableCell>{echipament.ultimaRevizie}</TableCell>
                       <TableCell>{echipament.urmatoareaRevizie}</TableCell>
                       <TableCell>
