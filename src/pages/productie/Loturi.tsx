@@ -895,7 +895,7 @@ const Loturi = () => {
               Înregistrați un nou lot de producție
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+          <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Ordin Producție</Label>
@@ -911,34 +911,8 @@ const Loturi = () => {
                 </Select>
               </div>
               <div>
-                <Label>Rețetă</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectează rețetă" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="BA16 - Beton Asfaltic">BA16 - Beton Asfaltic</SelectItem>
-                    <SelectItem value="MASF16 - Mixtură Asfaltică">MASF16 - Mixtură Asfaltică</SelectItem>
-                    <SelectItem value="BSC - Beton Stabilizat">BSC - Beton Stabilizat</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
                 <Label>Cantitate</Label>
                 <Input type="number" placeholder="Ex: 50" />
-              </div>
-              <div>
-                <Label>Unitate Măsură</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectează unitate" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="tone">Tone</SelectItem>
-                    <SelectItem value="kg">Kg</SelectItem>
-                    <SelectItem value="mc">MC</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
               <div>
                 <Label>Operator</Label>
@@ -949,13 +923,8 @@ const Loturi = () => {
                   <SelectContent>
                     <SelectItem value="Ion Popescu">Ion Popescu</SelectItem>
                     <SelectItem value="Maria Dumitrescu">Maria Dumitrescu</SelectItem>
-                    <SelectItem value="Andrei Vasilescu">Andrei Vasilescu</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-              <div>
-                <Label>Data/Ora</Label>
-                <Input type="datetime-local" />
               </div>
             </div>
 
