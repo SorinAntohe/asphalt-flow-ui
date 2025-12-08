@@ -1186,18 +1186,6 @@ const OrdineProductie = () => {
 
               <DialogFooter className="flex-col sm:flex-row gap-2">
                 <div className="flex flex-wrap gap-2">
-                  {selectedOrdin.status === "Planificat" && (
-                    <Button size="sm" onClick={() => {
-                      setOrdine(prev => prev.map(o => 
-                        o.id === selectedOrdin.id ? { ...o, status: "În lucru" as const } : o
-                      ));
-                      toast.success(`Ordinul ${selectedOrdin.numar} a fost pornit`);
-                      setDetailDialogOpen(false);
-                    }}>
-                      <Play className="h-4 w-4 mr-1" />
-                      Pornește
-                    </Button>
-                  )}
                   <Button size="sm" variant="outline" onClick={() => handleOpenEdit(selectedOrdin)}>
                     <Pencil className="h-4 w-4 mr-1" />
                     Editează
