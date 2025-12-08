@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { 
   GitBranch, Search, Download, Package, FileText, Truck, Users,
   ChevronRight, ArrowRight, AlertTriangle, CheckCircle, Clock, ClipboardList
 } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -54,40 +55,6 @@ interface TrasabilitateData {
   loturiProductie: LotProducție[];
 }
 
-// Mock data for traceability
-const mockTrasabilitateData: Record<string, TrasabilitateData> = {
-  "LOT-2024-001": {
-    comenziClient: [
-      { id: "CC1", codComanda: "CC-2024-201", client: "Primăria Sector 3", produs: "BA 16", cantitate: 100 },
-      { id: "CC2", codComanda: "CC-2024-202", client: "CNAIR SA", produs: "BA 16", cantitate: 150 },
-    ],
-    reteta: { id: "RET-1", nume: "BA 16 Standard", produs: "Beton Asfaltic BA 16" },
-    ordinProductie: { id: "OP1", cod: "OP-2024-156", produs: "BA 16", cantitate: 250, data: "29/11/2024" },
-    loturiProductie: [
-      { id: "P1", codLot: "LOT-2024-001", ordin: "OP-2024-156", cantitate: 250, data: "29/11/2024", status: "Conform" },
-    ]
-  },
-  "LOT-2024-002": {
-    comenziClient: [
-      { id: "CC3", codComanda: "CC-2024-203", client: "Drumuri Locale SRL", produs: "MASF 16", cantitate: 180 },
-    ],
-    reteta: { id: "RET-2", nume: "MASF 16 Premium", produs: "Mixtură Asfaltică MASF 16" },
-    ordinProductie: { id: "OP2", cod: "OP-2024-157", produs: "MASF 16", cantitate: 180, data: "28/11/2024" },
-    loturiProductie: [
-      { id: "P2", codLot: "LOT-2024-002", ordin: "OP-2024-157", cantitate: 180, data: "28/11/2024", status: "Neconform" },
-    ]
-  },
-  "LOT-2024-003": {
-    comenziClient: [
-      { id: "CC4", codComanda: "CC-2024-204", client: "Autostrăzi SA", produs: "BAD 25", cantitate: 300 },
-    ],
-    reteta: { id: "RET-3", nume: "BAD 25 Greu", produs: "Beton Asfaltic Deschis BAD 25" },
-    ordinProductie: { id: "OP3", cod: "OP-2024-158", produs: "BAD 25", cantitate: 300, data: "27/11/2024" },
-    loturiProductie: [
-      { id: "P3", codLot: "LOT-2024-003", ordin: "OP-2024-158", cantitate: 300, data: "27/11/2024", status: "În așteptare" },
-    ]
-  }
-};
 
 
 const statusConfig = {
@@ -99,14 +66,40 @@ const statusConfig = {
 const Trasabilitate = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLot, setSelectedLot] = useState<string | null>(null);
-  
+  const [availableLots, setAvailableLots] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch lots from API
+  useEffect(() => {
+    const fetchLots = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_BASE_URL}/productie/returneaza/loturi`);
+        if (!response.ok) throw new Error("Failed to fetch lots");
+        const data = await response.json();
+        // Extract unique lot codes from the response
+        const lotCodes = [...new Set(data.map((item: any) => item.cod_lot || item.codLot).filter(Boolean))] as string[];
+        setAvailableLots(lotCodes);
+      } catch (error) {
+        console.error("Error fetching lots:", error);
+        toast.error("Eroare la încărcarea loturilor");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchLots();
+  }, []);
 
   const trasabilitateResult = useMemo(() => {
     if (!selectedLot) return null;
-    return mockTrasabilitateData[selectedLot] || null;
+    // Return a placeholder structure - full traceability data would need separate API calls
+    return {
+      comenziClient: [],
+      reteta: { id: "", nume: selectedLot, produs: "" },
+      ordinProductie: { id: "", cod: "", produs: "", cantitate: 0, data: "" },
+      loturiProductie: [{ id: "1", codLot: selectedLot, ordin: "", cantitate: 0, data: "", status: "În așteptare" as const }]
+    };
   }, [selectedLot]);
-
-  const availableLots = Object.keys(mockTrasabilitateData);
 
   const filteredLots = useMemo(() => {
     if (!searchQuery) return availableLots;
