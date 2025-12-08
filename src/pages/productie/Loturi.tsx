@@ -229,8 +229,8 @@ const Loturi = () => {
           const data = await response.json();
           const options = Array.isArray(data) 
             ? data.map((m: any) => ({
-                value: m.produs || m.denumire || m.material || String(m),
-                label: m.produs || m.denumire || m.material || String(m)
+                value: m.produse || String(m),
+                label: m.produse || String(m)
               }))
             : [];
           setMaterialeDisponibile(options);
