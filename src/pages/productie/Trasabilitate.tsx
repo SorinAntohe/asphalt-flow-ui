@@ -106,29 +106,47 @@ const Trasabilitate = () => {
         if (!response.ok) throw new Error("Failed to fetch traceability data");
         const data = await response.json();
         
-        // Map API response to TrasabilitateData structure
+        // Map API response structure:
+        // { cod_lot, ordine: [{ cod_ordin, detalii: [{ comenzi_asociate, produse, retete }] }] }
+        const ordine = data.ordine || [];
+        const firstOrdin = ordine[0] || {};
+        const detalii = firstOrdin.detalii || [];
+        
+        // Extract unique comenzi, retete from all detalii
+        const comenziClient: ComandaClient[] = detalii.map((d: any, idx: number) => ({
+          id: `CC${idx + 1}`,
+          codComanda: d.comenzi_asociate || "",
+          client: "",
+          produs: d.produse || "",
+          cantitate: 0
+        }));
+
+        // Get unique retete
+        const reteteList = [...new Set(detalii.map((d: any) => d.retete).filter(Boolean))] as string[];
+        const produseList = [...new Set(detalii.map((d: any) => d.produse).filter(Boolean))] as string[];
+
         setTrasabilitateResult({
-          comenziClient: data.comenzi_client || data.comenziClient || [],
+          comenziClient,
           reteta: {
-            id: data.reteta?.id || "",
-            nume: data.reteta?.nume || data.reteta?.cod_reteta || "",
-            produs: data.reteta?.produs || ""
+            id: reteteList[0] || "",
+            nume: reteteList.join(", ") || "",
+            produs: produseList.join(", ") || ""
           },
           ordinProductie: {
-            id: data.ordin_productie?.id || data.ordinProductie?.id || "",
-            cod: data.ordin_productie?.cod || data.ordin_productie?.cod_ordin || data.ordinProductie?.cod || "",
-            produs: data.ordin_productie?.produs || data.ordinProductie?.produs || "",
-            cantitate: parseFloat(data.ordin_productie?.cantitate || data.ordinProductie?.cantitate) || 0,
-            data: data.ordin_productie?.data || data.ordinProductie?.data || ""
+            id: firstOrdin.cod_ordin || "",
+            cod: firstOrdin.cod_ordin || "",
+            produs: produseList.join(", ") || "",
+            cantitate: 0,
+            data: ""
           },
-          loturiProductie: (data.loturi_productie || data.loturiProductie || [data]).map((lp: any) => ({
-            id: lp.id || "1",
-            codLot: lp.cod_lot || lp.codLot || selectedLot,
-            ordin: lp.cod_ordin || lp.ordin || "",
-            cantitate: parseFloat(lp.cantitate) || 0,
-            data: lp.data_ora || lp.data || "",
-            status: lp.verdict_qc || lp.status || "În așteptare"
-          }))
+          loturiProductie: [{
+            id: "1",
+            codLot: data.cod_lot || selectedLot,
+            ordin: firstOrdin.cod_ordin || "",
+            cantitate: 0,
+            data: "",
+            status: "În așteptare" as const
+          }]
         });
       } catch (error) {
         console.error("Error fetching traceability:", error);
