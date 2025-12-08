@@ -299,6 +299,7 @@ const Loturi = () => {
 
       const payload = {
         cod_ordin: addFormData.cod_ordin,
+        produs: addFormData.material,
         cod_reteta: addFormData.cod_reteta,
         cantitate: addFormData.cantitate,
         operator: addFormData.operator,
