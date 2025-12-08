@@ -85,14 +85,12 @@ const Loturi = () => {
   // Add form state
   const [addFormData, setAddFormData] = useState({
     cod_ordin: "",
-    cod_reteta: "",
-    cantitate: "",
     operator: "",
     temperatura: "",
     marshall: "",
     verdict_calitate: "În așteptare",
     observatii: "",
-    comenzi_asociate: [{ cod: "" }] as { cod: string }[]
+    comenzi_asociate: [{ cod: "", reteta: "", cantitate: "" }] as { cod: string; reteta: string; cantitate: string }[]
   });
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -279,7 +277,7 @@ const Loturi = () => {
   const handleAddComanda = () => {
     setAddFormData(prev => ({
       ...prev,
-      comenzi_asociate: [...prev.comenzi_asociate, { cod: "" }]
+      comenzi_asociate: [...prev.comenzi_asociate, { cod: "", reteta: "", cantitate: "" }]
     }));
   };
 
@@ -292,17 +290,19 @@ const Loturi = () => {
     }
   };
 
-  const handleComandaChange = (index: number, value: string) => {
+  const handleComandaChange = (index: number, field: "cod" | "reteta" | "cantitate", value: string) => {
     setAddFormData(prev => ({
       ...prev,
-      comenzi_asociate: prev.comenzi_asociate.map((c, i) => i === index ? { cod: value } : c)
+      comenzi_asociate: prev.comenzi_asociate.map((c, i) => i === index ? { ...c, [field]: value } : c)
     }));
   };
 
   // Handle add lot
   const handleAddLot = async () => {
-    if (!addFormData.cod_ordin || !addFormData.cod_reteta || !addFormData.cantitate || !addFormData.operator) {
-      toast.error("Completați toate câmpurile obligatorii");
+    // Validate at least one comanda with reteta and cantitate
+    const validComenzi = addFormData.comenzi_asociate.filter(c => c.cod && c.reteta && c.cantitate);
+    if (!addFormData.cod_ordin || !addFormData.operator || validComenzi.length === 0) {
+      toast.error("Completați toate câmpurile obligatorii (cod ordin, operator, și cel puțin o comandă cu rețetă și cantitate)");
       return;
     }
 
@@ -318,13 +318,11 @@ const Loturi = () => {
         }
       }
 
-      // Get valid comenzi
-      const validComenzi = addFormData.comenzi_asociate.filter(c => c.cod).map(c => c.cod);
+      // Get valid comenzi with reteta and cantitate
+      const validComenzi = addFormData.comenzi_asociate.filter(c => c.cod && c.reteta && c.cantitate);
       
       const basePayload = {
         cod_ordin: addFormData.cod_ordin,
-        cod_reteta: addFormData.cod_reteta,
-        cantitate: addFormData.cantitate,
         operator: addFormData.operator,
         temperatura: parseFloat(addFormData.temperatura) || 0,
         marshall: parseFloat(addFormData.marshall) || 0,
@@ -334,10 +332,12 @@ const Loturi = () => {
       };
 
       // First call without cod_lot to get the generated code
-      const firstComanda = validComenzi[0] || "";
+      const firstComanda = validComenzi[0];
       const firstPayload = {
         ...basePayload,
-        comenzi_asociate: firstComanda
+        cod_reteta: firstComanda.reteta,
+        cantitate: firstComanda.cantitate,
+        comenzi_asociate: firstComanda.cod
       };
 
       const firstResponse = await fetch(`${API_BASE_URL}/productie/adauga/loturi_telemetrie`, {
@@ -360,7 +360,9 @@ const Loturi = () => {
         const payload = {
           ...basePayload,
           cod_lot: codLot,
-          comenzi_asociate: comanda
+          cod_reteta: comanda.reteta,
+          cantitate: comanda.cantitate,
+          comenzi_asociate: comanda.cod
         };
 
         await fetch(`${API_BASE_URL}/productie/adauga/loturi_telemetrie`, {
@@ -374,14 +376,12 @@ const Loturi = () => {
       setAddDialogOpen(false);
       setAddFormData({
         cod_ordin: "",
-        cod_reteta: "",
-        cantitate: "",
         operator: "",
         temperatura: "",
         marshall: "",
         verdict_calitate: "În așteptare",
         observatii: "",
-        comenzi_asociate: [{ cod: "" }]
+        comenzi_asociate: [{ cod: "", reteta: "", cantitate: "" }]
       });
       setUploadedFiles([]);
       fetchLoturi();
@@ -965,24 +965,6 @@ const Loturi = () => {
                 />
               </div>
               <div>
-                <Label>Rețetă *</Label>
-                <FilterableSelect
-                  options={reteteDisponibile}
-                  value={addFormData.cod_reteta}
-                  onValueChange={(v) => setAddFormData(prev => ({ ...prev, cod_reteta: v }))}
-                  placeholder="Selectează rețetă"
-                />
-              </div>
-              <div>
-                <Label>Cantitate *</Label>
-                <Input
-                  type="number"
-                  value={addFormData.cantitate}
-                  onChange={(e) => setAddFormData(prev => ({ ...prev, cantitate: e.target.value }))}
-                  placeholder="Ex: 50"
-                />
-              </div>
-              <div>
                 <Label>Operator *</Label>
                 <FilterableSelect
                   options={operatoriDisponibili}
@@ -995,10 +977,10 @@ const Loturi = () => {
 
             <Separator />
 
-            {/* Comenzi Asociate Section */}
+            {/* Comenzi Asociate Section - fiecare comandă cu rețetă și cantitate */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <Label className="text-base font-medium">Comenzi Asociate</Label>
+                <Label className="text-base font-medium">Comenzi Asociate *</Label>
                 <Button type="button" variant="outline" size="sm" onClick={handleAddComanda}>
                   <Plus className="w-4 h-4 mr-1" />Adaugă comandă
                 </Button>
@@ -1011,8 +993,27 @@ const Loturi = () => {
                       <FilterableSelect
                         options={comenziDisponibile}
                         value={item.cod}
-                        onValueChange={(v) => handleComandaChange(index, v)}
+                        onValueChange={(v) => handleComandaChange(index, "cod", v)}
                         placeholder="Selectează comandă"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <Label className="text-xs">Rețetă</Label>
+                      <FilterableSelect
+                        options={reteteDisponibile}
+                        value={item.reteta}
+                        onValueChange={(v) => handleComandaChange(index, "reteta", v)}
+                        placeholder="Selectează rețetă"
+                      />
+                    </div>
+                    <div className="w-28">
+                      <Label className="text-xs">Cantitate</Label>
+                      <Input
+                        type="number"
+                        className="h-9"
+                        value={item.cantitate}
+                        onChange={(e) => handleComandaChange(index, "cantitate", e.target.value)}
+                        placeholder="Ex: 50"
                       />
                     </div>
                     {addFormData.comenzi_asociate.length > 1 && (
