@@ -318,10 +318,10 @@ const Loturi = () => {
         }
       }
 
-      // Build comenzi_asociate string
+      // Get valid comenzi
       const validComenzi = addFormData.comenzi_asociate.filter(c => c.cod).map(c => c.cod);
       
-      const payload = {
+      const basePayload = {
         cod_ordin: addFormData.cod_ordin,
         cod_reteta: addFormData.cod_reteta,
         cantitate: addFormData.cantitate,
@@ -330,35 +330,61 @@ const Loturi = () => {
         marshall: parseFloat(addFormData.marshall) || 0,
         verdict_calitate: addFormData.verdict_calitate,
         observatii: addFormData.observatii,
-        cai_fisiere: uploadedPaths.join(","),
-        comenzi_asociate: validComenzi.join(",")
+        cai_fisiere: uploadedPaths.join(",")
       };
 
-      const response = await fetch(`${API_BASE_URL}/productie/adauga/loturi_telemetrie`, {
+      // First call without cod_lot to get the generated code
+      const firstComanda = validComenzi[0] || "";
+      const firstPayload = {
+        ...basePayload,
+        comenzi_asociate: firstComanda
+      };
+
+      const firstResponse = await fetch(`${API_BASE_URL}/productie/adauga/loturi_telemetrie`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(firstPayload)
       });
 
-      if (response.ok) {
-        toast.success("Lot adăugat cu succes");
-        setAddDialogOpen(false);
-        setAddFormData({
-          cod_ordin: "",
-          cod_reteta: "",
-          cantitate: "",
-          operator: "",
-          temperatura: "",
-          marshall: "",
-          verdict_calitate: "În așteptare",
-          observatii: "",
-          comenzi_asociate: [{ cod: "" }]
-        });
-        setUploadedFiles([]);
-        fetchLoturi();
-      } else {
+      if (!firstResponse.ok) {
         toast.error("Eroare la adăugarea lotului");
+        return;
       }
+
+      const firstResult = await firstResponse.json();
+      const codLot = firstResult.cod_lot;
+
+      // For remaining comenzi, use the same cod_lot
+      for (let i = 1; i < validComenzi.length; i++) {
+        const comanda = validComenzi[i];
+        const payload = {
+          ...basePayload,
+          cod_lot: codLot,
+          comenzi_asociate: comanda
+        };
+
+        await fetch(`${API_BASE_URL}/productie/adauga/loturi_telemetrie`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+      }
+
+      toast.success("Lot adăugat cu succes");
+      setAddDialogOpen(false);
+      setAddFormData({
+        cod_ordin: "",
+        cod_reteta: "",
+        cantitate: "",
+        operator: "",
+        temperatura: "",
+        marshall: "",
+        verdict_calitate: "În așteptare",
+        observatii: "",
+        comenzi_asociate: [{ cod: "" }]
+      });
+      setUploadedFiles([]);
+      fetchLoturi();
     } catch (error) {
       console.error("Error adding lot:", error);
       toast.error("Eroare la adăugarea lotului");
