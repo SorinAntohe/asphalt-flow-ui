@@ -315,8 +315,10 @@ const Trasabilitate = () => {
                       <FileText className="h-8 w-8 text-purple-400" />
                     </div>
                     <span className="font-semibold text-foreground text-sm">Rețetă</span>
-                    <div className="mt-2 text-center max-w-[120px]">
-                      <p className="text-xs text-muted-foreground truncate">{trasabilitateResult.reteta.nume}</p>
+                    <div className="mt-2 text-center">
+                      <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/30">
+                        {trasabilitateResult.reteta.nume.split(", ").filter(Boolean).length} rețete
+                      </Badge>
                     </div>
                   </div>
 
