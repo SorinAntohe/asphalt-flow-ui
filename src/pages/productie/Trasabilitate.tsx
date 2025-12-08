@@ -396,14 +396,6 @@ const Trasabilitate = () => {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {trasabilitateResult.receptiiLoturi.map(r => (
-                          <TableRow key={r.id}>
-                            <TableCell className="font-medium">{r.codLot}</TableCell>
-                            <TableCell>{r.material}</TableCell>
-                            <TableCell>{r.furnizor}</TableCell>
-                            <TableCell className="text-right">{r.cantitate} to</TableCell>
-                          </TableRow>
-                        ))}
                       </TableBody>
                     </Table>
                   </ScrollArea>
@@ -428,14 +420,6 @@ const Trasabilitate = () => {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {trasabilitateResult.livrari.map(l => (
-                            <TableRow key={l.id}>
-                              <TableCell className="font-medium">{l.nrAviz}</TableCell>
-                              <TableCell>{l.client}</TableCell>
-                              <TableCell>{l.data}</TableCell>
-                              <TableCell className="text-right">{l.cantitate} to</TableCell>
-                            </TableRow>
-                          ))}
                         </TableBody>
                       </Table>
                     ) : (
