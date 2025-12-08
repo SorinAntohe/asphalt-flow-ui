@@ -229,13 +229,13 @@ const Loturi = () => {
           const data = await response.json();
           const options = Array.isArray(data) 
             ? data.map((m: any) => ({
-                value: m.produs || m.denumire || m.material || m,
-                label: m.produs || m.denumire || m.material || m
+                value: m.produs || m.denumire || m.material || String(m),
+                label: m.produs || m.denumire || m.material || String(m)
               }))
             : [];
           setMaterialeDisponibile(options);
-          // Reset material selection when order changes
-          setAddFormData(prev => ({ ...prev, material: "" }));
+        } else {
+          setMaterialeDisponibile([]);
         }
       } catch (error) {
         console.error("Error fetching produse pt cod ordin:", error);
