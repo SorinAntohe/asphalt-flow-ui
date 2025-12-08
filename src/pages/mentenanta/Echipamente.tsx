@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
-import { Truck, Plus, Download, Settings, Pencil, Trash2 } from "lucide-react";
+import { Truck, Plus, Download, Settings, Pencil, Trash2, Wrench } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { API_BASE_URL } from "@/lib/api";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -49,7 +50,13 @@ const Echipamente = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isServisareDialogOpen, setIsServisareDialogOpen] = useState(false);
   
+  // Servisare form state
+  const [servisareFormData, setServisareFormData] = useState({
+    descriere: "",
+    cost: ""
+  });
   // Add form state
   const [addFormData, setAddFormData] = useState({
     denumire: "",
@@ -270,6 +277,22 @@ const Echipamente = () => {
     }
   };
 
+  const handleOpenServisare = () => {
+    setServisareFormData({ descriere: "", cost: "" });
+    setIsDetailOpen(false);
+    setIsServisareDialogOpen(true);
+  };
+
+  const handleServisareSubmit = () => {
+    if (!servisareFormData.descriere) {
+      toast.error("Introduceți descrierea servisării");
+      return;
+    }
+    toast.success("Servisare înregistrată cu succes");
+    setIsServisareDialogOpen(false);
+    setServisareFormData({ descriere: "", cost: "" });
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -479,9 +502,10 @@ const Echipamente = () => {
                 </div>
               </div>
 
-              <DialogFooter className="gap-2">
-                <Button variant="outline" onClick={() => setIsDetailOpen(false)}>
-                  Închide
+              <DialogFooter className="gap-2 flex-wrap">
+                <Button variant="secondary" onClick={handleOpenServisare} className="gap-2">
+                  <Wrench className="h-4 w-4" />
+                  Servisare
                 </Button>
                 <Button variant="outline" onClick={handleOpenEdit}>
                   <Pencil className="h-4 w-4 mr-2" />
@@ -494,6 +518,45 @@ const Echipamente = () => {
               </DialogFooter>
             </>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Servisare Dialog */}
+      <Dialog open={isServisareDialogOpen} onOpenChange={setIsServisareDialogOpen}>
+        <DialogContent className="max-w-md" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Wrench className="h-5 w-5" />
+              Înregistrare Servisare
+            </DialogTitle>
+            <DialogDescription>
+              {selectedEchipament?.denumire}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label>Descriere servisare *</Label>
+              <Textarea 
+                placeholder="Descrieți lucrările efectuate..."
+                value={servisareFormData.descriere}
+                onChange={(e) => setServisareFormData(prev => ({ ...prev, descriere: e.target.value }))}
+                rows={4}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Cost (RON)</Label>
+              <Input 
+                type="number"
+                placeholder="ex: 2500"
+                value={servisareFormData.cost}
+                onChange={(e) => setServisareFormData(prev => ({ ...prev, cost: e.target.value }))}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsServisareDialogOpen(false)}>Anulează</Button>
+            <Button onClick={handleServisareSubmit}>Salvează</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 

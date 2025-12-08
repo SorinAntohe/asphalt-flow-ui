@@ -20,6 +20,7 @@ interface PlanMentenanta {
   dataUltimaRevizie: string;
   dataRevizieUrmatoare: string;
   costAproxRevizie: number;
+  observatii: string;
 }
 
 interface Echipament {
@@ -31,15 +32,15 @@ interface Echipament {
 const mockPlanMentenanta: PlanMentenanta[] = [
   { 
     id: 1, cod: "ECH-001", denumire: "Stație Asfalt Mobilă 160t/h",
-    dataUltimaRevizie: "15/06/2024", dataRevizieUrmatoare: "15/12/2024", costAproxRevizie: 8500
+    dataUltimaRevizie: "15/06/2024", dataRevizieUrmatoare: "15/12/2024", costAproxRevizie: 8500, observatii: "Verificare completă sistem"
   },
   { 
     id: 2, cod: "ECH-002", denumire: "Încărcător Frontal Cat 966",
-    dataUltimaRevizie: "01/08/2024", dataRevizieUrmatoare: "01/02/2025", costAproxRevizie: 3200
+    dataUltimaRevizie: "01/08/2024", dataRevizieUrmatoare: "01/02/2025", costAproxRevizie: 3200, observatii: ""
   },
   { 
     id: 3, cod: "VEH-001", denumire: "Camion Basculant MAN TGS 8x4",
-    dataUltimaRevizie: "20/09/2024", dataRevizieUrmatoare: "20/03/2025", costAproxRevizie: 2500
+    dataUltimaRevizie: "20/09/2024", dataRevizieUrmatoare: "20/03/2025", costAproxRevizie: 2500, observatii: "Schimb ulei + filtre"
   },
 ];
 
@@ -68,6 +69,7 @@ const PlanMentenanta = () => {
     dataUltimaRevizie: "",
     dataRevizieUrmatoare: "",
     costAproxRevizie: "",
+    observatii: "",
   });
 
   // Fetch echipamente for dropdown
@@ -172,6 +174,7 @@ const PlanMentenanta = () => {
       dataUltimaRevizie: "",
       dataRevizieUrmatoare: "",
       costAproxRevizie: "",
+      observatii: "",
     });
   };
 
@@ -187,6 +190,7 @@ const PlanMentenanta = () => {
       dataUltimaRevizie: formData.dataUltimaRevizie,
       dataRevizieUrmatoare: formData.dataRevizieUrmatoare,
       costAproxRevizie: parseFloat(formData.costAproxRevizie) || 0,
+      observatii: formData.observatii,
     };
     setData(prev => [...prev, newItem]);
     setIsAddDialogOpen(false);
@@ -202,6 +206,7 @@ const PlanMentenanta = () => {
         dataUltimaRevizie: selectedItem.dataUltimaRevizie,
         dataRevizieUrmatoare: selectedItem.dataRevizieUrmatoare,
         costAproxRevizie: String(selectedItem.costAproxRevizie),
+        observatii: selectedItem.observatii || "",
       });
       setIsDetailOpen(false);
       setIsEditDialogOpen(true);
@@ -220,6 +225,7 @@ const PlanMentenanta = () => {
               dataUltimaRevizie: formData.dataUltimaRevizie,
               dataRevizieUrmatoare: formData.dataRevizieUrmatoare,
               costAproxRevizie: parseFloat(formData.costAproxRevizie) || 0,
+              observatii: formData.observatii,
             }
           : item
       )
@@ -322,11 +328,21 @@ const PlanMentenanta = () => {
                       onFilterChange={(value) => handleFilter("costAproxRevizie", value)}
                     />
                   </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Observații"
+                      sortKey="observatii"
+                      currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
+                      filterValue={columnFilters.observatii || ""}
+                      onSort={handleSort}
+                      onFilterChange={(value) => handleFilter("observatii", value)}
+                    />
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {paginatedData.length === 0 ? (
-                  <DataTableEmpty colSpan={5} message="Nu există planuri de mentenanță" />
+                  <DataTableEmpty colSpan={6} message="Nu există planuri de mentenanță" />
                 ) : (
                   paginatedData.map(item => (
                     <TableRow 
@@ -339,6 +355,7 @@ const PlanMentenanta = () => {
                       <TableCell>{item.dataUltimaRevizie}</TableCell>
                       <TableCell>{item.dataRevizieUrmatoare}</TableCell>
                       <TableCell>{item.costAproxRevizie.toLocaleString()} RON</TableCell>
+                      <TableCell className="max-w-[200px] truncate">{item.observatii || "-"}</TableCell>
                     </TableRow>
                   ))
                 )}
