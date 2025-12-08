@@ -719,10 +719,6 @@ const Loturi = () => {
                         <span className="font-medium ml-1">{selectedLot.dataOra}</span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Linie:</span>
-                        <span className="font-medium ml-1">{selectedLot.linie}</span>
-                      </div>
-                      <div>
                         <span className="text-muted-foreground">Operator:</span>
                         <span className="font-medium ml-1">{selectedLot.operator}</span>
                       </div>
@@ -927,18 +923,6 @@ const Loturi = () => {
                   <SelectContent>
                     <SelectItem value="Ion Popescu">Ion Popescu</SelectItem>
                     <SelectItem value="Maria Dumitrescu">Maria Dumitrescu</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Linie</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectează linie" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Linia 1">Linia 1</SelectItem>
-                    <SelectItem value="Linia 2">Linia 2</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
