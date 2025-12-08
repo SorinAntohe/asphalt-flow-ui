@@ -79,120 +79,6 @@ interface Lot {
   dataQC?: string;
   inspectorQC?: string;
 }
-
-// Mock data
-const mockLoturi: Lot[] = [
-  {
-    id: 1,
-    codLot: "LOT-2024-001",
-    ordin: "OP-2024-001",
-    reteta: "BA16 - Beton Asfaltic",
-    cantitate: 50,
-    unitateMasura: "tone",
-    dataOra: "15/01/2024 08:30",
-    operator: "Ion Popescu",
-    linie: "Linia 1",
-    parametri: [
-      { nume: "Temperatură", valoare: 165, unitate: "°C", tinta: 160, tolerantaMinus: 10, tolerantaPlus: 15, status: "ok" },
-      { nume: "Marshall", valoare: 12.5, unitate: "kN", tinta: 12, tolerantaMinus: 1.5, tolerantaPlus: 2, status: "ok" }
-    ],
-    verdictQC: "Conform",
-    observatii: "Lot conform specificațiilor",
-    atasamente: [
-      { id: 1, nume: "foto_lot_001.jpg", tip: "foto", dataAdaugare: "15/01/2024" },
-      { id: 2, nume: "fisa_tehnica.pdf", tip: "document", dataAdaugare: "15/01/2024" }
-    ],
-    trimisLaQC: true,
-    dataQC: "15/01/2024 09:00",
-    inspectorQC: "Maria Ionescu"
-  },
-  {
-    id: 2,
-    codLot: "LOT-2024-002",
-    ordin: "OP-2024-001",
-    reteta: "BA16 - Beton Asfaltic",
-    cantitate: 50,
-    unitateMasura: "tone",
-    dataOra: "15/01/2024 09:15",
-    operator: "Ion Popescu",
-    linie: "Linia 1",
-    parametri: [
-      { nume: "Temperatură", valoare: 158, unitate: "°C", tinta: 160, tolerantaMinus: 10, tolerantaPlus: 15, status: "ok" },
-      { nume: "Marshall", valoare: 11.8, unitate: "kN", tinta: 12, tolerantaMinus: 1.5, tolerantaPlus: 2, status: "ok" }
-    ],
-    verdictQC: "Conform",
-    observatii: "",
-    atasamente: [
-      { id: 3, nume: "foto_lot_002.jpg", tip: "foto", dataAdaugare: "15/01/2024" }
-    ],
-    trimisLaQC: true,
-    dataQC: "15/01/2024 10:00",
-    inspectorQC: "Maria Ionescu"
-  },
-  {
-    id: 3,
-    codLot: "LOT-2024-003",
-    ordin: "OP-2024-002",
-    reteta: "MASF16 - Mixtură Asfaltică",
-    cantitate: 45,
-    unitateMasura: "tone",
-    dataOra: "15/01/2024 14:20",
-    operator: "Maria Dumitrescu",
-    linie: "Linia 2",
-    parametri: [
-      { nume: "Temperatură", valoare: 145, unitate: "°C", tinta: 160, tolerantaMinus: 10, tolerantaPlus: 15, status: "error" },
-      { nume: "Marshall", valoare: 10.2, unitate: "kN", tinta: 12, tolerantaMinus: 1.5, tolerantaPlus: 2, status: "warning" }
-    ],
-    verdictQC: "Neconform",
-    observatii: "Depășiri multiple - temperatură în afara limitelor",
-    atasamente: [
-      { id: 4, nume: "raport_neconformitate.pdf", tip: "document", dataAdaugare: "15/01/2024" }
-    ],
-    trimisLaQC: true,
-    dataQC: "15/01/2024 15:00",
-    inspectorQC: "Andrei Popa"
-  },
-  {
-    id: 4,
-    codLot: "LOT-2024-004",
-    ordin: "OP-2024-002",
-    reteta: "MASF16 - Mixtură Asfaltică",
-    cantitate: 50,
-    unitateMasura: "tone",
-    dataOra: "15/01/2024 15:45",
-    operator: "Maria Dumitrescu",
-    linie: "Linia 2",
-    parametri: [
-      { nume: "Temperatură", valoare: 162, unitate: "°C", tinta: 160, tolerantaMinus: 10, tolerantaPlus: 15, status: "ok" },
-      { nume: "Marshall", valoare: 12.3, unitate: "kN", tinta: 12, tolerantaMinus: 1.5, tolerantaPlus: 2, status: "ok" }
-    ],
-    verdictQC: "În așteptare",
-    observatii: "",
-    atasamente: [],
-    trimisLaQC: true,
-    dataQC: "15/01/2024 16:00"
-  },
-  {
-    id: 5,
-    codLot: "LOT-2024-005",
-    ordin: "OP-2024-003",
-    reteta: "BSC - Beton Stabilizat",
-    cantitate: 80,
-    unitateMasura: "tone",
-    dataOra: "16/01/2024 07:00",
-    operator: "Andrei Vasilescu",
-    linie: "Linia 1",
-    parametri: [
-      { nume: "Temperatură", valoare: 22, unitate: "°C", tinta: 20, tolerantaMinus: 5, tolerantaPlus: 10, status: "ok" },
-      { nume: "Slump", valoare: 85, unitate: "mm", tinta: 80, tolerantaMinus: 20, tolerantaPlus: 20, status: "ok" }
-    ],
-    verdictQC: "Blocat",
-    observatii: "Blocat pentru verificare suplimentară",
-    atasamente: [],
-    trimisLaQC: false
-  }
-];
-
 const verdictConfig: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ReactNode; color: string }> = {
   "Conform": { variant: "default", icon: <CheckCircle2 className="h-3 w-3" />, color: "text-green-600" },
   "Neconform": { variant: "destructive", icon: <XCircle className="h-3 w-3" />, color: "text-red-600" },
@@ -201,7 +87,7 @@ const verdictConfig: Record<string, { variant: "default" | "secondary" | "destru
 };
 
 const Loturi = () => {
-  const [loturi, setLoturi] = useState<Lot[]>(mockLoturi);
+  const [loturi, setLoturi] = useState<Lot[]>([]);
   const [selectedLot, setSelectedLot] = useState<Lot | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
