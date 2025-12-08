@@ -956,68 +956,30 @@ const Loturi = () => {
             <Separator />
 
             {/* File Upload Section */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               <Label className="flex items-center gap-2">
                 <Upload className="h-4 w-4" />
-                Atașamente (Poze / Documente)
+                Atașamente
               </Label>
-              
-              {/* Photo Upload */}
-              <div className="space-y-2">
-                <Label className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Camera className="h-3 w-3" />
-                  Fotografii
-                </Label>
-                <div className="flex flex-wrap gap-2">
-                  <label className="cursor-pointer">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      className="hidden"
-                      onChange={(e) => {
-                        const files = e.target.files;
-                        if (files) {
-                          toast.info(`${files.length} poză(e) selectată(e)`);
-                        }
-                      }}
-                    />
-                    <div className="h-20 w-20 border-2 border-dashed border-muted-foreground/30 rounded-lg flex flex-col items-center justify-center hover:border-primary hover:bg-muted/50 transition-colors">
-                      <Image className="h-6 w-6 text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground mt-1">Adaugă</span>
-                    </div>
-                  </label>
+              <label className="cursor-pointer block">
+                <input
+                  type="file"
+                  accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => {
+                    const files = e.target.files;
+                    if (files) {
+                      toast.info(`${files.length} fișier(e) selectat(e)`);
+                    }
+                  }}
+                />
+                <div className="border-2 border-dashed border-muted-foreground/30 rounded-lg p-6 flex flex-col items-center justify-center gap-2 hover:border-primary hover:bg-muted/50 transition-colors">
+                  <Upload className="h-8 w-8 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Click pentru a încărca fișiere</span>
+                  <span className="text-xs text-muted-foreground">Poze, PDF, DOC, XLS (max 10MB)</span>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Acceptă: JPG, PNG, WEBP (max 10MB per fișier)
-                </p>
-              </div>
-
-              {/* Document Upload */}
-              <div className="space-y-2">
-                <Label className="text-xs text-muted-foreground flex items-center gap-1">
-                  <FileText className="h-3 w-3" />
-                  Documente
-                </Label>
-                <label className="cursor-pointer block">
-                  <input
-                    type="file"
-                    accept=".pdf,.doc,.docx,.xls,.xlsx"
-                    multiple
-                    className="hidden"
-                    onChange={(e) => {
-                      const files = e.target.files;
-                      if (files) {
-                        toast.info(`${files.length} document(e) selectat(e)`);
-                      }
-                    }}
-                  />
-                  <div className="border-2 border-dashed border-muted-foreground/30 rounded-lg p-4 flex items-center justify-center gap-2 hover:border-primary hover:bg-muted/50 transition-colors">
-                    <File className="h-5 w-5 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">Încarcă documente (PDF, DOC, XLS)</span>
-                  </div>
-                </label>
-              </div>
+              </label>
             </div>
           </div>
           <DialogFooter>
