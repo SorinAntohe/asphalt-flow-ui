@@ -98,7 +98,7 @@ interface DataTableWrapperProps {
 
 export function DataTableWrapper({ children, className }: DataTableWrapperProps) {
   return (
-    <div className={cn("overflow-x-auto", className)}>
+    <div className={cn("overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0", className)}>
       {children}
     </div>
   );

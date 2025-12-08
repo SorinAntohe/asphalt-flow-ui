@@ -31,12 +31,13 @@ const AlertDialogContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPortal>
     <AlertDialogOverlay className="flex items-center justify-center" />
-    <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+    <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none p-2 sm:p-4">
       <AlertDialogPrimitive.Content
         ref={ref}
         className={cn(
-          "pointer-events-auto z-50 grid w-full max-w-lg gap-4 mx-4",
-          "border border-border/30 bg-background p-6 shadow-2xl rounded-2xl",
+          "pointer-events-auto z-50 grid w-full gap-4",
+          "max-w-[calc(100vw-1rem)] sm:max-w-lg",
+          "border border-border/30 bg-background p-4 sm:p-6 shadow-2xl rounded-xl sm:rounded-2xl",
           "duration-100 ease-out",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
           "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
@@ -56,7 +57,7 @@ const AlertDialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDiv
 AlertDialogHeader.displayName = "AlertDialogHeader";
 
 const AlertDialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)} {...props} />
+  <div className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-2", className)} {...props} />
 );
 AlertDialogFooter.displayName = "AlertDialogFooter";
 
