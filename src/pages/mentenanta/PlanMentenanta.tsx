@@ -1,185 +1,211 @@
-import { useState, useMemo } from "react";
-import { Wrench, Plus, Download, Edit, Trash2 } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { Wrench, Plus, Download, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { DataTablePagination, DataTableColumnHeader, DataTableEmpty } from "@/components/ui/data-table";
+import { FilterableSelect } from "@/components/ui/filterable-select";
 import { exportToCSV } from "@/lib/exportUtils";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
+import { API_BASE_URL } from "@/lib/api";
 
-interface Mentenanta {
+interface PlanMentenanta {
   id: number;
   cod: string;
   denumire: string;
-  serie: string;
-  producator: string;
-  oreFunctionare: number;
-  oreUltimaRevizie: number;
-  dataUrmatoareRevizie: string;
-  servisare: boolean;
-  cost: number | null;
+  dataUltimaRevizie: string;
+  dataRevizieUrmatoare: string;
+  costAproxRevizie: number;
 }
 
-const mockMentenanta: Mentenanta[] = [
-  {
-    id: 1,
-    cod: "EXC-001",
-    denumire: "Excavator Komatsu PC210",
-    serie: "KOM2024-1234",
-    producator: "Komatsu",
-    oreFunctionare: 2450,
-    oreUltimaRevizie: 2200,
-    dataUrmatoareRevizie: "15/01/2026",
-    servisare: true,
-    cost: 2500,
+interface Echipament {
+  cod: string;
+  denumire: string;
+}
+
+// Mock data
+const mockPlanMentenanta: PlanMentenanta[] = [
+  { 
+    id: 1, cod: "ECH-001", denumire: "Stație Asfalt Mobilă 160t/h",
+    dataUltimaRevizie: "15/06/2024", dataRevizieUrmatoare: "15/12/2024", costAproxRevizie: 8500
   },
-  {
-    id: 2,
-    cod: "MIX-001",
-    denumire: "Centrală asfalt Ammann 240t/h",
-    serie: "AMM2023-5678",
-    producator: "Ammann",
-    oreFunctionare: 5200,
-    oreUltimaRevizie: 5000,
-    dataUrmatoareRevizie: "01/02/2026",
-    servisare: false,
-    cost: null,
+  { 
+    id: 2, cod: "ECH-002", denumire: "Încărcător Frontal Cat 966",
+    dataUltimaRevizie: "01/08/2024", dataRevizieUrmatoare: "01/02/2025", costAproxRevizie: 3200
   },
-  {
-    id: 3,
-    cod: "CAM-003",
-    denumire: "Camion MAN TGS 8x4",
-    serie: "MAN2022-9012",
-    producator: "MAN",
-    oreFunctionare: 12500,
-    oreUltimaRevizie: 12000,
-    dataUrmatoareRevizie: "20/12/2025",
-    servisare: true,
-    cost: 3800,
-  },
-  {
-    id: 4,
-    cod: "FIN-001",
-    denumire: "Finișer Vogele Super 1800",
-    serie: "VOG2024-3456",
-    producator: "Vogele",
-    oreFunctionare: 890,
-    oreUltimaRevizie: 750,
-    dataUrmatoareRevizie: "10/03/2026",
-    servisare: false,
-    cost: null,
-  },
-  {
-    id: 5,
-    cod: "COM-001",
-    denumire: "Compactor Bomag BW219",
-    serie: "BOM2023-7890",
-    producator: "Bomag",
-    oreFunctionare: 1650,
-    oreUltimaRevizie: 1500,
-    dataUrmatoareRevizie: "05/01/2026",
-    servisare: true,
-    cost: 1200,
+  { 
+    id: 3, cod: "VEH-001", denumire: "Camion Basculant MAN TGS 8x4",
+    dataUltimaRevizie: "20/09/2024", dataRevizieUrmatoare: "20/03/2025", costAproxRevizie: 2500
   },
 ];
 
 const PlanMentenanta = () => {
-  const [data, setData] = useState<Mentenanta[]>(mockMentenanta);
+  const [data, setData] = useState<PlanMentenanta[]>(mockPlanMentenanta);
+  const [echipamente, setEchipamente] = useState<Echipament[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<Mentenanta | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<PlanMentenanta | null>(null);
+  
+  // Sorting & Filters
+  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [columnFilters, setColumnFilters] = useState<Record<string, string>>({});
+  
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   
   // Form state
   const [formData, setFormData] = useState({
     cod: "",
     denumire: "",
-    serie: "",
-    producator: "",
-    oreFunctionare: "",
-    oreUltimaRevizie: "",
-    dataUrmatoareRevizie: "",
-    servisare: false,
-    cost: "",
+    dataUltimaRevizie: "",
+    dataRevizieUrmatoare: "",
+    costAproxRevizie: "",
   });
 
+  // Fetch echipamente for dropdown
+  useEffect(() => {
+    const fetchEchipamente = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/mentenanta/returneaza/echipamente`);
+        if (response.ok) {
+          const result = await response.json();
+          const mapped = result.map((item: any) => ({
+            cod: item.cod || item.cod_echipament || "",
+            denumire: item.denumire || ""
+          }));
+          setEchipamente(mapped);
+        }
+      } catch (error) {
+        console.error("Error fetching echipamente:", error);
+      }
+    };
+    fetchEchipamente();
+  }, []);
+
+  const echipamenteOptions = useMemo(() => 
+    echipamente.map(e => ({ value: e.cod, label: `${e.cod} - ${e.denumire}` })),
+    [echipamente]
+  );
+
+  // When cod changes, auto-populate denumire
+  const handleCodChange = (cod: string) => {
+    setFormData(prev => ({ ...prev, cod }));
+    const found = echipamente.find(e => e.cod === cod);
+    if (found) {
+      setFormData(prev => ({ ...prev, denumire: found.denumire }));
+    }
+  };
+
+  // Filtering and sorting
+  const filteredData = useMemo(() => {
+    let result = [...data];
+    
+    Object.entries(columnFilters).forEach(([key, value]) => {
+      if (value) {
+        result = result.filter(item => 
+          String(item[key as keyof PlanMentenanta]).toLowerCase().includes(value.toLowerCase())
+        );
+      }
+    });
+    
+    if (sortKey) {
+      result.sort((a, b) => {
+        const aVal = a[sortKey as keyof PlanMentenanta];
+        const bVal = b[sortKey as keyof PlanMentenanta];
+        if (typeof aVal === "number" && typeof bVal === "number") {
+          return sortDirection === "asc" ? aVal - bVal : bVal - aVal;
+        }
+        return sortDirection === "asc" 
+          ? String(aVal).localeCompare(String(bVal))
+          : String(bVal).localeCompare(String(aVal));
+      });
+    }
+    
+    return result;
+  }, [data, columnFilters, sortKey, sortDirection]);
+
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredData.slice(start, start + itemsPerPage);
+  }, [filteredData, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+  const handleSort = (key: string, direction: "asc" | "desc") => {
+    setSortKey(key);
+    setSortDirection(direction);
+  };
+
+  const handleFilter = (key: string, value: string) => {
+    setColumnFilters(prev => ({ ...prev, [key]: value }));
+    setCurrentPage(1);
+  };
+
+  const handleRowClick = (item: PlanMentenanta) => {
+    setSelectedItem(item);
+    setIsDetailOpen(true);
+  };
+
   const handleExport = () => {
-    const exportData = data.map(item => ({
-      cod: item.cod,
-      denumire: item.denumire,
-      serie: item.serie,
-      producator: item.producator,
-      ore_functionare: item.oreFunctionare,
-      ore_ultima_revizie: item.oreUltimaRevizie,
-      data_urmatoare_revizie: item.dataUrmatoareRevizie,
-      servisare: item.servisare ? "Da" : "Nu",
-      cost: item.cost ?? "",
-    }));
-
-    const columns = [
-      { key: "cod" as const, label: "Cod" },
-      { key: "denumire" as const, label: "Denumire" },
-      { key: "serie" as const, label: "Serie" },
-      { key: "producator" as const, label: "Producător" },
-      { key: "ore_functionare" as const, label: "Ore Funcționare" },
-      { key: "ore_ultima_revizie" as const, label: "Ore Ultimă Revizie" },
-      { key: "data_urmatoare_revizie" as const, label: "Data Următoare Revizie" },
-      { key: "servisare" as const, label: "Servisare" },
-      { key: "cost" as const, label: "Cost" },
-    ];
-
-    exportToCSV(exportData, "plan_mentenanta", columns);
+    exportToCSV(filteredData, "plan_mentenanta", [
+      { key: "cod", label: "Cod" },
+      { key: "denumire", label: "Denumire" },
+      { key: "dataUltimaRevizie", label: "Data Ultima Revizie" },
+      { key: "dataRevizieUrmatoare", label: "Data Revizie Următoare" },
+      { key: "costAproxRevizie", label: "Cost Aprox. Revizie (RON)" },
+    ]);
+    toast.success("Export realizat cu succes");
   };
 
   const resetForm = () => {
     setFormData({
       cod: "",
       denumire: "",
-      serie: "",
-      producator: "",
-      oreFunctionare: "",
-      oreUltimaRevizie: "",
-      dataUrmatoareRevizie: "",
-      servisare: false,
-      cost: "",
+      dataUltimaRevizie: "",
+      dataRevizieUrmatoare: "",
+      costAproxRevizie: "",
     });
   };
 
   const handleAddSubmit = () => {
-    const newItem: Mentenanta = {
-      id: Math.max(...data.map(d => d.id)) + 1,
+    if (!formData.cod || !formData.denumire) {
+      toast.error("Selectați un echipament");
+      return;
+    }
+    const newItem: PlanMentenanta = {
+      id: data.length > 0 ? Math.max(...data.map(d => d.id)) + 1 : 1,
       cod: formData.cod,
       denumire: formData.denumire,
-      serie: formData.serie,
-      producator: formData.producator,
-      oreFunctionare: Number(formData.oreFunctionare),
-      oreUltimaRevizie: Number(formData.oreUltimaRevizie),
-      dataUrmatoareRevizie: formData.dataUrmatoareRevizie,
-      servisare: formData.servisare,
-      cost: formData.servisare ? Number(formData.cost) : null,
+      dataUltimaRevizie: formData.dataUltimaRevizie,
+      dataRevizieUrmatoare: formData.dataRevizieUrmatoare,
+      costAproxRevizie: parseFloat(formData.costAproxRevizie) || 0,
     };
     setData(prev => [...prev, newItem]);
     setIsAddDialogOpen(false);
     resetForm();
-    toast({ title: "Succes", description: "Înregistrare adăugată cu succes." });
+    toast.success("Plan mentenanță adăugat cu succes");
   };
 
-  const handleOpenEdit = (item: Mentenanta) => {
-    setSelectedItem(item);
-    setFormData({
-      cod: item.cod,
-      denumire: item.denumire,
-      serie: item.serie,
-      producator: item.producator,
-      oreFunctionare: String(item.oreFunctionare),
-      oreUltimaRevizie: String(item.oreUltimaRevizie),
-      dataUrmatoareRevizie: item.dataUrmatoareRevizie,
-      servisare: item.servisare,
-      cost: item.cost !== null ? String(item.cost) : "",
-    });
-    setIsEditDialogOpen(true);
+  const handleOpenEdit = () => {
+    if (selectedItem) {
+      setFormData({
+        cod: selectedItem.cod,
+        denumire: selectedItem.denumire,
+        dataUltimaRevizie: selectedItem.dataUltimaRevizie,
+        dataRevizieUrmatoare: selectedItem.dataRevizieUrmatoare,
+        costAproxRevizie: String(selectedItem.costAproxRevizie),
+      });
+      setIsDetailOpen(false);
+      setIsEditDialogOpen(true);
+    }
   };
 
   const handleEditSubmit = () => {
@@ -191,24 +217,20 @@ const PlanMentenanta = () => {
               ...item,
               cod: formData.cod,
               denumire: formData.denumire,
-              serie: formData.serie,
-              producator: formData.producator,
-              oreFunctionare: Number(formData.oreFunctionare),
-              oreUltimaRevizie: Number(formData.oreUltimaRevizie),
-              dataUrmatoareRevizie: formData.dataUrmatoareRevizie,
-              servisare: formData.servisare,
-              cost: formData.servisare ? Number(formData.cost) : null,
+              dataUltimaRevizie: formData.dataUltimaRevizie,
+              dataRevizieUrmatoare: formData.dataRevizieUrmatoare,
+              costAproxRevizie: parseFloat(formData.costAproxRevizie) || 0,
             }
           : item
       )
     );
     setIsEditDialogOpen(false);
     resetForm();
-    toast({ title: "Succes", description: "Înregistrare actualizată cu succes." });
+    toast.success("Plan mentenanță actualizat cu succes");
   };
 
-  const handleOpenDelete = (item: Mentenanta) => {
-    setSelectedItem(item);
+  const handleOpenDelete = () => {
+    setIsDetailOpen(false);
     setIsDeleteDialogOpen(true);
   };
 
@@ -217,112 +239,8 @@ const PlanMentenanta = () => {
     setData(prev => prev.filter(item => item.id !== selectedItem.id));
     setIsDeleteDialogOpen(false);
     setSelectedItem(null);
-    toast({ title: "Succes", description: "Înregistrare ștearsă cu succes." });
+    toast.success("Plan mentenanță șters cu succes");
   };
-
-  const renderForm = () => (
-    <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="grid gap-2">
-          <Label htmlFor="cod">Cod</Label>
-          <Input
-            id="cod"
-            value={formData.cod}
-            onChange={e => setFormData(prev => ({ ...prev, cod: e.target.value }))}
-            placeholder="ex: EXC-001"
-          />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="denumire">Denumire</Label>
-          <Input
-            id="denumire"
-            value={formData.denumire}
-            onChange={e => setFormData(prev => ({ ...prev, denumire: e.target.value }))}
-            placeholder="ex: Excavator Komatsu PC210"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="grid gap-2">
-          <Label htmlFor="serie">Serie</Label>
-          <Input
-            id="serie"
-            value={formData.serie}
-            onChange={e => setFormData(prev => ({ ...prev, serie: e.target.value }))}
-            placeholder="ex: KOM2024-1234"
-          />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="producator">Producător</Label>
-          <Input
-            id="producator"
-            value={formData.producator}
-            onChange={e => setFormData(prev => ({ ...prev, producator: e.target.value }))}
-            placeholder="ex: Komatsu"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="grid gap-2">
-          <Label htmlFor="oreFunctionare">Ore Funcționare</Label>
-          <Input
-            id="oreFunctionare"
-            type="number"
-            value={formData.oreFunctionare}
-            onChange={e => setFormData(prev => ({ ...prev, oreFunctionare: e.target.value }))}
-            placeholder="ex: 2450"
-          />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="oreUltimaRevizie">Ore Ultimă Revizie</Label>
-          <Input
-            id="oreUltimaRevizie"
-            type="number"
-            value={formData.oreUltimaRevizie}
-            onChange={e => setFormData(prev => ({ ...prev, oreUltimaRevizie: e.target.value }))}
-            placeholder="ex: 2200"
-          />
-        </div>
-      </div>
-
-      <div className="grid gap-2">
-        <Label htmlFor="dataUrmatoareRevizie">Data Următoare Revizie</Label>
-        <Input
-          id="dataUrmatoareRevizie"
-          value={formData.dataUrmatoareRevizie}
-          onChange={e => setFormData(prev => ({ ...prev, dataUrmatoareRevizie: e.target.value }))}
-          placeholder="ex: 15/01/2026"
-        />
-      </div>
-
-      <div className="flex items-center justify-between gap-4 p-4 rounded-lg bg-muted/50">
-        <div className="grid gap-1">
-          <Label htmlFor="servisare">Servisare</Label>
-          <p className="text-sm text-muted-foreground">Activează dacă echipamentul necesită servisare</p>
-        </div>
-        <Switch
-          id="servisare"
-          checked={formData.servisare}
-          onCheckedChange={checked => setFormData(prev => ({ ...prev, servisare: checked }))}
-        />
-      </div>
-
-      {formData.servisare && (
-        <div className="grid gap-2">
-          <Label htmlFor="cost">Cost Servisare (RON)</Label>
-          <Input
-            id="cost"
-            type="number"
-            value={formData.cost}
-            onChange={e => setFormData(prev => ({ ...prev, cost: e.target.value }))}
-            placeholder="ex: 2500"
-          />
-        </div>
-      )}
-    </div>
-  );
 
   return (
     <div className="space-y-6">
@@ -336,31 +254,213 @@ const PlanMentenanta = () => {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => { resetForm(); setIsAddDialogOpen(true); }} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Adaugă
-          </Button>
           <Button variant="outline" onClick={handleExport} disabled={data.length === 0} className="gap-2">
             <Download className="h-4 w-4" />
             Export
           </Button>
+          <Button onClick={() => { resetForm(); setIsAddDialogOpen(true); }} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Adaugă
+          </Button>
         </div>
       </div>
 
-      {/* Empty State / Content Placeholder */}
-      <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed rounded-lg">
-        <Wrench className="h-12 w-12 text-muted-foreground/50 mb-4" />
-        <h3 className="text-lg font-medium text-foreground">Plan Mentenanță</h3>
-        <p className="text-muted-foreground mt-1">Funcționalitate în dezvoltare</p>
-      </div>
+      {/* Table */}
+      <Card>
+        <CardContent className="pt-4">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Cod"
+                      sortKey="cod"
+                      currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
+                      filterValue={columnFilters.cod || ""}
+                      onSort={handleSort}
+                      onFilterChange={(value) => handleFilter("cod", value)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Denumire"
+                      sortKey="denumire"
+                      currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
+                      filterValue={columnFilters.denumire || ""}
+                      onSort={handleSort}
+                      onFilterChange={(value) => handleFilter("denumire", value)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Data Ultima Revizie"
+                      sortKey="dataUltimaRevizie"
+                      currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
+                      filterValue={columnFilters.dataUltimaRevizie || ""}
+                      onSort={handleSort}
+                      onFilterChange={(value) => handleFilter("dataUltimaRevizie", value)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Data Revizie Următoare"
+                      sortKey="dataRevizieUrmatoare"
+                      currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
+                      filterValue={columnFilters.dataRevizieUrmatoare || ""}
+                      onSort={handleSort}
+                      onFilterChange={(value) => handleFilter("dataRevizieUrmatoare", value)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Cost Aprox. Revizie"
+                      sortKey="costAproxRevizie"
+                      currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
+                      filterValue={columnFilters.costAproxRevizie || ""}
+                      onSort={handleSort}
+                      onFilterChange={(value) => handleFilter("costAproxRevizie", value)}
+                    />
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {paginatedData.length === 0 ? (
+                  <DataTableEmpty colSpan={5} message="Nu există planuri de mentenanță" />
+                ) : (
+                  paginatedData.map(item => (
+                    <TableRow 
+                      key={item.id} 
+                      className="cursor-pointer hover:bg-muted/50"
+                      onClick={() => handleRowClick(item)}
+                    >
+                      <TableCell className="font-medium">{item.cod}</TableCell>
+                      <TableCell>{item.denumire}</TableCell>
+                      <TableCell>{item.dataUltimaRevizie}</TableCell>
+                      <TableCell>{item.dataRevizieUrmatoare}</TableCell>
+                      <TableCell>{item.costAproxRevizie.toLocaleString()} RON</TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+          
+          <div className="mt-4">
+            <DataTablePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={filteredData.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+              onItemsPerPageChange={(value) => { setItemsPerPage(value); setCurrentPage(1); }}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Detail Dialog */}
+      <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+        <DialogContent className="max-w-lg" hideCloseButton>
+          {selectedItem && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Wrench className="h-5 w-5" />
+                  {selectedItem.cod}
+                </DialogTitle>
+                <DialogDescription>{selectedItem.denumire}</DialogDescription>
+              </DialogHeader>
+              
+              <div className="grid grid-cols-2 gap-4 py-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Cod</p>
+                  <p className="font-medium">{selectedItem.cod}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Denumire</p>
+                  <p className="font-medium">{selectedItem.denumire}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Data Ultima Revizie</p>
+                  <p className="font-medium">{selectedItem.dataUltimaRevizie || "-"}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Data Revizie Următoare</p>
+                  <p className="font-medium">{selectedItem.dataRevizieUrmatoare || "-"}</p>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-sm text-muted-foreground">Cost Aprox. Revizie</p>
+                  <p className="font-medium">{selectedItem.costAproxRevizie.toLocaleString()} RON</p>
+                </div>
+              </div>
+
+              <DialogFooter className="gap-2">
+                <Button variant="destructive" onClick={handleOpenDelete} className="gap-2">
+                  <Trash2 className="h-4 w-4" />
+                  Șterge
+                </Button>
+                <Button onClick={handleOpenEdit} className="gap-2">
+                  <Pencil className="h-4 w-4" />
+                  Editează
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Add Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent className="max-w-lg" hideCloseButton>
           <DialogHeader>
-            <DialogTitle>Adaugă Înregistrare</DialogTitle>
+            <DialogTitle>Adaugă Plan Mentenanță</DialogTitle>
+            <DialogDescription>Selectați echipamentul și completați datele de revizie</DialogDescription>
           </DialogHeader>
-          {renderForm()}
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label>Echipament *</Label>
+              <FilterableSelect
+                options={echipamenteOptions}
+                value={formData.cod}
+                onValueChange={handleCodChange}
+                placeholder="Selectați echipament..."
+              />
+            </div>
+            {formData.denumire && (
+              <div className="space-y-2">
+                <Label>Denumire</Label>
+                <Input value={formData.denumire} disabled className="bg-muted" />
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Data Ultima Revizie</Label>
+                <Input 
+                  placeholder="dd/mm/yyyy"
+                  value={formData.dataUltimaRevizie}
+                  onChange={(e) => setFormData(prev => ({ ...prev, dataUltimaRevizie: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Data Revizie Următoare</Label>
+                <Input 
+                  placeholder="dd/mm/yyyy"
+                  value={formData.dataRevizieUrmatoare}
+                  onChange={(e) => setFormData(prev => ({ ...prev, dataRevizieUrmatoare: e.target.value }))}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Cost Aprox. Revizie (RON)</Label>
+              <Input 
+                type="number"
+                placeholder="ex: 5000"
+                value={formData.costAproxRevizie}
+                onChange={(e) => setFormData(prev => ({ ...prev, costAproxRevizie: e.target.value }))}
+              />
+            </div>
+          </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Anulează</Button>
             <Button onClick={handleAddSubmit}>Adaugă</Button>
@@ -372,9 +472,47 @@ const PlanMentenanta = () => {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="max-w-lg" hideCloseButton>
           <DialogHeader>
-            <DialogTitle>Editează Înregistrare</DialogTitle>
+            <DialogTitle>Editează Plan Mentenanță</DialogTitle>
           </DialogHeader>
-          {renderForm()}
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Cod</Label>
+                <Input value={formData.cod} disabled className="bg-muted" />
+              </div>
+              <div className="space-y-2">
+                <Label>Denumire</Label>
+                <Input value={formData.denumire} disabled className="bg-muted" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Data Ultima Revizie</Label>
+                <Input 
+                  placeholder="dd/mm/yyyy"
+                  value={formData.dataUltimaRevizie}
+                  onChange={(e) => setFormData(prev => ({ ...prev, dataUltimaRevizie: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Data Revizie Următoare</Label>
+                <Input 
+                  placeholder="dd/mm/yyyy"
+                  value={formData.dataRevizieUrmatoare}
+                  onChange={(e) => setFormData(prev => ({ ...prev, dataRevizieUrmatoare: e.target.value }))}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Cost Aprox. Revizie (RON)</Label>
+              <Input 
+                type="number"
+                placeholder="ex: 5000"
+                value={formData.costAproxRevizie}
+                onChange={(e) => setFormData(prev => ({ ...prev, costAproxRevizie: e.target.value }))}
+              />
+            </div>
+          </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Anulează</Button>
             <Button onClick={handleEditSubmit}>Salvează</Button>
@@ -388,7 +526,7 @@ const PlanMentenanta = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmare ștergere</AlertDialogTitle>
             <AlertDialogDescription>
-              Ești sigur că vrei să ștergi înregistrarea "{selectedItem?.cod}"? Această acțiune nu poate fi anulată.
+              Ești sigur că vrei să ștergi planul de mentenanță pentru "{selectedItem?.cod}"? Această acțiune nu poate fi anulată.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
