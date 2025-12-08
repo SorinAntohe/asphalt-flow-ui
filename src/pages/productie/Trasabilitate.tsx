@@ -163,7 +163,7 @@ const Trasabilitate = () => {
           <GitBranch className="h-8 w-8 text-primary" />
           <div>
             <h1 className="text-2xl font-bold text-foreground">Trasabilitate</h1>
-            <p className="text-muted-foreground">Urmărire genealogică lot → produs → client</p>
+            <p className="text-muted-foreground">Urmărire genealogică: Materie primă → Rețetă → Lot → Produs finit</p>
           </div>
         </div>
         {selectedLot && trasabilitateResult && (
@@ -243,11 +243,11 @@ const Trasabilitate = () => {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col lg:flex-row items-stretch gap-4">
-                  {/* Recepții Loturi */}
+                  {/* Materii Prime */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-3">
                       <Package className="h-5 w-5 text-blue-400" />
-                      <span className="font-medium text-foreground">Comandă Materii Prime</span>
+                      <span className="font-medium text-foreground">Materii Prime</span>
                     </div>
                     <div className="space-y-2">
                       {trasabilitateResult.receptiiLoturi.map(r => (
@@ -284,11 +284,11 @@ const Trasabilitate = () => {
                     <ChevronRight className="h-6 w-6 text-muted-foreground rotate-90 lg:hidden" />
                   </div>
 
-                  {/* Loturi Producție */}
+                  {/* Lot */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-3">
                       <GitBranch className="h-5 w-5 text-emerald-400" />
-                      <span className="font-medium text-foreground">Loturi Producție</span>
+                      <span className="font-medium text-foreground">Lot</span>
                     </div>
                     <div className="space-y-2">
                       {trasabilitateResult.loturiProductie.map(lp => {
@@ -317,11 +317,11 @@ const Trasabilitate = () => {
                     <ChevronRight className="h-6 w-6 text-muted-foreground rotate-90 lg:hidden" />
                   </div>
 
-                  {/* Livrări / Clienți */}
+                  {/* Produs Finit */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-3">
                       <Truck className="h-5 w-5 text-amber-400" />
-                      <span className="font-medium text-foreground">Comandă Client</span>
+                      <span className="font-medium text-foreground">Produs Finit</span>
                     </div>
                     {trasabilitateResult.livrari.length > 0 ? (
                       <div className="space-y-2">
@@ -348,10 +348,10 @@ const Trasabilitate = () => {
 
             {/* Detailed Tables */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {/* Recepții Table */}
+              {/* Materii Prime Table */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Comandă Materii Prime</CardTitle>
+                  <CardTitle className="text-base">Materii Prime</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ScrollArea className="h-[200px]">
