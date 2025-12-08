@@ -194,10 +194,16 @@ const OrdineProductie = () => {
 
     const fetchComenzi = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/comercial/returneaza/comenzi_client`);
+        const response = await fetch(`${API_BASE_URL}/productie/returneaza/comenzi`);
         if (response.ok) {
           const data = await response.json();
-          setComenziDisponibile(data.map((c: { cod: string }) => c.cod));
+          // API returns array of cod_comanda values or objects with cod_comanda field
+          const coduri = Array.isArray(data) 
+            ? data.map((c: string | { cod_comanda: string }) => 
+                typeof c === 'string' ? c : c.cod_comanda
+              ).filter(Boolean)
+            : [];
+          setComenziDisponibile(coduri);
         }
       } catch (error) {
         console.error("Error fetching comenzi:", error);
