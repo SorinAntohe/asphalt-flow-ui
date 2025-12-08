@@ -216,27 +216,34 @@ const Loturi = () => {
     fetchOperatori();
   }, []);
 
-  // Fetch materiale
+  // Fetch produse based on selected cod_ordin
   useEffect(() => {
-    const fetchMateriale = async () => {
+    const fetchProdusePtCodOrdin = async () => {
+      if (!addFormData.cod_ordin) {
+        setMaterialeDisponibile([]);
+        return;
+      }
       try {
-        const response = await fetch(`${API_BASE_URL}/liste/returneaza/produse_finite`);
+        const response = await fetch(`${API_BASE_URL}/productie/returneaza/produse_pt_cod_ordin/${addFormData.cod_ordin}`);
         if (response.ok) {
           const data = await response.json();
           const options = Array.isArray(data) 
             ? data.map((m: any) => ({
-                value: m.denumire || m.material || m,
-                label: m.denumire || m.material || m
+                value: m.produs || m.denumire || m.material || m,
+                label: m.produs || m.denumire || m.material || m
               }))
             : [];
           setMaterialeDisponibile(options);
+          // Reset material selection when order changes
+          setAddFormData(prev => ({ ...prev, material: "" }));
         }
       } catch (error) {
-        console.error("Error fetching materiale:", error);
+        console.error("Error fetching produse pt cod ordin:", error);
+        setMaterialeDisponibile([]);
       }
     };
-    fetchMateriale();
-  }, []);
+    fetchProdusePtCodOrdin();
+  }, [addFormData.cod_ordin]);
 
 
   // Stats
