@@ -68,6 +68,8 @@ const Trasabilitate = () => {
   const [selectedLot, setSelectedLot] = useState<string | null>(null);
   const [availableLots, setAvailableLots] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [trasabilitateResult, setTrasabilitateResult] = useState<TrasabilitateData | null>(null);
+  const [isLoadingTrasabilitate, setIsLoadingTrasabilitate] = useState(false);
 
   // Fetch lots from API
   useEffect(() => {
@@ -90,15 +92,54 @@ const Trasabilitate = () => {
     fetchLots();
   }, []);
 
-  const trasabilitateResult = useMemo(() => {
-    if (!selectedLot) return null;
-    // Return a placeholder structure - full traceability data would need separate API calls
-    return {
-      comenziClient: [],
-      reteta: { id: "", nume: selectedLot, produs: "" },
-      ordinProductie: { id: "", cod: "", produs: "", cantitate: 0, data: "" },
-      loturiProductie: [{ id: "1", codLot: selectedLot, ordin: "", cantitate: 0, data: "", status: "În așteptare" as const }]
+  // Fetch traceability data when a lot is selected
+  useEffect(() => {
+    if (!selectedLot) {
+      setTrasabilitateResult(null);
+      return;
+    }
+
+    const fetchTrasabilitate = async () => {
+      try {
+        setIsLoadingTrasabilitate(true);
+        const response = await fetch(`${API_BASE_URL}/productie/returneaza/trasabilitate/${encodeURIComponent(selectedLot)}`);
+        if (!response.ok) throw new Error("Failed to fetch traceability data");
+        const data = await response.json();
+        
+        // Map API response to TrasabilitateData structure
+        setTrasabilitateResult({
+          comenziClient: data.comenzi_client || data.comenziClient || [],
+          reteta: {
+            id: data.reteta?.id || "",
+            nume: data.reteta?.nume || data.reteta?.cod_reteta || "",
+            produs: data.reteta?.produs || ""
+          },
+          ordinProductie: {
+            id: data.ordin_productie?.id || data.ordinProductie?.id || "",
+            cod: data.ordin_productie?.cod || data.ordin_productie?.cod_ordin || data.ordinProductie?.cod || "",
+            produs: data.ordin_productie?.produs || data.ordinProductie?.produs || "",
+            cantitate: parseFloat(data.ordin_productie?.cantitate || data.ordinProductie?.cantitate) || 0,
+            data: data.ordin_productie?.data || data.ordinProductie?.data || ""
+          },
+          loturiProductie: (data.loturi_productie || data.loturiProductie || [data]).map((lp: any) => ({
+            id: lp.id || "1",
+            codLot: lp.cod_lot || lp.codLot || selectedLot,
+            ordin: lp.cod_ordin || lp.ordin || "",
+            cantitate: parseFloat(lp.cantitate) || 0,
+            data: lp.data_ora || lp.data || "",
+            status: lp.verdict_qc || lp.status || "În așteptare"
+          }))
+        });
+      } catch (error) {
+        console.error("Error fetching traceability:", error);
+        toast.error("Eroare la încărcarea trasabilității");
+        setTrasabilitateResult(null);
+      } finally {
+        setIsLoadingTrasabilitate(false);
+      }
     };
+
+    fetchTrasabilitate();
   }, [selectedLot]);
 
   const filteredLots = useMemo(() => {
