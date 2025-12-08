@@ -16,12 +16,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { exportToCSV } from "@/lib/exportUtils";
 
-interface ReceptieLot {
+interface ComandaMateriePrima {
   id: string;
-  codLot: string;
+  codComanda: string;
   material: string;
   furnizor: string;
-  data: string;
   cantitate: number;
 }
 
@@ -40,12 +39,12 @@ interface LotProducție {
   status: "Conform" | "Neconform" | "În așteptare";
 }
 
-interface Livrare {
+interface ComandaProdusFinit {
   id: string;
-  nrAviz: string;
+  codComanda: string;
   client: string;
+  produs: string;
   cantitate: number;
-  data: string;
 }
 
 interface OrdinProductie {
@@ -57,56 +56,56 @@ interface OrdinProductie {
 }
 
 interface TrasabilitateData {
-  receptiiLoturi: ReceptieLot[];
+  comenziMateriePrima: ComandaMateriePrima[];
   reteta: Reteta;
   ordinProductie: OrdinProductie;
   loturiProductie: LotProducție[];
-  livrari: Livrare[];
+  comenziProdusFinit: ComandaProdusFinit[];
 }
 
 // Mock data for traceability
 const mockTrasabilitateData: Record<string, TrasabilitateData> = {
   "LOT-2024-001": {
-    receptiiLoturi: [
-      { id: "R1", codLot: "RM-001", material: "Bitum 50/70", furnizor: "Petrobit SRL", data: "28/11/2024", cantitate: 25 },
-      { id: "R2", codLot: "RM-002", material: "0/4 NAT", furnizor: "Cariera Nord", data: "28/11/2024", cantitate: 150 },
-      { id: "R3", codLot: "RM-003", material: "4/8 CONC", furnizor: "Cariera Nord", data: "28/11/2024", cantitate: 100 },
+    comenziMateriePrima: [
+      { id: "C1", codComanda: "CMP-2024-101", material: "Bitum 50/70", furnizor: "Petrobit SRL", cantitate: 25 },
+      { id: "C2", codComanda: "CMP-2024-102", material: "0/4 NAT", furnizor: "Cariera Nord", cantitate: 150 },
+      { id: "C3", codComanda: "CMP-2024-103", material: "4/8 CONC", furnizor: "Cariera Nord", cantitate: 100 },
     ],
     reteta: { id: "RET-1", nume: "BA 16 Standard", produs: "Beton Asfaltic BA 16" },
     ordinProductie: { id: "OP1", cod: "OP-2024-156", produs: "BA 16", cantitate: 250, data: "29/11/2024" },
     loturiProductie: [
       { id: "P1", codLot: "LOT-2024-001", ordin: "OP-2024-156", cantitate: 250, data: "29/11/2024", status: "Conform" },
     ],
-    livrari: [
-      { id: "L1", nrAviz: "AVZ-001234", client: "Primăria Sector 3", cantitate: 100, data: "29/11/2024" },
-      { id: "L2", nrAviz: "AVZ-001235", client: "CNAIR SA", cantitate: 150, data: "29/11/2024" },
+    comenziProdusFinit: [
+      { id: "CPF1", codComanda: "CPF-2024-201", client: "Primăria Sector 3", produs: "BA 16", cantitate: 100 },
+      { id: "CPF2", codComanda: "CPF-2024-202", client: "CNAIR SA", produs: "BA 16", cantitate: 150 },
     ]
   },
   "LOT-2024-002": {
-    receptiiLoturi: [
-      { id: "R4", codLot: "RM-004", material: "Bitum 50/70", furnizor: "Petrobit SRL", data: "27/11/2024", cantitate: 30 },
-      { id: "R5", codLot: "RM-005", material: "8/16 CRIBLURI", furnizor: "Agregate Plus", data: "27/11/2024", cantitate: 200 },
+    comenziMateriePrima: [
+      { id: "C4", codComanda: "CMP-2024-104", material: "Bitum 50/70", furnizor: "Petrobit SRL", cantitate: 30 },
+      { id: "C5", codComanda: "CMP-2024-105", material: "8/16 CRIBLURI", furnizor: "Agregate Plus", cantitate: 200 },
     ],
     reteta: { id: "RET-2", nume: "MASF 16 Premium", produs: "Mixtură Asfaltică MASF 16" },
     ordinProductie: { id: "OP2", cod: "OP-2024-157", produs: "MASF 16", cantitate: 180, data: "28/11/2024" },
     loturiProductie: [
       { id: "P2", codLot: "LOT-2024-002", ordin: "OP-2024-157", cantitate: 180, data: "28/11/2024", status: "Neconform" },
     ],
-    livrari: [
-      { id: "L3", nrAviz: "AVZ-001230", client: "Drumuri Locale SRL", cantitate: 180, data: "28/11/2024" },
+    comenziProdusFinit: [
+      { id: "CPF3", codComanda: "CPF-2024-203", client: "Drumuri Locale SRL", produs: "MASF 16", cantitate: 180 },
     ]
   },
   "LOT-2024-003": {
-    receptiiLoturi: [
-      { id: "R6", codLot: "RM-006", material: "Filler", furnizor: "Ciment SA", data: "26/11/2024", cantitate: 15 },
-      { id: "R7", codLot: "RM-007", material: "0/4 CONC", furnizor: "Cariera Sud", data: "26/11/2024", cantitate: 120 },
+    comenziMateriePrima: [
+      { id: "C6", codComanda: "CMP-2024-106", material: "Filler", furnizor: "Ciment SA", cantitate: 15 },
+      { id: "C7", codComanda: "CMP-2024-107", material: "0/4 CONC", furnizor: "Cariera Sud", cantitate: 120 },
     ],
     reteta: { id: "RET-3", nume: "BAD 25 Greu", produs: "Beton Asfaltic Deschis BAD 25" },
     ordinProductie: { id: "OP3", cod: "OP-2024-158", produs: "BAD 25", cantitate: 300, data: "27/11/2024" },
     loturiProductie: [
       { id: "P3", codLot: "LOT-2024-003", ordin: "OP-2024-158", cantitate: 300, data: "27/11/2024", status: "În așteptare" },
     ],
-    livrari: []
+    comenziProdusFinit: []
   }
 };
 
@@ -147,21 +146,21 @@ const Trasabilitate = () => {
   const handleExportImpactClienti = () => {
     if (!trasabilitateResult) return;
     
-    const impactData = trasabilitateResult.livrari.map(l => ({
+    const impactData = trasabilitateResult.comenziProdusFinit.map(c => ({
       lot: selectedLot,
-      nrAviz: l.nrAviz,
-      client: l.client,
-      cantitate: l.cantitate,
-      dataLivrare: l.data,
+      codComanda: c.codComanda,
+      client: c.client,
+      produs: c.produs,
+      cantitate: c.cantitate,
       status: trasabilitateResult.loturiProductie[0]?.status || "N/A"
     }));
 
     exportToCSV(impactData, `impact_clienti_${selectedLot}`, [
       { key: "lot", label: "Lot Produs" },
-      { key: "nrAviz", label: "Nr. Aviz" },
+      { key: "codComanda", label: "Cod Comandă" },
       { key: "client", label: "Client" },
+      { key: "produs", label: "Produs" },
       { key: "cantitate", label: "Cantitate (to)" },
-      { key: "dataLivrare", label: "Data Livrare" },
       { key: "status", label: "Status QC" },
     ]);
     toast.success("Export impact clienți realizat cu succes");
@@ -261,10 +260,10 @@ const Trasabilitate = () => {
                     <div className="w-20 h-20 rounded-full bg-blue-500/20 border-2 border-blue-500 flex items-center justify-center mb-3 shadow-lg shadow-blue-500/20">
                       <Package className="h-8 w-8 text-blue-400" />
                     </div>
-                    <span className="font-semibold text-foreground text-sm">Materii Prime</span>
+                    <span className="font-semibold text-foreground text-sm">Comenzi MP</span>
                     <div className="mt-2 text-center">
                       <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/30">
-                        {trasabilitateResult.receptiiLoturi.length} materiale
+                        {trasabilitateResult.comenziMateriePrima.length} comenzi
                       </Badge>
                     </div>
                   </div>
@@ -338,10 +337,10 @@ const Trasabilitate = () => {
                     <div className="w-20 h-20 rounded-full bg-amber-500/20 border-2 border-amber-500 flex items-center justify-center mb-3 shadow-lg shadow-amber-500/20">
                       <Truck className="h-8 w-8 text-amber-400" />
                     </div>
-                    <span className="font-semibold text-foreground text-sm">Produs Finit</span>
+                    <span className="font-semibold text-foreground text-sm">Comenzi PF</span>
                     <div className="mt-2 text-center">
                       <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/30">
-                        {trasabilitateResult.livrari.length} livrări
+                        {trasabilitateResult.comenziProdusFinit.length} comenzi
                       </Badge>
                     </div>
                   </div>
@@ -349,18 +348,16 @@ const Trasabilitate = () => {
 
                 {/* Details Cards Below */}
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mt-6 pt-6 border-t border-border">
-                  {/* Materii Prime Details */}
                   <div className="space-y-2">
-                    <h4 className="text-xs font-semibold text-blue-400 uppercase tracking-wide">Materii Prime</h4>
-                    {trasabilitateResult.receptiiLoturi.map(r => (
-                      <div key={r.id} className="p-2 rounded-md bg-blue-500/5 border border-blue-500/20 text-xs">
-                        <div className="font-medium text-foreground">{r.codLot}</div>
-                        <div className="text-muted-foreground">{r.material}</div>
-                        <div className="text-muted-foreground">{r.cantitate} to</div>
+                    <h4 className="text-xs font-semibold text-blue-400 uppercase tracking-wide">Comenzi Materie Primă</h4>
+                    {trasabilitateResult.comenziMateriePrima.map(c => (
+                      <div key={c.id} className="p-2 rounded-md bg-blue-500/5 border border-blue-500/20 text-xs">
+                        <div className="font-medium text-foreground">{c.codComanda}</div>
+                        <div className="text-muted-foreground">{c.material}</div>
+                        <div className="text-muted-foreground">{c.furnizor} • {c.cantitate} to</div>
                       </div>
                     ))}
                   </div>
-
                   {/* Rețetă Details */}
                   <div className="space-y-2">
                     <h4 className="text-xs font-semibold text-purple-400 uppercase tracking-wide">Rețetă</h4>
@@ -392,20 +389,20 @@ const Trasabilitate = () => {
                     ))}
                   </div>
 
-                  {/* Produs Finit Details */}
+                  {/* Comenzi Produs Finit Details */}
                   <div className="space-y-2">
-                    <h4 className="text-xs font-semibold text-amber-400 uppercase tracking-wide">Livrări</h4>
-                    {trasabilitateResult.livrari.length > 0 ? (
-                      trasabilitateResult.livrari.map(l => (
-                        <div key={l.id} className="p-2 rounded-md bg-amber-500/5 border border-amber-500/20 text-xs">
-                          <div className="font-medium text-foreground">{l.nrAviz}</div>
-                          <div className="text-muted-foreground">{l.client}</div>
-                          <div className="text-muted-foreground">{l.cantitate} to</div>
+                    <h4 className="text-xs font-semibold text-amber-400 uppercase tracking-wide">Comenzi Produs Finit</h4>
+                    {trasabilitateResult.comenziProdusFinit.length > 0 ? (
+                      trasabilitateResult.comenziProdusFinit.map(c => (
+                        <div key={c.id} className="p-2 rounded-md bg-amber-500/5 border border-amber-500/20 text-xs">
+                          <div className="font-medium text-foreground">{c.codComanda}</div>
+                          <div className="text-muted-foreground">{c.client}</div>
+                          <div className="text-muted-foreground">{c.produs} • {c.cantitate} to</div>
                         </div>
                       ))
                     ) : (
                       <div className="p-2 rounded-md bg-muted/30 border border-border text-xs text-muted-foreground text-center">
-                        Nicio livrare
+                        Nicio comandă
                       </div>
                     )}
                   </div>
@@ -415,17 +412,17 @@ const Trasabilitate = () => {
 
             {/* Detailed Tables */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {/* Materii Prime Table */}
+              {/* Comenzi Materie Prima Table */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Materii Prime</CardTitle>
+                  <CardTitle className="text-base">Comenzi Materie Primă</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ScrollArea className="h-[200px]">
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Cod Lot</TableHead>
+                          <TableHead>Cod Comandă</TableHead>
                           <TableHead>Material</TableHead>
                           <TableHead>Furnizor</TableHead>
                           <TableHead className="text-right">Cantitate</TableHead>
@@ -438,20 +435,20 @@ const Trasabilitate = () => {
                 </CardContent>
               </Card>
 
-              {/* Livrări Table */}
+              {/* Comenzi Produs Finit Table */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Livrări efectuate</CardTitle>
+                  <CardTitle className="text-base">Comenzi Produs Finit</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ScrollArea className="h-[200px]">
-                    {trasabilitateResult.livrari.length > 0 ? (
+                    {trasabilitateResult.comenziProdusFinit.length > 0 ? (
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Nr. Aviz</TableHead>
+                            <TableHead>Cod Comandă</TableHead>
                             <TableHead>Client</TableHead>
-                            <TableHead>Data</TableHead>
+                            <TableHead>Produs</TableHead>
                             <TableHead className="text-right">Cantitate</TableHead>
                           </TableRow>
                         </TableHeader>
@@ -460,7 +457,7 @@ const Trasabilitate = () => {
                       </Table>
                     ) : (
                       <div className="flex items-center justify-center h-full text-muted-foreground">
-                        Nicio livrare înregistrată pentru acest lot
+                        Nicio comandă produs finit înregistrată pentru acest lot
                       </div>
                     )}
                   </ScrollArea>
