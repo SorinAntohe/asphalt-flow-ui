@@ -140,12 +140,17 @@ const Loturi = () => {
         const response = await fetch(`${API_BASE_URL}/productie/returneaza/coduri_retete`);
         if (response.ok) {
           const data = await response.json();
-          const options = Array.isArray(data) 
-            ? data.map((r: any) => ({
-                value: r.cod_reteta || r,
-                label: r.cod_reteta || r
-              }))
-            : [];
+          const uniqueCodes = new Set<string>();
+          const options: { value: string; label: string }[] = [];
+          if (Array.isArray(data)) {
+            data.forEach((r: any) => {
+              const code = r.cod_reteta || r;
+              if (code && !uniqueCodes.has(code)) {
+                uniqueCodes.add(code);
+                options.push({ value: code, label: code });
+              }
+            });
+          }
           setReteteDisponibile(options);
         }
       } catch (error) {
