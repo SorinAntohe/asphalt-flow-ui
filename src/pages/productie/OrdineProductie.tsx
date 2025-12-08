@@ -90,18 +90,8 @@ interface EstimareMaterial {
   status: "OK" | "NOT OK";
 }
 
-interface EstimareRecipeResult {
-  status_general: "OK" | "NOT OK";
-  materiale: EstimareMaterial[];
-}
-
-// API returns dictionary with recipe codes as keys
+// Direct API response format
 interface EstimareApiResponse {
-  [codReteta: string]: EstimareRecipeResult;
-}
-
-// Aggregated response for UI display
-interface EstimareResponse {
   status_general: "OK" | "NOT OK";
   materiale: EstimareMaterial[];
 }
@@ -142,7 +132,7 @@ const OrdineProductie = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   // Estimare data state
-  const [estimareData, setEstimareData] = useState<EstimareResponse | null>(null);
+  const [estimareData, setEstimareData] = useState<EstimareApiResponse | null>(null);
   const [estimareLoading, setEstimareLoading] = useState(false);
 
   // API data states
@@ -323,30 +313,15 @@ const OrdineProductie = () => {
           
           // Check for error in response
           if ('error' in data) {
-            console.error("API error:", data.error);
+            console.error("API error:", (data as any).error);
             setEstimareData(null);
             return;
           }
           
-          // Aggregate results from all recipes
-          const allMateriale: EstimareMaterial[] = [];
-          let overallStatus: "OK" | "NOT OK" = "OK";
-          
-          for (const codReteta of Object.keys(data)) {
-            const recipeResult = data[codReteta];
-            if (recipeResult) {
-              if (recipeResult.status_general === "NOT OK") {
-                overallStatus = "NOT OK";
-              }
-              if (recipeResult.materiale) {
-                allMateriale.push(...recipeResult.materiale);
-              }
-            }
-          }
-          
+          // Use the direct response format
           setEstimareData({
-            status_general: overallStatus,
-            materiale: allMateriale
+            status_general: data.status_general,
+            materiale: data.materiale || []
           });
         } else {
           console.error("Error fetching estimare:", response.status);
