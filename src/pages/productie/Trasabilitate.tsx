@@ -112,18 +112,21 @@ const Trasabilitate = () => {
         const firstOrdin = ordine[0] || {};
         const detalii = firstOrdin.detalii || [];
         
-        // Extract unique comenzi, retete from all detalii
+        // Extract comenzi from all detalii with cantitati
         const comenziClient: ComandaClient[] = detalii.map((d: any, idx: number) => ({
           id: `CC${idx + 1}`,
           codComanda: d.comenzi_asociate || "",
           client: "",
           produs: d.produse || "",
-          cantitate: 0
+          cantitate: parseFloat(d.cantitati) || 0
         }));
 
         // Get unique retete
         const reteteList = [...new Set(detalii.map((d: any) => d.retete).filter(Boolean))] as string[];
         const produseList = [...new Set(detalii.map((d: any) => d.produse).filter(Boolean))] as string[];
+        
+        // Calculate total quantity
+        const totalCantitate = detalii.reduce((sum: number, d: any) => sum + (parseFloat(d.cantitati) || 0), 0);
 
         setTrasabilitateResult({
           comenziClient,
@@ -136,14 +139,14 @@ const Trasabilitate = () => {
             id: firstOrdin.cod_ordin || "",
             cod: firstOrdin.cod_ordin || "",
             produs: produseList.join(", ") || "",
-            cantitate: 0,
+            cantitate: totalCantitate,
             data: ""
           },
           loturiProductie: [{
             id: "1",
             codLot: data.cod_lot || selectedLot,
             ordin: firstOrdin.cod_ordin || "",
-            cantitate: 0,
+            cantitate: totalCantitate,
             data: "",
             status: "În așteptare" as const
           }]
