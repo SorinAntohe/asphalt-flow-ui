@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { 
   Layers, 
   Plus, 
@@ -42,6 +42,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { toast } from "sonner";
 import { exportToCSV } from "@/lib/exportUtils";
 import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
+import { API_BASE_URL } from "@/lib/api";
+import { FilterableSelect } from "@/components/ui/filterable-select";
 
 // Types
 interface ParametruMasurat {
@@ -95,6 +97,10 @@ const Loturi = () => {
   const [qcVerdict, setQcVerdict] = useState<"Conform" | "Neconform">("Conform");
   const [qcObservatii, setQcObservatii] = useState("");
 
+  // Retete state
+  const [reteteDisponibile, setReteteDisponibile] = useState<{ value: string; label: string }[]>([]);
+  const [selectedReteta, setSelectedReteta] = useState("");
+
   // Filters & Sort
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
@@ -103,6 +109,28 @@ const Loturi = () => {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  // Fetch retete
+  useEffect(() => {
+    const fetchRetete = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/productie/returneaza/retete`);
+        if (response.ok) {
+          const data = await response.json();
+          const options = Array.isArray(data) 
+            ? data.map((r: { cod_reteta: string; denumire?: string }) => ({
+                value: r.cod_reteta,
+                label: r.denumire ? `${r.cod_reteta} - ${r.denumire}` : r.cod_reteta
+              }))
+            : [];
+          setReteteDisponibile(options);
+        }
+      } catch (error) {
+        console.error("Error fetching retete:", error);
+      }
+    };
+    fetchRetete();
+  }, []);
 
   // Stats
   const stats = useMemo(() => {
@@ -799,6 +827,15 @@ const Loturi = () => {
                     <SelectItem value="OP-2024-003">OP-2024-003</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+              <div>
+                <Label>Rețetă</Label>
+                <FilterableSelect
+                  options={reteteDisponibile}
+                  value={selectedReteta}
+                  onValueChange={setSelectedReteta}
+                  placeholder="Selectează rețetă"
+                />
               </div>
               <div>
                 <Label>Cantitate</Label>
