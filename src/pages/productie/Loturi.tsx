@@ -1,29 +1,20 @@
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { 
   Layers, 
   Plus, 
   FileDown, 
   CheckCircle2, 
   XCircle, 
-  AlertTriangle,
   Thermometer,
   Gauge,
   Clock,
-  User,
   FileText,
-  Camera,
   Send,
   Lock,
   Unlock,
   Tag,
-  TrendingUp,
-  TrendingDown,
-  Activity,
   BarChart3,
-  AlertCircle,
   Upload,
-  Image,
-  File,
   X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -46,41 +37,21 @@ import { API_BASE_URL } from "@/lib/api";
 import { FilterableSelect } from "@/components/ui/filterable-select";
 
 // Types
-interface ParametruMasurat {
-  nume: string;
-  valoare: number;
-  unitate: string;
-  tinta: number;
-  tolerantaMinus: number;
-  tolerantaPlus: number;
-  status: "ok" | "warning" | "error";
-}
-
-interface Atasament {
-  id: number;
-  nume: string;
-  tip: "foto" | "document";
-  dataAdaugare: string;
-}
-
 interface Lot {
   id: number;
   codLot: string;
   ordin: string;
   reteta: string;
   cantitate: number;
-  unitateMasura: string;
   dataOra: string;
   operator: string;
-  linie: string;
-  parametri: ParametruMasurat[];
+  temperatura: number;
+  marshall: number;
   verdictQC: "Conform" | "Neconform" | "În așteptare" | "Blocat";
   observatii: string;
-  atasamente: Atasament[];
-  trimisLaQC: boolean;
-  dataQC?: string;
-  inspectorQC?: string;
+  caiFisiere: string;
 }
+
 const verdictConfig: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ReactNode; color: string }> = {
   "Conform": { variant: "default", icon: <CheckCircle2 className="h-3 w-3" />, color: "text-green-600" },
   "Neconform": { variant: "destructive", icon: <XCircle className="h-3 w-3" />, color: "text-red-600" },
@@ -101,6 +72,24 @@ const Loturi = () => {
   const [reteteDisponibile, setReteteDisponibile] = useState<{ value: string; label: string }[]>([]);
   const [selectedReteta, setSelectedReteta] = useState("");
 
+  // Operators state
+  const [operatoriDisponibili, setOperatoriDisponibili] = useState<{ value: string; label: string }[]>([]);
+  const [selectedOperator, setSelectedOperator] = useState("");
+
+  // Add form state
+  const [addFormData, setAddFormData] = useState({
+    cod_ordin: "",
+    cod_reteta: "",
+    cantitate: "",
+    operator: "",
+    temperatura: "",
+    marshall: "",
+    verdict_calitate: "În așteptare",
+    observatii: ""
+  });
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Filters & Sort
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
@@ -110,17 +99,51 @@ const Loturi = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  // Fetch retete
+  // Fetch loturi from API
+  const fetchLoturi = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/productie/returneaza/loturi_telemetrie`);
+      if (response.ok) {
+        const data = await response.json();
+        const mappedData: Lot[] = Array.isArray(data) 
+          ? data.map((item: any) => ({
+              id: item.id,
+              codLot: item.cod_lot || "",
+              ordin: item.cod_ordin || "",
+              reteta: item.cod_reteta || "",
+              cantitate: parseFloat(item.cantitate) || 0,
+              dataOra: item.data_ora || "",
+              operator: item.operator || "",
+              temperatura: parseFloat(item.temperatura) || 0,
+              marshall: parseFloat(item.marshall) || 0,
+              verdictQC: item.verdict_calitate || "În așteptare",
+              observatii: item.observatii || "",
+              caiFisiere: item.cai_fisiere || ""
+            }))
+          : [];
+        setLoturi(mappedData);
+      }
+    } catch (error) {
+      console.error("Error fetching loturi:", error);
+      toast.error("Eroare la încărcarea loturilor");
+    }
+  };
+
+  useEffect(() => {
+    fetchLoturi();
+  }, []);
+
+  // Fetch retete (coduri_retete)
   useEffect(() => {
     const fetchRetete = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/productie/returneaza/retete`);
+        const response = await fetch(`${API_BASE_URL}/productie/returneaza/coduri_retete`);
         if (response.ok) {
           const data = await response.json();
           const options = Array.isArray(data) 
-            ? data.map((r: { cod_reteta: string; denumire?: string }) => ({
-                value: r.cod_reteta,
-                label: r.denumire ? `${r.cod_reteta} - ${r.denumire}` : r.cod_reteta
+            ? data.map((r: any) => ({
+                value: r.cod_reteta || r,
+                label: r.cod_reteta || r
               }))
             : [];
           setReteteDisponibile(options);
@@ -132,15 +155,122 @@ const Loturi = () => {
     fetchRetete();
   }, []);
 
+  // Fetch operators
+  useEffect(() => {
+    const fetchOperatori = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/productie/returneaza/operator`);
+        if (response.ok) {
+          const data = await response.json();
+          const options = Array.isArray(data) 
+            ? data.map((op: any) => ({
+                value: op.operator || op.nume || op,
+                label: op.operator || op.nume || op
+              }))
+            : [];
+          setOperatoriDisponibili(options);
+        }
+      } catch (error) {
+        console.error("Error fetching operatori:", error);
+      }
+    };
+    fetchOperatori();
+  }, []);
+
   // Stats
   const stats = useMemo(() => {
     const total = loturi.length;
     const conform = loturi.filter(l => l.verdictQC === "Conform").length;
     const neconform = loturi.filter(l => l.verdictQC === "Neconform").length;
-    const inAsteptare = loturi.filter(l => l.verdictQC === "În așteptare").length;
+    const inAsteptare = loturi.filter(l => l.verdictQC === "În așteptare" || l.verdictQC === "Blocat").length;
     const rataConformitate = total > 0 ? Math.round((conform / (conform + neconform || 1)) * 100) : 0;
     return { total, conform, neconform, inAsteptare, rataConformitate };
   }, [loturi]);
+
+  // Handle file upload
+  const handleFileUpload = async (file: File): Promise<string | null> => {
+    const formData = new FormData();
+    formData.append("folder", "fisiere_loturi");
+    formData.append("file", file);
+    formData.append("return_physical_path", "false");
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/upload`, {
+        method: "POST",
+        body: formData
+      });
+      if (response.ok) {
+        const result = await response.json();
+        return result.public_url;
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+    return null;
+  };
+
+  // Handle add lot
+  const handleAddLot = async () => {
+    if (!addFormData.cod_ordin || !addFormData.cod_reteta || !addFormData.cantitate || !addFormData.operator) {
+      toast.error("Completați toate câmpurile obligatorii");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Upload files first
+      const uploadedPaths: string[] = [];
+      for (const file of uploadedFiles) {
+        const path = await handleFileUpload(file);
+        if (path) {
+          uploadedPaths.push(path);
+        }
+      }
+
+      const payload = {
+        cod_ordin: addFormData.cod_ordin,
+        cod_reteta: addFormData.cod_reteta,
+        cantitate: addFormData.cantitate,
+        operator: addFormData.operator,
+        temperatura: parseFloat(addFormData.temperatura) || 0,
+        marshall: parseFloat(addFormData.marshall) || 0,
+        verdict_calitate: addFormData.verdict_calitate,
+        observatii: addFormData.observatii,
+        cai_fisiere: uploadedPaths.join(",")
+      };
+
+      const response = await fetch(`${API_BASE_URL}/productie/adauga/loturi_telemetrie`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        toast.success("Lot adăugat cu succes");
+        setAddDialogOpen(false);
+        setAddFormData({
+          cod_ordin: "",
+          cod_reteta: "",
+          cantitate: "",
+          operator: "",
+          temperatura: "",
+          marshall: "",
+          verdict_calitate: "În așteptare",
+          observatii: ""
+        });
+        setUploadedFiles([]);
+        fetchLoturi();
+      } else {
+        toast.error("Eroare la adăugarea lotului");
+      }
+    } catch (error) {
+      console.error("Error adding lot:", error);
+      toast.error("Eroare la adăugarea lotului");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Filter and sort
   const filteredLoturi = useMemo(() => {
@@ -185,21 +315,17 @@ const Loturi = () => {
   };
 
   const handleExportCSV = () => {
-    const exportData = loturi.map(l => ({
-      ...l,
-      temperatura: l.parametri.find(p => p.nume === "Temperatură")?.valoare || "-",
-      marshall: l.parametri.find(p => p.nume === "Marshall")?.valoare || "-",
-      slump: l.parametri.find(p => p.nume === "Slump")?.valoare || "-"
-    }));
-    exportToCSV(exportData, "loturi_productie", [
+    exportToCSV(loturi, "loturi_productie", [
       { key: "codLot", label: "Cod Lot" },
       { key: "ordin", label: "Ordin" },
+      { key: "reteta", label: "Rețetă" },
       { key: "cantitate", label: "Cantitate" },
       { key: "dataOra", label: "Data/Ora" },
       { key: "operator", label: "Operator" },
       { key: "temperatura", label: "Temperatură °C" },
       { key: "marshall", label: "Marshall kN" },
-      { key: "verdictQC", label: "Verdict Calitate" }
+      { key: "verdictQC", label: "Verdict Calitate" },
+      { key: "observatii", label: "Observații" }
     ]);
     toast.success("Export CSV realizat cu succes");
   };
@@ -211,7 +337,7 @@ const Loturi = () => {
 
   const handleConfirmaLot = (lot: Lot) => {
     setLoturi(prev => prev.map(l => 
-      l.id === lot.id ? { ...l, verdictQC: "Conform" as const, trimisLaQC: true } : l
+      l.id === lot.id ? { ...l, verdictQC: "Conform" as const } : l
     ));
     toast.success(`Lotul ${lot.codLot} a fost confirmat`);
     setDetailDialogOpen(false);
@@ -230,10 +356,7 @@ const Loturi = () => {
         l.id === selectedLot.id ? { 
           ...l, 
           verdictQC: qcVerdict, 
-          observatii: qcObservatii,
-          trimisLaQC: true,
-          dataQC: new Date().toLocaleString('ro-RO'),
-          inspectorQC: "Inspector QC"
+          observatii: qcObservatii
         } : l
       ));
       toast.success(`Verdict Calitate pentru ${selectedLot.codLot}: ${qcVerdict}`);
@@ -260,18 +383,6 @@ const Loturi = () => {
 
   const handlePrintEticheta = (lot: Lot) => {
     toast.info(`Se generează eticheta pentru ${lot.codLot}`);
-  };
-
-  const getParameterDeviation = (param: ParametruMasurat) => {
-    const deviation = param.valoare - param.tinta;
-    const deviationPercent = (deviation / param.tinta) * 100;
-    return { deviation, deviationPercent };
-  };
-
-  const getParameterBarWidth = (param: ParametruMasurat) => {
-    const range = param.tolerantaMinus + param.tolerantaPlus;
-    const position = (param.valoare - (param.tinta - param.tolerantaMinus)) / range;
-    return Math.max(0, Math.min(100, position * 100));
   };
 
   return (
@@ -449,33 +560,37 @@ const Loturi = () => {
                     >
                       <TableCell className="font-medium">{lot.codLot}</TableCell>
                       <TableCell>{lot.ordin}</TableCell>
-                      <TableCell>{lot.cantitate} {lot.unitateMasura}</TableCell>
+                      <TableCell>{lot.cantitate}</TableCell>
                       <TableCell>{lot.dataOra}</TableCell>
                       <TableCell>{lot.operator}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          {lot.parametri.slice(0, 3).map((param, idx) => (
-                            <TooltipProvider key={idx}>
-                              <Tooltip>
-                                <TooltipTrigger>
-                                  <Badge 
-                                    variant={param.status === "ok" ? "outline" : param.status === "warning" ? "secondary" : "destructive"}
-                                    className="text-xs"
-                                  >
-                                    {param.nume === "Temperatură" && <Thermometer className="h-3 w-3 mr-1" />}
-                                    {(param.nume === "Marshall" || param.nume === "Slump") && <Gauge className="h-3 w-3 mr-1" />}
-                                    {param.valoare}
-                                  </Badge>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>{param.nume}: {param.valoare} {param.unitate}</p>
-                                  <p className="text-xs text-muted-foreground">
-                                    Țintă: {param.tinta} ({param.tinta - param.tolerantaMinus} - {param.tinta + param.tolerantaPlus})
-                                  </p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          ))}
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Badge variant="outline" className="text-xs">
+                                  <Thermometer className="h-3 w-3 mr-1" />
+                                  {lot.temperatura}°C
+                                </Badge>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Temperatură: {lot.temperatura}°C</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Badge variant="outline" className="text-xs">
+                                  <Gauge className="h-3 w-3 mr-1" />
+                                  {lot.marshall} kN
+                                </Badge>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Marshall: {lot.marshall} kN</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -530,95 +645,35 @@ const Loturi = () => {
                 </TabsList>
 
                 <div className="flex-1 overflow-y-auto mt-3">
-                  {/* Parametri Tab */}
                   <TabsContent value="parametri" className="space-y-3 m-0">
                     <div className="grid gap-3">
-                      {selectedLot.parametri.map((param, idx) => {
-                        const { deviation, deviationPercent } = getParameterDeviation(param);
-                        const barWidth = getParameterBarWidth(param);
-                        
-                        return (
-                          <Card key={idx} className={`border-l-4 ${
-                            param.status === "ok" ? "border-l-green-500" : 
-                            param.status === "warning" ? "border-l-yellow-500" : "border-l-red-500"
-                          }`}>
-                            <CardContent className="p-3">
-                              <div className="flex items-center justify-between mb-1">
-                                <div className="flex items-center gap-2">
-                                  {param.nume === "Temperatură" && <Thermometer className="h-4 w-4 text-orange-500" />}
-                                  {(param.nume === "Marshall" || param.nume === "Slump") && <Gauge className="h-4 w-4 text-purple-500" />}
-                                  <span className="font-medium text-sm">{param.nume}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  {param.status === "ok" ? (
-                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                  ) : param.status === "warning" ? (
-                                    <AlertTriangle className="h-4 w-4 text-yellow-500" />
-                                  ) : (
-                                    <AlertCircle className="h-4 w-4 text-red-500" />
-                                  )}
-                                  <span className={`font-bold ${
-                                    param.status === "ok" ? "text-green-600" : 
-                                    param.status === "warning" ? "text-yellow-600" : "text-red-600"
-                                  }`}>
-                                    {param.valoare} {param.unitate}
-                                  </span>
-                                </div>
-                              </div>
-                              
-                              {/* Visual Range Bar */}
-                              <div className="relative h-5 bg-muted rounded-full overflow-hidden mb-1">
-                                <div className="absolute inset-y-0 left-0 right-0 flex">
-                                  <div className="flex-1 bg-red-200" />
-                                  <div className="w-1/3 bg-green-200" />
-                                  <div className="flex-1 bg-red-200" />
-                                </div>
-                                <div 
-                                  className={`absolute top-0.5 bottom-0.5 w-2.5 rounded-full ${
-                                    param.status === "ok" ? "bg-green-500" : 
-                                    param.status === "warning" ? "bg-yellow-500" : "bg-red-500"
-                                  }`}
-                                  style={{ left: `calc(${barWidth}% - 5px)` }}
-                                />
-                              </div>
-
-                              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                                <span>{param.tinta - param.tolerantaMinus} {param.unitate}</span>
-                                <span className="font-medium">Țintă: {param.tinta} {param.unitate}</span>
-                                <span>{param.tinta + param.tolerantaPlus} {param.unitate}</span>
-                              </div>
-
-                              {/* Deviation Info */}
-                              <div className="flex items-center justify-end gap-1 text-xs">
-                                {deviation > 0 ? (
-                                  <TrendingUp className="h-3 w-3 text-muted-foreground" />
-                                ) : (
-                                  <TrendingDown className="h-3 w-3 text-muted-foreground" />
-                                )}
-                                <span className={deviation === 0 ? "text-green-600" : "text-muted-foreground"}>
-                                  {deviation > 0 ? "+" : ""}{deviation.toFixed(2)} {param.unitate} ({deviationPercent.toFixed(1)}%)
-                                </span>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        );
-                      })}
+                      <Card className="border-l-4 border-l-orange-500">
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Thermometer className="h-4 w-4 text-orange-500" />
+                              <span className="font-medium text-sm">Temperatură</span>
+                            </div>
+                            <span className="font-bold text-foreground">
+                              {selectedLot.temperatura}°C
+                            </span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      <Card className="border-l-4 border-l-purple-500">
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Gauge className="h-4 w-4 text-purple-500" />
+                              <span className="font-medium text-sm">Marshall</span>
+                            </div>
+                            <span className="font-bold text-foreground">
+                              {selectedLot.marshall} kN
+                            </span>
+                          </div>
+                        </CardContent>
+                      </Card>
                     </div>
-
-                    {/* Control Chart Preview */}
-                    <Card>
-                      <CardContent className="p-3">
-                        <p className="text-sm font-medium flex items-center gap-2 mb-2">
-                          <Activity className="h-4 w-4" />
-                          Grafic Control (Trend)
-                        </p>
-                        <div className="h-20 flex items-center justify-center bg-muted/50 rounded-lg">
-                          <span className="text-muted-foreground text-xs">
-                            Grafic de control - integrare StonemontQC
-                          </span>
-                        </div>
-                      </CardContent>
-                    </Card>
                   </TabsContent>
 
                   {/* Info Tab */}
@@ -630,7 +685,7 @@ const Loturi = () => {
                       </div>
                       <div>
                         <span className="text-muted-foreground">Cantitate:</span>
-                        <span className="font-medium ml-1">{selectedLot.cantitate} {selectedLot.unitateMasura}</span>
+                        <span className="font-medium ml-1">{selectedLot.cantitate}</span>
                       </div>
                       <div>
                         <span className="text-muted-foreground">Data/Ora:</span>
@@ -646,26 +701,6 @@ const Loturi = () => {
                       </div>
                     </div>
 
-                    <Separator />
-
-                    <div className="space-y-2">
-                      <span className="text-sm text-muted-foreground">Informații QC</span>
-                      {selectedLot.trimisLaQC ? (
-                        <div className="grid grid-cols-2 gap-3 p-2 bg-muted/50 rounded-lg text-sm">
-                          <div>
-                            <span className="text-muted-foreground text-xs">Data Verificare:</span>
-                            <span className="font-medium ml-1">{selectedLot.dataQC || "-"}</span>
-                          </div>
-                          <div>
-                            <span className="text-muted-foreground text-xs">Inspector QC:</span>
-                            <span className="font-medium ml-1">{selectedLot.inspectorQC || "-"}</span>
-                          </div>
-                        </div>
-                      ) : (
-                        <p className="text-sm text-muted-foreground">Nu a fost trimis la QC</p>
-                      )}
-                    </div>
-
                     {selectedLot.observatii && (
                       <>
                         <Separator />
@@ -677,53 +712,43 @@ const Loturi = () => {
                     )}
                   </TabsContent>
 
-                  {/* Atasamente Tab */}
                   <TabsContent value="atasamente" className="space-y-3 m-0">
-                    {selectedLot.atasamente.length === 0 ? (
+                    {!selectedLot.caiFisiere ? (
                       <div className="text-center py-6 text-muted-foreground">
                         <FileText className="h-10 w-10 mx-auto mb-2 opacity-50" />
                         <p className="text-sm">Niciun atașament</p>
                       </div>
                     ) : (
                       <div className="space-y-2">
-                        {selectedLot.atasamente.map((atasament) => (
+                        {selectedLot.caiFisiere.split(",").filter(Boolean).map((path, idx) => (
                           <div 
-                            key={atasament.id} 
+                            key={idx} 
                             className="flex items-center justify-between p-2 bg-muted/50 rounded-lg hover:bg-muted transition-colors cursor-pointer"
                           >
                             <div className="flex items-center gap-2">
-                              {atasament.tip === "foto" ? (
-                                <Camera className="h-4 w-4 text-blue-500" />
-                              ) : (
-                                <FileText className="h-4 w-4 text-orange-500" />
-                              )}
+                              <FileText className="h-4 w-4 text-blue-500" />
                               <div>
-                                <p className="font-medium text-sm">{atasament.nume}</p>
-                                <p className="text-xs text-muted-foreground">{atasament.dataAdaugare}</p>
+                                <p className="font-medium text-sm">{path.split("/").pop()}</p>
                               </div>
                             </div>
-                            <Button variant="ghost" size="sm">
-                              <FileDown className="h-4 w-4" />
+                            <Button variant="ghost" size="sm" asChild>
+                              <a href={`${API_BASE_URL}${path}`} target="_blank" rel="noopener noreferrer">
+                                <FileDown className="h-4 w-4" />
+                              </a>
                             </Button>
                           </div>
                         ))}
                       </div>
                     )}
-                    <Button variant="outline" size="sm" className="w-full">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Adaugă Atașament
-                    </Button>
                   </TabsContent>
                 </div>
               </Tabs>
 
               <DialogFooter className="flex-shrink-0 flex-wrap gap-1 pt-2">
-                {!selectedLot.trimisLaQC && (
-                  <Button size="sm" onClick={() => handleTrimiteQC(selectedLot)}>
-                    <Send className="h-4 w-4 mr-1" />
-                    Trimite la QC
-                  </Button>
-                )}
+                <Button size="sm" onClick={() => handleTrimiteQC(selectedLot)}>
+                  <Send className="h-4 w-4 mr-1" />
+                  Trimite la QC
+                </Button>
                 {selectedLot.verdictQC === "În așteptare" && (
                   <Button size="sm" variant="default" onClick={() => handleConfirmaLot(selectedLot)}>
                     <CheckCircle2 className="h-4 w-4 mr-1" />
@@ -806,7 +831,7 @@ const Loturi = () => {
 
       {/* Add Dialog */}
       <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
-        <DialogContent hideCloseButton>
+        <DialogContent hideCloseButton className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Adaugă Lot</DialogTitle>
             <DialogDescription>
@@ -816,42 +841,39 @@ const Loturi = () => {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Ordin Producție</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectează ordin" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="OP-2024-001">OP-2024-001</SelectItem>
-                    <SelectItem value="OP-2024-002">OP-2024-002</SelectItem>
-                    <SelectItem value="OP-2024-003">OP-2024-003</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label>Cod Ordin *</Label>
+                <Input
+                  value={addFormData.cod_ordin}
+                  onChange={(e) => setAddFormData(prev => ({ ...prev, cod_ordin: e.target.value }))}
+                  placeholder="Ex: OP-2024-001"
+                />
               </div>
               <div>
-                <Label>Rețetă</Label>
+                <Label>Rețetă *</Label>
                 <FilterableSelect
                   options={reteteDisponibile}
-                  value={selectedReteta}
-                  onValueChange={setSelectedReteta}
+                  value={addFormData.cod_reteta}
+                  onValueChange={(v) => setAddFormData(prev => ({ ...prev, cod_reteta: v }))}
                   placeholder="Selectează rețetă"
                 />
               </div>
               <div>
-                <Label>Cantitate</Label>
-                <Input type="number" placeholder="Ex: 50" />
+                <Label>Cantitate *</Label>
+                <Input
+                  type="number"
+                  value={addFormData.cantitate}
+                  onChange={(e) => setAddFormData(prev => ({ ...prev, cantitate: e.target.value }))}
+                  placeholder="Ex: 50"
+                />
               </div>
               <div>
-                <Label>Operator</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectează operator" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Ion Popescu">Ion Popescu</SelectItem>
-                    <SelectItem value="Maria Dumitrescu">Maria Dumitrescu</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label>Operator *</Label>
+                <FilterableSelect
+                  options={operatoriDisponibili}
+                  value={addFormData.operator}
+                  onValueChange={(v) => setAddFormData(prev => ({ ...prev, operator: v }))}
+                  placeholder="Selectează operator"
+                />
               </div>
             </div>
 
@@ -862,18 +884,51 @@ const Loturi = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label className="text-xs">Temperatură (°C)</Label>
-                  <Input type="number" placeholder="Ex: 160" />
+                  <Input
+                    type="number"
+                    value={addFormData.temperatura}
+                    onChange={(e) => setAddFormData(prev => ({ ...prev, temperatura: e.target.value }))}
+                    placeholder="Ex: 160"
+                  />
                 </div>
                 <div>
                   <Label className="text-xs">Marshall (kN)</Label>
-                  <Input type="number" step="0.1" placeholder="Ex: 12.0" />
+                  <Input
+                    type="number"
+                    step="0.1"
+                    value={addFormData.marshall}
+                    onChange={(e) => setAddFormData(prev => ({ ...prev, marshall: e.target.value }))}
+                    placeholder="Ex: 12.0"
+                  />
                 </div>
               </div>
             </div>
 
             <div>
+              <Label>Verdict Calitate</Label>
+              <Select
+                value={addFormData.verdict_calitate}
+                onValueChange={(v) => setAddFormData(prev => ({ ...prev, verdict_calitate: v }))}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="În așteptare">În așteptare</SelectItem>
+                  <SelectItem value="Conform">Conform</SelectItem>
+                  <SelectItem value="Neconform">Neconform</SelectItem>
+                  <SelectItem value="Blocat">Blocat</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
               <Label>Observații</Label>
-              <Textarea placeholder="Observații opționale..." />
+              <Textarea
+                value={addFormData.observatii}
+                onChange={(e) => setAddFormData(prev => ({ ...prev, observatii: e.target.value }))}
+                placeholder="Observații opționale..."
+              />
             </div>
 
             <Separator />
@@ -893,6 +948,7 @@ const Loturi = () => {
                   onChange={(e) => {
                     const files = e.target.files;
                     if (files) {
+                      setUploadedFiles(prev => [...prev, ...Array.from(files)]);
                       toast.info(`${files.length} fișier(e) selectat(e)`);
                     }
                   }}
@@ -903,17 +959,33 @@ const Loturi = () => {
                   <span className="text-xs text-muted-foreground">Poze, PDF, DOC, XLS (max 10MB)</span>
                 </div>
               </label>
+              {uploadedFiles.length > 0 && (
+                <div className="space-y-1">
+                  {uploadedFiles.map((file, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-blue-500" />
+                        <span className="text-sm">{file.name}</span>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setUploadedFiles(prev => prev.filter((_, i) => i !== idx))}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAddDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setAddDialogOpen(false)} disabled={isSubmitting}>
               Anulează
             </Button>
-            <Button onClick={() => {
-              toast.success("Lot adăugat cu succes");
-              setAddDialogOpen(false);
-            }}>
-              Salvează Lot
+            <Button onClick={handleAddLot} disabled={isSubmitting}>
+              {isSubmitting ? "Se salvează..." : "Salvează Lot"}
             </Button>
           </DialogFooter>
         </DialogContent>
