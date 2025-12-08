@@ -1,161 +1,82 @@
 import { useState, useMemo } from "react";
-import { 
-  Truck, Plus, Download, Calendar, AlertTriangle,
-  Wrench, FileText, CheckCircle, XCircle, Settings, History
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Truck, Plus, Download, Settings } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { 
   Table, TableBody, TableCell, TableHead, 
   TableHeader, TableRow 
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DataTablePagination } from "@/components/ui/data-table";
+import { DataTablePagination, DataTableColumnHeader } from "@/components/ui/data-table";
 import { toast } from "sonner";
 import { exportToCSV } from "@/lib/exportUtils";
-
-type StatusEchipament = "Disponibil" | "În revizie" | "Defect";
 
 interface Echipament {
   id: number;
   cod: string;
-  tip: string;
-  serie: string;
-  planta: string;
-  oreFunctionare: number;
-  ultimaRevizie: string;
-  urmatoareaRevizie: string;
-  status: StatusEchipament;
-  descriere?: string;
-  producator?: string;
-  anFabricatie?: number;
-  documenteVehicul?: {
-    rcaExpira?: string;
-    itpExpira?: string;
-  };
-}
-
-interface Interventie {
-  id: number;
-  data: string;
-  tip: string;
-  descriere: string;
-  piese: string[];
-  cost: number;
-  tehnician: string;
-}
-
-interface PiesaCritica {
-  id: number;
   denumire: string;
-  codPiesa: string;
-  stocActual: number;
-  stocMinim: number;
+  serie: string;
+  producator: string;
+  anFabricatie: number;
+  valoareAchizitie: number;
+  durataAmortizare: number; // în luni
 }
 
 // Mock data
 const mockEchipamente: Echipament[] = [
   { 
-    id: 1, cod: "ECH-001", tip: "Stație Asfalt", serie: "SA-2020-001", planta: "Planta Nord",
-    oreFunctionare: 12500, ultimaRevizie: "15/10/2024", urmatoareaRevizie: "15/01/2025", status: "Disponibil",
-    descriere: "Stație asfalt mobilă 160t/h", producator: "Ammann", anFabricatie: 2020
+    id: 1, cod: "ECH-001", denumire: "Stație Asfalt Mobilă 160t/h", serie: "SA-2020-001",
+    producator: "Ammann", anFabricatie: 2020, valoareAchizitie: 850000, durataAmortizare: 120
   },
   { 
-    id: 2, cod: "ECH-002", tip: "Încărcător Frontal", serie: "IF-2019-003", planta: "Planta Nord",
-    oreFunctionare: 8200, ultimaRevizie: "01/11/2024", urmatoareaRevizie: "01/02/2025", status: "Disponibil",
-    descriere: "Încărcător frontal Cat 966", producator: "Caterpillar", anFabricatie: 2019
+    id: 2, cod: "ECH-002", denumire: "Încărcător Frontal Cat 966", serie: "IF-2019-003",
+    producator: "Caterpillar", anFabricatie: 2019, valoareAchizitie: 320000, durataAmortizare: 96
   },
   { 
-    id: 3, cod: "VEH-001", tip: "Camion Basculant", serie: "CB-2021-005", planta: "Planta Nord",
-    oreFunctionare: 45000, ultimaRevizie: "20/09/2024", urmatoareaRevizie: "20/12/2024", status: "În revizie",
-    descriere: "MAN TGS 8x4", producator: "MAN", anFabricatie: 2021,
-    documenteVehicul: { rcaExpira: "15/03/2025", itpExpira: "20/06/2025" }
+    id: 3, cod: "VEH-001", denumire: "Camion Basculant MAN TGS 8x4", serie: "CB-2021-005",
+    producator: "MAN", anFabricatie: 2021, valoareAchizitie: 180000, durataAmortizare: 84
   },
   { 
-    id: 4, cod: "ECH-003", tip: "Finisor Asfalt", serie: "FA-2018-002", planta: "Planta Sud",
-    oreFunctionare: 6800, ultimaRevizie: "05/08/2024", urmatoareaRevizie: "05/11/2024", status: "Defect",
-    descriere: "Finisor Vögele Super 1900-3", producator: "Vögele", anFabricatie: 2018
+    id: 4, cod: "ECH-003", denumire: "Finisor Asfalt Vögele Super 1900-3", serie: "FA-2018-002",
+    producator: "Vögele", anFabricatie: 2018, valoareAchizitie: 420000, durataAmortizare: 120
   },
   { 
-    id: 5, cod: "VEH-002", tip: "Autobasculantă", serie: "AB-2022-001", planta: "Planta Sud",
-    oreFunctionare: 32000, ultimaRevizie: "10/11/2024", urmatoareaRevizie: "10/02/2025", status: "Disponibil",
-    descriere: "Volvo FH 6x4", producator: "Volvo", anFabricatie: 2022,
-    documenteVehicul: { rcaExpira: "01/05/2025", itpExpira: "15/08/2025" }
+    id: 5, cod: "VEH-002", denumire: "Autobasculantă Volvo FH 6x4", serie: "AB-2022-001",
+    producator: "Volvo", anFabricatie: 2022, valoareAchizitie: 195000, durataAmortizare: 84
   },
   { 
-    id: 6, cod: "ECH-004", tip: "Cilindru Compactor", serie: "CC-2020-004", planta: "Planta Nord",
-    oreFunctionare: 4500, ultimaRevizie: "25/10/2024", urmatoareaRevizie: "25/01/2025", status: "Disponibil",
-    descriere: "Hamm HD+ 110", producator: "Hamm", anFabricatie: 2020
+    id: 6, cod: "ECH-004", denumire: "Cilindru Compactor Hamm HD+ 110", serie: "CC-2020-004",
+    producator: "Hamm", anFabricatie: 2020, valoareAchizitie: 145000, durataAmortizare: 96
   },
 ];
-
-const mockInterventii: Record<number, Interventie[]> = {
-  1: [
-    { id: 1, data: "15/10/2024", tip: "Revizie planificată", descriere: "Schimb ulei, filtre, verificare sistem hidraulic", piese: ["Filtru ulei", "Filtru aer"], cost: 2500, tehnician: "Ion Popescu" },
-    { id: 2, data: "01/08/2024", tip: "Reparație", descriere: "Înlocuire pompă hidraulică", piese: ["Pompă hidraulică"], cost: 8500, tehnician: "Vasile Ionescu" },
-  ],
-  3: [
-    { id: 3, data: "20/09/2024", tip: "Revizie planificată", descriere: "Revizie completă motor și transmisie", piese: ["Ulei motor", "Filtre", "Plăcuțe frână"], cost: 4200, tehnician: "Gheorghe Marin" },
-  ],
-  4: [
-    { id: 4, data: "28/11/2024", tip: "Defecțiune", descriere: "Defect sistem electronic de nivelare", piese: [], cost: 0, tehnician: "În așteptare" },
-  ],
-};
-
-const mockPieseCritice: Record<number, PiesaCritica[]> = {
-  1: [
-    { id: 1, denumire: "Pompă hidraulică", codPiesa: "PH-001", stocActual: 1, stocMinim: 1 },
-    { id: 2, denumire: "Filtru ulei", codPiesa: "FO-010", stocActual: 5, stocMinim: 3 },
-    { id: 3, denumire: "Curea transmisie", codPiesa: "CT-005", stocActual: 2, stocMinim: 2 },
-  ],
-  4: [
-    { id: 4, denumire: "Modul electronic nivelare", codPiesa: "MEN-001", stocActual: 0, stocMinim: 1 },
-    { id: 5, denumire: "Senzor temperatură", codPiesa: "ST-012", stocActual: 3, stocMinim: 2 },
-  ],
-};
-
-const statusConfig = {
-  "Disponibil": { color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30", icon: CheckCircle },
-  "În revizie": { color: "bg-amber-500/20 text-amber-400 border-amber-500/30", icon: Wrench },
-  "Defect": { color: "bg-red-500/20 text-red-400 border-red-500/30", icon: XCircle },
-};
-
-const tipuriUtilaj = ["Toate", "Stație Asfalt", "Încărcător Frontal", "Camion Basculant", "Finisor Asfalt", "Autobasculantă", "Cilindru Compactor"];
-const plante = ["Toate", "Planta Nord", "Planta Sud"];
-const statusuri: ("Toate" | StatusEchipament)[] = ["Toate", "Disponibil", "În revizie", "Defect"];
 
 const Echipamente = () => {
   const [echipamente] = useState<Echipament[]>(mockEchipamente);
   const [selectedEchipament, setSelectedEchipament] = useState<Echipament | null>(null);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [isPlanRevizieOpen, setIsPlanRevizieOpen] = useState(false);
-  const [isDefectDialogOpen, setIsDefectDialogOpen] = useState(false);
   
-  // Filters
-  const [filterTip, setFilterTip] = useState("Toate");
-  const [filterPlanta, setFilterPlanta] = useState("Toate");
-  const [filterStatus, setFilterStatus] = useState<"Toate" | StatusEchipament>("Toate");
+  // Add form state
+  const [addFormData, setAddFormData] = useState({
+    cod: "",
+    denumire: "",
+    serie: "",
+    producator: "",
+    anFabricatie: "",
+    valoareAchizitie: "",
+    durataAmortizare: ""
+  });
   
-  // Sorting
+  // Sorting & Filters
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [columnFilters, setColumnFilters] = useState<Record<string, string>>({});
@@ -167,25 +88,13 @@ const Echipamente = () => {
   // Stats
   const stats = useMemo(() => {
     const total = echipamente.length;
-    const disponibile = echipamente.filter(e => e.status === "Disponibil").length;
-    const inRevizie = echipamente.filter(e => e.status === "În revizie").length;
-    const defecte = echipamente.filter(e => e.status === "Defect").length;
-    return { total, disponibile, inRevizie, defecte };
+    const valoareTotala = echipamente.reduce((acc, e) => acc + e.valoareAchizitie, 0);
+    return { total, valoareTotala };
   }, [echipamente]);
 
   // Filtering and sorting
   const filteredEchipamente = useMemo(() => {
     let result = [...echipamente];
-    
-    if (filterTip !== "Toate") {
-      result = result.filter(e => e.tip === filterTip);
-    }
-    if (filterPlanta !== "Toate") {
-      result = result.filter(e => e.planta === filterPlanta);
-    }
-    if (filterStatus !== "Toate") {
-      result = result.filter(e => e.status === filterStatus);
-    }
     
     // Column filters
     Object.entries(columnFilters).forEach(([key, value]) => {
@@ -211,7 +120,7 @@ const Echipamente = () => {
     }
     
     return result;
-  }, [echipamente, filterTip, filterPlanta, filterStatus, columnFilters, sortKey, sortDirection]);
+  }, [echipamente, columnFilters, sortKey, sortDirection]);
 
   const paginatedEchipamente = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -220,13 +129,9 @@ const Echipamente = () => {
 
   const totalPages = Math.ceil(filteredEchipamente.length / itemsPerPage);
 
-  const handleSort = (key: string) => {
-    if (sortKey === key) {
-      setSortDirection(prev => prev === "asc" ? "desc" : "asc");
-    } else {
-      setSortKey(key);
-      setSortDirection("asc");
-    }
+  const handleSort = (key: string, direction: "asc" | "desc") => {
+    setSortKey(key);
+    setSortDirection(direction);
   };
 
   const handleFilter = (key: string, value: string) => {
@@ -236,27 +141,38 @@ const Echipamente = () => {
 
   const handleRowClick = (echipament: Echipament) => {
     setSelectedEchipament(echipament);
-    setIsDrawerOpen(true);
+    setIsDetailOpen(true);
   };
 
   const handleExport = () => {
     exportToCSV(filteredEchipamente, "echipamente_flota", [
       { key: "cod", label: "Cod" },
-      { key: "tip", label: "Tip" },
+      { key: "denumire", label: "Denumire" },
       { key: "serie", label: "Serie" },
-      { key: "ultimaRevizie", label: "Ultima Revizie" },
-      { key: "urmatoareaRevizie", label: "Următoarea Revizie" },
-      { key: "status", label: "Status" },
+      { key: "producator", label: "Producător" },
+      { key: "anFabricatie", label: "An Fabricație" },
+      { key: "valoareAchizitie", label: "Valoare Achiziție (RON)" },
+      { key: "durataAmortizare", label: "Durata Amortizare (luni)" },
     ]);
     toast.success("Export realizat cu succes");
   };
 
-  const handlePlanRevizie = () => {
-    setIsPlanRevizieOpen(true);
-  };
-
-  const handleRaportareDefect = () => {
-    setIsDefectDialogOpen(true);
+  const handleAddSubmit = () => {
+    if (!addFormData.cod || !addFormData.denumire) {
+      toast.error("Completați câmpurile obligatorii");
+      return;
+    }
+    toast.success("Echipament adăugat cu succes");
+    setIsAddDialogOpen(false);
+    setAddFormData({
+      cod: "",
+      denumire: "",
+      serie: "",
+      producator: "",
+      anFabricatie: "",
+      valoareAchizitie: "",
+      durataAmortizare: ""
+    });
   };
 
   return (
@@ -283,61 +199,34 @@ const Echipamente = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Card>
-          <CardContent className="p-3 sm:pt-4 sm:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-              <div className="p-2 rounded-lg bg-primary/10 w-fit">
-                <Settings className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+          <CardContent className="p-4 sm:pt-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Settings className="h-5 w-5 text-primary" />
               </div>
-              <div className="min-w-0">
-                <p className="text-xl sm:text-2xl font-bold">{stats.total}</p>
-                <p className="text-xs sm:text-sm text-muted-foreground truncate">Total Echipamente</p>
+              <div>
+                <p className="text-2xl font-bold">{stats.total}</p>
+                <p className="text-sm text-muted-foreground">Total Echipamente</p>
               </div>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-3 sm:pt-4 sm:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-              <div className="p-2 rounded-lg bg-emerald-500/10 w-fit">
-                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-500" />
+          <CardContent className="p-4 sm:pt-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-emerald-500/10">
+                <Truck className="h-5 w-5 text-emerald-500" />
               </div>
-              <div className="min-w-0">
-                <p className="text-xl sm:text-2xl font-bold">{stats.disponibile}</p>
-                <p className="text-xs sm:text-sm text-muted-foreground">Disponibile</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-3 sm:pt-4 sm:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-              <div className="p-2 rounded-lg bg-amber-500/10 w-fit">
-                <Wrench className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xl sm:text-2xl font-bold">{stats.inRevizie}</p>
-                <p className="text-xs sm:text-sm text-muted-foreground">În Revizie</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-3 sm:pt-4 sm:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-              <div className="p-2 rounded-lg bg-red-500/10 w-fit">
-                <XCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xl sm:text-2xl font-bold">{stats.defecte}</p>
-                <p className="text-xs sm:text-sm text-muted-foreground">Defecte</p>
+              <div>
+                <p className="text-2xl font-bold">{stats.valoareTotala.toLocaleString()} RON</p>
+                <p className="text-sm text-muted-foreground">Valoare Totală Achiziții</p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
-
 
       {/* Table */}
       <Card>
@@ -346,38 +235,94 @@ const Echipamente = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Cod</TableHead>
-                  <TableHead>Tip</TableHead>
-                  <TableHead>Serie</TableHead>
-                  <TableHead>Ultima Revizie</TableHead>
-                  <TableHead>Următoarea Revizie</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Cod"
+                      sortKey="cod"
+                      currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
+                      filterValue={columnFilters.cod || ""}
+                      onSort={handleSort}
+                      onFilterChange={(value) => handleFilter("cod", value)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Denumire"
+                      sortKey="denumire"
+                      currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
+                      filterValue={columnFilters.denumire || ""}
+                      onSort={handleSort}
+                      onFilterChange={(value) => handleFilter("denumire", value)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Serie"
+                      sortKey="serie"
+                      currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
+                      filterValue={columnFilters.serie || ""}
+                      onSort={handleSort}
+                      onFilterChange={(value) => handleFilter("serie", value)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Producător"
+                      sortKey="producator"
+                      currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
+                      filterValue={columnFilters.producator || ""}
+                      onSort={handleSort}
+                      onFilterChange={(value) => handleFilter("producator", value)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="An Fabricație"
+                      sortKey="anFabricatie"
+                      currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
+                      filterValue={columnFilters.anFabricatie || ""}
+                      onSort={handleSort}
+                      onFilterChange={(value) => handleFilter("anFabricatie", value)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Valoare Achiziție"
+                      sortKey="valoareAchizitie"
+                      currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
+                      filterValue={columnFilters.valoareAchizitie || ""}
+                      onSort={handleSort}
+                      onFilterChange={(value) => handleFilter("valoareAchizitie", value)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Durată Amortizare (luni)"
+                      sortKey="durataAmortizare"
+                      currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
+                      filterValue={columnFilters.durataAmortizare || ""}
+                      onSort={handleSort}
+                      onFilterChange={(value) => handleFilter("durataAmortizare", value)}
+                    />
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedEchipamente.map(echipament => {
-                  const config = statusConfig[echipament.status];
-                  const StatusIcon = config.icon;
-                  return (
-                    <TableRow 
-                      key={echipament.id} 
-                      className="cursor-pointer hover:bg-muted/50"
-                      onClick={() => handleRowClick(echipament)}
-                    >
-                      <TableCell className="font-medium">{echipament.cod}</TableCell>
-                      <TableCell>{echipament.tip}</TableCell>
-                      <TableCell>{echipament.serie}</TableCell>
-                      <TableCell>{echipament.ultimaRevizie}</TableCell>
-                      <TableCell>{echipament.urmatoareaRevizie}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className={config.color}>
-                          <StatusIcon className="h-3 w-3 mr-1" />
-                          {echipament.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                {paginatedEchipamente.map(echipament => (
+                  <TableRow 
+                    key={echipament.id} 
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => handleRowClick(echipament)}
+                  >
+                    <TableCell className="font-medium">{echipament.cod}</TableCell>
+                    <TableCell>{echipament.denumire}</TableCell>
+                    <TableCell>{echipament.serie}</TableCell>
+                    <TableCell>{echipament.producator}</TableCell>
+                    <TableCell>{echipament.anFabricatie}</TableCell>
+                    <TableCell>{echipament.valoareAchizitie.toLocaleString()} RON</TableCell>
+                    <TableCell>{echipament.durataAmortizare} luni</TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </div>
@@ -396,174 +341,51 @@ const Echipamente = () => {
       </Card>
 
       {/* Detail Dialog */}
-      <Dialog open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" hideCloseButton>
+      <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+        <DialogContent className="max-w-lg" hideCloseButton>
           {selectedEchipament && (
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <Settings className="h-5 w-5" />
-                  {selectedEchipament.cod} - {selectedEchipament.tip}
+                  {selectedEchipament.cod}
                 </DialogTitle>
+                <DialogDescription>{selectedEchipament.denumire}</DialogDescription>
               </DialogHeader>
               
-              <div className="space-y-4 py-4">
-                <Tabs defaultValue="fisa">
-                  <TabsList className="w-full">
-                    <TabsTrigger value="fisa" className="flex-1">Fișă Tehnică</TabsTrigger>
-                    <TabsTrigger value="istoric" className="flex-1">Istoric</TabsTrigger>
-                    <TabsTrigger value="piese" className="flex-1">Piese Critice</TabsTrigger>
-                    {selectedEchipament.documenteVehicul && (
-                      <TabsTrigger value="documente" className="flex-1">Documente</TabsTrigger>
-                    )}
-                  </TabsList>
-
-                  {/* Fișă Tehnică */}
-                  <TabsContent value="fisa" className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Cod</p>
-                        <p className="font-medium">{selectedEchipament.cod}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Tip</p>
-                        <p className="font-medium">{selectedEchipament.tip}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Serie</p>
-                        <p className="font-medium">{selectedEchipament.serie}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Plantă</p>
-                        <p className="font-medium">{selectedEchipament.planta}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Producător</p>
-                        <p className="font-medium">{selectedEchipament.producator || "N/A"}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">An Fabricație</p>
-                        <p className="font-medium">{selectedEchipament.anFabricatie || "N/A"}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Ore Funcționare</p>
-                        <p className="font-medium">{selectedEchipament.oreFunctionare.toLocaleString()} h</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Status</p>
-                        <Badge variant="outline" className={statusConfig[selectedEchipament.status].color}>
-                          {selectedEchipament.status}
-                        </Badge>
-                      </div>
-                    </div>
-                    {selectedEchipament.descriere && (
-                      <div className="pt-2 border-t">
-                        <p className="text-sm text-muted-foreground">Descriere</p>
-                        <p className="font-medium">{selectedEchipament.descriere}</p>
-                      </div>
-                    )}
-                  </TabsContent>
-
-                  {/* Istoric Intervenții */}
-                  <TabsContent value="istoric" className="space-y-3 max-h-[300px] overflow-y-auto">
-                    {(mockInterventii[selectedEchipament.id] || []).length > 0 ? (
-                      mockInterventii[selectedEchipament.id]?.map(interventie => (
-                        <div key={interventie.id} className="p-3 border rounded-lg">
-                          <div className="flex items-start justify-between">
-                            <div className="flex items-center gap-2">
-                              <History className="h-4 w-4 text-muted-foreground" />
-                              <span className="font-medium text-sm">{interventie.data}</span>
-                            </div>
-                            <Badge variant="outline" className="text-xs">{interventie.tip}</Badge>
-                          </div>
-                          <p className="mt-2 text-sm">{interventie.descriere}</p>
-                          <div className="mt-2 flex justify-between text-xs text-muted-foreground">
-                            <span>Tehnician: {interventie.tehnician}</span>
-                            <span>Cost: {interventie.cost.toLocaleString()} RON</span>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-center py-8 text-muted-foreground">
-                        Nicio intervenție înregistrată
-                      </div>
-                    )}
-                  </TabsContent>
-
-                  {/* Piese Critice */}
-                  <TabsContent value="piese" className="space-y-4">
-                    {(mockPieseCritice[selectedEchipament.id] || []).length > 0 ? (
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Denumire</TableHead>
-                            <TableHead>Cod</TableHead>
-                            <TableHead className="text-right">Stoc</TableHead>
-                            <TableHead className="text-right">Minim</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {mockPieseCritice[selectedEchipament.id]?.map(piesa => (
-                            <TableRow key={piesa.id}>
-                              <TableCell className="font-medium">{piesa.denumire}</TableCell>
-                              <TableCell>{piesa.codPiesa}</TableCell>
-                              <TableCell className="text-right">
-                                <span className={piesa.stocActual < piesa.stocMinim ? "text-red-400" : ""}>
-                                  {piesa.stocActual}
-                                </span>
-                              </TableCell>
-                              <TableCell className="text-right">{piesa.stocMinim}</TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    ) : (
-                      <div className="text-center py-8 text-muted-foreground">
-                        Nicio piesă critică definită
-                      </div>
-                    )}
-                  </TabsContent>
-
-                  {/* Documente Vehicul */}
-                  {selectedEchipament.documenteVehicul && (
-                    <TabsContent value="documente" className="space-y-3">
-                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                        <div className="flex items-center gap-3">
-                          <FileText className="h-5 w-5 text-primary" />
-                          <div>
-                            <p className="font-medium">RCA</p>
-                            <p className="text-sm text-muted-foreground">
-                              Expiră: {selectedEchipament.documenteVehicul.rcaExpira}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                        <div className="flex items-center gap-3">
-                          <FileText className="h-5 w-5 text-primary" />
-                          <div>
-                            <p className="font-medium">ITP</p>
-                            <p className="text-sm text-muted-foreground">
-                              Expiră: {selectedEchipament.documenteVehicul.itpExpira}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </TabsContent>
-                  )}
-                </Tabs>
+              <div className="grid grid-cols-2 gap-4 py-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Cod</p>
+                  <p className="font-medium">{selectedEchipament.cod}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Denumire</p>
+                  <p className="font-medium">{selectedEchipament.denumire}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Serie</p>
+                  <p className="font-medium">{selectedEchipament.serie}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Producător</p>
+                  <p className="font-medium">{selectedEchipament.producator}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">An Fabricație</p>
+                  <p className="font-medium">{selectedEchipament.anFabricatie}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Valoare Achiziție</p>
+                  <p className="font-medium">{selectedEchipament.valoareAchizitie.toLocaleString()} RON</p>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-sm text-muted-foreground">Durată Amortizare</p>
+                  <p className="font-medium">{selectedEchipament.durataAmortizare} luni</p>
+                </div>
               </div>
 
-              <DialogFooter className="flex-col sm:flex-row gap-2">
-                <Button size="sm" onClick={handlePlanRevizie}>
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Plan Revizie
-                </Button>
-                <Button size="sm" variant="destructive" onClick={handleRaportareDefect}>
-                  <AlertTriangle className="w-4 h-4 mr-2" />
-                  Raportează Defecțiune
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => setIsDrawerOpen(false)}>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsDetailOpen(false)}>
                   Închide
                 </Button>
               </DialogFooter>
@@ -574,157 +396,81 @@ const Echipamente = () => {
 
       {/* Add Equipment Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg" hideCloseButton>
           <DialogHeader>
             <DialogTitle>Adaugă Echipament</DialogTitle>
+            <DialogDescription>Completați datele echipamentului nou</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Cod</Label>
-                <Input placeholder="ECH-XXX" />
+                <Label>Cod *</Label>
+                <Input 
+                  placeholder="ECH-XXX"
+                  value={addFormData.cod}
+                  onChange={(e) => setAddFormData(prev => ({ ...prev, cod: e.target.value }))}
+                />
               </div>
-              <div className="space-y-2">
-                <Label>Tip</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectează tip" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {tipuriUtilaj.filter(t => t !== "Toate").map(tip => (
-                      <SelectItem key={tip} value={tip}>{tip}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Serie</Label>
-                <Input placeholder="Serie echipament" />
+                <Input 
+                  placeholder="Serie echipament"
+                  value={addFormData.serie}
+                  onChange={(e) => setAddFormData(prev => ({ ...prev, serie: e.target.value }))}
+                />
               </div>
-              <div className="space-y-2">
-                <Label>Plantă</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectează plantă" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {plante.filter(p => p !== "Toate").map(p => (
-                      <SelectItem key={p} value={p}>{p}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Denumire *</Label>
+              <Input 
+                placeholder="Denumire echipament"
+                value={addFormData.denumire}
+                onChange={(e) => setAddFormData(prev => ({ ...prev, denumire: e.target.value }))}
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Producător</Label>
-                <Input placeholder="Producător" />
+                <Input 
+                  placeholder="Producător"
+                  value={addFormData.producator}
+                  onChange={(e) => setAddFormData(prev => ({ ...prev, producator: e.target.value }))}
+                />
               </div>
               <div className="space-y-2">
                 <Label>An Fabricație</Label>
-                <Input type="number" placeholder="2024" />
+                <Input 
+                  type="number" 
+                  placeholder="2024"
+                  value={addFormData.anFabricatie}
+                  onChange={(e) => setAddFormData(prev => ({ ...prev, anFabricatie: e.target.value }))}
+                />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label>Descriere</Label>
-              <Textarea placeholder="Descriere echipament..." />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Valoare Achiziție (RON)</Label>
+                <Input 
+                  type="number" 
+                  placeholder="100000"
+                  value={addFormData.valoareAchizitie}
+                  onChange={(e) => setAddFormData(prev => ({ ...prev, valoareAchizitie: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Durată Amortizare (luni)</Label>
+                <Input 
+                  type="number" 
+                  placeholder="60"
+                  value={addFormData.durataAmortizare}
+                  onChange={(e) => setAddFormData(prev => ({ ...prev, durataAmortizare: e.target.value }))}
+                />
+              </div>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Anulează</Button>
-            <Button onClick={() => { toast.success("Echipament adăugat"); setIsAddDialogOpen(false); }}>
-              Salvează
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Plan Revizie Dialog */}
-      <Dialog open={isPlanRevizieOpen} onOpenChange={setIsPlanRevizieOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Planificare Revizie</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="space-y-2">
-              <Label>Data Revizie</Label>
-              <Input type="date" />
-            </div>
-            <div className="space-y-2">
-              <Label>Tip Revizie</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selectează tip" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="planificata">Revizie Planificată</SelectItem>
-                  <SelectItem value="preventiva">Mentenanță Preventivă</SelectItem>
-                  <SelectItem value="anuala">Revizie Anuală</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Observații</Label>
-              <Textarea placeholder="Detalii revizie..." />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsPlanRevizieOpen(false)}>Anulează</Button>
-            <Button onClick={() => { toast.success("Revizie planificată"); setIsPlanRevizieOpen(false); }}>
-              Planifică
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Raportare Defect Dialog */}
-      <Dialog open={isDefectDialogOpen} onOpenChange={setIsDefectDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Raportare Defecțiune</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="space-y-2">
-              <Label>Tip Defecțiune</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selectează tip" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="mecanic">Mecanic</SelectItem>
-                  <SelectItem value="electric">Electric</SelectItem>
-                  <SelectItem value="hidraulic">Hidraulic</SelectItem>
-                  <SelectItem value="electronic">Electronic</SelectItem>
-                  <SelectItem value="altele">Altele</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Descriere Defecțiune</Label>
-              <Textarea placeholder="Descrieți problema întâmpinată..." rows={4} />
-            </div>
-            <div className="space-y-2">
-              <Label>Urgență</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Nivel urgență" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="scazuta">Scăzută</SelectItem>
-                  <SelectItem value="medie">Medie</SelectItem>
-                  <SelectItem value="ridicata">Ridicată</SelectItem>
-                  <SelectItem value="critica">Critică</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDefectDialogOpen(false)}>Anulează</Button>
-            <Button variant="destructive" onClick={() => { toast.success("Defecțiune raportată"); setIsDefectDialogOpen(false); }}>
-              Raportează
-            </Button>
+            <Button onClick={handleAddSubmit}>Salvează</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
