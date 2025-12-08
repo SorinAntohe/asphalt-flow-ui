@@ -908,12 +908,12 @@ const Loturi = () => {
                 />
               </div>
               <div>
-                <Label>Material *</Label>
+                <Label>Produs *</Label>
                 <FilterableSelect
                   options={materialeDisponibile}
                   value={addFormData.material}
                   onValueChange={(v) => setAddFormData(prev => ({ ...prev, material: v }))}
-                  placeholder="Selectează material"
+                  placeholder="Selectează produs"
                 />
               </div>
             </div>
