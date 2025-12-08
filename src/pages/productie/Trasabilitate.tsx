@@ -355,28 +355,6 @@ const Trasabilitate = () => {
               </CardContent>
             </Card>
 
-            {/* Detailed Table - Comenzi Client */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Comenzi Client</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[200px]">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Cod Comandă</TableHead>
-                        <TableHead>Client</TableHead>
-                        <TableHead>Produs</TableHead>
-                        <TableHead className="text-right">Cantitate</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                    </TableBody>
-                  </Table>
-                </ScrollArea>
-              </CardContent>
-            </Card>
         </div>
       )}
 
