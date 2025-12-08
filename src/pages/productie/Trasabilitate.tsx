@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { 
   GitBranch, Search, Download, Package, FileText, Truck, Users,
-  ChevronRight, ArrowRight, AlertTriangle, CheckCircle, Clock
+  ChevronRight, ArrowRight, AlertTriangle, CheckCircle, Clock, ClipboardList
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -48,9 +48,18 @@ interface Livrare {
   data: string;
 }
 
+interface OrdinProductie {
+  id: string;
+  cod: string;
+  produs: string;
+  cantitate: number;
+  data: string;
+}
+
 interface TrasabilitateData {
   receptiiLoturi: ReceptieLot[];
   reteta: Reteta;
+  ordinProductie: OrdinProductie;
   loturiProductie: LotProducție[];
   livrari: Livrare[];
 }
@@ -64,6 +73,7 @@ const mockTrasabilitateData: Record<string, TrasabilitateData> = {
       { id: "R3", codLot: "RM-003", material: "4/8 CONC", furnizor: "Cariera Nord", data: "28/11/2024", cantitate: 100 },
     ],
     reteta: { id: "RET-1", nume: "BA 16 Standard", produs: "Beton Asfaltic BA 16" },
+    ordinProductie: { id: "OP1", cod: "OP-2024-156", produs: "BA 16", cantitate: 250, data: "29/11/2024" },
     loturiProductie: [
       { id: "P1", codLot: "LOT-2024-001", ordin: "OP-2024-156", cantitate: 250, data: "29/11/2024", status: "Conform" },
     ],
@@ -78,6 +88,7 @@ const mockTrasabilitateData: Record<string, TrasabilitateData> = {
       { id: "R5", codLot: "RM-005", material: "8/16 CRIBLURI", furnizor: "Agregate Plus", data: "27/11/2024", cantitate: 200 },
     ],
     reteta: { id: "RET-2", nume: "MASF 16 Premium", produs: "Mixtură Asfaltică MASF 16" },
+    ordinProductie: { id: "OP2", cod: "OP-2024-157", produs: "MASF 16", cantitate: 180, data: "28/11/2024" },
     loturiProductie: [
       { id: "P2", codLot: "LOT-2024-002", ordin: "OP-2024-157", cantitate: 180, data: "28/11/2024", status: "Neconform" },
     ],
@@ -91,6 +102,7 @@ const mockTrasabilitateData: Record<string, TrasabilitateData> = {
       { id: "R7", codLot: "RM-007", material: "0/4 CONC", furnizor: "Cariera Sud", data: "26/11/2024", cantitate: 120 },
     ],
     reteta: { id: "RET-3", nume: "BAD 25 Greu", produs: "Beton Asfaltic Deschis BAD 25" },
+    ordinProductie: { id: "OP3", cod: "OP-2024-158", produs: "BAD 25", cantitate: 300, data: "27/11/2024" },
     loturiProductie: [
       { id: "P3", codLot: "LOT-2024-003", ordin: "OP-2024-158", cantitate: 300, data: "27/11/2024", status: "În așteptare" },
     ],
@@ -163,7 +175,7 @@ const Trasabilitate = () => {
           <GitBranch className="h-8 w-8 text-primary" />
           <div>
             <h1 className="text-2xl font-bold text-foreground">Trasabilitate</h1>
-            <p className="text-muted-foreground">Urmărire genealogică: Materie primă → Rețetă → Lot → Produs finit</p>
+            <p className="text-muted-foreground">Urmărire genealogică: Materie primă → Rețetă → Ordin producție → Lot → Produs finit</p>
           </div>
         </div>
         {selectedLot && trasabilitateResult && (
@@ -275,6 +287,25 @@ const Trasabilitate = () => {
                     <div className="p-4 rounded-lg bg-purple-500/10 border border-purple-500/20">
                       <div className="font-medium">{trasabilitateResult.reteta.nume}</div>
                       <div className="text-sm text-muted-foreground">{trasabilitateResult.reteta.produs}</div>
+                    </div>
+                  </div>
+
+                  {/* Arrow */}
+                  <div className="flex items-center justify-center lg:py-8">
+                    <ArrowRight className="h-6 w-6 text-muted-foreground hidden lg:block" />
+                    <ChevronRight className="h-6 w-6 text-muted-foreground rotate-90 lg:hidden" />
+                  </div>
+
+                  {/* Ordin de Producție */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-3">
+                      <ClipboardList className="h-5 w-5 text-orange-400" />
+                      <span className="font-medium text-foreground">Ordin Producție</span>
+                    </div>
+                    <div className="p-4 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                      <div className="font-medium">{trasabilitateResult.ordinProductie.cod}</div>
+                      <div className="text-sm text-muted-foreground">{trasabilitateResult.ordinProductie.produs}</div>
+                      <div className="text-xs text-muted-foreground">{trasabilitateResult.ordinProductie.cantitate} to • {trasabilitateResult.ordinProductie.data}</div>
                     </div>
                   </div>
 
