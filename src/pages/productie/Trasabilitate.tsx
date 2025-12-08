@@ -262,7 +262,7 @@ const Trasabilitate = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-3">
                       <Package className="h-5 w-5 text-blue-400" />
-                      <span className="font-medium text-foreground">Recepții Materii Prime</span>
+                      <span className="font-medium text-foreground">Comandă Materii Prime</span>
                     </div>
                     <div className="space-y-2">
                       {trasabilitateResult.receptiiLoturi.map(r => (
@@ -336,7 +336,7 @@ const Trasabilitate = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-3">
                       <Truck className="h-5 w-5 text-amber-400" />
-                      <span className="font-medium text-foreground">Livrări / Clienți</span>
+                      <span className="font-medium text-foreground">Comandă Client</span>
                     </div>
                     {trasabilitateResult.livrari.length > 0 ? (
                       <div className="space-y-2">
@@ -366,7 +366,7 @@ const Trasabilitate = () => {
               {/* Recepții Table */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Recepții Materii Prime</CardTitle>
+                  <CardTitle className="text-base">Comandă Materii Prime</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ScrollArea className="h-[200px]">
@@ -494,7 +494,7 @@ const Trasabilitate = () => {
           <h2 className="text-xl font-semibold text-foreground mb-2">Căutați un lot</h2>
           <p className="text-muted-foreground max-w-md mx-auto mb-4">
             Introduceți codul lotului pentru a vizualiza trasabilitatea completă
-            de la recepție materii prime până la livrarea către client.
+            de la comandă materii prime până la livrarea către client.
           </p>
           <div className="flex flex-wrap justify-center gap-2">
             <span className="text-sm text-muted-foreground">Exemple:</span>
