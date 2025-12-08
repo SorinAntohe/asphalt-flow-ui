@@ -48,6 +48,7 @@ interface ProdusOrdin {
   produs: string;
   cantitate: number;
   reteta: string;
+  comandaAsociata: string;
 }
 
 interface OrdinProductie {
@@ -224,10 +225,13 @@ const OrdineProductie = () => {
             const cantitatiArray = item.cantitati ? item.cantitati.split(", ").map(c => parseFloat(c) || 0) : [];
             const reteteArray = item.retete ? item.retete.split(", ") : [];
             
+            const comenziAsociateArray = item.comenzi_asociate ? item.comenzi_asociate.split(", ") : [];
+            
             const produse: ProdusOrdin[] = produseArray.map((produs, i) => ({
               produs: produs,
               cantitate: cantitatiArray[i] || 0,
-              reteta: reteteArray[i] || ""
+              reteta: reteteArray[i] || "",
+              comandaAsociata: comenziAsociateArray[i] || ""
             }));
             
             const cantitateTotala = item.masa_totala || cantitatiArray.reduce((sum, c) => sum + c, 0);
@@ -355,21 +359,19 @@ const OrdineProductie = () => {
 
   // Wizard form state
   const [wizardForm, setWizardForm] = useState<{
-    produse: { produs: string; cantitate: string; reteta: string }[];
+    produse: { produs: string; cantitate: string; reteta: string; comandaAsociata: string }[];
     unitateMasura: string;
     startPlanificat: string;
     operator: string;
     sefSchimb: string;
     observatii: string;
-    comenziAsociate: string[];
   }>({
-    produse: [{ produs: "", cantitate: "", reteta: "" }],
+    produse: [{ produs: "", cantitate: "", reteta: "", comandaAsociata: "" }],
     unitateMasura: "tone",
     startPlanificat: "",
     operator: "",
     sefSchimb: "",
-    observatii: "",
-    comenziAsociate: []
+    observatii: ""
   });
 
   // Stats
@@ -478,14 +480,14 @@ const OrdineProductie = () => {
       produse: ordin.produse.map(p => ({
         produs: p.produs,
         cantitate: String(p.cantitate),
-        reteta: p.reteta
+        reteta: p.reteta,
+        comandaAsociata: p.comandaAsociata || ""
       })),
       unitateMasura: ordin.unitateMasura,
       startPlanificat: ordin.startPlanificat,
       operator: ordin.operator,
       sefSchimb: ordin.sefSchimb,
-      observatii: ordin.observatii,
-      comenziAsociate: ordin.comenziAsociate
+      observatii: ordin.observatii
     });
     setDetailDialogOpen(false);
     setEditDialogOpen(true);
@@ -506,7 +508,8 @@ const OrdineProductie = () => {
         produse: validProduse.map(p => ({
           produs: p.produs,
           cantitate: parseFloat(p.cantitate) || 0,
-          reteta: p.reteta
+          reteta: p.reteta,
+          comandaAsociata: p.comandaAsociata || ""
         })),
         cantitateTotala: validProduse.reduce((sum, p) => sum + (parseFloat(p.cantitate) || 0), 0),
         unitateMasura: wizardForm.unitateMasura,
@@ -514,7 +517,7 @@ const OrdineProductie = () => {
         operator: wizardForm.operator,
         sefSchimb: wizardForm.sefSchimb,
         observatii: wizardForm.observatii,
-        comenziAsociate: wizardForm.comenziAsociate
+        comenziAsociate: validProduse.map(p => p.comandaAsociata).filter(Boolean)
       } : o
     ));
     
@@ -534,13 +537,12 @@ const OrdineProductie = () => {
 
   const resetWizardForm = () => {
     setWizardForm({
-      produse: [{ produs: "", cantitate: "", reteta: "" }],
+      produse: [{ produs: "", cantitate: "", reteta: "", comandaAsociata: "" }],
       unitateMasura: "tone",
       startPlanificat: "",
       operator: "",
       sefSchimb: "",
-      observatii: "",
-      comenziAsociate: []
+      observatii: ""
     });
   };
 
@@ -548,7 +550,7 @@ const OrdineProductie = () => {
   const addProdus = () => {
     setWizardForm(prev => ({
       ...prev,
-      produse: [...prev.produse, { produs: "", cantitate: "", reteta: "" }]
+      produse: [...prev.produse, { produs: "", cantitate: "", reteta: "", comandaAsociata: "" }]
     }));
   };
 
@@ -608,7 +610,6 @@ const OrdineProductie = () => {
           unitate_masura: wizardForm.unitateMasura,
           operator: wizardForm.operator,
           sef_schimb: wizardForm.sefSchimb,
-          comenzi_asociate: wizardForm.comenziAsociate.join(",") || "",
           observatii: wizardForm.observatii || ""
         };
 
@@ -619,6 +620,7 @@ const OrdineProductie = () => {
           produse: firstProduct.produs,
           cantitati: String(firstProduct.cantitate),
           retete: firstProduct.reteta || "",
+          comenzi_asociate: firstProduct.comandaAsociata || ""
         };
 
         console.log("=== PRIMA CERERE (fara cod_ordin) ===");
@@ -651,6 +653,7 @@ const OrdineProductie = () => {
             produse: product.produs,
             cantitati: String(product.cantitate),
             retete: product.reteta || "",
+            comenzi_asociate: product.comandaAsociata || ""
           };
 
           console.log(`Cerere ${i}/${validProduse.length - 1}:`, JSON.stringify(payload, null, 2));
@@ -679,10 +682,13 @@ const OrdineProductie = () => {
             const cantitatiArray = item.cantitati ? item.cantitati.split(", ").map(c => parseFloat(c) || 0) : [];
             const reteteArray = item.retete ? item.retete.split(", ") : [];
             
+            const comenziAsociateArray = item.comenzi_asociate ? item.comenzi_asociate.split(", ") : [];
+            
             const produse: ProdusOrdin[] = produseArray.map((produs, i) => ({
               produs: produs,
               cantitate: cantitatiArray[i] || 0,
-              reteta: reteteArray[i] || ""
+              reteta: reteteArray[i] || "",
+              comandaAsociata: comenziAsociateArray[i] || ""
             }));
             
             const cantitateTotala = item.masa_totala || cantitatiArray.reduce((sum, c) => sum + c, 0);
@@ -712,13 +718,12 @@ const OrdineProductie = () => {
         setWizardOpen(false);
         setWizardStep(1);
         setWizardForm({
-          produse: [{ produs: "", cantitate: "", reteta: "" }],
+          produse: [{ produs: "", cantitate: "", reteta: "", comandaAsociata: "" }],
           unitateMasura: "tone",
           startPlanificat: "",
           operator: "",
           sefSchimb: "",
-          observatii: "",
-          comenziAsociate: []
+          observatii: ""
         });
       } catch (error) {
         console.error("Error adding order:", error);
@@ -1257,7 +1262,7 @@ const OrdineProductie = () => {
                         </Button>
                       )}
                     </div>
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-4 gap-3">
                       <div>
                         <Label className="text-xs">Produs Finit</Label>
                         <Select value={item.produs} onValueChange={(v) => updateProdus(index, "produs", v)}>
@@ -1290,6 +1295,19 @@ const OrdineProductie = () => {
                           <SelectContent>
                             {retete.map((r) => (
                               <SelectItem key={r} value={r}>{r}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-xs">Comandă Asociată</Label>
+                        <Select value={item.comandaAsociata} onValueChange={(v) => updateProdus(index, "comandaAsociata", v)}>
+                          <SelectTrigger className="h-9">
+                            <SelectValue placeholder="Selectează" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {comenziDisponibile.map((cmd) => (
+                              <SelectItem key={cmd} value={cmd}>{cmd}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
@@ -1356,40 +1374,6 @@ const OrdineProductie = () => {
                   </Select>
                 </div>
                 <div className="col-span-2">
-                  <Label>Comenzi Asociate</Label>
-                  <div className="flex flex-wrap gap-2 mt-2 p-3 border rounded-md min-h-[40px]">
-                    {wizardForm.comenziAsociate.map((cmd) => (
-                      <Badge key={cmd} variant="secondary" className="gap-1">
-                        {cmd}
-                        <X 
-                          className="h-3 w-3 cursor-pointer" 
-                          onClick={() => setWizardForm(prev => ({
-                            ...prev,
-                            comenziAsociate: prev.comenziAsociate.filter(c => c !== cmd)
-                          }))}
-                        />
-                      </Badge>
-                    ))}
-                  </div>
-                  <Select onValueChange={(v) => {
-                    if (!wizardForm.comenziAsociate.includes(v)) {
-                      setWizardForm(prev => ({
-                        ...prev,
-                        comenziAsociate: [...prev.comenziAsociate, v]
-                      }));
-                    }
-                  }}>
-                    <SelectTrigger className="mt-2">
-                      <SelectValue placeholder="Adaugă comandă..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {comenziDisponibile.filter(c => !wizardForm.comenziAsociate.includes(c)).map((cmd) => (
-                        <SelectItem key={cmd} value={cmd}>{cmd}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="col-span-2">
                   <Label>Observații</Label>
                   <Textarea
                     value={wizardForm.observatii}
@@ -1444,12 +1428,12 @@ const OrdineProductie = () => {
                     <span className="text-muted-foreground">Observații:</span> {wizardForm.observatii}
                   </div>
                 )}
-                {wizardForm.comenziAsociate.length > 0 && (
+                {wizardForm.produse.some(p => p.comandaAsociata) && (
                   <div className="text-sm">
                     <span className="text-muted-foreground">Comenzi Asociate:</span>
                     <div className="flex flex-wrap gap-1 mt-1">
-                      {wizardForm.comenziAsociate.map((cmd) => (
-                        <Badge key={cmd} variant="secondary" className="text-xs">{cmd}</Badge>
+                      {wizardForm.produse.filter(p => p.comandaAsociata).map((p, i) => (
+                        <Badge key={i} variant="secondary" className="text-xs">{p.produs}: {p.comandaAsociata}</Badge>
                       ))}
                     </div>
                   </div>
@@ -1519,7 +1503,7 @@ const OrdineProductie = () => {
                       </Button>
                     )}
                   </div>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-4 gap-2">
                     <div>
                       <Label className="text-xs">Produs Finit</Label>
                       <Select value={item.produs} onValueChange={(v) => updateProdus(index, "produs", v)}>
@@ -1552,6 +1536,19 @@ const OrdineProductie = () => {
                         <SelectContent>
                           {retete.map((r) => (
                             <SelectItem key={r} value={r}>{r}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-xs">Comandă Asociată</Label>
+                      <Select value={item.comandaAsociata} onValueChange={(v) => updateProdus(index, "comandaAsociata", v)}>
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder="Selectează" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {comenziDisponibile.map((cmd) => (
+                            <SelectItem key={cmd} value={cmd}>{cmd}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -1613,40 +1610,6 @@ const OrdineProductie = () => {
                   <SelectContent>
                     {sefiSchimb.map((s) => (
                       <SelectItem key={s.id} value={s.nume}>{s.nume}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="col-span-2">
-                <Label>Comenzi Asociate</Label>
-                <div className="flex flex-wrap gap-2 mt-2 p-3 border rounded-md min-h-[40px]">
-                  {wizardForm.comenziAsociate.map((cmd) => (
-                    <Badge key={cmd} variant="secondary" className="gap-1">
-                      {cmd}
-                      <X 
-                        className="h-3 w-3 cursor-pointer" 
-                        onClick={() => setWizardForm(prev => ({
-                          ...prev,
-                          comenziAsociate: prev.comenziAsociate.filter(c => c !== cmd)
-                        }))}
-                      />
-                    </Badge>
-                  ))}
-                </div>
-                <Select onValueChange={(v) => {
-                  if (!wizardForm.comenziAsociate.includes(v)) {
-                    setWizardForm(prev => ({
-                      ...prev,
-                      comenziAsociate: [...prev.comenziAsociate, v]
-                    }));
-                  }
-                }}>
-                  <SelectTrigger className="mt-2">
-                    <SelectValue placeholder="Adaugă comandă..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {comenziDisponibile.filter(c => !wizardForm.comenziAsociate.includes(c)).map((cmd) => (
-                      <SelectItem key={cmd} value={cmd}>{cmd}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
