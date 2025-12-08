@@ -41,6 +41,7 @@ interface Lot {
   id: number;
   codLot: string;
   ordin: string;
+  produs: string;
   reteta: string;
   cantitate: number;
   dataOra: string;
@@ -117,6 +118,7 @@ const Loturi = () => {
               id: item.id,
               codLot: item.cod_lot || "",
               ordin: item.cod_ordin || "",
+              produs: item.produs || "",
               reteta: item.cod_reteta || "",
               cantitate: parseFloat(item.cantitate) || 0,
               dataOra: item.data_ora || "",
@@ -579,6 +581,16 @@ const Loturi = () => {
                   </TableHead>
                   <TableHead>
                     <DataTableColumnHeader
+                      title="Produs"
+                      sortKey="produs"
+                      currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
+                      filterValue={filters.produs || ""}
+                      onSort={handleSort}
+                      onFilterChange={(value) => handleFilter("produs", value)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
                       title="Cantitate"
                       sortKey="cantitate"
                       currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
@@ -622,7 +634,7 @@ const Loturi = () => {
               </TableHeader>
               <TableBody>
                 {paginatedLoturi.length === 0 ? (
-                  <DataTableEmpty colSpan={7} message="Nu există loturi de producție" />
+                  <DataTableEmpty colSpan={8} message="Nu există loturi de producție" />
                 ) : (
                   paginatedLoturi.map((lot) => (
                     <TableRow
@@ -632,6 +644,7 @@ const Loturi = () => {
                     >
                       <TableCell className="font-medium">{lot.codLot}</TableCell>
                       <TableCell>{lot.ordin}</TableCell>
+                      <TableCell>{lot.produs}</TableCell>
                       <TableCell>{lot.cantitate}</TableCell>
                       <TableCell>{lot.dataOra}</TableCell>
                       <TableCell>{lot.operator}</TableCell>
