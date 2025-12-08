@@ -77,9 +77,8 @@ const Echipamente = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   
-  // Add form state
+  // Add form state (cod is auto-generated, not included)
   const [addFormData, setAddFormData] = useState({
-    cod: "",
     denumire: "",
     serie: "",
     producator: "",
@@ -181,14 +180,13 @@ const Echipamente = () => {
   };
 
   const handleAddSubmit = () => {
-    if (!addFormData.cod || !addFormData.denumire) {
+    if (!addFormData.denumire) {
       toast.error("Completați câmpurile obligatorii");
       return;
     }
     toast.success("Echipament adăugat cu succes");
     setIsAddDialogOpen(false);
     setAddFormData({
-      cod: "",
       denumire: "",
       serie: "",
       producator: "",
@@ -490,11 +488,11 @@ const Echipamente = () => {
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Cod *</Label>
+                <Label>Denumire *</Label>
                 <Input 
-                  placeholder="ECH-XXX"
-                  value={addFormData.cod}
-                  onChange={(e) => setAddFormData(prev => ({ ...prev, cod: e.target.value }))}
+                  placeholder="Denumire echipament"
+                  value={addFormData.denumire}
+                  onChange={(e) => setAddFormData(prev => ({ ...prev, denumire: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
@@ -505,14 +503,6 @@ const Echipamente = () => {
                   onChange={(e) => setAddFormData(prev => ({ ...prev, serie: e.target.value }))}
                 />
               </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Denumire *</Label>
-              <Input 
-                placeholder="Denumire echipament"
-                value={addFormData.denumire}
-                onChange={(e) => setAddFormData(prev => ({ ...prev, denumire: e.target.value }))}
-              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
