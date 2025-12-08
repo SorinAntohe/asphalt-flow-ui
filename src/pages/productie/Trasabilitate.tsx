@@ -98,14 +98,6 @@ const mockTrasabilitateData: Record<string, TrasabilitateData> = {
   }
 };
 
-// Where-used data
-const whereUsedData = [
-  { lotMaterie: "RM-001", material: "Bitum 50/70", loturiProduse: ["LOT-2024-001", "LOT-2024-004"], cantitateUtilizata: 25 },
-  { lotMaterie: "RM-002", material: "0/4 NAT", loturiProduse: ["LOT-2024-001"], cantitateUtilizata: 150 },
-  { lotMaterie: "RM-004", material: "Bitum 50/70", loturiProduse: ["LOT-2024-002"], cantitateUtilizata: 30 },
-  { lotMaterie: "RM-005", material: "8/16 CRIBLURI", loturiProduse: ["LOT-2024-002", "LOT-2024-005"], cantitateUtilizata: 200 },
-  { lotMaterie: "RM-006", material: "Filler", loturiProduse: ["LOT-2024-003"], cantitateUtilizata: 15 },
-];
 
 const statusConfig = {
   "Conform": { color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30", icon: CheckCircle },
@@ -116,7 +108,7 @@ const statusConfig = {
 const Trasabilitate = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLot, setSelectedLot] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState("genealogic");
+  
 
   const trasabilitateResult = useMemo(() => {
     if (!selectedLot) return null;
@@ -243,14 +235,7 @@ const Trasabilitate = () => {
 
       {/* Results Section */}
       {selectedLot && trasabilitateResult && (
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList>
-            <TabsTrigger value="genealogic">Grafic Genealogic</TabsTrigger>
-            <TabsTrigger value="where-used">Where-Used</TabsTrigger>
-          </TabsList>
-
-          {/* Genealogical Graph Tab */}
-          <TabsContent value="genealogic" className="space-y-4">
+        <div className="space-y-4">
             {/* Visual Flow */}
             <Card>
               <CardHeader>
@@ -431,60 +416,7 @@ const Trasabilitate = () => {
                 </CardContent>
               </Card>
             </div>
-          </TabsContent>
-
-          {/* Where-Used Tab */}
-          <TabsContent value="where-used" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Lista Where-Used</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Materii prime utilizate și loturile de producție în care au fost consumate
-                </p>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Lot Materie Primă</TableHead>
-                      <TableHead>Material</TableHead>
-                      <TableHead>Loturi Produse</TableHead>
-                      <TableHead className="text-right">Cantitate Utilizată</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {whereUsedData.map((item, idx) => (
-                      <TableRow key={idx}>
-                        <TableCell className="font-medium">{item.lotMaterie}</TableCell>
-                        <TableCell>{item.material}</TableCell>
-                        <TableCell>
-                          <div className="flex flex-wrap gap-1">
-                            {item.loturiProduse.map(lot => (
-                              <Badge 
-                                key={lot} 
-                                variant="outline" 
-                                className={`cursor-pointer hover:bg-accent ${lot === selectedLot ? 'bg-primary/20 border-primary' : ''}`}
-                                onClick={() => {
-                                  if (mockTrasabilitateData[lot]) {
-                                    setSelectedLot(lot);
-                                    setActiveTab("genealogic");
-                                  }
-                                }}
-                              >
-                                {lot}
-                              </Badge>
-                            ))}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right">{item.cantitateUtilizata} to</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+        </div>
       )}
 
       {/* Empty State */}
