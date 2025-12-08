@@ -79,18 +79,16 @@ const Loturi = () => {
   const [operatoriDisponibili, setOperatoriDisponibili] = useState<{ value: string; label: string }[]>([]);
   const [selectedOperator, setSelectedOperator] = useState("");
 
-  // Comenzi disponibile pentru asociere
-  const [comenziDisponibile, setComenziDisponibile] = useState<{ value: string; label: string }[]>([]);
-
   // Add form state
   const [addFormData, setAddFormData] = useState({
     cod_ordin: "",
+    cod_reteta: "",
+    cantitate: "",
     operator: "",
     temperatura: "",
     marshall: "",
     verdict_calitate: "În așteptare",
-    observatii: "",
-    comenzi_asociate: [{ cod: "", reteta: "", cantitate: "" }] as { cod: string; reteta: string; cantitate: string }[]
+    observatii: ""
   });
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -214,32 +212,6 @@ const Loturi = () => {
     fetchOperatori();
   }, []);
 
-  // Fetch comenzi disponibile pentru asociere
-  useEffect(() => {
-    const fetchComenzi = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/comercial/returneaza/comenzi_client`);
-        if (response.ok) {
-          const data = await response.json();
-          const uniqueCodes = new Set<string>();
-          const options: { value: string; label: string }[] = [];
-          if (Array.isArray(data)) {
-            data.forEach((c: any) => {
-              const code = c.cod || c.cod_comanda || c;
-              if (code && !uniqueCodes.has(code)) {
-                uniqueCodes.add(code);
-                options.push({ value: code, label: code });
-              }
-            });
-          }
-          setComenziDisponibile(options);
-        }
-      } catch (error) {
-        console.error("Error fetching comenzi:", error);
-      }
-    };
-    fetchComenzi();
-  }, []);
 
   // Stats
   const stats = useMemo(() => {
@@ -273,36 +245,10 @@ const Loturi = () => {
     return null;
   };
 
-  // Helper functions for comenzi asociate
-  const handleAddComanda = () => {
-    setAddFormData(prev => ({
-      ...prev,
-      comenzi_asociate: [...prev.comenzi_asociate, { cod: "", reteta: "", cantitate: "" }]
-    }));
-  };
-
-  const handleRemoveComanda = (index: number) => {
-    if (addFormData.comenzi_asociate.length > 1) {
-      setAddFormData(prev => ({
-        ...prev,
-        comenzi_asociate: prev.comenzi_asociate.filter((_, i) => i !== index)
-      }));
-    }
-  };
-
-  const handleComandaChange = (index: number, field: "cod" | "reteta" | "cantitate", value: string) => {
-    setAddFormData(prev => ({
-      ...prev,
-      comenzi_asociate: prev.comenzi_asociate.map((c, i) => i === index ? { ...c, [field]: value } : c)
-    }));
-  };
-
   // Handle add lot
   const handleAddLot = async () => {
-    // Validate at least one comanda with reteta and cantitate
-    const validComenzi = addFormData.comenzi_asociate.filter(c => c.cod && c.reteta && c.cantitate);
-    if (!addFormData.cod_ordin || !addFormData.operator || validComenzi.length === 0) {
-      toast.error("Completați toate câmpurile obligatorii (cod ordin, operator, și cel puțin o comandă cu rețetă și cantitate)");
+    if (!addFormData.cod_ordin || !addFormData.cod_reteta || !addFormData.cantitate || !addFormData.operator) {
+      toast.error("Completați toate câmpurile obligatorii (cod ordin, rețetă, cantitate, operator)");
       return;
     }
 
@@ -318,11 +264,10 @@ const Loturi = () => {
         }
       }
 
-      // Get valid comenzi with reteta and cantitate
-      const validComenzi = addFormData.comenzi_asociate.filter(c => c.cod && c.reteta && c.cantitate);
-      
-      const basePayload = {
+      const payload = {
         cod_ordin: addFormData.cod_ordin,
+        cod_reteta: addFormData.cod_reteta,
+        cantitate: addFormData.cantitate,
         operator: addFormData.operator,
         temperatura: parseFloat(addFormData.temperatura) || 0,
         marshall: parseFloat(addFormData.marshall) || 0,
@@ -331,57 +276,28 @@ const Loturi = () => {
         cai_fisiere: uploadedPaths.join(",")
       };
 
-      // First call without cod_lot to get the generated code
-      const firstComanda = validComenzi[0];
-      const firstPayload = {
-        ...basePayload,
-        cod_reteta: firstComanda.reteta,
-        cantitate: firstComanda.cantitate,
-        comenzi_asociate: firstComanda.cod
-      };
-
-      const firstResponse = await fetch(`${API_BASE_URL}/productie/adauga/loturi_telemetrie`, {
+      const response = await fetch(`${API_BASE_URL}/productie/adauga/loturi_telemetrie`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(firstPayload)
+        body: JSON.stringify(payload)
       });
 
-      if (!firstResponse.ok) {
+      if (!response.ok) {
         toast.error("Eroare la adăugarea lotului");
         return;
-      }
-
-      const firstResult = await firstResponse.json();
-      const codLot = firstResult.cod_lot;
-
-      // For remaining comenzi, use the same cod_lot
-      for (let i = 1; i < validComenzi.length; i++) {
-        const comanda = validComenzi[i];
-        const payload = {
-          ...basePayload,
-          cod_lot: codLot,
-          cod_reteta: comanda.reteta,
-          cantitate: comanda.cantitate,
-          comenzi_asociate: comanda.cod
-        };
-
-        await fetch(`${API_BASE_URL}/productie/adauga/loturi_telemetrie`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
       }
 
       toast.success("Lot adăugat cu succes");
       setAddDialogOpen(false);
       setAddFormData({
         cod_ordin: "",
+        cod_reteta: "",
+        cantitate: "",
         operator: "",
         temperatura: "",
         marshall: "",
         verdict_calitate: "În așteptare",
-        observatii: "",
-        comenzi_asociate: [{ cod: "", reteta: "", cantitate: "" }]
+        observatii: ""
       });
       setUploadedFiles([]);
       fetchLoturi();
@@ -975,60 +891,24 @@ const Loturi = () => {
               </div>
             </div>
 
-            <Separator />
-
-            {/* Comenzi Asociate Section - fiecare comandă cu rețetă și cantitate */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <Label className="text-base font-medium">Comenzi Asociate *</Label>
-                <Button type="button" variant="outline" size="sm" onClick={handleAddComanda}>
-                  <Plus className="w-4 h-4 mr-1" />Adaugă comandă
-                </Button>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Rețetă *</Label>
+                <FilterableSelect
+                  options={reteteDisponibile}
+                  value={addFormData.cod_reteta}
+                  onValueChange={(v) => setAddFormData(prev => ({ ...prev, cod_reteta: v }))}
+                  placeholder="Selectează rețetă"
+                />
               </div>
-              <div className="space-y-2">
-                {addFormData.comenzi_asociate.map((item, index) => (
-                  <div key={index} className="flex gap-2 items-end p-3 border rounded-lg bg-muted/30">
-                    <div className="flex-1">
-                      <Label className="text-xs">Cod Comandă</Label>
-                      <FilterableSelect
-                        options={comenziDisponibile}
-                        value={item.cod}
-                        onValueChange={(v) => handleComandaChange(index, "cod", v)}
-                        placeholder="Selectează comandă"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <Label className="text-xs">Rețetă</Label>
-                      <FilterableSelect
-                        options={reteteDisponibile}
-                        value={item.reteta}
-                        onValueChange={(v) => handleComandaChange(index, "reteta", v)}
-                        placeholder="Selectează rețetă"
-                      />
-                    </div>
-                    <div className="w-28">
-                      <Label className="text-xs">Cantitate</Label>
-                      <Input
-                        type="number"
-                        className="h-9"
-                        value={item.cantitate}
-                        onChange={(e) => handleComandaChange(index, "cantitate", e.target.value)}
-                        placeholder="Ex: 50"
-                      />
-                    </div>
-                    {addFormData.comenzi_asociate.length > 1 && (
-                      <Button 
-                        type="button" 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-9 w-9 text-destructive hover:text-destructive"
-                        onClick={() => handleRemoveComanda(index)}
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    )}
-                  </div>
-                ))}
+              <div>
+                <Label>Cantitate *</Label>
+                <Input
+                  type="number"
+                  value={addFormData.cantitate}
+                  onChange={(e) => setAddFormData(prev => ({ ...prev, cantitate: e.target.value }))}
+                  placeholder="Ex: 50"
+                />
               </div>
             </div>
 
