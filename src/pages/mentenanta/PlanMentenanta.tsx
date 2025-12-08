@@ -1,16 +1,18 @@
 import { useState, useMemo } from "react";
-import { Wrench, Plus, Download, Edit, Trash2 } from "lucide-react";
+import { Wrench, Plus, Download, Edit, Trash2, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { exportToCSV } from "@/lib/exportUtils";
 import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
 import { toast } from "@/hooks/use-toast";
+import { FilterableSelect } from "@/components/ui/filterable-select";
 
 interface Mentenanta {
   id: number;
@@ -94,7 +96,15 @@ const PlanMentenanta = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isServisareDialogOpen, setIsServisareDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Mentenanta | null>(null);
+  
+  // Servisare form state
+  const [servisareFormData, setServisareFormData] = useState({
+    cod: "",
+    pretReparatie: "",
+    observatii: ""
+  });
   
   // Form state
   const [formData, setFormData] = useState({
@@ -403,6 +413,17 @@ const PlanMentenanta = () => {
             <Plus className="h-4 w-4" />
             Adaugă
           </Button>
+          <Button 
+            variant="secondary" 
+            onClick={() => { 
+              setServisareFormData({ cod: "", pretReparatie: "", observatii: "" }); 
+              setIsServisareDialogOpen(true); 
+            }} 
+            className="gap-2"
+          >
+            <Settings className="h-4 w-4" />
+            Servisare
+          </Button>
           <Button variant="outline" onClick={handleExport} disabled={data.length === 0} className="gap-2">
             <Download className="h-4 w-4" />
             Export
@@ -624,6 +645,69 @@ const PlanMentenanta = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Servisare Dialog */}
+      <Dialog open={isServisareDialogOpen} onOpenChange={setIsServisareDialogOpen}>
+        <DialogContent className="max-w-md" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle>Înregistrare Servisare</DialogTitle>
+            <DialogDescription>
+              Completați detaliile reparației pentru echipamentul selectat
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Cod Echipament *</Label>
+              <FilterableSelect
+                options={data.map(item => ({ value: item.cod, label: `${item.cod} - ${item.denumire}` }))}
+                value={servisareFormData.cod}
+                onValueChange={(v) => setServisareFormData(prev => ({ ...prev, cod: v }))}
+                placeholder="Selectează echipament"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Preț Reparație (RON) *</Label>
+              <Input
+                type="number"
+                value={servisareFormData.pretReparatie}
+                onChange={(e) => setServisareFormData(prev => ({ ...prev, pretReparatie: e.target.value }))}
+                placeholder="Ex: 2500"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Observații</Label>
+              <Textarea
+                value={servisareFormData.observatii}
+                onChange={(e) => setServisareFormData(prev => ({ ...prev, observatii: e.target.value }))}
+                placeholder="Detalii despre reparație..."
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsServisareDialogOpen(false)}>
+              Anulează
+            </Button>
+            <Button 
+              onClick={() => {
+                if (!servisareFormData.cod || !servisareFormData.pretReparatie) {
+                  toast({ title: "Eroare", description: "Completați codul și prețul reparației.", variant: "destructive" });
+                  return;
+                }
+                setData(prev => prev.map(item => 
+                  item.cod === servisareFormData.cod 
+                    ? { ...item, servisare: true, cost: Number(servisareFormData.pretReparatie) }
+                    : item
+                ));
+                setIsServisareDialogOpen(false);
+                toast({ title: "Succes", description: "Servisare înregistrată cu succes." });
+              }}
+            >
+              Salvează
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
