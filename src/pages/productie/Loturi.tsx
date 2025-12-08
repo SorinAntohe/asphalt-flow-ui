@@ -920,12 +920,12 @@ const Loturi = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Operator *</Label>
+                <Label>Rețetă</Label>
                 <FilterableSelect
-                  options={operatoriDisponibili}
-                  value={addFormData.operator}
-                  onValueChange={(v) => setAddFormData(prev => ({ ...prev, operator: v }))}
-                  placeholder="Selectează operator"
+                  options={reteteDisponibile}
+                  value={addFormData.cod_reteta}
+                  onValueChange={(v) => setAddFormData(prev => ({ ...prev, cod_reteta: v }))}
+                  placeholder="Selectează rețetă"
                 />
               </div>
               <div>
@@ -939,33 +939,14 @@ const Loturi = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Rețetă</Label>
-                <FilterableSelect
-                  options={reteteDisponibile}
-                  value={addFormData.cod_reteta}
-                  onValueChange={(v) => setAddFormData(prev => ({ ...prev, cod_reteta: v }))}
-                  placeholder="Selectează rețetă"
-                />
-              </div>
-              <div>
-                <Label>Verdict Calitate</Label>
-                <Select
-                  value={addFormData.verdict_calitate}
-                  onValueChange={(v) => setAddFormData(prev => ({ ...prev, verdict_calitate: v }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="În așteptare">În așteptare</SelectItem>
-                    <SelectItem value="Conform">Conform</SelectItem>
-                    <SelectItem value="Neconform">Neconform</SelectItem>
-                    <SelectItem value="Blocat">Blocat</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div>
+              <Label>Operator *</Label>
+              <FilterableSelect
+                options={operatoriDisponibili}
+                value={addFormData.operator}
+                onValueChange={(v) => setAddFormData(prev => ({ ...prev, operator: v }))}
+                placeholder="Selectează operator"
+              />
             </div>
 
             <Separator />
