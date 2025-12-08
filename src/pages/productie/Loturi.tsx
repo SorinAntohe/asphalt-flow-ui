@@ -75,6 +75,9 @@ const Loturi = () => {
   const [reteteDisponibile, setReteteDisponibile] = useState<{ value: string; label: string }[]>([]);
   const [selectedReteta, setSelectedReteta] = useState("");
 
+  // Materiale state
+  const [materialeDisponibile, setMaterialeDisponibile] = useState<{ value: string; label: string }[]>([]);
+
   // Operators state
   const [operatoriDisponibili, setOperatoriDisponibili] = useState<{ value: string; label: string }[]>([]);
   const [selectedOperator, setSelectedOperator] = useState("");
@@ -82,6 +85,7 @@ const Loturi = () => {
   // Add form state
   const [addFormData, setAddFormData] = useState({
     cod_ordin: "",
+    material: "",
     cod_reteta: "",
     cantitate: "",
     operator: "",
@@ -212,6 +216,28 @@ const Loturi = () => {
     fetchOperatori();
   }, []);
 
+  // Fetch materiale
+  useEffect(() => {
+    const fetchMateriale = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/liste/returneaza/produse_finite`);
+        if (response.ok) {
+          const data = await response.json();
+          const options = Array.isArray(data) 
+            ? data.map((m: any) => ({
+                value: m.denumire || m.material || m,
+                label: m.denumire || m.material || m
+              }))
+            : [];
+          setMaterialeDisponibile(options);
+        }
+      } catch (error) {
+        console.error("Error fetching materiale:", error);
+      }
+    };
+    fetchMateriale();
+  }, []);
+
 
   // Stats
   const stats = useMemo(() => {
@@ -291,6 +317,7 @@ const Loturi = () => {
       setAddDialogOpen(false);
       setAddFormData({
         cod_ordin: "",
+        material: "",
         cod_reteta: "",
         cantitate: "",
         operator: "",
@@ -881,24 +908,24 @@ const Loturi = () => {
                 />
               </div>
               <div>
-                <Label>Operator *</Label>
+                <Label>Material *</Label>
                 <FilterableSelect
-                  options={operatoriDisponibili}
-                  value={addFormData.operator}
-                  onValueChange={(v) => setAddFormData(prev => ({ ...prev, operator: v }))}
-                  placeholder="Selectează operator"
+                  options={materialeDisponibile}
+                  value={addFormData.material}
+                  onValueChange={(v) => setAddFormData(prev => ({ ...prev, material: v }))}
+                  placeholder="Selectează material"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Rețetă *</Label>
+                <Label>Operator *</Label>
                 <FilterableSelect
-                  options={reteteDisponibile}
-                  value={addFormData.cod_reteta}
-                  onValueChange={(v) => setAddFormData(prev => ({ ...prev, cod_reteta: v }))}
-                  placeholder="Selectează rețetă"
+                  options={operatoriDisponibili}
+                  value={addFormData.operator}
+                  onValueChange={(v) => setAddFormData(prev => ({ ...prev, operator: v }))}
+                  placeholder="Selectează operator"
                 />
               </div>
               <div>
@@ -909,6 +936,35 @@ const Loturi = () => {
                   onChange={(e) => setAddFormData(prev => ({ ...prev, cantitate: e.target.value }))}
                   placeholder="Ex: 50"
                 />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Rețetă</Label>
+                <FilterableSelect
+                  options={reteteDisponibile}
+                  value={addFormData.cod_reteta}
+                  onValueChange={(v) => setAddFormData(prev => ({ ...prev, cod_reteta: v }))}
+                  placeholder="Selectează rețetă"
+                />
+              </div>
+              <div>
+                <Label>Verdict Calitate</Label>
+                <Select
+                  value={addFormData.verdict_calitate}
+                  onValueChange={(v) => setAddFormData(prev => ({ ...prev, verdict_calitate: v }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="În așteptare">În așteptare</SelectItem>
+                    <SelectItem value="Conform">Conform</SelectItem>
+                    <SelectItem value="Neconform">Neconform</SelectItem>
+                    <SelectItem value="Blocat">Blocat</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -937,24 +993,6 @@ const Loturi = () => {
                   />
                 </div>
               </div>
-            </div>
-
-            <div>
-              <Label>Verdict Calitate</Label>
-              <Select
-                value={addFormData.verdict_calitate}
-                onValueChange={(v) => setAddFormData(prev => ({ ...prev, verdict_calitate: v }))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="În așteptare">În așteptare</SelectItem>
-                  <SelectItem value="Conform">Conform</SelectItem>
-                  <SelectItem value="Neconform">Neconform</SelectItem>
-                  <SelectItem value="Blocat">Blocat</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
 
             <div>
