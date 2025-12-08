@@ -790,12 +790,6 @@ const Loturi = () => {
                     Confirmă Lot
                   </Button>
                 )}
-                {selectedLot.verdictQC !== "Blocat" && (
-                  <Button size="sm" variant="outline" onClick={() => handleBlocheaza(selectedLot)}>
-                    <Lock className="h-4 w-4 mr-1" />
-                    Blochează
-                  </Button>
-                )}
                 {selectedLot.verdictQC === "Blocat" && (
                   <Button size="sm" variant="outline" onClick={() => handleElibereaza(selectedLot)}>
                     <Unlock className="h-4 w-4 mr-1" />
