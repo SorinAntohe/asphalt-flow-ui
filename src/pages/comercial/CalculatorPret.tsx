@@ -920,10 +920,14 @@ const CalculatorPret = () => {
             </div>
             <div className="space-y-2">
               <Label>Produs</Label>
-              <Input
-                placeholder="Nume produs"
+              <FilterableSelect
+                options={retetaOptions}
                 value={newConcurent.produs}
-                onChange={(e) => setNewConcurent(prev => ({ ...prev, produs: e.target.value }))}
+                onValueChange={(value) => {
+                  const selectedRet = retete.find(r => r.cod_reteta === value);
+                  setNewConcurent(prev => ({ ...prev, produs: selectedRet?.denumire?.split(" - ")[0] || value }));
+                }}
+                placeholder="Selectează produs"
               />
             </div>
             <div className="space-y-2">
