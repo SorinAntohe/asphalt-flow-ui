@@ -586,6 +586,15 @@ const PlanMentenanta = () => {
                 onChange={(e) => setFormData(prev => ({ ...prev, costAproxRevizie: e.target.value }))}
               />
             </div>
+            <div className="space-y-2">
+              <Label>Observații</Label>
+              <Textarea 
+                placeholder="Introduceți observații..."
+                value={formData.observatii}
+                onChange={(e) => setFormData(prev => ({ ...prev, observatii: e.target.value }))}
+                rows={3}
+              />
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Anulează</Button>
