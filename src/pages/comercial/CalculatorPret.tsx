@@ -543,13 +543,31 @@ const CalculatorPret = () => {
                       Marjă Profit ({marjaProfit}%)
                     </span>
                     <span className="font-semibold text-emerald-600">
-                      {formatCurrency(costBreakdown.pretRecomandat - costBreakdown.costTotal)}
+                      {formatCurrency(costBreakdown.costTotal * (marjaProfit / 100))}
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {formatCurrency((costBreakdown.pretRecomandat - costBreakdown.costTotal) / parseFloat(cantitate))}/tonă
+                    {formatCurrency((costBreakdown.costTotal * (marjaProfit / 100)) / parseFloat(cantitate))}/tonă
                   </p>
                 </div>
+
+                {/* Fond de Rezervă - only show if enabled */}
+                {fondRezervaEnabled && (
+                  <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium flex items-center gap-2">
+                        <Package className="h-4 w-4 text-blue-500" />
+                        Fond de Rezervă ({fondRezerva}%)
+                      </span>
+                      <span className="font-semibold text-blue-600">
+                        {formatCurrency(costBreakdown.costTotal * (fondRezerva / 100))}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {formatCurrency((costBreakdown.costTotal * (fondRezerva / 100)) / parseFloat(cantitate))}/tonă
+                    </p>
+                  </div>
+                )}
 
                 {/* Analiză Comparativă Concurență */}
                 {filteredPreturiConcurenti.length > 0 ? (
