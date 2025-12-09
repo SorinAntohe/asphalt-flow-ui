@@ -65,6 +65,8 @@ const PlanMentenanta = () => {
     dataRevizieUrmatoare: "",
     costAproxRevizie: "",
     observatii: "",
+    descriereServisare: "",
+    costServisare: "",
   });
 
   // Fetch planuri mentenanta
@@ -199,6 +201,8 @@ const PlanMentenanta = () => {
       dataRevizieUrmatoare: "",
       costAproxRevizie: "",
       observatii: "",
+      descriereServisare: "",
+      costServisare: "",
     });
   };
 
@@ -245,6 +249,8 @@ const PlanMentenanta = () => {
         dataRevizieUrmatoare: selectedItem.dataRevizieUrmatoare,
         costAproxRevizie: String(selectedItem.costAproxRevizie),
         observatii: selectedItem.observatii || "",
+        descriereServisare: selectedItem.descriereServisare || "",
+        costServisare: selectedItem.costServisare ? String(selectedItem.costServisare) : "",
       });
       setIsDetailOpen(false);
       setIsEditDialogOpen(true);
@@ -484,10 +490,6 @@ const PlanMentenanta = () => {
                   <Trash2 className="h-4 w-4" />
                   Șterge
                 </Button>
-                <Button variant="secondary" onClick={handleOpenServisare} className="gap-2">
-                  <Wrench className="h-4 w-4" />
-                  Servisare
-                </Button>
                 <Button onClick={handleOpenEdit} className="gap-2">
                   <Pencil className="h-4 w-4" />
                   Editează
@@ -639,6 +641,24 @@ const PlanMentenanta = () => {
                 placeholder="ex: 5000"
                 value={formData.costAproxRevizie}
                 onChange={(e) => setFormData(prev => ({ ...prev, costAproxRevizie: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Descriere Servisare</Label>
+              <Textarea 
+                placeholder="Descrieți servisarea efectuată..."
+                value={formData.descriereServisare}
+                onChange={(e) => setFormData(prev => ({ ...prev, descriereServisare: e.target.value }))}
+                rows={3}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Cost Servisare (RON)</Label>
+              <Input 
+                type="number"
+                placeholder="ex: 3000"
+                value={formData.costServisare}
+                onChange={(e) => setFormData(prev => ({ ...prev, costServisare: e.target.value }))}
               />
             </div>
           </div>
