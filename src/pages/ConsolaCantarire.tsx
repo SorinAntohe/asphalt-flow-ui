@@ -305,29 +305,29 @@ export default function ConsolaCantarire() {
 
   return (
     <>
-      <div className="flex flex-col h-[calc(100vh-120px)]">
+      <div className="flex flex-col min-h-[calc(100vh-120px)] lg:h-[calc(100vh-120px)]">
         {/* Header Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
-            <Scale className="h-6 w-6 text-primary" />
-            <h1 className="text-xl sm:text-2xl font-bold">Consolă Cântărire</h1>
+            <Scale className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold">Consolă Cântărire</h1>
           </div>
           
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
             {/* New Weighing Button */}
-            <Button onClick={() => setNewWeighingDialogOpen(true)}>
+            <Button onClick={() => setNewWeighingDialogOpen(true)} className="w-full sm:w-auto h-11">
               <Plus className="h-4 w-4 mr-2" />
               Adaugă în coadă
             </Button>
 
-
             {/* Search */}
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Nr. auto / Comandă / PO"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 h-11 w-full sm:w-[200px] lg:w-[240px]"
               />
             </div>
           </div>
@@ -335,25 +335,25 @@ export default function ConsolaCantarire() {
 
         <Separator className="mb-4" />
 
-        {/* 3-Column Layout */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-0">
+        {/* 3-Column Layout - Stacked on mobile, side-by-side on larger screens */}
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-0 overflow-auto lg:overflow-hidden pb-4 lg:pb-0">
           {/* Column A - Queue 1 (Step 1/2) */}
-          <Card className="flex flex-col min-h-0">
-            <CardHeader className="pb-2">
+          <Card className="flex flex-col min-h-[300px] lg:min-h-0">
+            <CardHeader className="pb-2 px-3 sm:px-6">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-sm sm:text-base flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-amber-500" />
                   Coadă Pas 1/2
                 </CardTitle>
-                <Badge variant="outline">{filteredQueue1.length}</Badge>
+                <Badge variant="outline" className="text-xs">{filteredQueue1.length}</Badge>
               </div>
             </CardHeader>
-            <CardContent className="flex-1 min-h-0 p-3">
-              <ScrollArea className="h-full">
+            <CardContent className="flex-1 min-h-0 p-2 sm:p-3">
+              <ScrollArea className="h-full max-h-[250px] lg:max-h-none">
                 {filteredQueue1.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-center p-6">
-                    <Truck className="h-10 w-10 text-muted-foreground/30 mb-2" />
-                    <p className="text-sm text-muted-foreground">
+                  <div className="flex flex-col items-center justify-center h-full text-center p-4 sm:p-6">
+                    <Truck className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground/30 mb-2" />
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Nu sunt camioane în așteptare
                     </p>
                   </div>
@@ -386,22 +386,22 @@ export default function ConsolaCantarire() {
           />
 
           {/* Column C - Queue 2 (Step 2/2) */}
-          <Card className="flex flex-col min-h-0">
-            <CardHeader className="pb-2">
+          <Card className="flex flex-col min-h-[300px] lg:min-h-0">
+            <CardHeader className="pb-2 px-3 sm:px-6">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-sm sm:text-base flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-green-500" />
                   Coadă Pas 2/2
                 </CardTitle>
-                <Badge variant="outline">{filteredQueue2.length}</Badge>
+                <Badge variant="outline" className="text-xs">{filteredQueue2.length}</Badge>
               </div>
             </CardHeader>
-            <CardContent className="flex-1 min-h-0 p-3">
-              <ScrollArea className="h-full">
+            <CardContent className="flex-1 min-h-0 p-2 sm:p-3">
+              <ScrollArea className="h-full max-h-[250px] lg:max-h-none">
                 {filteredQueue2.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-center p-6">
-                    <Package className="h-10 w-10 text-muted-foreground/30 mb-2" />
-                    <p className="text-sm text-muted-foreground">
+                  <div className="flex flex-col items-center justify-center h-full text-center p-4 sm:p-6">
+                    <Package className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground/30 mb-2" />
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Nu sunt camioane pentru a doua cântărire
                     </p>
                   </div>

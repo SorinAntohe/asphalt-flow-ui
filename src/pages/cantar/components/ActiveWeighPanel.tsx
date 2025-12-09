@@ -97,15 +97,15 @@ export function ActiveWeighPanel({
   
 
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="pb-4">
+    <Card className="h-full flex flex-col min-h-[350px] lg:min-h-0 md:col-span-2 lg:col-span-1">
+      <CardHeader className="pb-3 sm:pb-4 px-3 sm:px-6">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Scale className="h-5 w-5 text-primary" />
+          <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+            <Scale className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
             Pe Cântar
           </CardTitle>
           {session && (
-            <Badge variant={isInbound ? "info" : "warning"} className="text-sm">
+            <Badge variant={isInbound ? "info" : "warning"} className="text-xs sm:text-sm">
               {isInbound ? (
                 <><Package className="h-3 w-3 mr-1" /> Recepție</>
               ) : (
@@ -116,16 +116,16 @@ export function ActiveWeighPanel({
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col gap-4">
+      <CardContent className="flex-1 flex flex-col gap-3 sm:gap-4 px-3 sm:px-6 pb-4">
         {/* Nr. Auto Input */}
         <div className="space-y-2">
-          <Label htmlFor="nr-auto">Nr. Auto *</Label>
+          <Label htmlFor="nr-auto" className="text-sm">Nr. Auto *</Label>
           <Input
             id="nr-auto"
             placeholder="Nr. înmatriculare"
             value={nrAuto}
             onChange={handleNrAutoChange}
-            className="font-mono text-lg"
+            className="font-mono text-base sm:text-lg h-11 sm:h-12"
           />
         </div>
 
@@ -134,7 +134,7 @@ export function ActiveWeighPanel({
           <Button 
             onClick={onStartSession} 
             disabled={!nrAutoValid || isLoading}
-            className="w-full h-12"
+            className="w-full h-11 sm:h-12 text-sm sm:text-base"
           >
             {isLoading ? (
               <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Se procesează...</>
@@ -149,26 +149,26 @@ export function ActiveWeighPanel({
         {/* Active Session Display */}
         {session && (
           <>
-            <div className="p-4 bg-muted/50 rounded-lg space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Comandă</span>
-                <span className="font-medium">
+            <div className="p-3 sm:p-4 bg-muted/50 rounded-lg space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-xs sm:text-sm text-muted-foreground">Comandă</span>
+                <span className="font-medium text-sm">
                   {isInbound ? session.poNo : session.orderNo}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Id</span>
-                <span className="font-mono text-sm">{session.rowId}</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">Id</span>
+                <span className="font-mono text-xs sm:text-sm">{session.rowId}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Cod sesiune</span>
-                <Badge variant="premium" className="font-mono">
+                <span className="text-xs sm:text-sm text-muted-foreground">Cod sesiune</span>
+                <Badge variant="premium" className="font-mono text-xs">
                   {session.sessionCode}
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Pas</span>
-                <Badge variant="outline">{session.step}</Badge>
+                <span className="text-xs sm:text-sm text-muted-foreground">Pas</span>
+                <Badge variant="outline" className="text-xs">{session.step}</Badge>
               </div>
             </div>
 
@@ -178,35 +178,35 @@ export function ActiveWeighPanel({
             {nextWeightType && (
               <Button 
                 size="lg" 
-                className="w-full h-16 text-lg"
+                className="w-full h-12 sm:h-16 text-base sm:text-lg"
                 onClick={() => handleOpenWeightDialog(nextWeightType)}
                 disabled={isSaving}
               >
                 {isSaving ? (
-                  <><Loader2 className="h-5 w-5 mr-2 animate-spin" /> Se salvează...</>
+                  <><Loader2 className="h-4 w-4 sm:h-5 sm:w-5 mr-2 animate-spin" /> Se salvează...</>
                 ) : (
-                  <><Scale className="h-5 w-5 mr-2" /> Introdu {nextWeightType}</>
+                  <><Scale className="h-4 w-4 sm:h-5 sm:w-5 mr-2" /> Introdu {nextWeightType}</>
                 )}
               </Button>
             )}
 
             {/* Weight Summary */}
-            <div className="grid grid-cols-3 gap-3 p-4 bg-muted/30 rounded-lg">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 p-3 sm:p-4 bg-muted/30 rounded-lg">
               <div className="text-center">
-                <p className="text-xs text-muted-foreground mb-1">TARA</p>
-                <p className="text-lg font-mono font-medium">
+                <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">TARA</p>
+                <p className="text-sm sm:text-lg font-mono font-medium">
                   {session.tara ? `${session.tara.toLocaleString('ro-RO')} kg` : '—'}
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-xs text-muted-foreground mb-1">BRUT</p>
-                <p className="text-lg font-mono font-medium">
+                <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">BRUT</p>
+                <p className="text-sm sm:text-lg font-mono font-medium">
                   {session.masaBrut ? `${session.masaBrut.toLocaleString('ro-RO')} kg` : '—'}
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-xs text-muted-foreground mb-1">NET</p>
-                <p className="text-2xl font-mono font-bold text-primary">
+                <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">NET</p>
+                <p className="text-lg sm:text-2xl font-mono font-bold text-primary">
                   {masaNet !== null ? `${masaNet.toLocaleString('ro-RO')} kg` : '—'}
                 </p>
               </div>
@@ -232,11 +232,11 @@ export function ActiveWeighPanel({
             )}
 
             {/* Footer Info */}
-            <div className="mt-auto pt-4 border-t space-y-2">
-              <p className="text-xs text-muted-foreground">
+            <div className="mt-auto pt-3 sm:pt-4 border-t space-y-2">
+              <p className="text-[10px] sm:text-xs text-muted-foreground">
                 Creat de {session.createdBy} la {new Date(session.createdAt).toLocaleString('ro-RO')}
               </p>
-              <Button variant="link" size="sm" className="h-auto p-0 text-xs">
+              <Button variant="link" size="sm" className="h-auto p-0 text-[10px] sm:text-xs">
                 <ExternalLink className="h-3 w-3 mr-1" />
                 Deschide rândul în listă
               </Button>
@@ -246,10 +246,10 @@ export function ActiveWeighPanel({
 
         {/* Empty State */}
         {!session && !nrAuto && (
-          <div className="flex-1 flex items-center justify-center">
+          <div className="flex-1 flex items-center justify-center min-h-[100px]">
             <div className="text-center text-muted-foreground">
-              <Scale className="h-12 w-12 mx-auto mb-3 opacity-30" />
-              <p className="text-sm">Introduceți Nr. Auto pentru a începe</p>
+              <Scale className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-2 sm:mb-3 opacity-30" />
+              <p className="text-xs sm:text-sm">Introduceți Nr. Auto pentru a începe</p>
             </div>
           </div>
         )}
