@@ -21,9 +21,9 @@ interface PlanMentenanta {
   dataUltimaRevizie: string;
   dataRevizieUrmatoare: string;
   costAproxRevizie: number;
-  observatii: string;
-  descriereServisare: string;
-  costServisare: number;
+  observatii?: string;
+  descriereServisare?: string;
+  costServisare?: number;
 }
 
 interface Echipament {
@@ -31,27 +31,9 @@ interface Echipament {
   denumire: string;
 }
 
-// Mock data
-const mockPlanMentenanta: PlanMentenanta[] = [
-  { 
-    id: 1, cod: "ECH-001", denumire: "Stație Asfalt Mobilă 160t/h",
-    dataUltimaRevizie: "15/06/2024", dataRevizieUrmatoare: "15/12/2024", costAproxRevizie: 8500, observatii: "Verificare completă sistem",
-    descriereServisare: "Revizie generală", costServisare: 7500
-  },
-  { 
-    id: 2, cod: "ECH-002", denumire: "Încărcător Frontal Cat 966",
-    dataUltimaRevizie: "01/08/2024", dataRevizieUrmatoare: "01/02/2025", costAproxRevizie: 3200, observatii: "",
-    descriereServisare: "", costServisare: 0
-  },
-  { 
-    id: 3, cod: "VEH-001", denumire: "Camion Basculant MAN TGS 8x4",
-    dataUltimaRevizie: "20/09/2024", dataRevizieUrmatoare: "20/03/2025", costAproxRevizie: 2500, observatii: "Schimb ulei + filtre",
-    descriereServisare: "Schimb ulei și filtre", costServisare: 1800
-  },
-];
-
 const PlanMentenanta = () => {
-  const [data, setData] = useState<PlanMentenanta[]>(mockPlanMentenanta);
+  const [data, setData] = useState<PlanMentenanta[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [echipamente, setEchipamente] = useState<Echipament[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -80,8 +62,38 @@ const PlanMentenanta = () => {
     observatii: "",
   });
 
+  // Fetch planuri mentenanta
+  const fetchPlanuri = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`${API_BASE_URL}/mentenanta/returneaza/planuri_mentenanta`);
+      if (response.ok) {
+        const result = await response.json();
+        const mapped = result.map((item: any) => ({
+          id: item.id,
+          cod: item.cod || "",
+          denumire: item.denumire || "",
+          dataUltimaRevizie: item.data_ultima_revizie || "",
+          dataRevizieUrmatoare: item.data_revizie_urmatoare || "",
+          costAproxRevizie: parseFloat(item.cost_aprox_revizie) || 0,
+          observatii: item.observatii || "",
+          descriereServisare: item.descriere_servisare || "",
+          costServisare: parseFloat(item.cost_servisare) || 0,
+        }));
+        setData(mapped);
+      }
+    } catch (error) {
+      console.error("Error fetching planuri mentenanta:", error);
+      toast.error("Eroare la încărcarea datelor");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Fetch echipamente for dropdown
   useEffect(() => {
+    fetchPlanuri();
+    
     const fetchEchipamente = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/mentenanta/returneaza/echipamente`);
@@ -186,26 +198,38 @@ const PlanMentenanta = () => {
     });
   };
 
-  const handleAddSubmit = () => {
-    if (!formData.cod || !formData.denumire) {
-      toast.error("Selectați un echipament");
+  const handleAddSubmit = async () => {
+    if (!formData.denumire) {
+      toast.error("Introduceți denumirea");
       return;
     }
-    const newItem: PlanMentenanta = {
-      id: data.length > 0 ? Math.max(...data.map(d => d.id)) + 1 : 1,
-      cod: formData.cod,
-      denumire: formData.denumire,
-      dataUltimaRevizie: formData.dataUltimaRevizie,
-      dataRevizieUrmatoare: formData.dataRevizieUrmatoare,
-      costAproxRevizie: parseFloat(formData.costAproxRevizie) || 0,
-      observatii: formData.observatii,
-      descriereServisare: "",
-      costServisare: 0,
-    };
-    setData(prev => [...prev, newItem]);
-    setIsAddDialogOpen(false);
-    resetForm();
-    toast.success("Plan mentenanță adăugat cu succes");
+    
+    try {
+      const payload = {
+        denumire: formData.denumire,
+        data_ultima_revizie: formData.dataUltimaRevizie,
+        data_revizie_urmatare: formData.dataRevizieUrmatoare,
+        cost_aprox_revizie: parseFloat(formData.costAproxRevizie) || 0,
+      };
+      
+      const response = await fetch(`${API_BASE_URL}/mentenanta/adauga/planur_mentenanta`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      
+      if (response.ok) {
+        setIsAddDialogOpen(false);
+        resetForm();
+        toast.success("Plan mentenanță adăugat cu succes");
+        fetchPlanuri();
+      } else {
+        toast.error("Eroare la adăugarea planului");
+      }
+    } catch (error) {
+      console.error("Error adding plan:", error);
+      toast.error("Eroare la adăugarea planului");
+    }
   };
 
   const handleOpenEdit = () => {
