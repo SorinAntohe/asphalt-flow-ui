@@ -644,6 +644,15 @@ const PlanMentenanta = () => {
               />
             </div>
             <div className="space-y-2">
+              <Label>Observații</Label>
+              <Textarea 
+                placeholder="Introduceți observații..."
+                value={formData.observatii}
+                onChange={(e) => setFormData(prev => ({ ...prev, observatii: e.target.value }))}
+                rows={3}
+              />
+            </div>
+            <div className="space-y-2">
               <Label>Descriere Servisare</Label>
               <Textarea 
                 placeholder="Descrieți servisarea efectuată..."
