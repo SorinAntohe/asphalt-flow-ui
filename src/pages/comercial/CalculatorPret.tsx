@@ -123,6 +123,8 @@ const CalculatorPret = () => {
   const [selectedConcurent, setSelectedConcurent] = useState<PretConcurent | null>(null);
   const [isConcurentDetailOpen, setIsConcurentDetailOpen] = useState(false);
   const [isAddConcurentOpen, setIsAddConcurentOpen] = useState(false);
+  const [selectedPretCalculat, setSelectedPretCalculat] = useState<PretCalculat | null>(null);
+  const [isPretCalculatDetailOpen, setIsPretCalculatDetailOpen] = useState(false);
   
   // Stock shortage dialog state
   const [isStockShortageOpen, setIsStockShortageOpen] = useState(false);
@@ -742,7 +744,11 @@ const CalculatorPret = () => {
                     </TableHeader>
                     <TableBody>
                       {preturiCalculate.map((pret) => (
-                        <TableRow key={pret.id}>
+                        <TableRow 
+                          key={pret.id}
+                          className="cursor-pointer hover:bg-muted/50"
+                          onClick={() => { setSelectedPretCalculat(pret); setIsPretCalculatDetailOpen(true); }}
+                        >
                           <TableCell>{pret.data}</TableCell>
                           <TableCell>
                             <Badge variant="outline">{pret.codReteta}</Badge>
@@ -762,7 +768,7 @@ const CalculatorPret = () => {
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8 text-destructive hover:text-destructive"
-                              onClick={() => handleRemoveCalculation(pret.id)}
+                              onClick={(e) => { e.stopPropagation(); handleRemoveCalculation(pret.id); }}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -1094,6 +1100,76 @@ const CalculatorPret = () => {
               Confirmă și Calculează
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Pret Calculat Detail Dialog */}
+      <Dialog open={isPretCalculatDetailOpen} onOpenChange={setIsPretCalculatDetailOpen}>
+        <DialogContent className="max-w-md" hideCloseButton>
+          {selectedPretCalculat && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <History className="h-5 w-5" />
+                  Detalii Preț Calculat
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Data Calcul</p>
+                    <p className="font-medium">{selectedPretCalculat.data}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Cod Rețetă</p>
+                    <Badge variant="outline">{selectedPretCalculat.codReteta}</Badge>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Denumire Rețetă</p>
+                  <p className="font-medium">{selectedPretCalculat.denumireReteta}</p>
+                </div>
+                <Separator />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Cantitate</p>
+                    <p className="font-medium">{selectedPretCalculat.cantitate} tone</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Marjă Profit</p>
+                    <p className="font-medium">{selectedPretCalculat.marjaProfit}%</p>
+                  </div>
+                </div>
+                <Separator />
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Cost Total Producție</span>
+                    <span className="font-medium">{formatCurrency(selectedPretCalculat.costTotal)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Preț pe Tonă</span>
+                    <span className="font-semibold text-primary">{formatCurrency(selectedPretCalculat.pretPeTona)}</span>
+                  </div>
+                  <div className="flex justify-between p-3 rounded-lg bg-primary/10 border border-primary/20">
+                    <span className="font-medium">Preț Total Recomandat</span>
+                    <span className="font-bold text-primary">{formatCurrency(selectedPretCalculat.pretRecomandat)}</span>
+                  </div>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button
+                  variant="destructive"
+                  onClick={() => {
+                    handleRemoveCalculation(selectedPretCalculat.id);
+                    setIsPretCalculatDetailOpen(false);
+                  }}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Șterge
+                </Button>
+              </DialogFooter>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </div>
