@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DataTablePagination, DataTableColumnHeader, DataTableEmpty } from "@/components/ui/data-table";
 import { FilterableSelect } from "@/components/ui/filterable-select";
@@ -21,6 +22,8 @@ interface PlanMentenanta {
   dataRevizieUrmatoare: string;
   costAproxRevizie: number;
   observatii: string;
+  descriereServisare: string;
+  costServisare: number;
 }
 
 interface Echipament {
@@ -32,15 +35,18 @@ interface Echipament {
 const mockPlanMentenanta: PlanMentenanta[] = [
   { 
     id: 1, cod: "ECH-001", denumire: "Stație Asfalt Mobilă 160t/h",
-    dataUltimaRevizie: "15/06/2024", dataRevizieUrmatoare: "15/12/2024", costAproxRevizie: 8500, observatii: "Verificare completă sistem"
+    dataUltimaRevizie: "15/06/2024", dataRevizieUrmatoare: "15/12/2024", costAproxRevizie: 8500, observatii: "Verificare completă sistem",
+    descriereServisare: "Revizie generală", costServisare: 7500
   },
   { 
     id: 2, cod: "ECH-002", denumire: "Încărcător Frontal Cat 966",
-    dataUltimaRevizie: "01/08/2024", dataRevizieUrmatoare: "01/02/2025", costAproxRevizie: 3200, observatii: ""
+    dataUltimaRevizie: "01/08/2024", dataRevizieUrmatoare: "01/02/2025", costAproxRevizie: 3200, observatii: "",
+    descriereServisare: "", costServisare: 0
   },
   { 
     id: 3, cod: "VEH-001", denumire: "Camion Basculant MAN TGS 8x4",
-    dataUltimaRevizie: "20/09/2024", dataRevizieUrmatoare: "20/03/2025", costAproxRevizie: 2500, observatii: "Schimb ulei + filtre"
+    dataUltimaRevizie: "20/09/2024", dataRevizieUrmatoare: "20/03/2025", costAproxRevizie: 2500, observatii: "Schimb ulei + filtre",
+    descriereServisare: "Schimb ulei și filtre", costServisare: 1800
   },
 ];
 
@@ -51,7 +57,9 @@ const PlanMentenanta = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isServisareDialogOpen, setIsServisareDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<PlanMentenanta | null>(null);
+  const [servisareFormData, setServisareFormData] = useState({ descriere: "", cost: "" });
   
   // Sorting & Filters
   const [sortKey, setSortKey] = useState<string | null>(null);
@@ -191,6 +199,8 @@ const PlanMentenanta = () => {
       dataRevizieUrmatoare: formData.dataRevizieUrmatoare,
       costAproxRevizie: parseFloat(formData.costAproxRevizie) || 0,
       observatii: formData.observatii,
+      descriereServisare: "",
+      costServisare: 0,
     };
     setData(prev => [...prev, newItem]);
     setIsAddDialogOpen(false);
@@ -246,6 +256,29 @@ const PlanMentenanta = () => {
     setIsDeleteDialogOpen(false);
     setSelectedItem(null);
     toast.success("Plan mentenanță șters cu succes");
+  };
+
+  const handleOpenServisare = () => {
+    setServisareFormData({ descriere: "", cost: "" });
+    setIsDetailOpen(false);
+    setIsServisareDialogOpen(true);
+  };
+
+  const handleServisareSubmit = () => {
+    if (!selectedItem) return;
+    setData(prev =>
+      prev.map(item =>
+        item.id === selectedItem.id
+          ? {
+              ...item,
+              descriereServisare: servisareFormData.descriere,
+              costServisare: parseFloat(servisareFormData.cost) || 0,
+            }
+          : item
+      )
+    );
+    setIsServisareDialogOpen(false);
+    toast.success("Servisare înregistrată cu succes");
   };
 
   return (
@@ -338,11 +371,31 @@ const PlanMentenanta = () => {
                       onFilterChange={(value) => handleFilter("observatii", value)}
                     />
                   </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Descriere Servisare"
+                      sortKey="descriereServisare"
+                      currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
+                      filterValue={columnFilters.descriereServisare || ""}
+                      onSort={handleSort}
+                      onFilterChange={(value) => handleFilter("descriereServisare", value)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Cost Servisare"
+                      sortKey="costServisare"
+                      currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
+                      filterValue={columnFilters.costServisare || ""}
+                      onSort={handleSort}
+                      onFilterChange={(value) => handleFilter("costServisare", value)}
+                    />
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {paginatedData.length === 0 ? (
-                  <DataTableEmpty colSpan={6} message="Nu există planuri de mentenanță" />
+                  <DataTableEmpty colSpan={8} message="Nu există planuri de mentenanță" />
                 ) : (
                   paginatedData.map(item => (
                     <TableRow 
@@ -356,6 +409,8 @@ const PlanMentenanta = () => {
                       <TableCell>{item.dataRevizieUrmatoare}</TableCell>
                       <TableCell>{item.costAproxRevizie.toLocaleString()} RON</TableCell>
                       <TableCell className="max-w-[200px] truncate">{item.observatii || "-"}</TableCell>
+                      <TableCell className="max-w-[200px] truncate">{item.descriereServisare || "-"}</TableCell>
+                      <TableCell>{item.costServisare > 0 ? `${item.costServisare.toLocaleString()} RON` : "-"}</TableCell>
                     </TableRow>
                   ))
                 )}
@@ -412,10 +467,14 @@ const PlanMentenanta = () => {
                 </div>
               </div>
 
-              <DialogFooter className="gap-2">
+              <DialogFooter className="flex-col sm:flex-row gap-2">
                 <Button variant="destructive" onClick={handleOpenDelete} className="gap-2">
                   <Trash2 className="h-4 w-4" />
                   Șterge
+                </Button>
+                <Button variant="secondary" onClick={handleOpenServisare} className="gap-2">
+                  <Wrench className="h-4 w-4" />
+                  Servisare
                 </Button>
                 <Button onClick={handleOpenEdit} className="gap-2">
                   <Pencil className="h-4 w-4" />
@@ -554,6 +613,45 @@ const PlanMentenanta = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Servisare Dialog */}
+      <Dialog open={isServisareDialogOpen} onOpenChange={setIsServisareDialogOpen}>
+        <DialogContent className="max-w-md" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Wrench className="h-5 w-5" />
+              Înregistrare Servisare
+            </DialogTitle>
+            <DialogDescription>
+              Înregistrați detaliile servisării pentru {selectedItem?.cod}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label>Descriere Servisare</Label>
+              <Textarea
+                value={servisareFormData.descriere}
+                onChange={(e) => setServisareFormData(prev => ({ ...prev, descriere: e.target.value }))}
+                placeholder="Introduceți descrierea servisării..."
+                rows={4}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Cost Servisare (RON)</Label>
+              <Input
+                type="number"
+                value={servisareFormData.cost}
+                onChange={(e) => setServisareFormData(prev => ({ ...prev, cost: e.target.value }))}
+                placeholder="0"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsServisareDialogOpen(false)}>Anulează</Button>
+            <Button onClick={handleServisareSubmit}>Salvează</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
