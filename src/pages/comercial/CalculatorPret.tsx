@@ -287,7 +287,13 @@ const CalculatorPret = () => {
       const costMateriale = mockBreakdown.materiale.reduce((sum, m) => sum + m.total, 0);
       const costIndirecte = Object.values(mockBreakdown.costuriIndirecte).reduce((sum, c) => sum + c, 0);
       mockBreakdown.costTotal = costMateriale + mockBreakdown.curentActiv + mockBreakdown.consumCTL + costIndirecte;
-      mockBreakdown.pretRecomandat = mockBreakdown.costTotal * (1 + marja);
+      
+      // Calculate total margin including reserve fund if enabled
+      const totalMargin = fondRezervaEnabled 
+        ? marja + (fondRezerva / 100)
+        : marja;
+      
+      mockBreakdown.pretRecomandat = mockBreakdown.costTotal * (1 + totalMargin);
 
       setCostBreakdown(mockBreakdown);
 
