@@ -901,6 +901,33 @@ const CalculatorPret = () => {
               <p className="text-xs text-muted-foreground text-center">
                 {formatCurrency(costBreakdown.costTotal / parseFloat(cantitate))}/tonă
               </p>
+
+              <Separator />
+
+              {/* Margins breakdown */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Marjă Profit ({marjaProfit}%)</span>
+                  <span className="text-emerald-600">{formatCurrency(costBreakdown.costTotal * (marjaProfit / 100))}</span>
+                </div>
+                {fondRezervaEnabled && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Fond de Rezervă ({fondRezerva}%)</span>
+                    <span className="text-blue-600">{formatCurrency(costBreakdown.costTotal * (fondRezerva / 100))}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Grand Total */}
+              <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
+                <div className="flex justify-between font-bold text-lg">
+                  <span>Preț Total Recomandat</span>
+                  <span className="text-primary">{formatCurrency(costBreakdown.pretRecomandat)}</span>
+                </div>
+                <p className="text-xs text-muted-foreground text-center mt-1">
+                  {formatCurrency(costBreakdown.pretRecomandat / parseFloat(cantitate))}/tonă
+                </p>
+              </div>
             </div>
           )}
         </DialogContent>
