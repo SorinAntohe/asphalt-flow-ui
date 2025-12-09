@@ -178,7 +178,6 @@ const PlanMentenanta = () => {
 
   const handleExport = () => {
     exportToCSV(filteredData, "plan_mentenanta", [
-      { key: "cod", label: "Cod" },
       { key: "denumire", label: "Denumire" },
       { key: "dataUltimaRevizie", label: "Data Ultima Revizie" },
       { key: "dataRevizieUrmatoare", label: "Data Revizie Următoare" },
@@ -337,16 +336,6 @@ const PlanMentenanta = () => {
                 <TableRow>
                   <TableHead>
                     <DataTableColumnHeader
-                      title="Cod"
-                      sortKey="cod"
-                      currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
-                      filterValue={columnFilters.cod || ""}
-                      onSort={handleSort}
-                      onFilterChange={(value) => handleFilter("cod", value)}
-                    />
-                  </TableHead>
-                  <TableHead>
-                    <DataTableColumnHeader
                       title="Denumire"
                       sortKey="denumire"
                       currentSort={sortKey ? { key: sortKey, direction: sortDirection } : null}
@@ -419,7 +408,7 @@ const PlanMentenanta = () => {
               </TableHeader>
               <TableBody>
                 {paginatedData.length === 0 ? (
-                  <DataTableEmpty colSpan={8} message="Nu există planuri de mentenanță" />
+                  <DataTableEmpty colSpan={7} message="Nu există planuri de mentenanță" />
                 ) : (
                   paginatedData.map(item => (
                     <TableRow 
@@ -427,8 +416,7 @@ const PlanMentenanta = () => {
                       className="cursor-pointer hover:bg-muted/50"
                       onClick={() => handleRowClick(item)}
                     >
-                      <TableCell className="font-medium">{item.cod}</TableCell>
-                      <TableCell>{item.denumire}</TableCell>
+                      <TableCell className="font-medium">{item.denumire}</TableCell>
                       <TableCell>{item.dataUltimaRevizie}</TableCell>
                       <TableCell>{item.dataRevizieUrmatoare}</TableCell>
                       <TableCell>{item.costAproxRevizie.toLocaleString()} RON</TableCell>
@@ -463,17 +451,12 @@ const PlanMentenanta = () => {
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <Wrench className="h-5 w-5" />
-                  {selectedItem.cod}
+                  {selectedItem.denumire}
                 </DialogTitle>
-                <DialogDescription>{selectedItem.denumire}</DialogDescription>
               </DialogHeader>
               
               <div className="grid grid-cols-2 gap-4 py-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">Cod</p>
-                  <p className="font-medium">{selectedItem.cod}</p>
-                </div>
-                <div>
+                <div className="col-span-2">
                   <p className="text-sm text-muted-foreground">Denumire</p>
                   <p className="font-medium">{selectedItem.denumire}</p>
                 </div>
@@ -575,15 +558,9 @@ const PlanMentenanta = () => {
             <DialogTitle>Editează Plan Mentenanță</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Cod</Label>
-                <Input value={formData.cod} disabled className="bg-muted" />
-              </div>
-              <div className="space-y-2">
-                <Label>Denumire</Label>
-                <Input value={formData.denumire} disabled className="bg-muted" />
-              </div>
+            <div className="space-y-2">
+              <Label>Denumire</Label>
+              <Input value={formData.denumire} disabled className="bg-muted" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -626,7 +603,7 @@ const PlanMentenanta = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmare ștergere</AlertDialogTitle>
             <AlertDialogDescription>
-              Ești sigur că vrei să ștergi planul de mentenanță pentru "{selectedItem?.cod}"? Această acțiune nu poate fi anulată.
+              Ești sigur că vrei să ștergi planul de mentenanță pentru "{selectedItem?.denumire}"? Această acțiune nu poate fi anulată.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -647,7 +624,7 @@ const PlanMentenanta = () => {
               Înregistrare Servisare
             </DialogTitle>
             <DialogDescription>
-              Înregistrați detaliile servisării pentru {selectedItem?.cod}
+              Înregistrați detaliile servisării pentru {selectedItem?.denumire}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
