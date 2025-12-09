@@ -119,6 +119,7 @@ const CalculatorPret = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [selectedConcurent, setSelectedConcurent] = useState<PretConcurent | null>(null);
   const [isConcurentDetailOpen, setIsConcurentDetailOpen] = useState(false);
+  const [isAddConcurentOpen, setIsAddConcurentOpen] = useState(false);
 
   // Fetch retete (keeping for when API is available)
   useEffect(() => {
@@ -522,37 +523,11 @@ const CalculatorPret = () => {
               </div>
             ) : null}
 
-            {/* Add form */}
-            <div className="space-y-2">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <Input
-                  placeholder="Concurent"
-                  value={newConcurent.concurent}
-                  onChange={(e) => setNewConcurent(prev => ({ ...prev, concurent: e.target.value }))}
-                />
-                <Input
-                  placeholder="Produs"
-                  value={newConcurent.produs}
-                  onChange={(e) => setNewConcurent(prev => ({ ...prev, produs: e.target.value }))}
-                />
-                <Input
-                  type="number"
-                  placeholder="Preț"
-                  value={newConcurent.pret}
-                  onChange={(e) => setNewConcurent(prev => ({ ...prev, pret: e.target.value }))}
-                />
-                <Input
-                  type="date"
-                  placeholder="Data"
-                  value={newConcurent.data}
-                  onChange={(e) => setNewConcurent(prev => ({ ...prev, data: e.target.value }))}
-                />
-              </div>
-              <Button variant="outline" size="sm" className="w-full" onClick={handleAddConcurent}>
-                <Plus className="h-4 w-4 mr-1" />
-                Adaugă Preț Concurent
-              </Button>
-            </div>
+            {/* Add button */}
+            <Button variant="outline" size="sm" className="w-full" onClick={() => setIsAddConcurentOpen(true)}>
+              <Plus className="h-4 w-4 mr-1" />
+              Adaugă Preț Concurent
+            </Button>
 
             <Separator />
 
@@ -825,6 +800,61 @@ const CalculatorPret = () => {
               </DialogFooter>
             </>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Concurent Dialog */}
+      <Dialog open={isAddConcurentOpen} onOpenChange={setIsAddConcurentOpen}>
+        <DialogContent className="max-w-md" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Plus className="h-5 w-5" />
+              Adaugă Preț Concurent
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Concurent</Label>
+              <Input
+                placeholder="Nume concurent"
+                value={newConcurent.concurent}
+                onChange={(e) => setNewConcurent(prev => ({ ...prev, concurent: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Produs</Label>
+              <Input
+                placeholder="Nume produs"
+                value={newConcurent.produs}
+                onChange={(e) => setNewConcurent(prev => ({ ...prev, produs: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Preț (RON/tonă)</Label>
+              <Input
+                type="number"
+                placeholder="Preț"
+                value={newConcurent.pret}
+                onChange={(e) => setNewConcurent(prev => ({ ...prev, pret: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Data</Label>
+              <Input
+                type="date"
+                value={newConcurent.data}
+                onChange={(e) => setNewConcurent(prev => ({ ...prev, data: e.target.value }))}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAddConcurentOpen(false)}>
+              Anulează
+            </Button>
+            <Button onClick={() => { handleAddConcurent(); setIsAddConcurentOpen(false); }}>
+              Adaugă
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
