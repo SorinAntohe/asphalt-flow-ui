@@ -757,7 +757,6 @@ const CalculatorPret = () => {
                         <TableHead className="text-right">Cost Total</TableHead>
                         <TableHead className="text-right">Preț/Tonă</TableHead>
                         <TableHead className="text-right">Preț Total</TableHead>
-                        <TableHead className="w-10"></TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -780,16 +779,6 @@ const CalculatorPret = () => {
                           </TableCell>
                           <TableCell className="text-right font-medium">
                             {formatCurrency(pret.pretRecomandat)}
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-destructive hover:text-destructive"
-                              onClick={(e) => { e.stopPropagation(); handleRemoveCalculation(pret.id); }}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
                           </TableCell>
                         </TableRow>
                       ))}
