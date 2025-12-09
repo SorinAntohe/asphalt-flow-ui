@@ -1,5 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
-import { Wrench, Plus, Download, Pencil, Trash2 } from "lucide-react";
+import { Wrench, Plus, Download, Pencil, Trash2, CalendarIcon } from "lucide-react";
+import { format, parse } from "date-fns";
+import { ro } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
@@ -10,9 +12,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DataTablePagination, DataTableColumnHeader, DataTableEmpty } from "@/components/ui/data-table";
 import { FilterableSelect } from "@/components/ui/filterable-select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { exportToCSV } from "@/lib/exportUtils";
 import { toast } from "sonner";
 import { API_BASE_URL } from "@/lib/api";
+import { cn } from "@/lib/utils";
 
 interface PlanMentenanta {
   id: number;
@@ -513,19 +518,63 @@ const PlanMentenanta = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Data Ultima Revizie</Label>
-                <Input 
-                  placeholder="dd/mm/yyyy"
-                  value={formData.dataUltimaRevizie}
-                  onChange={(e) => setFormData(prev => ({ ...prev, dataUltimaRevizie: e.target.value }))}
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal h-12",
+                        !formData.dataUltimaRevizie && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.dataUltimaRevizie || "Selectați data"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={formData.dataUltimaRevizie ? parse(formData.dataUltimaRevizie, "dd/MM/yyyy", new Date()) : undefined}
+                      onSelect={(date) => setFormData(prev => ({ 
+                        ...prev, 
+                        dataUltimaRevizie: date ? format(date, "dd/MM/yyyy") : "" 
+                      }))}
+                      locale={ro}
+                      initialFocus
+                      className="pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
               <div className="space-y-2">
                 <Label>Data Revizie Următoare</Label>
-                <Input 
-                  placeholder="dd/mm/yyyy"
-                  value={formData.dataRevizieUrmatoare}
-                  onChange={(e) => setFormData(prev => ({ ...prev, dataRevizieUrmatoare: e.target.value }))}
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal h-12",
+                        !formData.dataRevizieUrmatoare && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.dataRevizieUrmatoare || "Selectați data"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={formData.dataRevizieUrmatoare ? parse(formData.dataRevizieUrmatoare, "dd/MM/yyyy", new Date()) : undefined}
+                      onSelect={(date) => setFormData(prev => ({ 
+                        ...prev, 
+                        dataRevizieUrmatoare: date ? format(date, "dd/MM/yyyy") : "" 
+                      }))}
+                      locale={ro}
+                      initialFocus
+                      className="pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
             <div className="space-y-2">
