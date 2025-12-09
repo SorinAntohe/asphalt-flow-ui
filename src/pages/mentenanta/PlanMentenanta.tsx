@@ -212,11 +212,11 @@ const PlanMentenanta = () => {
       const payload = {
         denumire: formData.denumire,
         data_ultima_revizie: formData.dataUltimaRevizie,
-        data_revizie_urmatare: formData.dataRevizieUrmatoare,
+        data_revizie_urmatoare: formData.dataRevizieUrmatoare,
         cost_aprox_revizie: parseFloat(formData.costAproxRevizie) || 0,
       };
       
-      const response = await fetch(`${API_BASE_URL}/mentenanta/adauga/planur_mentenanta`, {
+      const response = await fetch(`${API_BASE_URL}/mentenanta/adauga/plan_mentenanta`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
