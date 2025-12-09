@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { API_BASE_URL } from "@/lib/api";
 import { toast } from "sonner";
@@ -117,6 +117,8 @@ const CalculatorPret = () => {
   
   // Details dialog state
   const [showDetails, setShowDetails] = useState(false);
+  const [selectedConcurent, setSelectedConcurent] = useState<PretConcurent | null>(null);
+  const [isConcurentDetailOpen, setIsConcurentDetailOpen] = useState(false);
 
   // Fetch retete (keeping for when API is available)
   useEffect(() => {
@@ -574,7 +576,11 @@ const CalculatorPret = () => {
                   </TableHeader>
                   <TableBody>
                     {preturiConcurenti.map((pret) => (
-                      <TableRow key={pret.id}>
+                      <TableRow 
+                        key={pret.id} 
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => { setSelectedConcurent(pret); setIsConcurentDetailOpen(true); }}
+                      >
                         <TableCell className="text-sm py-2">{pret.concurent}</TableCell>
                         <TableCell className="text-sm py-2">{pret.produs}</TableCell>
                         <TableCell className="text-sm py-2">{pret.data || "-"}</TableCell>
@@ -586,7 +592,7 @@ const CalculatorPret = () => {
                             variant="ghost"
                             size="icon"
                             className="h-6 w-6 text-destructive hover:text-destructive"
-                            onClick={() => handleRemoveConcurent(pret.id)}
+                            onClick={(e) => { e.stopPropagation(); handleRemoveConcurent(pret.id); }}
                           >
                             <Trash2 className="h-3 w-3" />
                           </Button>
@@ -771,6 +777,53 @@ const CalculatorPret = () => {
                 {formatCurrency(costBreakdown.costTotal / parseFloat(cantitate))}/tonă
               </p>
             </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Concurent Detail Dialog */}
+      <Dialog open={isConcurentDetailOpen} onOpenChange={setIsConcurentDetailOpen}>
+        <DialogContent className="max-w-md" hideCloseButton>
+          {selectedConcurent && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  {selectedConcurent.concurent}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="grid grid-cols-2 gap-4 py-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Concurent</p>
+                  <p className="font-medium">{selectedConcurent.concurent}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Produs</p>
+                  <p className="font-medium">{selectedConcurent.produs}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Data Introducerii</p>
+                  <p className="font-medium">{selectedConcurent.data || "-"}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Preț</p>
+                  <p className="font-medium text-primary">{formatCurrency(selectedConcurent.pret)}</p>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button 
+                  variant="destructive" 
+                  onClick={() => { handleRemoveConcurent(selectedConcurent.id); setIsConcurentDetailOpen(false); }}
+                  className="gap-2"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Șterge
+                </Button>
+                <Button variant="outline" onClick={() => setIsConcurentDetailOpen(false)}>
+                  Închide
+                </Button>
+              </DialogFooter>
+            </>
           )}
         </DialogContent>
       </Dialog>
