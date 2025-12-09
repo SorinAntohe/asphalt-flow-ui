@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from "react";
-import { Calculator, Plus, Trash2, TrendingUp, TrendingDown, Minus, BarChart3, Users, Zap, Package, Info, History, CalendarIcon } from "lucide-react";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { Calculator, Plus, Trash2, TrendingUp, TrendingDown, Minus, BarChart3, Users, Zap, Package, Info, History, CalendarIcon, AlertTriangle, Upload, FileText, X } from "lucide-react";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -120,6 +120,21 @@ const CalculatorPret = () => {
   const [selectedConcurent, setSelectedConcurent] = useState<PretConcurent | null>(null);
   const [isConcurentDetailOpen, setIsConcurentDetailOpen] = useState(false);
   const [isAddConcurentOpen, setIsAddConcurentOpen] = useState(false);
+  
+  // Stock shortage dialog state
+  const [isStockShortageOpen, setIsStockShortageOpen] = useState(false);
+  const [stockShortages, setStockShortages] = useState<{ material: string; necesar: number; stocDisponibil: number; cantitateNecesara: number; pretUnitar: string }[]>([]);
+  const [ofertaFile, setOfertaFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Mock available stock data (in real app, this would come from API)
+  const mockStocuri: Record<string, number> = {
+    "Bitum 50/70": 3,
+    "Agregat 0/4": 20,
+    "Agregat 4/8": 15,
+    "Filler": 5,
+    "Agregat 8/16": 18,
+  };
 
   // Fetch retete (keeping for when API is available)
   useEffect(() => {
@@ -148,6 +163,29 @@ const CalculatorPret = () => {
     [retete]
   );
 
+  // Check stock availability and open shortage dialog if needed
+  const checkStockAvailability = (qty: number) => {
+    const materialNeeds = [
+      { material: "Bitum 50/70", necesar: qty * 0.05 },
+      { material: "Agregat 0/4", necesar: qty * 0.35 },
+      { material: "Agregat 4/8", necesar: qty * 0.25 },
+      { material: "Filler", necesar: qty * 0.08 },
+      { material: "Agregat 8/16", necesar: qty * 0.27 },
+    ];
+    
+    const shortages = materialNeeds
+      .filter(m => m.necesar > (mockStocuri[m.material] || 0))
+      .map(m => ({
+        material: m.material,
+        necesar: m.necesar,
+        stocDisponibil: mockStocuri[m.material] || 0,
+        cantitateNecesara: m.necesar - (mockStocuri[m.material] || 0),
+        pretUnitar: ""
+      }));
+    
+    return shortages;
+  };
+
   // Calculate price
   const handleCalculate = () => {
     if (!selectedReteta || !cantitate) {
@@ -155,26 +193,79 @@ const CalculatorPret = () => {
       return;
     }
 
+    const qty = parseFloat(cantitate);
+    
+    // Check for stock shortages
+    const shortages = checkStockAvailability(qty);
+    if (shortages.length > 0) {
+      setStockShortages(shortages);
+      setOfertaFile(null);
+      setIsStockShortageOpen(true);
+      return;
+    }
+    
+    proceedWithCalculation(qty);
+  };
+  
+  // Handle stock shortage form submission
+  const handleStockShortageSubmit = () => {
+    // Validate all prices are filled
+    const missingPrices = stockShortages.some(s => !s.pretUnitar || parseFloat(s.pretUnitar) <= 0);
+    if (missingPrices) {
+      toast.error("Completați prețurile pentru toate materialele");
+      return;
+    }
+    
+    setIsStockShortageOpen(false);
+    const qty = parseFloat(cantitate);
+    proceedWithCalculation(qty, stockShortages);
+    toast.success("Oferta a fost înregistrată și calculul a fost realizat");
+  };
+  
+  // Update shortage price
+  const updateShortagePrice = (material: string, price: string) => {
+    setStockShortages(prev => 
+      prev.map(s => s.material === material ? { ...s, pretUnitar: price } : s)
+    );
+  };
+  
+  // Handle file upload
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setOfertaFile(file);
+    }
+  };
+  
+  // Remove uploaded file
+  const handleRemoveFile = () => {
+    setOfertaFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+  
+  // Proceed with calculation
+  const proceedWithCalculation = (qty: number, shortagesWithPrices?: typeof stockShortages) => {
     setLoading(true);
     
     // Simulate calculation (in real app, this would be an API call)
     setTimeout(() => {
-      const qty = parseFloat(cantitate);
       const marja = marjaProfit / 100;
       
       // Mock cost breakdown based on quantity
       const mockBreakdown: CostBreakdown = {
         materiale: [
-          { material: "Bitum 50/70", cantitate: qty * 0.05, pretUnitar: 3500, total: qty * 0.05 * 3500 },
-          { material: "Agregat 0/4", cantitate: qty * 0.35, pretUnitar: 45, total: qty * 0.35 * 45 },
-          { material: "Agregat 4/8", cantitate: qty * 0.25, pretUnitar: 50, total: qty * 0.25 * 50 },
-          { material: "Filler", cantitate: qty * 0.08, pretUnitar: 120, total: qty * 0.08 * 120 },
-          { material: "Agregat 8/16", cantitate: qty * 0.27, pretUnitar: 55, total: qty * 0.27 * 55 },
+          { material: "Bitum 50/70", cantitate: qty * 0.05, pretUnitar: shortagesWithPrices?.find(s => s.material === "Bitum 50/70")?.pretUnitar ? parseFloat(shortagesWithPrices.find(s => s.material === "Bitum 50/70")!.pretUnitar) : 3500, total: 0 },
+          { material: "Agregat 0/4", cantitate: qty * 0.35, pretUnitar: shortagesWithPrices?.find(s => s.material === "Agregat 0/4")?.pretUnitar ? parseFloat(shortagesWithPrices.find(s => s.material === "Agregat 0/4")!.pretUnitar) : 45, total: 0 },
+          { material: "Agregat 4/8", cantitate: qty * 0.25, pretUnitar: shortagesWithPrices?.find(s => s.material === "Agregat 4/8")?.pretUnitar ? parseFloat(shortagesWithPrices.find(s => s.material === "Agregat 4/8")!.pretUnitar) : 50, total: 0 },
+          { material: "Filler", cantitate: qty * 0.08, pretUnitar: shortagesWithPrices?.find(s => s.material === "Filler")?.pretUnitar ? parseFloat(shortagesWithPrices.find(s => s.material === "Filler")!.pretUnitar) : 120, total: 0 },
+          { material: "Agregat 8/16", cantitate: qty * 0.27, pretUnitar: shortagesWithPrices?.find(s => s.material === "Agregat 8/16")?.pretUnitar ? parseFloat(shortagesWithPrices.find(s => s.material === "Agregat 8/16")!.pretUnitar) : 55, total: 0 },
         ],
-        curentActiv: qty * 12, // 12 RON/tonă pentru curent activ
-        consumCTL: qty * 8, // 8 RON/tonă pentru consum CTL
+        curentActiv: qty * 12,
+        consumCTL: qty * 8,
         costuriIndirecte: {
-          curentPasiv: qty * 3, // 3 RON/tonă pentru curent pasiv
+          curentPasiv: qty * 3,
           salarii: qty * 25,
           amortizari: qty * 18,
           mentenanta: qty * 12,
@@ -183,6 +274,12 @@ const CalculatorPret = () => {
         costTotal: 0,
         pretRecomandat: 0
       };
+      
+      // Calculate totals for each material
+      mockBreakdown.materiale = mockBreakdown.materiale.map(m => ({
+        ...m,
+        total: m.cantitate * m.pretUnitar
+      }));
 
       const costMateriale = mockBreakdown.materiale.reduce((sum, m) => sum + m.total, 0);
       const costIndirecte = Object.values(mockBreakdown.costuriIndirecte).reduce((sum, c) => sum + c, 0);
@@ -853,6 +950,126 @@ const CalculatorPret = () => {
             </Button>
             <Button onClick={() => { handleAddConcurent(); setIsAddConcurentOpen(false); }}>
               Adaugă
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Stock Shortage Dialog */}
+      <Dialog open={isStockShortageOpen} onOpenChange={setIsStockShortageOpen}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-amber-600">
+              <AlertTriangle className="h-5 w-5" />
+              Stoc Insuficient
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-2">
+            <p className="text-sm text-muted-foreground">
+              Cantitatea solicitată depășește stocul disponibil pentru următoarele materiale. 
+              Introduceți prețurile de achiziție pentru cantitățile necesare:
+            </p>
+            
+            <div className="space-y-3">
+              {stockShortages.map((shortage) => (
+                <div key={shortage.material} className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-sm">{shortage.material}</span>
+                    <Badge variant="outline" className="text-amber-600 border-amber-500/30">
+                      -{shortage.cantitateNecesara.toFixed(2)} tone
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground">
+                    <div>
+                      <span className="block">Necesar</span>
+                      <span className="font-medium text-foreground">{shortage.necesar.toFixed(2)} t</span>
+                    </div>
+                    <div>
+                      <span className="block">Stoc</span>
+                      <span className="font-medium text-foreground">{shortage.stocDisponibil.toFixed(2)} t</span>
+                    </div>
+                    <div>
+                      <span className="block">De achiziționat</span>
+                      <span className="font-medium text-amber-600">{shortage.cantitateNecesara.toFixed(2)} t</span>
+                    </div>
+                  </div>
+                  <div className="pt-1">
+                    <Label className="text-xs">Preț unitar (RON/tonă)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="Introduceți prețul..."
+                      value={shortage.pretUnitar}
+                      onChange={(e) => updateShortagePrice(shortage.material, e.target.value)}
+                      className="h-10 mt-1"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <Separator />
+            
+            {/* File Upload Section */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Încărcare Ofertă Furnizor
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Încărcați documentul cu oferta de preț primită de la furnizor (opțional)
+              </p>
+              
+              {ofertaFile ? (
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border">
+                  <FileText className="h-5 w-5 text-primary" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{ofertaFile.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {(ofertaFile.size / 1024).toFixed(1)} KB
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={handleRemoveFile}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div 
+                  className="border-2 border-dashed border-border/50 rounded-lg p-4 text-center cursor-pointer hover:border-primary/50 hover:bg-muted/30 transition-colors"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                  <p className="text-sm text-muted-foreground">
+                    Click pentru a încărca sau drag & drop
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    PDF, DOC, DOCX, XLS, XLSX (max 10MB)
+                  </p>
+                </div>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="hidden"
+                accept=".pdf,.doc,.docx,.xls,.xlsx"
+                onChange={handleFileUpload}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsStockShortageOpen(false)}>
+              Anulează
+            </Button>
+            <Button onClick={handleStockShortageSubmit}>
+              Confirmă și Calculează
             </Button>
           </DialogFooter>
         </DialogContent>
