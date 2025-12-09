@@ -518,7 +518,7 @@ const PlanMentenanta = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Data Ultima Revizie</Label>
-                <Popover>
+                <Popover modal={false}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
@@ -531,7 +531,7 @@ const PlanMentenanta = () => {
                       {formData.dataUltimaRevizie || "Selectați data"}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
                     <Calendar
                       mode="single"
                       selected={formData.dataUltimaRevizie ? parse(formData.dataUltimaRevizie, "dd/MM/yyyy", new Date()) : undefined}
@@ -548,7 +548,7 @@ const PlanMentenanta = () => {
               </div>
               <div className="space-y-2">
                 <Label>Data Revizie Următoare</Label>
-                <Popover>
+                <Popover modal={false}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
@@ -561,7 +561,7 @@ const PlanMentenanta = () => {
                       {formData.dataRevizieUrmatoare || "Selectați data"}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
                     <Calendar
                       mode="single"
                       selected={formData.dataRevizieUrmatoare ? parse(formData.dataRevizieUrmatoare, "dd/MM/yyyy", new Date()) : undefined}
