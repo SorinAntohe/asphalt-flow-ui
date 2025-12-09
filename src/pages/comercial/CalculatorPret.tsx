@@ -643,7 +643,6 @@ const CalculatorPret = () => {
                       <TableHead className="text-xs">Produs</TableHead>
                       <TableHead className="text-xs">Data</TableHead>
                       <TableHead className="text-xs text-right">Preț</TableHead>
-                      <TableHead className="w-8"></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -658,16 +657,6 @@ const CalculatorPret = () => {
                         <TableCell className="text-sm py-2">{pret.data || "-"}</TableCell>
                         <TableCell className="text-sm py-2 text-right font-medium">
                           {formatCurrency(pret.pret)}
-                        </TableCell>
-                        <TableCell className="py-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 text-destructive hover:text-destructive"
-                            onClick={(e) => { e.stopPropagation(); handleRemoveConcurent(pret.id); }}
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}
