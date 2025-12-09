@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-import { Calculator, Plus, Trash2, TrendingUp, TrendingDown, Minus, BarChart3, Users, Zap, Package, Info, History } from "lucide-react";
+import { Calculator, Plus, Trash2, TrendingUp, TrendingDown, Minus, BarChart3, Users, Zap, Package, Info, History, CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +41,7 @@ interface PretConcurent {
   concurent: string;
   produs: string;
   pret: number;
+  data: string;
 }
 
 interface PretCalculat {
@@ -64,11 +66,11 @@ const mockRetete: Reteta[] = [
 ];
 
 const mockPreturiConcurenti: PretConcurent[] = [
-  { id: "1", concurent: "Strabag", produs: "BA 16", pret: 385 },
-  { id: "2", concurent: "Porr", produs: "BA 16", pret: 392 },
-  { id: "3", concurent: "Colas", produs: "BA 16", pret: 378 },
-  { id: "4", concurent: "Eurovia", produs: "MASF 16", pret: 410 },
-  { id: "5", concurent: "Bitumex", produs: "BA 16", pret: 365 },
+  { id: "1", concurent: "Strabag", produs: "BA 16", pret: 385, data: "05/12/2024" },
+  { id: "2", concurent: "Porr", produs: "BA 16", pret: 392, data: "03/12/2024" },
+  { id: "3", concurent: "Colas", produs: "BA 16", pret: 378, data: "01/12/2024" },
+  { id: "4", concurent: "Eurovia", produs: "MASF 16", pret: 410, data: "28/11/2024" },
+  { id: "5", concurent: "Bitumex", produs: "BA 16", pret: 365, data: "25/11/2024" },
 ];
 
 const mockCostBreakdown: CostBreakdown = {
@@ -111,7 +113,7 @@ const CalculatorPret = () => {
 
   // Competitor prices state
   const [preturiConcurenti, setPreturiConcurenti] = useState<PretConcurent[]>(mockPreturiConcurenti);
-  const [newConcurent, setNewConcurent] = useState({ concurent: "", produs: "", pret: "" });
+  const [newConcurent, setNewConcurent] = useState({ concurent: "", produs: "", pret: "", data: "" });
   
   // Details dialog state
   const [showDetails, setShowDetails] = useState(false);
@@ -239,16 +241,17 @@ const CalculatorPret = () => {
   // Add competitor price
   const handleAddConcurent = () => {
     if (!newConcurent.concurent || !newConcurent.produs || !newConcurent.pret) {
-      toast.error("Completați toate câmpurile");
+      toast.error("Completați toate câmpurile obligatorii");
       return;
     }
     setPreturiConcurenti(prev => [...prev, {
       id: crypto.randomUUID(),
       concurent: newConcurent.concurent,
       produs: newConcurent.produs,
-      pret: parseFloat(newConcurent.pret)
+      pret: parseFloat(newConcurent.pret),
+      data: newConcurent.data || new Date().toLocaleDateString("ro-RO")
     }]);
-    setNewConcurent({ concurent: "", produs: "", pret: "" });
+    setNewConcurent({ concurent: "", produs: "", pret: "", data: "" });
   };
 
   // Remove competitor price
@@ -519,7 +522,7 @@ const CalculatorPret = () => {
 
             {/* Add form */}
             <div className="space-y-2">
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <Input
                   placeholder="Concurent"
                   value={newConcurent.concurent}
@@ -535,6 +538,12 @@ const CalculatorPret = () => {
                   placeholder="Preț"
                   value={newConcurent.pret}
                   onChange={(e) => setNewConcurent(prev => ({ ...prev, pret: e.target.value }))}
+                />
+                <Input
+                  type="date"
+                  placeholder="Data"
+                  value={newConcurent.data}
+                  onChange={(e) => setNewConcurent(prev => ({ ...prev, data: e.target.value }))}
                 />
               </div>
               <Button variant="outline" size="sm" className="w-full" onClick={handleAddConcurent}>
@@ -558,6 +567,7 @@ const CalculatorPret = () => {
                     <TableRow>
                       <TableHead className="text-xs">Concurent</TableHead>
                       <TableHead className="text-xs">Produs</TableHead>
+                      <TableHead className="text-xs">Data</TableHead>
                       <TableHead className="text-xs text-right">Preț</TableHead>
                       <TableHead className="w-8"></TableHead>
                     </TableRow>
@@ -567,6 +577,7 @@ const CalculatorPret = () => {
                       <TableRow key={pret.id}>
                         <TableCell className="text-sm py-2">{pret.concurent}</TableCell>
                         <TableCell className="text-sm py-2">{pret.produs}</TableCell>
+                        <TableCell className="text-sm py-2">{pret.data || "-"}</TableCell>
                         <TableCell className="text-sm py-2 text-right font-medium">
                           {formatCurrency(pret.pret)}
                         </TableCell>
