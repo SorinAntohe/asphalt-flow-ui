@@ -957,7 +957,7 @@ const CalculatorPret = () => {
 
       {/* Stock Shortage Dialog */}
       <Dialog open={isStockShortageOpen} onOpenChange={setIsStockShortageOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto" hideCloseButton>
+        <DialogContent className="max-w-3xl" hideCloseButton>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-amber-600">
               <AlertTriangle className="h-5 w-5" />
@@ -965,45 +965,34 @@ const CalculatorPret = () => {
             </DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-4 py-2">
+          <div className="space-y-3 py-2">
             <p className="text-sm text-muted-foreground">
-              Cantitatea solicitată depășește stocul disponibil pentru următoarele materiale. 
-              Introduceți prețurile de achiziție pentru cantitățile necesare:
+              Introduceți prețurile de achiziție pentru materialele cu stoc insuficient:
             </p>
             
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {stockShortages.map((shortage) => (
-                <div key={shortage.material} className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 space-y-2">
-                  <div className="flex items-center justify-between">
+                <div key={shortage.material} className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                  <div className="flex items-center justify-between mb-2">
                     <span className="font-medium text-sm">{shortage.material}</span>
-                    <Badge variant="outline" className="text-amber-600 border-amber-500/30">
-                      -{shortage.cantitateNecesara.toFixed(2)} tone
+                    <Badge variant="outline" className="text-amber-600 border-amber-500/30 text-xs">
+                      -{shortage.cantitateNecesara.toFixed(1)} t
                     </Badge>
                   </div>
-                  <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground">
-                    <div>
-                      <span className="block">Necesar</span>
-                      <span className="font-medium text-foreground">{shortage.necesar.toFixed(2)} t</span>
-                    </div>
-                    <div>
-                      <span className="block">Stoc</span>
-                      <span className="font-medium text-foreground">{shortage.stocDisponibil.toFixed(2)} t</span>
-                    </div>
-                    <div>
-                      <span className="block">De achiziționat</span>
-                      <span className="font-medium text-amber-600">{shortage.cantitateNecesara.toFixed(2)} t</span>
-                    </div>
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
+                    <span>Necesar: <strong className="text-foreground">{shortage.necesar.toFixed(1)}t</strong></span>
+                    <span>Stoc: <strong className="text-foreground">{shortage.stocDisponibil.toFixed(1)}t</strong></span>
                   </div>
-                  <div className="pt-1">
-                    <Label className="text-xs">Preț unitar (RON/tonă)</Label>
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs whitespace-nowrap">Preț (RON/t):</Label>
                     <Input
                       type="number"
                       step="0.01"
                       min="0"
-                      placeholder="Introduceți prețul..."
+                      placeholder="Preț..."
                       value={shortage.pretUnitar}
                       onChange={(e) => updateShortagePrice(shortage.material, e.target.value)}
-                      className="h-10 mt-1"
+                      className="h-9"
                     />
                   </div>
                 </div>
