@@ -113,16 +113,16 @@ const PlanMentenanta = () => {
   }, []);
 
   const echipamenteOptions = useMemo(() => 
-    echipamente.map(e => ({ value: e.cod, label: `${e.cod} - ${e.denumire}` })),
+    echipamente.map(e => ({ value: e.denumire, label: e.denumire })),
     [echipamente]
   );
 
-  // When cod changes, auto-populate denumire
-  const handleCodChange = (cod: string) => {
-    setFormData(prev => ({ ...prev, cod }));
-    const found = echipamente.find(e => e.cod === cod);
+  // When denumire changes, auto-populate cod
+  const handleDenumireChange = (denumire: string) => {
+    setFormData(prev => ({ ...prev, denumire }));
+    const found = echipamente.find(e => e.denumire === denumire);
     if (found) {
-      setFormData(prev => ({ ...prev, denumire: found.denumire }));
+      setFormData(prev => ({ ...prev, cod: found.cod }));
     }
   };
 
@@ -505,17 +505,11 @@ const PlanMentenanta = () => {
               <Label>Echipament *</Label>
               <FilterableSelect
                 options={echipamenteOptions}
-                value={formData.cod}
-                onValueChange={handleCodChange}
+                value={formData.denumire}
+                onValueChange={handleDenumireChange}
                 placeholder="Selectați echipament..."
               />
             </div>
-            {formData.denumire && (
-              <div className="space-y-2">
-                <Label>Denumire</Label>
-                <Input value={formData.denumire} disabled className="bg-muted" />
-              </div>
-            )}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Data Ultima Revizie</Label>
