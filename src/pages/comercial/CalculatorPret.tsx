@@ -9,6 +9,7 @@ import { FilterableSelect } from "@/components/ui/filterable-select";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -103,6 +104,8 @@ const CalculatorPret = () => {
   const [selectedReteta, setSelectedReteta] = useState("RET001");
   const [cantitate, setCantitate] = useState("100");
   const [marjaProfit, setMarjaProfit] = useState(15);
+  const [fondRezervaEnabled, setFondRezervaEnabled] = useState(false);
+  const [fondRezerva, setFondRezerva] = useState(5);
   const [loading, setLoading] = useState(false);
 
   // Calculation result state
@@ -452,6 +455,37 @@ const CalculatorPret = () => {
                 <span>15%</span>
                 <span>30%</span>
               </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <Label>Fond de Rezervă</Label>
+                <Switch
+                  checked={fondRezervaEnabled}
+                  onCheckedChange={setFondRezervaEnabled}
+                />
+              </div>
+              {fondRezervaEnabled && (
+                <>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-muted-foreground">Procent</span>
+                    <span className="text-sm font-semibold text-primary">{fondRezerva}%</span>
+                  </div>
+                  <Slider
+                    value={[fondRezerva]}
+                    onValueChange={(value) => setFondRezerva(value[0])}
+                    min={0}
+                    max={30}
+                    step={1}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>0%</span>
+                    <span>15%</span>
+                    <span>30%</span>
+                  </div>
+                </>
+              )}
             </div>
 
             <Button 
