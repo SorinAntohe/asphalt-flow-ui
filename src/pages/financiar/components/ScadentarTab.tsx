@@ -1,13 +1,17 @@
 import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { scadentarEntries } from "../parteneri-mockData";
 import { ScadentarEntry } from "../parteneri-types";
 import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
-import { FileText, TrendingUp, TrendingDown, Scale } from "lucide-react";
+import { FileText, TrendingUp, TrendingDown, Scale, Plus, Download } from "lucide-react";
+import { exportToCSV } from "@/lib/exportUtils";
+import { useToast } from "@/hooks/use-toast";
 
 const ScadentarTab = () => {
+  const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
@@ -167,6 +171,33 @@ const ScadentarTab = () => {
       {/* Table */}
       <Card>
         <CardContent className="pt-6">
+          <div className="flex justify-end gap-2 mb-4">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              onClick={() => {
+                exportToCSV(filteredAndSortedData, "scadentar", [
+                  { key: "tip_partener", label: "Tip Partener" },
+                  { key: "nume_partener", label: "Nume Partener" },
+                  { key: "tip_document", label: "Tip Document" },
+                  { key: "numar_document", label: "Număr Document" },
+                  { key: "data_document", label: "Dată Document" },
+                  { key: "data_scadenta", label: "Dată Scadență" },
+                  { key: "suma_restanta", label: "Sumă Restantă" },
+                  { key: "zile_intarziere", label: "Zile Întârziere" },
+                  { key: "status", label: "Status" },
+                ]);
+                toast({ title: "Export realizat", description: "Export CSV realizat cu succes." });
+              }}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export CSV
+            </Button>
+            <Button size="sm">
+              <Plus className="h-4 w-4 mr-2" />
+              Adaugă
+            </Button>
+          </div>
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>

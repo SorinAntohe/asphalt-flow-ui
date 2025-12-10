@@ -1,14 +1,18 @@
 import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { noteContabile, liniiNoteContabile } from "../contabilitate-mockData";
 import { NotaContabila, LinieNotaContabila } from "../contabilitate-types";
 import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
-import { BookOpen, FileText } from "lucide-react";
+import { BookOpen, FileText, Plus, Download } from "lucide-react";
+import { exportToCSV } from "@/lib/exportUtils";
+import { useToast } from "@/hooks/use-toast";
 
 const JurnalTab = () => {
+  const { toast } = useToast();
   const [selectedNota, setSelectedNota] = useState<NotaContabila | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -165,6 +169,31 @@ const JurnalTab = () => {
       {/* Journal Table */}
       <Card>
         <CardContent className="pt-6">
+          <div className="flex justify-end gap-2 mb-4">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              onClick={() => {
+                exportToCSV(filteredAndSortedData, "jurnal_note_contabile", [
+                  { key: "data", label: "Dată" },
+                  { key: "nrNota", label: "Nr. Notă" },
+                  { key: "tipJurnal", label: "Tip Jurnal" },
+                  { key: "explicatie", label: "Explicație" },
+                  { key: "sursa", label: "Sursă" },
+                  { key: "totalDebit", label: "Total Debit" },
+                  { key: "totalCredit", label: "Total Credit" },
+                ]);
+                toast({ title: "Export realizat", description: "Export CSV realizat cu succes." });
+              }}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export CSV
+            </Button>
+            <Button size="sm">
+              <Plus className="h-4 w-4 mr-2" />
+              Adaugă
+            </Button>
+          </div>
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>

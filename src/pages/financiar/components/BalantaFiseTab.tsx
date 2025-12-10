@@ -1,13 +1,17 @@
 import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { balanta, miscariCont } from "../contabilitate-mockData";
 import { ContBalanta, MiscareCont } from "../contabilitate-types";
 import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
-import { Calculator, FileSpreadsheet, TrendingUp, TrendingDown } from "lucide-react";
+import { Calculator, FileSpreadsheet, TrendingUp, TrendingDown, Plus, Download } from "lucide-react";
+import { exportToCSV } from "@/lib/exportUtils";
+import { useToast } from "@/hooks/use-toast";
 
 const BalantaFiseTab = () => {
+  const { toast } = useToast();
   const [selectedCont, setSelectedCont] = useState<ContBalanta | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -163,6 +167,32 @@ const BalantaFiseTab = () => {
       {/* Balance Table */}
       <Card>
         <CardContent className="pt-6">
+          <div className="flex justify-end gap-2 mb-4">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              onClick={() => {
+                exportToCSV(filteredAndSortedData, "balanta_conturi", [
+                  { key: "cont", label: "Cont" },
+                  { key: "denumire", label: "Denumire" },
+                  { key: "soldInitialDebit", label: "Sold Inițial D" },
+                  { key: "soldInitialCredit", label: "Sold Inițial C" },
+                  { key: "rulajDebit", label: "Rulaj D" },
+                  { key: "rulajCredit", label: "Rulaj C" },
+                  { key: "soldFinalDebit", label: "Sold Final D" },
+                  { key: "soldFinalCredit", label: "Sold Final C" },
+                ]);
+                toast({ title: "Export realizat", description: "Export CSV realizat cu succes." });
+              }}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export CSV
+            </Button>
+            <Button size="sm">
+              <Plus className="h-4 w-4 mr-2" />
+              Adaugă
+            </Button>
+          </div>
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
