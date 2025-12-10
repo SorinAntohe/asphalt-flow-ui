@@ -286,13 +286,20 @@ const CalculatorPret = () => {
 
   // Check stock availability and open shortage dialog if needed
   const checkStockAvailability = (qty: number) => {
-    const materialNeeds = [
-      { material: "Bitum 50/70", necesar: qty * 0.05 },
-      { material: "Agregat 0/4", necesar: qty * 0.35 },
-      { material: "Agregat 4/8", necesar: qty * 0.25 },
-      { material: "Filler", necesar: qty * 0.08 },
-      { material: "Agregat 8/16", necesar: qty * 0.27 },
-    ];
+    // Use materials from API if available, otherwise use mock
+    const materialNeeds = retetaMateriale.length > 0
+      ? retetaMateriale.map(m => ({
+          material: m.material,
+          // cantitate is kg per ton, convert to tons needed: (kg/ton * qty tons) / 1000
+          necesar: (m.cantitate / 1000) * qty
+        }))
+      : [
+          { material: "Bitum 50/70", necesar: qty * 0.05 },
+          { material: "Agregat 0/4", necesar: qty * 0.35 },
+          { material: "Agregat 4/8", necesar: qty * 0.25 },
+          { material: "Filler", necesar: qty * 0.08 },
+          { material: "Agregat 8/16", necesar: qty * 0.27 },
+        ];
     
     const shortages = materialNeeds
       .filter(m => m.necesar > (mockStocuri[m.material] || 0))
