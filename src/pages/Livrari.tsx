@@ -27,6 +27,7 @@ interface Livrare {
   id: number;
   data: string | null;
   cod: string | null;
+  nr_comanda: string | null;
   nr_aviz: string | null;
   nr_inmatriculare: string | null;
   tip_masina: string | null;
@@ -53,6 +54,7 @@ const Livrari = () => {
   // Form state
   const [form, setForm] = useState({
     cod: "",
+    nr_comanda: "",
     nr_aviz: "",
     nr_inmatriculare: "",
     tip_masina: "",
@@ -79,6 +81,7 @@ const Livrari = () => {
     id: "",
     data: "",
     cod: "",
+    nr_comanda: "",
     nr_aviz: "",
     nr_inmatriculare: "",
     tip_masina: "",
@@ -286,6 +289,7 @@ const Livrari = () => {
         item.id.toString().includes(filters.id) &&
         (item.data || "").toLowerCase().includes(filters.data.toLowerCase()) &&
         (item.cod || "").toLowerCase().includes(filters.cod.toLowerCase()) &&
+        (item.nr_comanda || "").toLowerCase().includes(filters.nr_comanda.toLowerCase()) &&
         (item.nr_aviz || "").toLowerCase().includes(filters.nr_aviz.toLowerCase()) &&
         (item.nr_inmatriculare || "").toLowerCase().includes(filters.nr_inmatriculare.toLowerCase()) &&
         (item.tip_masina || "").toLowerCase().includes(filters.tip_masina.toLowerCase()) &&
@@ -337,6 +341,7 @@ const Livrari = () => {
     setEditing(null);
     setForm({
       cod: "",
+      nr_comanda: "",
       nr_aviz: "",
       nr_inmatriculare: "",
       tip_masina: "",
@@ -358,6 +363,7 @@ const Livrari = () => {
     setEditing(livrare);
     setForm({
       cod: livrare.cod || "",
+      nr_comanda: livrare.nr_comanda || "",
       nr_aviz: livrare.nr_aviz || "",
       nr_inmatriculare: livrare.nr_inmatriculare || "",
       tip_masina: livrare.tip_masina || "",
@@ -391,6 +397,7 @@ const Livrari = () => {
         // Edit existing livrare
         const updatePayload = {
           cod: form.cod,
+          nr_comanda: form.nr_comanda,
           temperatura: form.temperatura,
           tara: form.tara,
           masa_brut: form.masa_brut,
@@ -430,6 +437,7 @@ const Livrari = () => {
         const payload = {
           data: currentDate,
           cod: form.cod,
+          nr_comanda: form.nr_comanda,
           temperatura: form.temperatura,
           tara: form.tara,
           masa_brut: form.masa_brut,
@@ -579,6 +587,7 @@ const Livrari = () => {
               { key: 'id', label: 'ID' },
               { key: 'data', label: 'Data' },
               { key: 'cod', label: 'Cod' },
+              { key: 'nr_comanda', label: 'Cod Comandă' },
               { key: 'nr_aviz', label: 'Nr. Aviz' },
               { key: 'nr_inmatriculare', label: 'Nr. Înmatr.' },
               { key: 'tip_masina', label: 'Tip Mașină' },
@@ -687,6 +696,7 @@ const Livrari = () => {
                   <FilterHeader field="id" label="ID" />
                   <FilterHeader field="data" label="Data" />
                   <FilterHeader field="cod" label="Cod" />
+                  <FilterHeader field="nr_comanda" label="Cod Comandă" />
                   <FilterHeader field="nr_aviz" label="Nr. Aviz" />
                   <FilterHeader field="nr_inmatriculare" label="Nr. Înmatriculare" />
                   <FilterHeader field="tip_masina" label="Tip Mașină" />
@@ -704,7 +714,7 @@ const Livrari = () => {
               <TableBody key={`livrari-page-${currentPage}`} className="animate-fade-in">
                 {paginatedData.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={15} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={16} className="text-center py-8 text-muted-foreground">
                       Nu există livrări înregistrate
                     </TableCell>
                   </TableRow>
@@ -718,6 +728,7 @@ const Livrari = () => {
                       <TableCell className="py-1 text-xs font-medium">{livrare.id}</TableCell>
                       <TableCell className="py-1 text-xs">{formatDate(livrare.data)}</TableCell>
                       <TableCell className="py-1 text-xs">{livrare.cod || "-"}</TableCell>
+                      <TableCell className="py-1 text-xs">{livrare.nr_comanda || "-"}</TableCell>
                       <TableCell className="py-1 text-xs">{livrare.nr_aviz || "-"}</TableCell>
                       <TableCell className="py-1 text-xs">{livrare.nr_inmatriculare || "-"}</TableCell>
                       <TableCell className="py-1 text-xs">{livrare.tip_masina || "-"}</TableCell>
@@ -788,17 +799,28 @@ const Livrari = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="cod">Cod</Label>
-              <FilterableSelect
-                id="cod"
-                value={form.cod}
-                onValueChange={handleCodChange}
-                options={codOptions}
-                placeholder="Selectează cod..."
-                searchPlaceholder="Caută cod..."
-                emptyText="Nu s-au găsit coduri."
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="cod">Cod</Label>
+                <FilterableSelect
+                  id="cod"
+                  value={form.cod}
+                  onValueChange={handleCodChange}
+                  options={codOptions}
+                  placeholder="Selectează cod..."
+                  searchPlaceholder="Caută cod..."
+                  emptyText="Nu s-au găsit coduri."
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="nr_comanda">Cod Comandă</Label>
+                <Input
+                  id="nr_comanda"
+                  value={form.nr_comanda}
+                  onChange={(e) => setForm({ ...form, nr_comanda: e.target.value })}
+                  placeholder="Introdu cod comandă..."
+                />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
@@ -1005,10 +1027,14 @@ const Livrari = () => {
                   <p className="font-medium">{formatDate(viewingDetails.data)}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-1">
                   <Label className="text-muted-foreground">Cod</Label>
                   <p className="font-medium">{viewingDetails.cod || "-"}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Cod Comandă</Label>
+                  <p className="font-medium">{viewingDetails.nr_comanda || "-"}</p>
                 </div>
                 <div className="space-y-1">
                   <Label className="text-muted-foreground">Nr. Aviz</Label>
