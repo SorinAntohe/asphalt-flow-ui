@@ -2280,16 +2280,6 @@ const Consumuri = () => {
                     }}
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Preț Total</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={((contorCTLFormData.pret_unitar || 0) * (contorCTLFormData.consum_to || 0)).toFixed(2)}
-                    disabled
-                    className="bg-muted h-9"
-                  />
-                </div>
               </div>
             </div>
 
