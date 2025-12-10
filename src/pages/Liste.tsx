@@ -307,7 +307,7 @@ const Liste = () => {
   // Fetch chirii data
   const fetchChirii = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/liste/returneaza/chirii`);
+      const response = await fetch(`${API_BASE_URL}/liste/returneaza/chiri`);
       if (response.ok) {
         const data = await response.json();
         const mappedData = Array.isArray(data) ? data.map((item: any) => ({
@@ -3257,7 +3257,7 @@ const Liste = () => {
                          method: 'PATCH',
                          headers: { 'Content-Type': 'application/json' },
                          body: JSON.stringify({
-                           tabel: "lista_chirii",
+                            tabel: "lista_chiri",
                            id: chiriiDialog.data.id,
                            denumire: chiriiFormData.denumire,
                            pret_luna: parseFloat(chiriiFormData.pretLuna) || 0
@@ -3295,7 +3295,7 @@ const Liste = () => {
                        method: 'DELETE',
                        headers: { 'Content-Type': 'application/json' },
                        body: JSON.stringify({
-                         tabel: "lista_chirii",
+                         tabel: "lista_chiri",
                          id: chiriiDeleteDialog.id
                        })
                      });
