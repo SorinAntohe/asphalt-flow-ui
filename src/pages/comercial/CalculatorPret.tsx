@@ -133,14 +133,8 @@ const CalculatorPret = () => {
   const [ofertaFile, setOfertaFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  // Mock available stock data (in real app, this would come from API)
-  const mockStocuri: Record<string, number> = {
-    "Bitum 50/70": 3,
-    "Agregat 0/4": 20,
-    "Agregat 4/8": 15,
-    "Filler": 5,
-    "Agregat 8/16": 18,
-  };
+  // Real stock data from API
+  const [stocuriReale, setStocuriReale] = useState<Record<string, number>>({});
 
   // Products for competitor prices
   const [produse, setProduse] = useState<string[]>([]);
@@ -284,8 +278,37 @@ const CalculatorPret = () => {
     [produse]
   );
 
+  // Fetch stock data from API
+  const fetchStocuri = async (): Promise<Record<string, number>> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/comercial/returneaza/stoc_total_materiale`);
+      if (response.ok) {
+        const data = await response.json();
+        // Assuming API returns { materiale: [{ material: "...", cantitate: ... }, ...] }
+        const stocMap: Record<string, number> = {};
+        if (data.materiale && Array.isArray(data.materiale)) {
+          data.materiale.forEach((item: { material?: string; denumire?: string; cantitate?: number; stoc?: number }) => {
+            const materialName = item.material || item.denumire || '';
+            const quantity = item.cantitate ?? item.stoc ?? 0;
+            if (materialName) {
+              stocMap[materialName] = quantity;
+            }
+          });
+        }
+        setStocuriReale(stocMap);
+        return stocMap;
+      }
+    } catch (error) {
+      console.error('Error fetching stock data:', error);
+    }
+    return {};
+  };
+
   // Check stock availability and open shortage dialog if needed
-  const checkStockAvailability = (qty: number) => {
+  const checkStockAvailability = async (qty: number) => {
+    // Fetch real stock data
+    const stocuri = await fetchStocuri();
+    
     // Use materials from API if available, otherwise use mock
     const materialNeeds = retetaMateriale.length > 0
       ? retetaMateriale.map(m => ({
@@ -302,12 +325,12 @@ const CalculatorPret = () => {
         ];
     
     const shortages = materialNeeds
-      .filter(m => m.necesar > (mockStocuri[m.material] || 0))
+      .filter(m => m.necesar > (stocuri[m.material] || 0))
       .map(m => ({
         material: m.material,
         necesar: m.necesar,
-        stocDisponibil: mockStocuri[m.material] || 0,
-        cantitateNecesara: m.necesar - (mockStocuri[m.material] || 0),
+        stocDisponibil: stocuri[m.material] || 0,
+        cantitateNecesara: m.necesar - (stocuri[m.material] || 0),
         pretUnitar: ""
       }));
     
@@ -315,24 +338,33 @@ const CalculatorPret = () => {
   };
 
   // Calculate price
-  const handleCalculate = () => {
+  const handleCalculate = async () => {
     if (!selectedReteta || !cantitate) {
       toast.error("Selectați o rețetă și introduceți cantitatea");
       return;
     }
 
+    setLoading(true);
     const qty = parseFloat(cantitate);
     
-    // Check for stock shortages
-    const shortages = checkStockAvailability(qty);
-    if (shortages.length > 0) {
-      setStockShortages(shortages);
-      setOfertaFile(null);
-      setIsStockShortageOpen(true);
-      return;
+    try {
+      // Check for stock shortages
+      const shortages = await checkStockAvailability(qty);
+      if (shortages.length > 0) {
+        setStockShortages(shortages);
+        setOfertaFile(null);
+        setIsStockShortageOpen(true);
+        setLoading(false);
+        return;
+      }
+      
+      proceedWithCalculation(qty);
+    } catch (error) {
+      console.error('Error checking stock:', error);
+      toast.error("Eroare la verificarea stocului");
+    } finally {
+      setLoading(false);
     }
-    
-    proceedWithCalculation(qty);
   };
   
   // Handle stock shortage form submission
