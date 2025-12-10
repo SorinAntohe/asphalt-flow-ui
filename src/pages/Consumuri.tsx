@@ -941,10 +941,10 @@ const Consumuri = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex flex-col gap-3 mb-4">
-          <TabsList className="flex flex-wrap h-auto p-1 gap-1 w-full">
-            <TabsTrigger value="contor-curent" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 sm:flex-none">Contor Curent</TabsTrigger>
-            <TabsTrigger value="contor-ctl" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 sm:flex-none">Contor CTL</TabsTrigger>
-            <TabsTrigger value="consumuri" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 sm:flex-none">Consumuri Materiale</TabsTrigger>
+          <TabsList className="inline-flex h-auto p-1.5 gap-1 w-auto">
+            <TabsTrigger value="contor-curent" className="text-xs sm:text-sm px-3 sm:px-4 py-2">Contor Curent</TabsTrigger>
+            <TabsTrigger value="contor-ctl" className="text-xs sm:text-sm px-3 sm:px-4 py-2">Contor CTL</TabsTrigger>
+            <TabsTrigger value="consumuri" className="text-xs sm:text-sm px-3 sm:px-4 py-2">Consumuri Materiale</TabsTrigger>
           </TabsList>
           <div className="flex gap-2">
             <Button 
