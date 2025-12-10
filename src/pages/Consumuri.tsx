@@ -1757,16 +1757,14 @@ const Consumuri = () => {
 
       {/* Contor Curent Form Dialog */}
       <Dialog open={isContorCurentFormOpen} onOpenChange={setIsContorCurentFormOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{isEditingContorCurent ? 'Editează Contor Curent' : 'Adaugă Contor Curent'}</DialogTitle>
             <DialogDescription>
               {isEditingContorCurent ? 'Modifică datele contorului' : 'Completează datele pentru noul contor'}
             </DialogDescription>
           </DialogHeader>
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* Left side - Form */}
-            <div className="flex-1 space-y-4">
+          <div className="space-y-4">
               {/* Image Upload - Only for Add mode */}
               {!isEditingContorCurent && (
                 <div className="space-y-2">
@@ -1915,90 +1913,6 @@ const Consumuri = () => {
                 </div>
               </div>
             </div>
-
-            {/* Right side - Summary */}
-            <div className="lg:w-56 shrink-0">
-              <Card variant="flat" className="h-full">
-                <CardHeader className="py-3 px-4">
-                  <CardTitle className="text-sm">Raport Curent</CardTitle>
-                </CardHeader>
-                <CardContent className="py-2 px-4 space-y-4">
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-muted-foreground">Astăzi</p>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="bg-muted/50 rounded p-2">
-                        <p className="text-muted-foreground">Înreg.</p>
-                        <p className="font-semibold text-lg">
-                          {contorCurentData.filter(c => {
-                            const today = new Date();
-                            const [day, month, year] = c.data.split('/');
-                            return day === String(today.getDate()).padStart(2, '0') &&
-                                   month === String(today.getMonth() + 1).padStart(2, '0') &&
-                                   year === String(today.getFullYear());
-                          }).length}
-                        </p>
-                      </div>
-                      <div className="bg-muted/50 rounded p-2">
-                        <p className="text-muted-foreground">Consum</p>
-                        <p className="font-semibold text-lg">
-                          {contorCurentData.filter(c => {
-                            const today = new Date();
-                            const [day, month, year] = c.data.split('/');
-                            return day === String(today.getDate()).padStart(2, '0') &&
-                                   month === String(today.getMonth() + 1).padStart(2, '0') &&
-                                   year === String(today.getFullYear());
-                          }).reduce((sum, c) => sum + (c.consum_kw || 0), 0).toFixed(0)}
-                          <span className="text-xs font-normal ml-1">kW</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-muted-foreground">Luna aceasta</p>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="bg-muted/50 rounded p-2">
-                        <p className="text-muted-foreground">Înreg.</p>
-                        <p className="font-semibold text-lg">
-                          {contorCurentData.filter(c => {
-                            const today = new Date();
-                            const [, month, year] = c.data.split('/');
-                            return month === String(today.getMonth() + 1).padStart(2, '0') &&
-                                   year === String(today.getFullYear());
-                          }).length}
-                        </p>
-                      </div>
-                      <div className="bg-muted/50 rounded p-2">
-                        <p className="text-muted-foreground">Consum</p>
-                        <p className="font-semibold text-lg">
-                          {(contorCurentData.filter(c => {
-                            const today = new Date();
-                            const [, month, year] = c.data.split('/');
-                            return month === String(today.getMonth() + 1).padStart(2, '0') &&
-                                   year === String(today.getFullYear());
-                          }).reduce((sum, c) => sum + (c.consum_kw || 0), 0) / 1000).toFixed(1)}
-                          <span className="text-xs font-normal ml-1">MWh</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-muted-foreground">Cost Lunar</p>
-                    <div className="bg-primary/10 rounded p-2 text-center">
-                      <p className="font-semibold text-lg text-primary">
-                        {contorCurentData.filter(c => {
-                          const today = new Date();
-                          const [, month, year] = c.data.split('/');
-                          return month === String(today.getMonth() + 1).padStart(2, '0') &&
-                                 year === String(today.getFullYear());
-                        }).reduce((sum, c) => sum + (c.pret || 0), 0).toLocaleString()}
-                        <span className="text-xs font-normal ml-1">RON</span>
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsContorCurentFormOpen(false)}>Anulează</Button>
             <Button onClick={handleContorCurentSave}>Salvează</Button>
@@ -2097,16 +2011,14 @@ const Consumuri = () => {
 
       {/* Contor CTL Form Dialog */}
       <Dialog open={isContorCTLFormOpen} onOpenChange={setIsContorCTLFormOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{isEditingContorCTL ? 'Editează Contor CTL' : 'Adaugă Contor CTL'}</DialogTitle>
             <DialogDescription>
               {isEditingContorCTL ? 'Modifică datele contorului' : 'Completează datele pentru noul contor'}
             </DialogDescription>
           </DialogHeader>
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* Left side - Form */}
-            <div className="flex-1 space-y-4">
+          <div className="space-y-4">
               {/* Image Upload - Only for Add mode */}
               {!isEditingContorCTL && (
                 <div className="space-y-2">
@@ -2282,90 +2194,6 @@ const Consumuri = () => {
                 </div>
               </div>
             </div>
-
-            {/* Right side - Summary */}
-            <div className="lg:w-56 shrink-0">
-              <Card className="h-full">
-                <CardHeader className="py-3 px-4">
-                  <CardTitle className="text-sm">Raport CTL</CardTitle>
-                </CardHeader>
-                <CardContent className="py-2 px-4 space-y-4">
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-muted-foreground">Astăzi</p>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="bg-muted/50 rounded p-2">
-                        <p className="text-muted-foreground">Înreg.</p>
-                        <p className="font-semibold text-lg">
-                          {contorCTLData.filter(c => {
-                            const today = new Date();
-                            const [day, month, year] = c.data.split('/');
-                            return day === String(today.getDate()).padStart(2, '0') &&
-                                   month === String(today.getMonth() + 1).padStart(2, '0') &&
-                                   year === String(today.getFullYear());
-                          }).length}
-                        </p>
-                      </div>
-                      <div className="bg-muted/50 rounded p-2">
-                        <p className="text-muted-foreground">Consum</p>
-                        <p className="font-semibold text-lg">
-                          {contorCTLData.filter(c => {
-                            const today = new Date();
-                            const [day, month, year] = c.data.split('/');
-                            return day === String(today.getDate()).padStart(2, '0') &&
-                                   month === String(today.getMonth() + 1).padStart(2, '0') &&
-                                   year === String(today.getFullYear());
-                          }).reduce((sum, c) => sum + (c.consum_l || 0), 0).toFixed(0)}
-                          <span className="text-xs font-normal ml-1">L</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-muted-foreground">Luna aceasta</p>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="bg-muted/50 rounded p-2">
-                        <p className="text-muted-foreground">Înreg.</p>
-                        <p className="font-semibold text-lg">
-                          {contorCTLData.filter(c => {
-                            const today = new Date();
-                            const [, month, year] = c.data.split('/');
-                            return month === String(today.getMonth() + 1).padStart(2, '0') &&
-                                   year === String(today.getFullYear());
-                          }).length}
-                        </p>
-                      </div>
-                      <div className="bg-muted/50 rounded p-2">
-                        <p className="text-muted-foreground">Consum</p>
-                        <p className="font-semibold text-lg">
-                          {(contorCTLData.filter(c => {
-                            const today = new Date();
-                            const [, month, year] = c.data.split('/');
-                            return month === String(today.getMonth() + 1).padStart(2, '0') &&
-                                   year === String(today.getFullYear());
-                          }).reduce((sum, c) => sum + (c.consum_l || 0), 0) / 1000).toFixed(1)}
-                          <span className="text-xs font-normal ml-1">kL</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-muted-foreground">Consum TO Lunar</p>
-                    <div className="bg-primary/10 rounded p-2 text-center">
-                      <p className="font-semibold text-lg text-primary">
-                        {contorCTLData.filter(c => {
-                          const today = new Date();
-                          const [, month, year] = c.data.split('/');
-                          return month === String(today.getMonth() + 1).padStart(2, '0') &&
-                                 year === String(today.getFullYear());
-                        }).reduce((sum, c) => sum + (c.consum_to || 0), 0).toFixed(1)}
-                        <span className="text-xs font-normal ml-1">TO</span>
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsContorCTLFormOpen(false)}>Anulează</Button>
             <Button onClick={handleContorCTLSave}>Salvează</Button>
@@ -2518,9 +2346,8 @@ const Consumuri = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Consum Form Dialog */}
       <Dialog open={isConsumFormOpen} onOpenChange={setIsConsumFormOpen}>
-        <DialogContent className="w-[95vw] max-w-6xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader className="pb-2 pr-8">
             <div className="flex items-center justify-between">
               <DialogTitle className="text-base">{isEditingConsum ? 'Editează Consum' : 'Adaugă Consum'}</DialogTitle>
@@ -2537,10 +2364,8 @@ const Consumuri = () => {
               )}
             </div>
           </DialogHeader>
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* Left side - Form inputs */}
-            <div className="flex-1">
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
             <div className="space-y-1">
               <Label className="text-xs">Produs</Label>
               <Input
@@ -2759,113 +2584,6 @@ const Consumuri = () => {
                 onChange={(e) => setConsumFormData({ ...consumFormData, consum_ctl: Number(e.target.value) })}
               />
               </div>
-            </div>
-            </div>
-
-            {/* Right side - Consumption Summary */}
-            <div className="lg:w-64 shrink-0">
-              <Card className="h-full">
-                <CardHeader className="py-3 px-4">
-                  <CardTitle className="text-sm">Raport Consum</CardTitle>
-                </CardHeader>
-                <CardContent className="py-2 px-4 space-y-4">
-                  {/* Daily Summary */}
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-muted-foreground">Astăzi</p>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="bg-muted/50 rounded p-2">
-                        <p className="text-muted-foreground">Înregistrări</p>
-                        <p className="font-semibold text-lg">
-                          {consumuriData.filter(c => {
-                            const today = new Date();
-                            const [day, month, year] = c.data.split('/');
-                            return day === String(today.getDate()).padStart(2, '0') &&
-                                   month === String(today.getMonth() + 1).padStart(2, '0') &&
-                                   year === String(today.getFullYear());
-                          }).length}
-                        </p>
-                      </div>
-                      <div className="bg-muted/50 rounded p-2">
-                        <p className="text-muted-foreground">Cantitate</p>
-                        <p className="font-semibold text-lg">
-                          {consumuriData.filter(c => {
-                            const today = new Date();
-                            const [day, month, year] = c.data.split('/');
-                            return day === String(today.getDate()).padStart(2, '0') &&
-                                   month === String(today.getMonth() + 1).padStart(2, '0') &&
-                                   year === String(today.getFullYear());
-                          }).reduce((sum, c) => sum + (c.cantitate || 0), 0).toFixed(0)}
-                          <span className="text-xs font-normal ml-1">t</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Monthly Summary */}
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-muted-foreground">Luna aceasta</p>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="bg-muted/50 rounded p-2">
-                        <p className="text-muted-foreground">Înregistrări</p>
-                        <p className="font-semibold text-lg">
-                          {consumuriData.filter(c => {
-                            const today = new Date();
-                            const [, month, year] = c.data.split('/');
-                            return month === String(today.getMonth() + 1).padStart(2, '0') &&
-                                   year === String(today.getFullYear());
-                          }).length}
-                        </p>
-                      </div>
-                      <div className="bg-muted/50 rounded p-2">
-                        <p className="text-muted-foreground">Cantitate</p>
-                        <p className="font-semibold text-lg">
-                          {consumuriData.filter(c => {
-                            const today = new Date();
-                            const [, month, year] = c.data.split('/');
-                            return month === String(today.getMonth() + 1).padStart(2, '0') &&
-                                   year === String(today.getFullYear());
-                          }).reduce((sum, c) => sum + (c.cantitate || 0), 0).toFixed(0)}
-                          <span className="text-xs font-normal ml-1">t</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Top Materials */}
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-muted-foreground">Top Materiale (Lunar)</p>
-                    <div className="space-y-1 text-xs">
-                      {(() => {
-                        const monthData = consumuriData.filter(c => {
-                          const today = new Date();
-                          const [, month, year] = c.data.split('/');
-                          return month === String(today.getMonth() + 1).padStart(2, '0') &&
-                                 year === String(today.getFullYear());
-                        });
-                        const bitumTotal = monthData.reduce((sum, c) => sum + (c.bitum || 0), 0);
-                        const fillerTotal = monthData.reduce((sum, c) => sum + (c.filler || 0), 0);
-                        const apaTotal = monthData.reduce((sum, c) => sum + (c.apa || 0), 0);
-                        return (
-                          <>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">Bitum</span>
-                              <span className="font-medium">{bitumTotal.toFixed(1)} t</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">Filler</span>
-                              <span className="font-medium">{fillerTotal.toFixed(1)} t</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">Apă</span>
-                              <span className="font-medium">{apaTotal.toFixed(1)} t</span>
-                            </div>
-                          </>
-                        );
-                      })()}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </div>
           <DialogFooter className="pt-2">
