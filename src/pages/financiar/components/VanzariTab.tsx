@@ -2,13 +2,24 @@ import { useState, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { facturiClienti, livrariClienti, incasariClienti } from "../mockData";
+import { FacturaClient, LivrareClient, IncasareClient } from "../types";
 import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
-import { FileText, Truck, Wallet, TrendingUp } from "lucide-react";
+import { FileText, Truck, Wallet, TrendingUp, Plus, Download } from "lucide-react";
+import { exportToCSV } from "@/lib/exportUtils";
+import { useToast } from "@/hooks/use-toast";
 
 const VanzariTab = () => {
+  const { toast } = useToast();
   const [activeSubTab, setActiveSubTab] = useState("facturi");
+  
+  // Dialog states
+  const [selectedFactura, setSelectedFactura] = useState<FacturaClient | null>(null);
+  const [selectedLivrare, setSelectedLivrare] = useState<LivrareClient | null>(null);
+  const [selectedIncasare, setSelectedIncasare] = useState<IncasareClient | null>(null);
   
   // Pagination states for each sub-tab
   const [facturiPage, setFacturiPage] = useState(1);
@@ -119,6 +130,58 @@ const VanzariTab = () => {
   const paginatedLivrari = filteredLivrari.slice((livrariPage - 1) * livrariPerPage, livrariPage * livrariPerPage);
   const paginatedIncasari = filteredIncasari.slice((incasariPage - 1) * incasariPerPage, incasariPage * incasariPerPage);
 
+  const handleExport = (type: string) => {
+    let data: Record<string, unknown>[] = [];
+    let filename = "";
+    
+    switch (type) {
+      case "facturi":
+        data = filteredFacturi.map(f => ({
+          "Nr Factură": f.nr_factura,
+          "Dată": f.data,
+          "Client": f.client,
+          "Total fără TVA": f.total_fara_tva,
+          "TVA": f.tva,
+          "Total": f.total,
+          "Dată scadență": f.data_scadenta,
+          "Sumă încasată": f.suma_incasata,
+          "Sumă restantă": f.suma_restanta,
+          "Status": f.status,
+        }));
+        filename = "facturi_clienti";
+        break;
+      case "livrari":
+        data = filteredLivrari.map(l => ({
+          "Dată": l.data,
+          "Cod": l.cod,
+          "Nr Aviz": l.nr_aviz,
+          "Client": l.client,
+          "Produs": l.produs,
+          "Cantitate": l.cantitate,
+          "Valoare produs": l.valoare_produs,
+          "Valoare transport": l.valoare_transport,
+          "Total": l.total,
+          "Status facturare": l.status_facturare,
+        }));
+        filename = "livrari_clienti";
+        break;
+      case "incasari":
+        data = filteredIncasari.map(i => ({
+          "Dată": i.data,
+          "Client": i.client,
+          "Tip": i.tip,
+          "Sumă totală": i.suma_totala,
+          "Sumă alocată": i.suma_alocata,
+          "Sumă nealocată": i.suma_nealocata,
+        }));
+        filename = "incasari_clienti";
+        break;
+    }
+    
+    exportToCSV(data, filename);
+    toast({ title: "Export realizat", description: `Fișierul ${filename}.csv a fost descărcat.` });
+  };
+
   return (
     <div className="space-y-6">
       {/* Summary Cards - TOP */}
@@ -181,11 +244,23 @@ const VanzariTab = () => {
       <Card>
         <CardContent className="pt-6">
           <Tabs value={activeSubTab} onValueChange={setActiveSubTab}>
-            <TabsList className="mb-4">
-              <TabsTrigger value="facturi">Facturi clienți</TabsTrigger>
-              <TabsTrigger value="livrari">Livrări (bonuri / avize)</TabsTrigger>
-              <TabsTrigger value="incasari">Încasări clienți</TabsTrigger>
-            </TabsList>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+              <TabsList>
+                <TabsTrigger value="facturi">Facturi clienți</TabsTrigger>
+                <TabsTrigger value="livrari">Livrări (bonuri / avize)</TabsTrigger>
+                <TabsTrigger value="incasari">Încasări clienți</TabsTrigger>
+              </TabsList>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => handleExport(activeSubTab)}>
+                  <Download className="h-4 w-4 mr-2" />
+                  Export CSV
+                </Button>
+                <Button size="sm">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adaugă
+                </Button>
+              </div>
+            </div>
 
             <TabsContent value="facturi">
               <div className="overflow-x-auto">
@@ -242,7 +317,11 @@ const VanzariTab = () => {
                   </TableHeader>
                   <TableBody>
                     {paginatedFacturi.map((factura) => (
-                      <TableRow key={factura.id} className="cursor-pointer hover:bg-muted/50">
+                      <TableRow 
+                        key={factura.id} 
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => setSelectedFactura(factura)}
+                      >
                         <TableCell className="font-medium">{factura.nr_factura}</TableCell>
                         <TableCell>{factura.data}</TableCell>
                         <TableCell>{factura.client}</TableCell>
@@ -318,7 +397,11 @@ const VanzariTab = () => {
                   </TableHeader>
                   <TableBody>
                     {paginatedLivrari.map((livrare) => (
-                      <TableRow key={livrare.id} className="cursor-pointer hover:bg-muted/50">
+                      <TableRow 
+                        key={livrare.id} 
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => setSelectedLivrare(livrare)}
+                      >
                         <TableCell>{livrare.data}</TableCell>
                         <TableCell className="font-medium">{livrare.cod}</TableCell>
                         <TableCell>{livrare.nr_aviz}</TableCell>
@@ -390,19 +473,21 @@ const VanzariTab = () => {
                   </TableHeader>
                   <TableBody>
                     {paginatedIncasari.map((incasare) => (
-                      <TableRow key={incasare.id} className="cursor-pointer hover:bg-muted/50">
+                      <TableRow 
+                        key={incasare.id} 
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => setSelectedIncasare(incasare)}
+                      >
                         <TableCell>{incasare.data}</TableCell>
                         <TableCell className="font-medium">{incasare.client}</TableCell>
                         <TableCell>
                           <Badge variant="outline">{incasare.tip}</Badge>
                         </TableCell>
-                        <TableCell className="text-right font-medium">{formatCurrency(incasare.suma_totala)}</TableCell>
-                        <TableCell className="text-right">{formatCurrency(incasare.suma_alocata)}</TableCell>
-                        <TableCell className="text-right">
-                          <span className={incasare.suma_nealocata > 0 ? "text-amber-600" : ""}>
-                            {formatCurrency(incasare.suma_nealocata)}
-                          </span>
+                        <TableCell className="text-right font-medium text-green-600">
+                          +{formatCurrency(incasare.suma_totala)}
                         </TableCell>
+                        <TableCell className="text-right">{formatCurrency(incasare.suma_alocata)}</TableCell>
+                        <TableCell className="text-right">{formatCurrency(incasare.suma_nealocata)}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -420,6 +505,174 @@ const VanzariTab = () => {
           </Tabs>
         </CardContent>
       </Card>
+
+      {/* Factura Detail Dialog */}
+      <Dialog open={!!selectedFactura} onOpenChange={() => setSelectedFactura(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Detalii Factură {selectedFactura?.nr_factura}
+            </DialogTitle>
+          </DialogHeader>
+          {selectedFactura && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Nr Factură</p>
+                  <p className="font-medium">{selectedFactura.nr_factura}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Dată</p>
+                  <p className="font-medium">{selectedFactura.data}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Client</p>
+                  <p className="font-medium">{selectedFactura.client}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Dată scadență</p>
+                  <p className="font-medium">{selectedFactura.data_scadenta}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Status</p>
+                  <Badge variant={getStatusBadgeVariant(selectedFactura.status)}>
+                    {selectedFactura.status}
+                  </Badge>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-muted/50 rounded-lg">
+                <div>
+                  <p className="text-sm text-muted-foreground">Total fără TVA</p>
+                  <p className="text-lg font-bold">{formatCurrency(selectedFactura.total_fara_tva)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">TVA</p>
+                  <p className="text-lg font-bold">{formatCurrency(selectedFactura.tva)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Total</p>
+                  <p className="text-lg font-bold">{formatCurrency(selectedFactura.total)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Sumă încasată</p>
+                  <p className="text-lg font-bold text-green-600">{formatCurrency(selectedFactura.suma_incasata)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Sumă restantă</p>
+                  <p className="text-lg font-bold text-red-600">{formatCurrency(selectedFactura.suma_restanta)}</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Livrare Detail Dialog */}
+      <Dialog open={!!selectedLivrare} onOpenChange={() => setSelectedLivrare(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Truck className="h-5 w-5" />
+              Detalii Livrare {selectedLivrare?.cod}
+            </DialogTitle>
+          </DialogHeader>
+          {selectedLivrare && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Cod</p>
+                  <p className="font-medium">{selectedLivrare.cod}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Nr Aviz</p>
+                  <p className="font-medium">{selectedLivrare.nr_aviz}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Dată</p>
+                  <p className="font-medium">{selectedLivrare.data}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Client</p>
+                  <p className="font-medium">{selectedLivrare.client}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Produs</p>
+                  <p className="font-medium">{selectedLivrare.produs}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Cantitate</p>
+                  <p className="font-medium">{selectedLivrare.cantitate} t</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-muted/50 rounded-lg">
+                <div>
+                  <p className="text-sm text-muted-foreground">Valoare produs</p>
+                  <p className="text-lg font-bold">{formatCurrency(selectedLivrare.valoare_produs)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Valoare transport</p>
+                  <p className="text-lg font-bold">{formatCurrency(selectedLivrare.valoare_transport)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Total</p>
+                  <p className="text-lg font-bold">{formatCurrency(selectedLivrare.total)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Status facturare</p>
+                  <Badge variant={selectedLivrare.status_facturare === "Nefacturat" ? "destructive" : "default"}>
+                    {selectedLivrare.status_facturare}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Incasare Detail Dialog */}
+      <Dialog open={!!selectedIncasare} onOpenChange={() => setSelectedIncasare(null)}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Wallet className="h-5 w-5" />
+              Detalii Încasare
+            </DialogTitle>
+          </DialogHeader>
+          {selectedIncasare && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Dată</p>
+                  <p className="font-medium">{selectedIncasare.data}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Client</p>
+                  <p className="font-medium">{selectedIncasare.client}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Tip plată</p>
+                  <Badge variant="outline">{selectedIncasare.tip}</Badge>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4 p-4 bg-muted/50 rounded-lg">
+                <div>
+                  <p className="text-sm text-muted-foreground">Sumă totală</p>
+                  <p className="text-lg font-bold text-green-600">{formatCurrency(selectedIncasare.suma_totala)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Sumă alocată</p>
+                  <p className="text-lg font-bold">{formatCurrency(selectedIncasare.suma_alocata)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Sumă nealocată</p>
+                  <p className="text-lg font-bold text-amber-600">{formatCurrency(selectedIncasare.suma_nealocata)}</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
