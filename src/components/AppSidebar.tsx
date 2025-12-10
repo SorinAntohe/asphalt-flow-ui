@@ -1,4 +1,4 @@
-import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog, Users, UserCheck, CalendarClock, Briefcase, Factory, Wrench, FileText, FileCheck, ShoppingCart, CalendarDays, FileBox, FlaskConical, ClipboardCheck, Layers, Calendar, GitBranch, Settings, CalendarRange, HardHat, PieChart, Clock, Scale, Calculator } from "lucide-react";
+import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog, Users, UserCheck, CalendarClock, Briefcase, Factory, Wrench, FileText, FileCheck, ShoppingCart, CalendarDays, FileBox, FlaskConical, ClipboardCheck, Layers, Calendar, GitBranch, Settings, CalendarRange, HardHat, PieChart, Clock, Scale, Calculator, Wallet } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -46,6 +46,11 @@ const comercialItems = [
   { title: "Calculator Preț", url: "/comercial/calculator", icon: Calculator },
 ];
 
+// Financiar module items
+const financiarItems = [
+  { title: "În curând", url: "/financiar", icon: Wallet },
+];
+
 // Productie module items
 const productieItems = [
   { title: "Rețete", url: "/productie/retete", icon: FlaskConical },
@@ -89,12 +94,14 @@ export function AppSidebar() {
   const isGestiuneActive = gestiuneItems.some((item) => isActive(item.url));
   const isResurseUmaneActive = resurseUmaneItems.some((item) => isActive(item.url));
   const isComercialActive = comercialItems.some((item) => isActive(item.url));
+  const isFinanciarActive = financiarItems.some((item) => isActive(item.url));
   const isProductieActive = productieItems.some((item) => isActive(item.url));
   const isMentenantaActive = mentenantaItems.some((item) => isActive(item.url));
   
   const [gestiuneOpen, setGestiuneOpen] = useState(isGestiuneActive);
   const [resurseUmaneOpen, setResurseUmaneOpen] = useState(isResurseUmaneActive);
   const [comercialOpen, setComercialOpen] = useState(isComercialActive);
+  const [financiarOpen, setFinanciarOpen] = useState(isFinanciarActive);
   const [productieOpen, setProductieOpen] = useState(isProductieActive);
   const [mentenantaOpen, setMentenantaOpen] = useState(isMentenantaActive);
 
@@ -466,6 +473,83 @@ export function AppSidebar() {
                         </span>
                       </SidebarMenuItem>
                     )}
+                  </SidebarMenu>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Financiar Dropdown */}
+              <Collapsible open={financiarOpen} onOpenChange={setFinanciarOpen}>
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton 
+                      className={`flex items-center rounded-lg transition-all duration-300 ease-in-out hover:bg-sidebar-accent text-sidebar-foreground ${
+                        isOpen ? 'gap-3 px-4 py-2.5' : 'justify-center py-2.5 w-full'
+                      }`}
+                      style={{
+                        background: financiarOpen ? 'hsl(var(--sidebar-accent))' : 'transparent',
+                      }}
+                      title={!isOpen ? 'Financiar' : undefined}
+                    >
+                      <Wallet className="w-5 h-5 flex-shrink-0" />
+                      {isOpen && (
+                        <>
+                          <span className="flex-1">Financiar</span>
+                          <ChevronDown 
+                            className="w-4 h-4 transition-transform duration-300" 
+                            style={{
+                              transform: financiarOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+                            }}
+                          />
+                        </>
+                      )}
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                </SidebarMenuItem>
+                <CollapsibleContent 
+                  className="overflow-hidden rounded-md"
+                  style={{
+                    transition: 'all 0.3s ease',
+                    opacity: financiarOpen ? 1 : 0,
+                    visibility: financiarOpen ? 'visible' : 'hidden',
+                    transform: financiarOpen ? 'translateY(0)' : 'translateY(-10px)',
+                    background: financiarOpen ? 'hsl(var(--sidebar-accent) / 0.5)' : 'transparent',
+                    padding: financiarOpen ? (isOpen ? '6px' : '4px 0') : '0',
+                    marginTop: financiarOpen ? '4px' : '0',
+                    marginLeft: '0',
+                    marginRight: '0',
+                    width: '100%',
+                    maxWidth: 'none',
+                    boxShadow: financiarOpen ? 'inset 0 2px 4px rgba(0, 0, 0, 0.1)' : 'none',
+                  }}
+                >
+                  <SidebarMenu className={isOpen ? "space-y-0.5" : "space-y-1"} style={{ width: '100%' }}>
+                    {financiarItems.map((item, index) => (
+                      <SidebarMenuItem 
+                        key={item.title}
+                        style={{
+                          transition: 'opacity 0.3s ease, transform 0.3s ease',
+                          transitionDelay: `${index * 50}ms`,
+                          width: '100%'
+                        }}
+                      >
+                        <SidebarMenuButton asChild isActive={isActive(item.url)} style={{ width: '100%' }}>
+                          <NavLink
+                            to={item.url}
+                            className={`flex items-center rounded-md transition-all duration-200 text-sidebar-foreground ${
+                              isOpen ? 'gap-3 px-3 py-2' : 'justify-center py-2.5 w-full'
+                            } ${
+                              isActive(item.url) 
+                                ? 'bg-sidebar-accent text-sidebar-accent-foreground font-semibold' 
+                                : 'hover:bg-sidebar-accent/40'
+                            }`}
+                            title={!isOpen ? item.title : undefined}
+                          >
+                            <item.icon className="w-5 h-5 flex-shrink-0" />
+                            {isOpen && <span className="text-sm">{item.title}</span>}
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
                   </SidebarMenu>
                 </CollapsibleContent>
               </Collapsible>
