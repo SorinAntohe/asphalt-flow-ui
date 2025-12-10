@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { conturiBancare, miscariBanca, registruCasa } from "../mockData";
 import { ContBancar, MiscareBanca, InregistrareCasa } from "../types";
 import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
@@ -28,8 +31,82 @@ const BancaCasaTab = () => {
   const [addMiscareOpen, setAddMiscareOpen] = useState(false);
   const [addCasaOpen, setAddCasaOpen] = useState(false);
   
+  // Edit dialog states
+  const [editContOpen, setEditContOpen] = useState(false);
+  const [editMiscareOpen, setEditMiscareOpen] = useState(false);
+  const [editCasaOpen, setEditCasaOpen] = useState(false);
+  
+  // Edit form data
+  const [editContData, setEditContData] = useState({
+    banca: "", iban: "", moneda: "", sold_curent: ""
+  });
+  const [editMiscareData, setEditMiscareData] = useState({
+    data: "", cont_bancar: "", tip: "", partener: "", suma: "", document_asociat: ""
+  });
+  const [editCasaData, setEditCasaData] = useState({
+    data: "", tip: "", partener: "", suma: "", document_asociat: ""
+  });
+  
   // Delete dialog states
   const [deleteType, setDeleteType] = useState<"cont" | "miscare" | "casa" | null>(null);
+
+  // Open edit dialogs
+  const openEditCont = () => {
+    if (selectedCont) {
+      setEditContData({
+        banca: selectedCont.banca,
+        iban: selectedCont.iban,
+        moneda: selectedCont.moneda,
+        sold_curent: String(selectedCont.sold_curent)
+      });
+      setEditContOpen(true);
+    }
+  };
+
+  const openEditMiscare = () => {
+    if (selectedMiscare) {
+      setEditMiscareData({
+        data: selectedMiscare.data,
+        cont_bancar: selectedMiscare.cont_bancar,
+        tip: selectedMiscare.tip,
+        partener: selectedMiscare.partener,
+        suma: String(selectedMiscare.suma),
+        document_asociat: selectedMiscare.document_asociat
+      });
+      setEditMiscareOpen(true);
+    }
+  };
+
+  const openEditCasa = () => {
+    if (selectedCasa) {
+      setEditCasaData({
+        data: selectedCasa.data,
+        tip: selectedCasa.tip,
+        partener: selectedCasa.partener,
+        suma: String(selectedCasa.suma),
+        document_asociat: selectedCasa.document_asociat
+      });
+      setEditCasaOpen(true);
+    }
+  };
+
+  const handleSaveCont = () => {
+    toast({ title: "Cont actualizat", description: "Contul bancar a fost actualizat cu succes." });
+    setEditContOpen(false);
+    setSelectedCont(null);
+  };
+
+  const handleSaveMiscare = () => {
+    toast({ title: "Mișcare actualizată", description: "Mișcarea a fost actualizată cu succes." });
+    setEditMiscareOpen(false);
+    setSelectedMiscare(null);
+  };
+
+  const handleSaveCasa = () => {
+    toast({ title: "Înregistrare actualizată", description: "Înregistrarea a fost actualizată cu succes." });
+    setEditCasaOpen(false);
+    setSelectedCasa(null);
+  };
   
   // Pagination states
   const [conturiPage, setConturiPage] = useState(1);
@@ -513,7 +590,7 @@ const BancaCasaTab = () => {
 
               {/* Action Buttons */}
               <div className="flex gap-2 pt-2 border-t">
-                <Button variant="outline" size="sm" className="flex-1">
+                <Button variant="outline" size="sm" className="flex-1" onClick={openEditCont}>
                   <Pencil className="h-4 w-4 mr-2" />
                   Editează
                 </Button>
@@ -571,7 +648,7 @@ const BancaCasaTab = () => {
 
               {/* Action Buttons */}
               <div className="flex gap-2 pt-2 border-t">
-                <Button variant="outline" size="sm" className="flex-1">
+                <Button variant="outline" size="sm" className="flex-1" onClick={openEditMiscare}>
                   <Pencil className="h-4 w-4 mr-2" />
                   Editează
                 </Button>
@@ -625,7 +702,7 @@ const BancaCasaTab = () => {
 
               {/* Action Buttons */}
               <div className="flex gap-2 pt-2 border-t">
-                <Button variant="outline" size="sm" className="flex-1">
+                <Button variant="outline" size="sm" className="flex-1" onClick={openEditCasa}>
                   <Pencil className="h-4 w-4 mr-2" />
                   Editează
                 </Button>
@@ -640,6 +717,130 @@ const BancaCasaTab = () => {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Cont Bancar Dialog */}
+      <Dialog open={editContOpen} onOpenChange={setEditContOpen}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Editează Cont Bancar</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Bancă</Label>
+              <Input value={editContData.banca} onChange={(e) => setEditContData(prev => ({ ...prev, banca: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Monedă</Label>
+              <Select value={editContData.moneda} onValueChange={(val) => setEditContData(prev => ({ ...prev, moneda: val }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="RON">RON</SelectItem>
+                  <SelectItem value="EUR">EUR</SelectItem>
+                  <SelectItem value="USD">USD</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="col-span-2 space-y-2">
+              <Label>IBAN</Label>
+              <Input value={editContData.iban} onChange={(e) => setEditContData(prev => ({ ...prev, iban: e.target.value }))} />
+            </div>
+            <div className="col-span-2 space-y-2">
+              <Label>Sold curent</Label>
+              <Input type="number" value={editContData.sold_curent} onChange={(e) => setEditContData(prev => ({ ...prev, sold_curent: e.target.value }))} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditContOpen(false)}>Anulează</Button>
+            <Button onClick={handleSaveCont}>Salvează</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Miscare Banca Dialog */}
+      <Dialog open={editMiscareOpen} onOpenChange={setEditMiscareOpen}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Editează Mișcare Bancă</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Dată</Label>
+              <Input type="date" value={editMiscareData.data} onChange={(e) => setEditMiscareData(prev => ({ ...prev, data: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Tip</Label>
+              <Select value={editMiscareData.tip} onValueChange={(val) => setEditMiscareData(prev => ({ ...prev, tip: val }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Încasare">Încasare</SelectItem>
+                  <SelectItem value="Plată">Plată</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Cont bancar</Label>
+              <Input value={editMiscareData.cont_bancar} onChange={(e) => setEditMiscareData(prev => ({ ...prev, cont_bancar: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Partener</Label>
+              <Input value={editMiscareData.partener} onChange={(e) => setEditMiscareData(prev => ({ ...prev, partener: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Sumă</Label>
+              <Input type="number" value={editMiscareData.suma} onChange={(e) => setEditMiscareData(prev => ({ ...prev, suma: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Document asociat</Label>
+              <Input value={editMiscareData.document_asociat} onChange={(e) => setEditMiscareData(prev => ({ ...prev, document_asociat: e.target.value }))} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditMiscareOpen(false)}>Anulează</Button>
+            <Button onClick={handleSaveMiscare}>Salvează</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Registru Casa Dialog */}
+      <Dialog open={editCasaOpen} onOpenChange={setEditCasaOpen}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Editează Înregistrare Casă</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Dată</Label>
+              <Input type="date" value={editCasaData.data} onChange={(e) => setEditCasaData(prev => ({ ...prev, data: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Tip</Label>
+              <Select value={editCasaData.tip} onValueChange={(val) => setEditCasaData(prev => ({ ...prev, tip: val }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Încasare">Încasare</SelectItem>
+                  <SelectItem value="Plată">Plată</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Partener</Label>
+              <Input value={editCasaData.partener} onChange={(e) => setEditCasaData(prev => ({ ...prev, partener: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Sumă</Label>
+              <Input type="number" value={editCasaData.suma} onChange={(e) => setEditCasaData(prev => ({ ...prev, suma: e.target.value }))} />
+            </div>
+            <div className="col-span-2 space-y-2">
+              <Label>Document asociat</Label>
+              <Input value={editCasaData.document_asociat} onChange={(e) => setEditCasaData(prev => ({ ...prev, document_asociat: e.target.value }))} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditCasaOpen(false)}>Anulează</Button>
+            <Button onClick={handleSaveCasa}>Salvează</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
