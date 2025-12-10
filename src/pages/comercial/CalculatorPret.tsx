@@ -355,12 +355,19 @@ const CalculatorPret = () => {
       toast.error("Completați toate câmpurile obligatorii");
       return;
     }
+    // Format date from yyyy-mm-dd to dd/mm/yyyy
+    let formattedDate = new Date().toLocaleDateString("ro-RO");
+    if (newConcurent.data) {
+      const [year, month, day] = newConcurent.data.split("-");
+      formattedDate = `${day}/${month}/${year}`;
+    }
+    
     setPreturiConcurenti(prev => [...prev, {
       id: crypto.randomUUID(),
       concurent: newConcurent.concurent,
       produs: newConcurent.produs,
       pret: parseFloat(newConcurent.pret),
-      data: newConcurent.data || new Date().toLocaleDateString("ro-RO")
+      data: formattedDate
     }]);
     setNewConcurent({ concurent: "", produs: "", pret: "", data: "" });
   };
