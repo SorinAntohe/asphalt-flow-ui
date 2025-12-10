@@ -922,15 +922,34 @@ interface AddScadentarDialogProps {
 
 export const AddScadentarDialog = ({ open, onOpenChange }: AddScadentarDialogProps) => {
   const { toast } = useToast();
+  
+  const getCurrentDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  };
+
   const [formData, setFormData] = useState({
     tip_partener: "Client",
     nume_partener: "",
     tip_document: "Factură client",
     numar_document: "",
-    data_document: "",
+    data_document: getCurrentDate(),
     data_scadenta: "",
     suma_restanta: "",
+    zile_intarziere: "",
   });
+
+  // Reset data_document to current date when dialog opens
+  useEffect(() => {
+    if (open) {
+      setFormData(prev => ({ ...prev, data_document: getCurrentDate() }));
+    }
+  }, [open]);
+
+  const handleTipPartenerChange = (val: string) => {
+    const tipDocument = val === "Client" ? "Factură client" : "Factură furnizor";
+    setFormData(prev => ({ ...prev, tip_partener: val, tip_document: tipDocument }));
+  };
 
   const handleSubmit = () => {
     toast({ title: "Scadență adăugată", description: "Înregistrarea scadențar a fost adăugată cu succes." });
@@ -940,9 +959,10 @@ export const AddScadentarDialog = ({ open, onOpenChange }: AddScadentarDialogPro
       nume_partener: "",
       tip_document: "Factură client",
       numar_document: "",
-      data_document: "",
+      data_document: getCurrentDate(),
       data_scadenta: "",
       suma_restanta: "",
+      zile_intarziere: "",
     });
   };
 
@@ -956,7 +976,7 @@ export const AddScadentarDialog = ({ open, onOpenChange }: AddScadentarDialogPro
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Tip Partener</Label>
-              <Select value={formData.tip_partener} onValueChange={(val) => setFormData(prev => ({ ...prev, tip_partener: val, tip_document: val === "Client" ? "Factură client" : "Factură furnizor" }))}>
+              <Select value={formData.tip_partener} onValueChange={handleTipPartenerChange}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Client">Client</SelectItem>
@@ -966,13 +986,7 @@ export const AddScadentarDialog = ({ open, onOpenChange }: AddScadentarDialogPro
             </div>
             <div className="space-y-2">
               <Label>Tip Document</Label>
-              <Select value={formData.tip_document} onValueChange={(val) => setFormData(prev => ({ ...prev, tip_document: val }))}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Factură client">Factură client</SelectItem>
-                  <SelectItem value="Factură furnizor">Factură furnizor</SelectItem>
-                </SelectContent>
-              </Select>
+              <Input value={formData.tip_document} readOnly className="bg-muted" />
             </div>
           </div>
           <div className="space-y-2">
@@ -986,16 +1000,22 @@ export const AddScadentarDialog = ({ open, onOpenChange }: AddScadentarDialogPro
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Dată Document</Label>
-              <Input type="date" value={formData.data_document} onChange={(e) => setFormData(prev => ({ ...prev, data_document: e.target.value }))} />
+              <Input type="date" value={formData.data_document} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Dată Scadență</Label>
               <Input type="date" value={formData.data_scadenta} onChange={(e) => setFormData(prev => ({ ...prev, data_scadenta: e.target.value }))} />
             </div>
           </div>
-          <div className="space-y-2">
-            <Label>Sumă Restantă (RON)</Label>
-            <Input type="number" value={formData.suma_restanta} onChange={(e) => setFormData(prev => ({ ...prev, suma_restanta: e.target.value }))} placeholder="0.00" />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Sumă Restantă (RON)</Label>
+              <Input type="number" value={formData.suma_restanta} onChange={(e) => setFormData(prev => ({ ...prev, suma_restanta: e.target.value }))} placeholder="0.00" />
+            </div>
+            <div className="space-y-2">
+              <Label>Zile Întârziere</Label>
+              <Input type="number" value={formData.zile_intarziere} onChange={(e) => setFormData(prev => ({ ...prev, zile_intarziere: e.target.value }))} placeholder="0" />
+            </div>
           </div>
         </div>
         <DialogFooter>
