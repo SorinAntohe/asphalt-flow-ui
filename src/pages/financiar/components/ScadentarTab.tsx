@@ -7,14 +7,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { scadentarEntries } from "../parteneri-mockData";
 import { ScadentarEntry } from "../parteneri-types";
 import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
-import { FileText, TrendingUp, TrendingDown, Scale, Plus, Download, Calendar, User } from "lucide-react";
+import { FileText, TrendingUp, TrendingDown, Scale, Plus, Download, Calendar } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { useToast } from "@/hooks/use-toast";
+import { AddScadentarDialog } from "./AddDialogs";
 
 const ScadentarTab = () => {
   const { toast } = useToast();
   const [selectedEntry, setSelectedEntry] = useState<ScadentarEntry | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
@@ -196,7 +198,7 @@ const ScadentarTab = () => {
               <Download className="h-4 w-4 mr-2" />
               Export CSV
             </Button>
-            <Button size="sm">
+            <Button size="sm" onClick={() => setAddDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Adaugă
             </Button>
@@ -418,6 +420,9 @@ const ScadentarTab = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Add Dialog */}
+      <AddScadentarDialog open={addDialogOpen} onOpenChange={setAddDialogOpen} />
     </div>
   );
 };
