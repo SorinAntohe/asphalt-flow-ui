@@ -14,12 +14,17 @@ const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableE
 );
 Table.displayName = "Table";
 
-const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
-  ({ className, ...props }, ref) => (
+interface TableHeaderProps extends React.HTMLAttributes<HTMLTableSectionElement> {
+  sticky?: boolean;
+}
+
+const TableHeader = React.forwardRef<HTMLTableSectionElement, TableHeaderProps>(
+  ({ className, sticky = false, ...props }, ref) => (
     <thead 
       ref={ref} 
       className={cn(
         "[&_tr]:border-b [&_tr]:border-border/50 bg-muted/50",
+        sticky && "sticky top-0 z-10 bg-card shadow-sm",
         className
       )} 
       {...props} 
