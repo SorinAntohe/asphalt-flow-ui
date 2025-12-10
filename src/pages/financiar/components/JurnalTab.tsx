@@ -1,15 +1,25 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useMemo } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { noteContabile, liniiNoteContabile } from "../contabilitate-mockData";
 import { NotaContabila, LinieNotaContabila } from "../contabilitate-types";
+import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
 import { BookOpen, FileText } from "lucide-react";
 
 const JurnalTab = () => {
   const [selectedNota, setSelectedNota] = useState<NotaContabila | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  
+  // Sorting state
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  
+  // Filter state
+  const [filters, setFilters] = useState<Record<string, string>>({});
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('ro-RO', { style: 'currency', currency: 'RON' }).format(amount);
@@ -44,14 +54,66 @@ const JurnalTab = () => {
     return liniiNoteContabile.filter(linie => linie.notaId === notaId);
   };
 
+  const handleSort = (column: string, direction: "asc" | "desc") => {
+    setSortColumn(column);
+    setSortDirection(direction);
+  };
+
+  const handleFilter = (column: string, value: string) => {
+    setFilters(prev => ({ ...prev, [column]: value }));
+    setCurrentPage(1);
+  };
+
   // Summary calculations
   const totalNote = noteContabile.length;
   const noteAutomate = noteContabile.filter(n => n.sursa === 'Automat').length;
   const noteManuale = noteContabile.filter(n => n.sursa === 'Manual').length;
 
+  // Filter and sort data
+  const filteredAndSortedData = useMemo(() => {
+    let data = [...noteContabile];
+    
+    // Apply filters
+    Object.entries(filters).forEach(([column, value]) => {
+      if (value) {
+        data = data.filter(item => {
+          const itemValue = String(item[column as keyof NotaContabila] || "").toLowerCase();
+          return itemValue.includes(value.toLowerCase());
+        });
+      }
+    });
+    
+    // Apply sorting
+    if (sortColumn) {
+      data.sort((a, b) => {
+        const aValue = a[sortColumn as keyof NotaContabila];
+        const bValue = b[sortColumn as keyof NotaContabila];
+        
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+        }
+        
+        const aStr = String(aValue || "");
+        const bStr = String(bValue || "");
+        return sortDirection === "asc" 
+          ? aStr.localeCompare(bStr) 
+          : bStr.localeCompare(aStr);
+      });
+    }
+    
+    return data;
+  }, [filters, sortColumn, sortDirection]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
+  const paginatedData = filteredAndSortedData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <div className="space-y-6">
-      {/* Summary Cards */}
+      {/* Summary Cards - TOP */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardContent className="pt-6">
@@ -96,25 +158,78 @@ const JurnalTab = () => {
 
       {/* Journal Table */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Note Contabile</CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Dată</TableHead>
-                  <TableHead>Nr. Notă</TableHead>
-                  <TableHead>Tip Jurnal</TableHead>
-                  <TableHead>Explicație</TableHead>
-                  <TableHead>Sursă</TableHead>
-                  <TableHead className="text-right">Total Debit</TableHead>
-                  <TableHead className="text-right">Total Credit</TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Dată"
+                      sortDirection={sortColumn === "data" ? sortDirection : null}
+                      onSort={(dir) => handleSort("data", dir)}
+                      filterValue={filters.data || ""}
+                      onFilter={(val) => handleFilter("data", val)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Nr. Notă"
+                      sortDirection={sortColumn === "nrNota" ? sortDirection : null}
+                      onSort={(dir) => handleSort("nrNota", dir)}
+                      filterValue={filters.nrNota || ""}
+                      onFilter={(val) => handleFilter("nrNota", val)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Tip Jurnal"
+                      sortDirection={sortColumn === "tipJurnal" ? sortDirection : null}
+                      onSort={(dir) => handleSort("tipJurnal", dir)}
+                      filterValue={filters.tipJurnal || ""}
+                      onFilter={(val) => handleFilter("tipJurnal", val)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Explicație"
+                      sortDirection={sortColumn === "explicatie" ? sortDirection : null}
+                      onSort={(dir) => handleSort("explicatie", dir)}
+                      filterValue={filters.explicatie || ""}
+                      onFilter={(val) => handleFilter("explicatie", val)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Sursă"
+                      sortDirection={sortColumn === "sursa" ? sortDirection : null}
+                      onSort={(dir) => handleSort("sursa", dir)}
+                      filterValue={filters.sursa || ""}
+                      onFilter={(val) => handleFilter("sursa", val)}
+                    />
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <DataTableColumnHeader
+                      title="Total Debit"
+                      sortDirection={sortColumn === "totalDebit" ? sortDirection : null}
+                      onSort={(dir) => handleSort("totalDebit", dir)}
+                      filterValue={filters.totalDebit || ""}
+                      onFilter={(val) => handleFilter("totalDebit", val)}
+                    />
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <DataTableColumnHeader
+                      title="Total Credit"
+                      sortDirection={sortColumn === "totalCredit" ? sortDirection : null}
+                      onSort={(dir) => handleSort("totalCredit", dir)}
+                      filterValue={filters.totalCredit || ""}
+                      onFilter={(val) => handleFilter("totalCredit", val)}
+                    />
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {noteContabile.map((nota) => (
+                {paginatedData.map((nota) => (
                   <TableRow 
                     key={nota.id} 
                     className="cursor-pointer hover:bg-muted/50"
@@ -140,6 +255,18 @@ const JurnalTab = () => {
               </TableBody>
             </Table>
           </div>
+
+          <DataTablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            itemsPerPage={itemsPerPage}
+            totalItems={filteredAndSortedData.length}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={(val) => {
+              setItemsPerPage(val);
+              setCurrentPage(1);
+            }}
+          />
         </CardContent>
       </Card>
 

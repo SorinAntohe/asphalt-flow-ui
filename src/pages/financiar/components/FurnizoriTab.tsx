@@ -1,15 +1,26 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useMemo } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { furnizoriCuSold, facturiFurnizoriIstoric, platiFurnizori, soldIntervaleFurnizori } from "../parteneri-mockData";
 import { FurnizorCuSold } from "../parteneri-types";
+import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
+import { Building2, TrendingDown, AlertTriangle, Clock } from "lucide-react";
 
 const FurnizoriTab = () => {
   const [selectedFurnizor, setSelectedFurnizor] = useState<FurnizorCuSold | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  
+  // Sorting state
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  
+  // Filter state
+  const [filters, setFilters] = useState<Record<string, string>>({});
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("ro-RO", {
@@ -30,30 +41,182 @@ const FurnizoriTab = () => {
     return "text-red-600";
   };
 
+  const handleSort = (column: string, direction: "asc" | "desc") => {
+    setSortColumn(column);
+    setSortDirection(direction);
+  };
+
+  const handleFilter = (column: string, value: string) => {
+    setFilters(prev => ({ ...prev, [column]: value }));
+    setCurrentPage(1);
+  };
+
+  // Filter and sort data
+  const filteredAndSortedData = useMemo(() => {
+    let data = [...furnizoriCuSold];
+    
+    // Apply filters
+    Object.entries(filters).forEach(([column, value]) => {
+      if (value) {
+        data = data.filter(item => {
+          const itemValue = String(item[column as keyof FurnizorCuSold] || "").toLowerCase();
+          return itemValue.includes(value.toLowerCase());
+        });
+      }
+    });
+    
+    // Apply sorting
+    if (sortColumn) {
+      data.sort((a, b) => {
+        const aValue = a[sortColumn as keyof FurnizorCuSold];
+        const bValue = b[sortColumn as keyof FurnizorCuSold];
+        
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+        }
+        
+        const aStr = String(aValue || "");
+        const bStr = String(bValue || "");
+        return sortDirection === "asc" 
+          ? aStr.localeCompare(bStr) 
+          : bStr.localeCompare(aStr);
+      });
+    }
+    
+    return data;
+  }, [filters, sortColumn, sortDirection]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
+  const paginatedData = filteredAndSortedData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   const furnizorFacturi = selectedFurnizor ? facturiFurnizoriIstoric[selectedFurnizor.id] || [] : [];
   const furnizorPlati = selectedFurnizor ? platiFurnizori[selectedFurnizor.id] || [] : [];
   const furnizorSoldIntervale = selectedFurnizor ? soldIntervaleFurnizori[selectedFurnizor.id] : null;
 
   return (
-    <>
+    <div className="space-y-6">
+      {/* Summary Cards - TOP */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Building2 className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground">Total Furnizori</div>
+                <div className="text-2xl font-bold">{furnizoriCuSold.length}</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
+                <TrendingDown className="h-5 w-5 text-red-600" />
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground">Total Sold Furnizori</div>
+                <div className="text-2xl font-bold text-red-600">
+                  {formatCurrency(furnizoriCuSold.reduce((sum, f) => sum + f.sold_curent, 0))}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                <AlertTriangle className="h-5 w-5 text-amber-600" />
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground">Furnizori cu Întârzieri</div>
+                <div className="text-2xl font-bold text-amber-600">
+                  {furnizoriCuSold.filter((f) => f.zile_intarziere_max > 0).length}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
+                <Clock className="h-5 w-5 text-red-600" />
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground">Furnizori &gt;60 zile</div>
+                <div className="text-2xl font-bold text-red-600">
+                  {furnizoriCuSold.filter((f) => f.zile_intarziere_max > 60).length}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>Lista Furnizori cu Solduri</CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Furnizor</TableHead>
-                  <TableHead>CUI</TableHead>
-                  <TableHead>Adresă</TableHead>
-                  <TableHead className="text-right">Sold curent</TableHead>
-                  <TableHead className="text-right">Zile întârziere max.</TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Furnizor"
+                      sortDirection={sortColumn === "nume" ? sortDirection : null}
+                      onSort={(dir) => handleSort("nume", dir)}
+                      filterValue={filters.nume || ""}
+                      onFilter={(val) => handleFilter("nume", val)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="CUI"
+                      sortDirection={sortColumn === "cui" ? sortDirection : null}
+                      onSort={(dir) => handleSort("cui", dir)}
+                      filterValue={filters.cui || ""}
+                      onFilter={(val) => handleFilter("cui", val)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Adresă"
+                      sortDirection={sortColumn === "adresa" ? sortDirection : null}
+                      onSort={(dir) => handleSort("adresa", dir)}
+                      filterValue={filters.adresa || ""}
+                      onFilter={(val) => handleFilter("adresa", val)}
+                    />
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <DataTableColumnHeader
+                      title="Sold curent"
+                      sortDirection={sortColumn === "sold_curent" ? sortDirection : null}
+                      onSort={(dir) => handleSort("sold_curent", dir)}
+                      filterValue={filters.sold_curent || ""}
+                      onFilter={(val) => handleFilter("sold_curent", val)}
+                    />
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <DataTableColumnHeader
+                      title="Zile întârziere max."
+                      sortDirection={sortColumn === "zile_intarziere_max" ? sortDirection : null}
+                      onSort={(dir) => handleSort("zile_intarziere_max", dir)}
+                      filterValue={filters.zile_intarziere_max || ""}
+                      onFilter={(val) => handleFilter("zile_intarziere_max", val)}
+                    />
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {furnizoriCuSold.map((furnizor) => (
+                {paginatedData.map((furnizor) => (
                   <TableRow 
                     key={furnizor.id} 
                     className="cursor-pointer hover:bg-muted/50"
@@ -76,39 +239,17 @@ const FurnizoriTab = () => {
             </Table>
           </div>
 
-          {/* Summary Cards */}
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-sm text-muted-foreground">Total Furnizori</div>
-                <div className="text-2xl font-bold">{furnizoriCuSold.length}</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-sm text-muted-foreground">Total Sold Furnizori</div>
-                <div className="text-2xl font-bold text-red-600">
-                  {formatCurrency(furnizoriCuSold.reduce((sum, f) => sum + f.sold_curent, 0))}
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-sm text-muted-foreground">Furnizori cu Întârzieri</div>
-                <div className="text-2xl font-bold text-amber-600">
-                  {furnizoriCuSold.filter((f) => f.zile_intarziere_max > 0).length}
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-sm text-muted-foreground">Furnizori &gt;60 zile</div>
-                <div className="text-2xl font-bold text-red-600">
-                  {furnizoriCuSold.filter((f) => f.zile_intarziere_max > 60).length}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <DataTablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            itemsPerPage={itemsPerPage}
+            totalItems={filteredAndSortedData.length}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={(val) => {
+              setItemsPerPage(val);
+              setCurrentPage(1);
+            }}
+          />
         </CardContent>
       </Card>
 
@@ -150,10 +291,8 @@ const FurnizoriTab = () => {
               {/* Sold pe Intervale */}
               {furnizorSoldIntervale && (
                 <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">Sold pe Intervale</CardTitle>
-                  </CardHeader>
-                  <CardContent>
+                  <CardContent className="pt-4">
+                    <div className="text-base font-medium mb-3">Sold pe Intervale</div>
                     <div className="grid grid-cols-3 gap-4">
                       <div className="text-center p-4 bg-green-50 dark:bg-green-950 rounded-lg">
                         <div className="text-sm text-muted-foreground">0-30 zile</div>
@@ -270,7 +409,7 @@ const FurnizoriTab = () => {
           )}
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 };
 

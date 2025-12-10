@@ -1,14 +1,24 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useMemo } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { balanta, miscariCont } from "../contabilitate-mockData";
 import { ContBalanta, MiscareCont } from "../contabilitate-types";
-import { Calculator, FileSpreadsheet } from "lucide-react";
+import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
+import { Calculator, FileSpreadsheet, TrendingUp, TrendingDown } from "lucide-react";
 
 const BalantaFiseTab = () => {
   const [selectedCont, setSelectedCont] = useState<ContBalanta | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  
+  // Sorting state
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  
+  // Filter state
+  const [filters, setFilters] = useState<Record<string, string>>({});
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('ro-RO', { style: 'currency', currency: 'RON' }).format(amount);
@@ -27,15 +37,67 @@ const BalantaFiseTab = () => {
     return miscariCont[cont] || [];
   };
 
+  const handleSort = (column: string, direction: "asc" | "desc") => {
+    setSortColumn(column);
+    setSortDirection(direction);
+  };
+
+  const handleFilter = (column: string, value: string) => {
+    setFilters(prev => ({ ...prev, [column]: value }));
+    setCurrentPage(1);
+  };
+
   // Summary calculations
   const totalSoldDebit = balanta.reduce((sum, c) => sum + c.soldFinalDebit, 0);
   const totalSoldCredit = balanta.reduce((sum, c) => sum + c.soldFinalCredit, 0);
   const totalRulajDebit = balanta.reduce((sum, c) => sum + c.rulajDebit, 0);
   const totalRulajCredit = balanta.reduce((sum, c) => sum + c.rulajCredit, 0);
 
+  // Filter and sort data
+  const filteredAndSortedData = useMemo(() => {
+    let data = [...balanta];
+    
+    // Apply filters
+    Object.entries(filters).forEach(([column, value]) => {
+      if (value) {
+        data = data.filter(item => {
+          const itemValue = String(item[column as keyof ContBalanta] || "").toLowerCase();
+          return itemValue.includes(value.toLowerCase());
+        });
+      }
+    });
+    
+    // Apply sorting
+    if (sortColumn) {
+      data.sort((a, b) => {
+        const aValue = a[sortColumn as keyof ContBalanta];
+        const bValue = b[sortColumn as keyof ContBalanta];
+        
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+        }
+        
+        const aStr = String(aValue || "");
+        const bStr = String(bValue || "");
+        return sortDirection === "asc" 
+          ? aStr.localeCompare(bStr) 
+          : bStr.localeCompare(aStr);
+      });
+    }
+    
+    return data;
+  }, [filters, sortColumn, sortDirection]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
+  const paginatedData = filteredAndSortedData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <div className="space-y-6">
-      {/* Summary Cards */}
+      {/* Summary Cards - TOP */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="pt-6">
@@ -52,25 +114,40 @@ const BalantaFiseTab = () => {
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div>
-              <p className="text-sm text-muted-foreground">Total Sold Debit</p>
-              <p className="text-xl font-bold text-green-600 dark:text-green-400">{formatCurrency(totalSoldDebit)}</p>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Total Sold Debit</p>
+                <p className="text-xl font-bold text-green-600 dark:text-green-400">{formatCurrency(totalSoldDebit)}</p>
+              </div>
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div>
-              <p className="text-sm text-muted-foreground">Total Sold Credit</p>
-              <p className="text-xl font-bold text-blue-600 dark:text-blue-400">{formatCurrency(totalSoldCredit)}</p>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                <TrendingDown className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Total Sold Credit</p>
+                <p className="text-xl font-bold text-blue-600 dark:text-blue-400">{formatCurrency(totalSoldCredit)}</p>
+              </div>
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div>
-              <p className="text-sm text-muted-foreground">Rulaj Perioadă</p>
-              <p className="text-xl font-bold">{formatCurrency(totalRulajDebit)}</p>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <FileSpreadsheet className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Rulaj Perioadă</p>
+                <p className="text-xl font-bold">{formatCurrency(totalRulajDebit)}</p>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -78,29 +155,87 @@ const BalantaFiseTab = () => {
 
       {/* Balance Table */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <FileSpreadsheet className="h-5 w-5" />
-            Balanță de Verificare
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Cont</TableHead>
-                  <TableHead>Denumire</TableHead>
-                  <TableHead className="text-right">Sold Inițial D</TableHead>
-                  <TableHead className="text-right">Sold Inițial C</TableHead>
-                  <TableHead className="text-right">Rulaj D</TableHead>
-                  <TableHead className="text-right">Rulaj C</TableHead>
-                  <TableHead className="text-right">Sold Final D</TableHead>
-                  <TableHead className="text-right">Sold Final C</TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Cont"
+                      sortDirection={sortColumn === "cont" ? sortDirection : null}
+                      onSort={(dir) => handleSort("cont", dir)}
+                      filterValue={filters.cont || ""}
+                      onFilter={(val) => handleFilter("cont", val)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <DataTableColumnHeader
+                      title="Denumire"
+                      sortDirection={sortColumn === "denumire" ? sortDirection : null}
+                      onSort={(dir) => handleSort("denumire", dir)}
+                      filterValue={filters.denumire || ""}
+                      onFilter={(val) => handleFilter("denumire", val)}
+                    />
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <DataTableColumnHeader
+                      title="Sold Inițial D"
+                      sortDirection={sortColumn === "soldInitialDebit" ? sortDirection : null}
+                      onSort={(dir) => handleSort("soldInitialDebit", dir)}
+                      filterValue={filters.soldInitialDebit || ""}
+                      onFilter={(val) => handleFilter("soldInitialDebit", val)}
+                    />
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <DataTableColumnHeader
+                      title="Sold Inițial C"
+                      sortDirection={sortColumn === "soldInitialCredit" ? sortDirection : null}
+                      onSort={(dir) => handleSort("soldInitialCredit", dir)}
+                      filterValue={filters.soldInitialCredit || ""}
+                      onFilter={(val) => handleFilter("soldInitialCredit", val)}
+                    />
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <DataTableColumnHeader
+                      title="Rulaj D"
+                      sortDirection={sortColumn === "rulajDebit" ? sortDirection : null}
+                      onSort={(dir) => handleSort("rulajDebit", dir)}
+                      filterValue={filters.rulajDebit || ""}
+                      onFilter={(val) => handleFilter("rulajDebit", val)}
+                    />
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <DataTableColumnHeader
+                      title="Rulaj C"
+                      sortDirection={sortColumn === "rulajCredit" ? sortDirection : null}
+                      onSort={(dir) => handleSort("rulajCredit", dir)}
+                      filterValue={filters.rulajCredit || ""}
+                      onFilter={(val) => handleFilter("rulajCredit", val)}
+                    />
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <DataTableColumnHeader
+                      title="Sold Final D"
+                      sortDirection={sortColumn === "soldFinalDebit" ? sortDirection : null}
+                      onSort={(dir) => handleSort("soldFinalDebit", dir)}
+                      filterValue={filters.soldFinalDebit || ""}
+                      onFilter={(val) => handleFilter("soldFinalDebit", val)}
+                    />
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <DataTableColumnHeader
+                      title="Sold Final C"
+                      sortDirection={sortColumn === "soldFinalCredit" ? sortDirection : null}
+                      onSort={(dir) => handleSort("soldFinalCredit", dir)}
+                      filterValue={filters.soldFinalCredit || ""}
+                      onFilter={(val) => handleFilter("soldFinalCredit", val)}
+                    />
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {balanta.map((cont) => (
+                {paginatedData.map((cont) => (
                   <TableRow 
                     key={cont.cont} 
                     className="cursor-pointer hover:bg-muted/50"
@@ -149,6 +284,18 @@ const BalantaFiseTab = () => {
               </TableBody>
             </Table>
           </div>
+
+          <DataTablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            itemsPerPage={itemsPerPage}
+            totalItems={filteredAndSortedData.length}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={(val) => {
+              setItemsPerPage(val);
+              setCurrentPage(1);
+            }}
+          />
         </CardContent>
       </Card>
 
