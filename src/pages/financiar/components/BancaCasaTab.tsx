@@ -19,14 +19,20 @@ const BancaCasaTab = () => {
   const [casaPerPage, setCasaPerPage] = useState(10);
   
   // Sorting states
-  const [conturiSort, setConturiSort] = useState<{ column: string | null; direction: "asc" | "desc" }>({ column: null, direction: "asc" });
-  const [miscariSort, setMiscariSort] = useState<{ column: string | null; direction: "asc" | "desc" }>({ column: null, direction: "asc" });
-  const [casaSort, setCasaSort] = useState<{ column: string | null; direction: "asc" | "desc" }>({ column: null, direction: "asc" });
+  const [conturiSort, setConturiSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
+  const [miscariSort, setMiscariSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
+  const [casaSort, setCasaSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
   
   // Filter states
-  const [conturiFilters, setConturiFilters] = useState<Record<string, string>>({});
-  const [miscariFilters, setMiscariFilters] = useState<Record<string, string>>({});
-  const [casaFilters, setCasaFilters] = useState<Record<string, string>>({});
+  const [conturiFilters, setConturiFilters] = useState<Record<string, string>>({
+    banca: "", iban: "", moneda: "", sold_curent: "",
+  });
+  const [miscariFilters, setMiscariFilters] = useState<Record<string, string>>({
+    data: "", cont_bancar: "", tip: "", partener: "",
+  });
+  const [casaFilters, setCasaFilters] = useState<Record<string, string>>({
+    data: "", tip: "", partener: "",
+  });
 
   const formatCurrency = (value: number, currency: string = "RON") => {
     return new Intl.NumberFormat("ro-RO", {
@@ -43,35 +49,34 @@ const BancaCasaTab = () => {
   const totalPlatiCasa = registruCasa.filter((r) => r.tip === "Plată").reduce((sum, r) => sum + r.suma, 0);
 
   // Filter and sort helper
-  const filterAndSort = <T extends Record<string, unknown>>(
+  const filterAndSort = <T,>(
     data: T[],
     filters: Record<string, string>,
-    sortColumn: string | null,
-    sortDirection: "asc" | "desc"
-  ) => {
+    sort: { key: string; direction: "asc" | "desc" } | null
+  ): T[] => {
     let result = [...data];
     
     Object.entries(filters).forEach(([column, value]) => {
       if (value) {
         result = result.filter(item => {
-          const itemValue = String(item[column] || "").toLowerCase();
+          const itemValue = String((item as Record<string, unknown>)[column] || "").toLowerCase();
           return itemValue.includes(value.toLowerCase());
         });
       }
     });
     
-    if (sortColumn) {
+    if (sort) {
       result.sort((a, b) => {
-        const aValue = a[sortColumn];
-        const bValue = b[sortColumn];
+        const aValue = (a as Record<string, unknown>)[sort.key];
+        const bValue = (b as Record<string, unknown>)[sort.key];
         
         if (typeof aValue === "number" && typeof bValue === "number") {
-          return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+          return sort.direction === "asc" ? aValue - bValue : bValue - aValue;
         }
         
         const aStr = String(aValue || "");
         const bStr = String(bValue || "");
-        return sortDirection === "asc" ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr);
+        return sort.direction === "asc" ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr);
       });
     }
     
@@ -80,17 +85,17 @@ const BancaCasaTab = () => {
 
   // Processed data
   const filteredConturi = useMemo(() => 
-    filterAndSort(conturiBancare, conturiFilters, conturiSort.column, conturiSort.direction),
+    filterAndSort(conturiBancare, conturiFilters, conturiSort),
     [conturiFilters, conturiSort]
   );
   
   const filteredMiscari = useMemo(() => 
-    filterAndSort(miscariBanca, miscariFilters, miscariSort.column, miscariSort.direction),
+    filterAndSort(miscariBanca, miscariFilters, miscariSort),
     [miscariFilters, miscariSort]
   );
   
   const filteredCasa = useMemo(() => 
-    filterAndSort(registruCasa, casaFilters, casaSort.column, casaSort.direction),
+    filterAndSort(registruCasa, casaFilters, casaSort),
     [casaFilters, casaSort]
   );
 
@@ -175,37 +180,41 @@ const BancaCasaTab = () => {
                       <TableHead>
                         <DataTableColumnHeader
                           title="Bancă"
-                          sortDirection={conturiSort.column === "banca" ? conturiSort.direction : null}
-                          onSort={(dir) => setConturiSort({ column: "banca", direction: dir })}
-                          filterValue={conturiFilters.banca || ""}
-                          onFilter={(val) => { setConturiFilters(prev => ({ ...prev, banca: val })); setConturiPage(1); }}
+                          sortKey="banca"
+                          currentSort={conturiSort}
+                          onSort={(key, dir) => setConturiSort({ key, direction: dir })}
+                          filterValue={conturiFilters.banca}
+                          onFilterChange={(val) => { setConturiFilters(prev => ({ ...prev, banca: val })); setConturiPage(1); }}
                         />
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="IBAN"
-                          sortDirection={conturiSort.column === "iban" ? conturiSort.direction : null}
-                          onSort={(dir) => setConturiSort({ column: "iban", direction: dir })}
-                          filterValue={conturiFilters.iban || ""}
-                          onFilter={(val) => { setConturiFilters(prev => ({ ...prev, iban: val })); setConturiPage(1); }}
+                          sortKey="iban"
+                          currentSort={conturiSort}
+                          onSort={(key, dir) => setConturiSort({ key, direction: dir })}
+                          filterValue={conturiFilters.iban}
+                          onFilterChange={(val) => { setConturiFilters(prev => ({ ...prev, iban: val })); setConturiPage(1); }}
                         />
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="Monedă"
-                          sortDirection={conturiSort.column === "moneda" ? conturiSort.direction : null}
-                          onSort={(dir) => setConturiSort({ column: "moneda", direction: dir })}
-                          filterValue={conturiFilters.moneda || ""}
-                          onFilter={(val) => { setConturiFilters(prev => ({ ...prev, moneda: val })); setConturiPage(1); }}
+                          sortKey="moneda"
+                          currentSort={conturiSort}
+                          onSort={(key, dir) => setConturiSort({ key, direction: dir })}
+                          filterValue={conturiFilters.moneda}
+                          onFilterChange={(val) => { setConturiFilters(prev => ({ ...prev, moneda: val })); setConturiPage(1); }}
                         />
                       </TableHead>
                       <TableHead className="text-right">
                         <DataTableColumnHeader
                           title="Sold curent"
-                          sortDirection={conturiSort.column === "sold_curent" ? conturiSort.direction : null}
-                          onSort={(dir) => setConturiSort({ column: "sold_curent", direction: dir })}
-                          filterValue={conturiFilters.sold_curent || ""}
-                          onFilter={(val) => { setConturiFilters(prev => ({ ...prev, sold_curent: val })); setConturiPage(1); }}
+                          sortKey="sold_curent"
+                          currentSort={conturiSort}
+                          onSort={(key, dir) => setConturiSort({ key, direction: dir })}
+                          filterValue={conturiFilters.sold_curent}
+                          onFilterChange={(val) => { setConturiFilters(prev => ({ ...prev, sold_curent: val })); setConturiPage(1); }}
                         />
                       </TableHead>
                     </TableRow>
@@ -244,37 +253,41 @@ const BancaCasaTab = () => {
                       <TableHead>
                         <DataTableColumnHeader
                           title="Dată"
-                          sortDirection={miscariSort.column === "data" ? miscariSort.direction : null}
-                          onSort={(dir) => setMiscariSort({ column: "data", direction: dir })}
-                          filterValue={miscariFilters.data || ""}
-                          onFilter={(val) => { setMiscariFilters(prev => ({ ...prev, data: val })); setMiscariPage(1); }}
+                          sortKey="data"
+                          currentSort={miscariSort}
+                          onSort={(key, dir) => setMiscariSort({ key, direction: dir })}
+                          filterValue={miscariFilters.data}
+                          onFilterChange={(val) => { setMiscariFilters(prev => ({ ...prev, data: val })); setMiscariPage(1); }}
                         />
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="Cont bancar"
-                          sortDirection={miscariSort.column === "cont_bancar" ? miscariSort.direction : null}
-                          onSort={(dir) => setMiscariSort({ column: "cont_bancar", direction: dir })}
-                          filterValue={miscariFilters.cont_bancar || ""}
-                          onFilter={(val) => { setMiscariFilters(prev => ({ ...prev, cont_bancar: val })); setMiscariPage(1); }}
+                          sortKey="cont_bancar"
+                          currentSort={miscariSort}
+                          onSort={(key, dir) => setMiscariSort({ key, direction: dir })}
+                          filterValue={miscariFilters.cont_bancar}
+                          onFilterChange={(val) => { setMiscariFilters(prev => ({ ...prev, cont_bancar: val })); setMiscariPage(1); }}
                         />
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="Tip"
-                          sortDirection={miscariSort.column === "tip" ? miscariSort.direction : null}
-                          onSort={(dir) => setMiscariSort({ column: "tip", direction: dir })}
-                          filterValue={miscariFilters.tip || ""}
-                          onFilter={(val) => { setMiscariFilters(prev => ({ ...prev, tip: val })); setMiscariPage(1); }}
+                          sortKey="tip"
+                          currentSort={miscariSort}
+                          onSort={(key, dir) => setMiscariSort({ key, direction: dir })}
+                          filterValue={miscariFilters.tip}
+                          onFilterChange={(val) => { setMiscariFilters(prev => ({ ...prev, tip: val })); setMiscariPage(1); }}
                         />
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="Partener"
-                          sortDirection={miscariSort.column === "partener" ? miscariSort.direction : null}
-                          onSort={(dir) => setMiscariSort({ column: "partener", direction: dir })}
-                          filterValue={miscariFilters.partener || ""}
-                          onFilter={(val) => { setMiscariFilters(prev => ({ ...prev, partener: val })); setMiscariPage(1); }}
+                          sortKey="partener"
+                          currentSort={miscariSort}
+                          onSort={(key, dir) => setMiscariSort({ key, direction: dir })}
+                          filterValue={miscariFilters.partener}
+                          onFilterChange={(val) => { setMiscariFilters(prev => ({ ...prev, partener: val })); setMiscariPage(1); }}
                         />
                       </TableHead>
                       <TableHead className="text-right">Sumă</TableHead>
@@ -321,28 +334,31 @@ const BancaCasaTab = () => {
                       <TableHead>
                         <DataTableColumnHeader
                           title="Dată"
-                          sortDirection={casaSort.column === "data" ? casaSort.direction : null}
-                          onSort={(dir) => setCasaSort({ column: "data", direction: dir })}
-                          filterValue={casaFilters.data || ""}
-                          onFilter={(val) => { setCasaFilters(prev => ({ ...prev, data: val })); setCasaPage(1); }}
+                          sortKey="data"
+                          currentSort={casaSort}
+                          onSort={(key, dir) => setCasaSort({ key, direction: dir })}
+                          filterValue={casaFilters.data}
+                          onFilterChange={(val) => { setCasaFilters(prev => ({ ...prev, data: val })); setCasaPage(1); }}
                         />
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="Tip"
-                          sortDirection={casaSort.column === "tip" ? casaSort.direction : null}
-                          onSort={(dir) => setCasaSort({ column: "tip", direction: dir })}
-                          filterValue={casaFilters.tip || ""}
-                          onFilter={(val) => { setCasaFilters(prev => ({ ...prev, tip: val })); setCasaPage(1); }}
+                          sortKey="tip"
+                          currentSort={casaSort}
+                          onSort={(key, dir) => setCasaSort({ key, direction: dir })}
+                          filterValue={casaFilters.tip}
+                          onFilterChange={(val) => { setCasaFilters(prev => ({ ...prev, tip: val })); setCasaPage(1); }}
                         />
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="Partener"
-                          sortDirection={casaSort.column === "partener" ? casaSort.direction : null}
-                          onSort={(dir) => setCasaSort({ column: "partener", direction: dir })}
-                          filterValue={casaFilters.partener || ""}
-                          onFilter={(val) => { setCasaFilters(prev => ({ ...prev, partener: val })); setCasaPage(1); }}
+                          sortKey="partener"
+                          currentSort={casaSort}
+                          onSort={(key, dir) => setCasaSort({ key, direction: dir })}
+                          filterValue={casaFilters.partener}
+                          onFilterChange={(val) => { setCasaFilters(prev => ({ ...prev, partener: val })); setCasaPage(1); }}
                         />
                       </TableHead>
                       <TableHead className="text-right">Sumă</TableHead>
