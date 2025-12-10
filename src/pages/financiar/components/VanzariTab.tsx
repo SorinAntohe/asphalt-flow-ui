@@ -42,7 +42,7 @@ const VanzariTab = () => {
     data_scadenta: "", suma_incasata: "", suma_restanta: "", status: ""
   });
   const [editLivrareData, setEditLivrareData] = useState({
-    nr_aviz: "", client: "", produs: "", cantitate: "",
+    cod_comanda: "", nr_aviz: "", client: "", produs: "", cantitate: "",
     valoare_produs: "", valoare_transport: "", total: "", status_facturare: ""
   });
   const [editIncasareData, setEditIncasareData] = useState({
@@ -72,6 +72,7 @@ const VanzariTab = () => {
   const openEditLivrare = () => {
     if (selectedLivrare) {
       setEditLivrareData({
+        cod_comanda: selectedLivrare.cod_comanda,
         nr_aviz: selectedLivrare.nr_aviz,
         client: selectedLivrare.client,
         produs: selectedLivrare.produs,
@@ -134,7 +135,7 @@ const VanzariTab = () => {
     nr_factura: "", data: "", client: "", status: "",
   });
   const [livrariFilters, setLivrariFilters] = useState<Record<string, string>>({
-    data: "", cod: "", client: "",
+    data: "", cod: "", cod_comanda: "", client: "",
   });
   const [incasariFilters, setIncasariFilters] = useState<Record<string, string>>({
     data: "", client: "", tip: "",
@@ -245,6 +246,7 @@ const VanzariTab = () => {
         exportToCSV(filteredLivrari, "livrari_clienti", [
           { key: "data", label: "Dată" },
           { key: "cod", label: "Cod" },
+          { key: "cod_comanda", label: "Cod Comandă" },
           { key: "nr_aviz", label: "Nr Aviz" },
           { key: "client", label: "Client" },
           { key: "produs", label: "Produs" },
@@ -467,6 +469,16 @@ const VanzariTab = () => {
                           onFilterChange={(val) => { setLivrariFilters(prev => ({ ...prev, cod: val })); setLivrariPage(1); }}
                         />
                       </TableHead>
+                      <TableHead>
+                        <DataTableColumnHeader
+                          title="Cod Comandă"
+                          sortKey="cod_comanda"
+                          currentSort={livrariSort}
+                          onSort={(key, dir) => setLivrariSort({ key, direction: dir })}
+                          filterValue={livrariFilters.cod_comanda}
+                          onFilterChange={(val) => { setLivrariFilters(prev => ({ ...prev, cod_comanda: val })); setLivrariPage(1); }}
+                        />
+                      </TableHead>
                       <TableHead>Nr Aviz</TableHead>
                       <TableHead>
                         <DataTableColumnHeader
@@ -495,6 +507,7 @@ const VanzariTab = () => {
                       >
                         <TableCell>{livrare.data}</TableCell>
                         <TableCell className="font-medium">{livrare.cod}</TableCell>
+                        <TableCell>{livrare.cod_comanda}</TableCell>
                         <TableCell>{livrare.nr_aviz}</TableCell>
                         <TableCell>{livrare.client}</TableCell>
                         <TableCell>{livrare.produs}</TableCell>
@@ -692,6 +705,10 @@ const VanzariTab = () => {
                   <p className="font-medium">{selectedLivrare.cod}</p>
                 </div>
                 <div>
+                  <p className="text-sm text-muted-foreground">Cod Comandă</p>
+                  <p className="font-medium">{selectedLivrare.cod_comanda}</p>
+                </div>
+                <div>
                   <p className="text-sm text-muted-foreground">Nr Aviz</p>
                   <p className="font-medium">{selectedLivrare.nr_aviz}</p>
                 </div>
@@ -874,6 +891,10 @@ const VanzariTab = () => {
             <DialogTitle>Editează Livrare</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Cod Comandă</Label>
+              <Input value={editLivrareData.cod_comanda} readOnly className="bg-muted" />
+            </div>
             <div className="space-y-2">
               <Label>Nr Aviz</Label>
               <Input value={editLivrareData.nr_aviz} onChange={(e) => setEditLivrareData(prev => ({ ...prev, nr_aviz: e.target.value }))} />

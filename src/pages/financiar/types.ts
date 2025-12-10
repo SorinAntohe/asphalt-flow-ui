@@ -18,6 +18,7 @@ export interface LivrareClient {
   id: number;
   data: string;
   cod: string;
+  cod_comanda: string;
   nr_aviz: string;
   client: string;
   produs: string;
