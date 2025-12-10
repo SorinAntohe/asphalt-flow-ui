@@ -398,6 +398,28 @@ const CalculatorPret = () => {
     };
   }, [filteredPreturiConcurenti]);
 
+  // Refetch competitor prices
+  const refetchPreturiConcurenti = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/comercial/returneaza/preturi_concurenta`);
+      if (response.ok) {
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          const preturi = data.map((item: { id: number; concurent: string; produs: string; pret: number; data: string }) => ({
+            id: String(item.id),
+            concurent: item.concurent,
+            produs: item.produs,
+            pret: item.pret,
+            data: item.data
+          }));
+          setPreturiConcurenti(preturi);
+        }
+      }
+    } catch (error) {
+      console.error("Error refetching preturi concurenti:", error);
+    }
+  };
+
   // Add competitor price
   const handleAddConcurent = async () => {
     if (!newConcurent.concurent || !newConcurent.produs || !newConcurent.pret) {
@@ -420,17 +442,12 @@ const CalculatorPret = () => {
         throw new Error('Eroare la adăugare');
       }
 
-      const formattedDate = new Date().toLocaleDateString("ro-RO");
-      
-      setPreturiConcurenti(prev => [...prev, {
-        id: crypto.randomUUID(),
-        concurent: newConcurent.concurent,
-        produs: newConcurent.produs,
-        pret: parseFloat(newConcurent.pret),
-        data: formattedDate
-      }]);
       setNewConcurent({ concurent: "", produs: "", pret: "", data: "" });
+      setIsAddConcurentOpen(false);
       toast.success("Preț concurent adăugat");
+      
+      // Refetch to get updated list with correct ID from backend
+      await refetchPreturiConcurenti();
     } catch (error) {
       console.error("Error adding competitor price:", error);
       toast.error("Eroare la adăugarea prețului");
