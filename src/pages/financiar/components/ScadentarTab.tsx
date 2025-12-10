@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { scadentarEntries } from "../parteneri-mockData";
 import { ScadentarEntry } from "../parteneri-types";
@@ -22,7 +23,7 @@ const ScadentarTab = () => {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [editFormData, setEditFormData] = useState({ data_scadenta: "", suma_restanta: "", zile_intarziere: "" });
+  const [editFormData, setEditFormData] = useState({ tip_partener: "", nume_partener: "", tip_document: "", numar_document: "", data_scadenta: "", suma_restanta: "", zile_intarziere: "" });
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
@@ -431,6 +432,10 @@ const ScadentarTab = () => {
                   className="flex-1"
                   onClick={() => {
                     setEditFormData({
+                      tip_partener: selectedEntry.tip_partener,
+                      nume_partener: selectedEntry.nume_partener,
+                      tip_document: selectedEntry.tip_document,
+                      numar_document: selectedEntry.numar_document,
                       data_scadenta: selectedEntry.data_scadenta,
                       suma_restanta: String(selectedEntry.suma_restanta),
                       zile_intarziere: String(selectedEntry.zile_intarziere),
@@ -457,20 +462,58 @@ const ScadentarTab = () => {
 
       {/* Edit Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Editează Scadență</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Dată Scadență</Label>
-              <Input 
-                type="date" 
-                value={editFormData.data_scadenta} 
-                onChange={(e) => setEditFormData(prev => ({ ...prev, data_scadenta: e.target.value }))} 
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Tip Partener</Label>
+                <Select 
+                  value={editFormData.tip_partener} 
+                  onValueChange={(val) => {
+                    const tipDoc = val === "Client" ? "Factură client" : "Factură furnizor";
+                    setEditFormData(prev => ({ ...prev, tip_partener: val, tip_document: tipDoc }));
+                  }}
+                >
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Client">Client</SelectItem>
+                    <SelectItem value="Furnizor">Furnizor</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Nume Partener</Label>
+                <Input 
+                  value={editFormData.nume_partener} 
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, nume_partener: e.target.value }))} 
+                />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Tip Document</Label>
+                <Input value={editFormData.tip_document} readOnly className="bg-muted" />
+              </div>
+              <div className="space-y-2">
+                <Label>Număr Document</Label>
+                <Input 
+                  value={editFormData.numar_document} 
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, numar_document: e.target.value }))} 
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Dată Scadență</Label>
+                <Input 
+                  type="date" 
+                  value={editFormData.data_scadenta} 
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, data_scadenta: e.target.value }))} 
+                />
+              </div>
               <div className="space-y-2">
                 <Label>Sumă Restantă (RON)</Label>
                 <Input 
@@ -479,14 +522,14 @@ const ScadentarTab = () => {
                   onChange={(e) => setEditFormData(prev => ({ ...prev, suma_restanta: e.target.value }))} 
                 />
               </div>
-              <div className="space-y-2">
-                <Label>Zile Întârziere</Label>
-                <Input 
-                  type="number" 
-                  value={editFormData.zile_intarziere} 
-                  onChange={(e) => setEditFormData(prev => ({ ...prev, zile_intarziere: e.target.value }))} 
-                />
-              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Zile Întârziere</Label>
+              <Input 
+                type="number" 
+                value={editFormData.zile_intarziere} 
+                onChange={(e) => setEditFormData(prev => ({ ...prev, zile_intarziere: e.target.value }))} 
+              />
             </div>
           </div>
           <DialogFooter>

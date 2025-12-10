@@ -23,7 +23,7 @@ const ClientiTab = () => {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [editFormData, setEditFormData] = useState({ sold_curent: "", zile_intarziere_max: "" });
+  const [editFormData, setEditFormData] = useState({ nume: "", cui: "", adresa: "", sold_curent: "", zile_intarziere_max: "" });
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
@@ -433,6 +433,9 @@ const ClientiTab = () => {
                   className="flex-1"
                   onClick={() => {
                     setEditFormData({
+                      nume: selectedClient.nume,
+                      cui: selectedClient.cui,
+                      adresa: selectedClient.adresa,
                       sold_curent: String(selectedClient.sold_curent),
                       zile_intarziere_max: String(selectedClient.zile_intarziere_max),
                     });
@@ -458,26 +461,51 @@ const ClientiTab = () => {
 
       {/* Edit Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Editează Client</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Sold Curent (RON)</Label>
+              <Label>Nume Client</Label>
               <Input 
-                type="number" 
-                value={editFormData.sold_curent} 
-                onChange={(e) => setEditFormData(prev => ({ ...prev, sold_curent: e.target.value }))} 
+                value={editFormData.nume} 
+                onChange={(e) => setEditFormData(prev => ({ ...prev, nume: e.target.value }))} 
               />
             </div>
-            <div className="space-y-2">
-              <Label>Zile Întârziere Max</Label>
-              <Input 
-                type="number" 
-                value={editFormData.zile_intarziere_max} 
-                onChange={(e) => setEditFormData(prev => ({ ...prev, zile_intarziere_max: e.target.value }))} 
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>CUI</Label>
+                <Input 
+                  value={editFormData.cui} 
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, cui: e.target.value }))} 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Adresă</Label>
+                <Input 
+                  value={editFormData.adresa} 
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, adresa: e.target.value }))} 
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Sold Curent (RON)</Label>
+                <Input 
+                  type="number" 
+                  value={editFormData.sold_curent} 
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, sold_curent: e.target.value }))} 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Zile Întârziere Max</Label>
+                <Input 
+                  type="number" 
+                  value={editFormData.zile_intarziere_max} 
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, zile_intarziere_max: e.target.value }))} 
+                />
+              </div>
             </div>
           </div>
           <DialogFooter>
