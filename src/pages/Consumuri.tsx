@@ -1855,8 +1855,8 @@ const Consumuri = () => {
 
               {/* Form fields */}
               <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1.5">
+                <div className="flex gap-3">
+                  <div className="flex-1 space-y-1.5">
                     <Label className="text-xs">Index Vechi</Label>
                     <Input
                       type="number"
@@ -1866,7 +1866,7 @@ const Consumuri = () => {
                       className="bg-muted h-9"
                     />
                   </div>
-                  <div className="space-y-1.5">
+                  <div className="flex-1 space-y-1.5">
                     <Label className="text-xs">Index Nou</Label>
                     <Input
                       type="number"
@@ -1886,8 +1886,8 @@ const Consumuri = () => {
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1.5">
+                <div className="flex gap-3">
+                  <div className="flex-1 space-y-1.5">
                     <Label className="text-xs">Consum (kW)</Label>
                     <Input
                       type="number"
@@ -1897,7 +1897,7 @@ const Consumuri = () => {
                       className="bg-muted h-9"
                     />
                   </div>
-                  <div className="space-y-1.5">
+                  <div className="flex-1 space-y-1.5">
                     <Label className="text-xs">Preț unitar (RON/kW)</Label>
                     <Input
                       type="number"
