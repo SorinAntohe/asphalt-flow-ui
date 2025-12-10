@@ -11,6 +11,7 @@ import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data
 import { Building, Wallet, ArrowUpDown, Landmark, Plus, Download } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { useToast } from "@/hooks/use-toast";
+import { AddContBancarDialog, AddMiscareBancaDialog, AddRegistruCasaDialog } from "./AddDialogs";
 
 const BancaCasaTab = () => {
   const { toast } = useToast();
@@ -20,6 +21,11 @@ const BancaCasaTab = () => {
   const [selectedCont, setSelectedCont] = useState<ContBancar | null>(null);
   const [selectedMiscare, setSelectedMiscare] = useState<MiscareBanca | null>(null);
   const [selectedCasa, setSelectedCasa] = useState<InregistrareCasa | null>(null);
+  
+  // Add dialog states
+  const [addContOpen, setAddContOpen] = useState(false);
+  const [addMiscareOpen, setAddMiscareOpen] = useState(false);
+  const [addCasaOpen, setAddCasaOpen] = useState(false);
   
   // Pagination states
   const [conturiPage, setConturiPage] = useState(1);

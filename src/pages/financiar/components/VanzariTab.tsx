@@ -11,6 +11,7 @@ import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data
 import { FileText, Truck, Wallet, TrendingUp, Plus, Download } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { useToast } from "@/hooks/use-toast";
+import { AddFacturaClientDialog, AddLivrareDialog, AddIncasareDialog } from "./AddDialogs";
 
 const VanzariTab = () => {
   const { toast } = useToast();
@@ -20,6 +21,11 @@ const VanzariTab = () => {
   const [selectedFactura, setSelectedFactura] = useState<FacturaClient | null>(null);
   const [selectedLivrare, setSelectedLivrare] = useState<LivrareClient | null>(null);
   const [selectedIncasare, setSelectedIncasare] = useState<IncasareClient | null>(null);
+  
+  // Add dialog states
+  const [addFacturaOpen, setAddFacturaOpen] = useState(false);
+  const [addLivrareOpen, setAddLivrareOpen] = useState(false);
+  const [addIncasareOpen, setAddIncasareOpen] = useState(false);
   
   // Pagination states for each sub-tab
   const [facturiPage, setFacturiPage] = useState(1);
@@ -247,7 +253,11 @@ const VanzariTab = () => {
                   <Download className="h-4 w-4 mr-2" />
                   Export CSV
                 </Button>
-                <Button size="sm">
+                <Button size="sm" onClick={() => {
+                  if (activeSubTab === "facturi") setAddFacturaOpen(true);
+                  else if (activeSubTab === "livrari") setAddLivrareOpen(true);
+                  else setAddIncasareOpen(true);
+                }}>
                   <Plus className="h-4 w-4 mr-2" />
                   Adaugă
                 </Button>
@@ -665,6 +675,11 @@ const VanzariTab = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Add Dialogs */}
+      <AddFacturaClientDialog open={addFacturaOpen} onOpenChange={setAddFacturaOpen} />
+      <AddLivrareDialog open={addLivrareOpen} onOpenChange={setAddLivrareOpen} />
+      <AddIncasareDialog open={addIncasareOpen} onOpenChange={setAddIncasareOpen} />
     </div>
   );
 };
