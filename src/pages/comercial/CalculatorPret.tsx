@@ -181,30 +181,37 @@ const CalculatorPret = () => {
           const data = await response.json();
           console.log("Recipe materials response:", data);
           
-          // Parse response - expecting materiale as comma-separated string or array
-          if (data && data.length > 0) {
-            const record = data[0];
-            let materials: RetetaMaterial[] = [];
+          // Find the record matching selected recipe code
+          const record = data.find((r: any) => r.cod_reteta === selectedReteta);
+          if (record && record.materiale) {
+            // Parse comma-separated materials
+            const materialeList = typeof record.materiale === 'string' 
+              ? record.materiale.split(',').map((m: string) => m.trim())
+              : record.materiale;
             
-            // Handle different response formats
-            if (record.materiale) {
-              const materialeList = typeof record.materiale === 'string' 
-                ? record.materiale.split(',').map((m: string) => m.trim())
-                : record.materiale;
-              
-              const cantitatiList = record.cantitati 
-                ? (typeof record.cantitati === 'string' 
-                    ? record.cantitati.split(',').map((c: string) => parseFloat(c.trim()))
-                    : record.cantitati)
-                : [];
-              
-              materials = materialeList.map((mat: string, idx: number) => ({
-                material: mat,
-                cantitate: cantitatiList[idx] || 0
-              }));
+            // Parse cantitati - could be comma-separated or single value
+            let cantitatiList: number[] = [];
+            if (record.cantitati) {
+              const cantitatiStr = String(record.cantitati);
+              if (cantitatiStr.includes(',')) {
+                cantitatiList = cantitatiStr.split(',').map((c: string) => parseFloat(c.trim()) || 0);
+              } else {
+                // Single value - might need to distribute or use as-is
+                const singleVal = parseFloat(cantitatiStr) || 0;
+                // For now, use equal distribution if single value
+                cantitatiList = materialeList.map(() => singleVal / materialeList.length);
+              }
             }
             
+            const materials: RetetaMaterial[] = materialeList.map((mat: string, idx: number) => ({
+              material: mat,
+              cantitate: cantitatiList[idx] || 0
+            }));
+            
+            console.log("Parsed materials:", materials);
             setRetetaMateriale(materials);
+          } else {
+            setRetetaMateriale([]);
           }
         }
       } catch (error) {
