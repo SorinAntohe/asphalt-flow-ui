@@ -381,26 +381,42 @@ const CalculatorPret = () => {
   }, [filteredPreturiConcurenti]);
 
   // Add competitor price
-  const handleAddConcurent = () => {
+  const handleAddConcurent = async () => {
     if (!newConcurent.concurent || !newConcurent.produs || !newConcurent.pret) {
       toast.error("Completați toate câmpurile obligatorii");
       return;
     }
-    // Format date from yyyy-mm-dd to dd/mm/yyyy
-    let formattedDate = new Date().toLocaleDateString("ro-RO");
-    if (newConcurent.data) {
-      const [year, month, day] = newConcurent.data.split("-");
-      formattedDate = `${day}/${month}/${year}`;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/comercial/adauga/preturi_concurenta`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          concurent: newConcurent.concurent,
+          produs: newConcurent.produs,
+          pret: parseFloat(newConcurent.pret)
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Eroare la adăugare');
+      }
+
+      const formattedDate = new Date().toLocaleDateString("ro-RO");
+      
+      setPreturiConcurenti(prev => [...prev, {
+        id: crypto.randomUUID(),
+        concurent: newConcurent.concurent,
+        produs: newConcurent.produs,
+        pret: parseFloat(newConcurent.pret),
+        data: formattedDate
+      }]);
+      setNewConcurent({ concurent: "", produs: "", pret: "", data: "" });
+      toast.success("Preț concurent adăugat");
+    } catch (error) {
+      console.error("Error adding competitor price:", error);
+      toast.error("Eroare la adăugarea prețului");
     }
-    
-    setPreturiConcurenti(prev => [...prev, {
-      id: crypto.randomUUID(),
-      concurent: newConcurent.concurent,
-      produs: newConcurent.produs,
-      pret: parseFloat(newConcurent.pret),
-      data: formattedDate
-    }]);
-    setNewConcurent({ concurent: "", produs: "", pret: "", data: "" });
   };
 
   // Remove competitor price
