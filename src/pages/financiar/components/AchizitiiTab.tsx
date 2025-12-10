@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { facturiFurnizori, receptiiMateriale } from "../mockData";
 import { FacturaFurnizor, ReceptieMaterial } from "../types";
 import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
@@ -26,8 +29,70 @@ const AchizitiiTab = () => {
   const [addFacturaOpen, setAddFacturaOpen] = useState(false);
   const [addReceptieOpen, setAddReceptieOpen] = useState(false);
   
+  // Edit dialog states
+  const [editFacturaOpen, setEditFacturaOpen] = useState(false);
+  const [editReceptieOpen, setEditReceptieOpen] = useState(false);
+  
+  // Edit form data
+  const [editFacturaData, setEditFacturaData] = useState({
+    nr_factura: "", data: "", furnizor: "", total_fara_tva: "", tva: "", total: "",
+    data_scadenta: "", suma_platita: "", suma_restanta: "", status: ""
+  });
+  const [editReceptieData, setEditReceptieData] = useState({
+    cod: "", data: "", furnizor: "", material: "", cantitate_receptionata: "",
+    pret_material_total: "", pret_transport_total: "", pret_total: "", nr_factura: ""
+  });
+  
   // Delete dialog states
   const [deleteType, setDeleteType] = useState<"factura" | "receptie" | null>(null);
+
+  // Open edit dialogs
+  const openEditFactura = () => {
+    if (selectedFactura) {
+      setEditFacturaData({
+        nr_factura: selectedFactura.nr_factura,
+        data: selectedFactura.data,
+        furnizor: selectedFactura.furnizor,
+        total_fara_tva: String(selectedFactura.total_fara_tva),
+        tva: String(selectedFactura.tva),
+        total: String(selectedFactura.total),
+        data_scadenta: selectedFactura.data_scadenta,
+        suma_platita: String(selectedFactura.suma_platita),
+        suma_restanta: String(selectedFactura.suma_restanta),
+        status: selectedFactura.status
+      });
+      setEditFacturaOpen(true);
+    }
+  };
+
+  const openEditReceptie = () => {
+    if (selectedReceptie) {
+      setEditReceptieData({
+        cod: selectedReceptie.cod,
+        data: selectedReceptie.data,
+        furnizor: selectedReceptie.furnizor,
+        material: selectedReceptie.material,
+        cantitate_receptionata: String(selectedReceptie.cantitate_receptionata),
+        pret_material_total: String(selectedReceptie.pret_material_total),
+        pret_transport_total: String(selectedReceptie.pret_transport_total),
+        pret_total: String(selectedReceptie.pret_total),
+        nr_factura: selectedReceptie.nr_factura || ""
+      });
+      setEditReceptieOpen(true);
+    }
+  };
+
+  const handleSaveFactura = () => {
+    toast({ title: "Factură actualizată", description: "Factura a fost actualizată cu succes." });
+    setEditFacturaOpen(false);
+    setSelectedFactura(null);
+  };
+
+  const handleSaveReceptie = () => {
+    toast({ title: "Recepție actualizată", description: "Recepția a fost actualizată cu succes." });
+    setEditReceptieOpen(false);
+    setSelectedReceptie(null);
+  };
 
   // Pagination states
   const [facturiPage, setFacturiPage] = useState(1);
@@ -480,7 +545,7 @@ const AchizitiiTab = () => {
 
               {/* Action Buttons */}
               <div className="flex gap-2 pt-2 border-t">
-                <Button variant="outline" size="sm" className="flex-1">
+                <Button variant="outline" size="sm" className="flex-1" onClick={openEditFactura}>
                   <Pencil className="h-4 w-4 mr-2" />
                   Editează
                 </Button>
@@ -552,7 +617,7 @@ const AchizitiiTab = () => {
 
               {/* Action Buttons */}
               <div className="flex gap-2 pt-2 border-t">
-                <Button variant="outline" size="sm" className="flex-1">
+                <Button variant="outline" size="sm" className="flex-1" onClick={openEditReceptie}>
                   <Pencil className="h-4 w-4 mr-2" />
                   Editează
                 </Button>
@@ -567,6 +632,119 @@ const AchizitiiTab = () => {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Factura Furnizor Dialog */}
+      <Dialog open={editFacturaOpen} onOpenChange={setEditFacturaOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Editează Factură Furnizor</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Nr Factură</Label>
+              <Input value={editFacturaData.nr_factura} onChange={(e) => setEditFacturaData(prev => ({ ...prev, nr_factura: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Dată</Label>
+              <Input type="date" value={editFacturaData.data} onChange={(e) => setEditFacturaData(prev => ({ ...prev, data: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Furnizor</Label>
+              <Input value={editFacturaData.furnizor} onChange={(e) => setEditFacturaData(prev => ({ ...prev, furnizor: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Dată scadență</Label>
+              <Input type="date" value={editFacturaData.data_scadenta} onChange={(e) => setEditFacturaData(prev => ({ ...prev, data_scadenta: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Total fără TVA</Label>
+              <Input type="number" value={editFacturaData.total_fara_tva} onChange={(e) => setEditFacturaData(prev => ({ ...prev, total_fara_tva: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>TVA</Label>
+              <Input type="number" value={editFacturaData.tva} onChange={(e) => setEditFacturaData(prev => ({ ...prev, tva: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Total</Label>
+              <Input type="number" value={editFacturaData.total} onChange={(e) => setEditFacturaData(prev => ({ ...prev, total: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Sumă plătită</Label>
+              <Input type="number" value={editFacturaData.suma_platita} onChange={(e) => setEditFacturaData(prev => ({ ...prev, suma_platita: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Sumă restantă</Label>
+              <Input type="number" value={editFacturaData.suma_restanta} onChange={(e) => setEditFacturaData(prev => ({ ...prev, suma_restanta: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Status</Label>
+              <Select value={editFacturaData.status} onValueChange={(val) => setEditFacturaData(prev => ({ ...prev, status: val }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Plătită">Plătită</SelectItem>
+                  <SelectItem value="Parțial">Parțial</SelectItem>
+                  <SelectItem value="Neplătită">Neplătită</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditFacturaOpen(false)}>Anulează</Button>
+            <Button onClick={handleSaveFactura}>Salvează</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Receptie Dialog */}
+      <Dialog open={editReceptieOpen} onOpenChange={setEditReceptieOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Editează Recepție</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Cod</Label>
+              <Input value={editReceptieData.cod} onChange={(e) => setEditReceptieData(prev => ({ ...prev, cod: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Dată</Label>
+              <Input type="date" value={editReceptieData.data} onChange={(e) => setEditReceptieData(prev => ({ ...prev, data: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Furnizor</Label>
+              <Input value={editReceptieData.furnizor} onChange={(e) => setEditReceptieData(prev => ({ ...prev, furnizor: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Material</Label>
+              <Input value={editReceptieData.material} onChange={(e) => setEditReceptieData(prev => ({ ...prev, material: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Cantitate recepționată (t)</Label>
+              <Input type="number" value={editReceptieData.cantitate_receptionata} onChange={(e) => setEditReceptieData(prev => ({ ...prev, cantitate_receptionata: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Nr Factură</Label>
+              <Input value={editReceptieData.nr_factura} onChange={(e) => setEditReceptieData(prev => ({ ...prev, nr_factura: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Preț material total</Label>
+              <Input type="number" value={editReceptieData.pret_material_total} onChange={(e) => setEditReceptieData(prev => ({ ...prev, pret_material_total: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Preț transport total</Label>
+              <Input type="number" value={editReceptieData.pret_transport_total} onChange={(e) => setEditReceptieData(prev => ({ ...prev, pret_transport_total: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Preț total</Label>
+              <Input type="number" value={editReceptieData.pret_total} onChange={(e) => setEditReceptieData(prev => ({ ...prev, pret_total: e.target.value }))} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditReceptieOpen(false)}>Anulează</Button>
+            <Button onClick={handleSaveReceptie}>Salvează</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
