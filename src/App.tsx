@@ -44,6 +44,11 @@ import RapoarteCalitate from "./pages/rapoarte/RapoarteCalitate";
 import RapoarteMentenanta from "./pages/rapoarte/RapoarteMentenanta";
 import RapoarteFinanciar from "./pages/rapoarte/RapoarteFinanciar";
 
+// Contabilitate module pages
+import ParteneriSolduri from "./pages/contabilitate/ParteneriSolduri";
+import DocumenteTrezorerie from "./pages/contabilitate/DocumenteTrezorerie";
+import ContabilitateRapoarte from "./pages/contabilitate/ContabilitateRapoarte";
+
 // Cantar page
 import ConsolaCantarire from "./pages/ConsolaCantarire";
 
@@ -79,6 +84,10 @@ const AppRoutes = () => (
     <Route path="/comercial/comenzi" element={<ProtectedRoute><ComenziClient /></ProtectedRoute>} />
     <Route path="/comercial/documente" element={<ProtectedRoute><Documente /></ProtectedRoute>} />
     <Route path="/comercial/calculator" element={<ProtectedRoute><CalculatorPret /></ProtectedRoute>} />
+    {/* Contabilitate module routes */}
+    <Route path="/contabilitate/parteneri-solduri" element={<ProtectedRoute><ParteneriSolduri /></ProtectedRoute>} />
+    <Route path="/contabilitate/documente-trezorerie" element={<ProtectedRoute><DocumenteTrezorerie /></ProtectedRoute>} />
+    <Route path="/contabilitate/rapoarte" element={<ProtectedRoute><ContabilitateRapoarte /></ProtectedRoute>} />
     {/* Productie module routes */}
     <Route path="/productie/retete" element={<ProtectedRoute><Retete /></ProtectedRoute>} />
     <Route path="/productie/ordine" element={<ProtectedRoute><OrdineProductie /></ProtectedRoute>} />

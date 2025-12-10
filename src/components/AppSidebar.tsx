@@ -48,7 +48,9 @@ const comercialItems = [
 
 // Contabilitate module items
 const contabilitateItems = [
-  { title: "În curând", url: "/contabilitate", icon: Wallet },
+  { title: "Parteneri & Solduri", url: "/contabilitate/parteneri-solduri", icon: Users },
+  { title: "Documente & Trezorerie", url: "/contabilitate/documente-trezorerie", icon: FileText },
+  { title: "Contabilitate & Rapoarte", url: "/contabilitate/rapoarte", icon: BarChart3 },
 ];
 
 // Productie module items
