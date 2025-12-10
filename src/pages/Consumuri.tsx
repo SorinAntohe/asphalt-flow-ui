@@ -1916,18 +1916,18 @@ const Consumuri = () => {
             </div>
             
             {/* Right side - Summary */}
-            <div className="lg:w-48 shrink-0">
+            <div className="lg:w-56 shrink-0">
               <Card className="h-full">
-                <CardHeader className="py-2 px-3">
-                  <CardTitle className="text-xs">Raport Curent</CardTitle>
+                <CardHeader className="py-3 px-4">
+                  <CardTitle className="text-sm font-semibold">Raport Curent</CardTitle>
                 </CardHeader>
-                <CardContent className="py-2 px-3 space-y-3">
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-medium text-muted-foreground">Astăzi</p>
-                    <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-                      <div className="bg-muted/50 rounded p-1.5">
+                <CardContent className="py-2 px-4 space-y-4">
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">Astăzi</p>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="bg-muted/50 rounded p-2">
                         <p className="text-muted-foreground">Înreg.</p>
-                        <p className="font-semibold text-sm">
+                        <p className="font-bold text-lg">
                           {contorCurentData.filter(c => {
                             const today = new Date();
                             const [day, month, year] = c.data.split('/');
@@ -1937,9 +1937,9 @@ const Consumuri = () => {
                           }).length}
                         </p>
                       </div>
-                      <div className="bg-muted/50 rounded p-1.5">
+                      <div className="bg-muted/50 rounded p-2">
                         <p className="text-muted-foreground">Consum</p>
-                        <p className="font-semibold text-sm">
+                        <p className="font-bold text-lg">
                           {contorCurentData.filter(c => {
                             const today = new Date();
                             const [day, month, year] = c.data.split('/');
@@ -1947,17 +1947,17 @@ const Consumuri = () => {
                                    month === String(today.getMonth() + 1).padStart(2, '0') &&
                                    year === String(today.getFullYear());
                           }).reduce((sum, c) => sum + (c.consum_kw || 0), 0).toFixed(0)}
-                          <span className="text-[8px] font-normal ml-0.5">kW</span>
+                          <span className="text-xs font-normal ml-1">kW</span>
                         </p>
                       </div>
                     </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-medium text-muted-foreground">Luna aceasta</p>
-                    <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-                      <div className="bg-muted/50 rounded p-1.5">
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">Luna aceasta</p>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="bg-muted/50 rounded p-2">
                         <p className="text-muted-foreground">Înreg.</p>
-                        <p className="font-semibold text-sm">
+                        <p className="font-bold text-lg">
                           {contorCurentData.filter(c => {
                             const today = new Date();
                             const [, month, year] = c.data.split('/');
@@ -1966,31 +1966,31 @@ const Consumuri = () => {
                           }).length}
                         </p>
                       </div>
-                      <div className="bg-muted/50 rounded p-1.5">
+                      <div className="bg-muted/50 rounded p-2">
                         <p className="text-muted-foreground">Consum</p>
-                        <p className="font-semibold text-sm">
+                        <p className="font-bold text-lg">
                           {(contorCurentData.filter(c => {
                             const today = new Date();
                             const [, month, year] = c.data.split('/');
                             return month === String(today.getMonth() + 1).padStart(2, '0') &&
                                    year === String(today.getFullYear());
                           }).reduce((sum, c) => sum + (c.consum_kw || 0), 0) / 1000).toFixed(1)}
-                          <span className="text-[8px] font-normal ml-0.5">MWh</span>
+                          <span className="text-xs font-normal ml-1">MWh</span>
                         </p>
                       </div>
                     </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-medium text-muted-foreground">Cost Lunar</p>
-                    <div className="bg-primary/10 rounded p-1.5 text-center">
-                      <p className="font-semibold text-sm text-primary">
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">Cost Lunar</p>
+                    <div className="bg-primary/10 rounded p-2.5 text-center">
+                      <p className="font-bold text-lg text-primary">
                         {contorCurentData.filter(c => {
                           const today = new Date();
                           const [, month, year] = c.data.split('/');
                           return month === String(today.getMonth() + 1).padStart(2, '0') &&
                                  year === String(today.getFullYear());
                         }).reduce((sum, c) => sum + (c.pret || 0), 0).toLocaleString()}
-                        <span className="text-[8px] font-normal ml-0.5">RON</span>
+                        <span className="text-xs font-normal ml-1">RON</span>
                       </p>
                     </div>
                   </div>
@@ -2282,18 +2282,18 @@ const Consumuri = () => {
             </div>
             
             {/* Right side - Summary */}
-            <div className="lg:w-48 shrink-0">
+            <div className="lg:w-56 shrink-0">
               <Card className="h-full">
-                <CardHeader className="py-2 px-3">
-                  <CardTitle className="text-xs">Raport CTL</CardTitle>
+                <CardHeader className="py-3 px-4">
+                  <CardTitle className="text-sm font-semibold">Raport CTL</CardTitle>
                 </CardHeader>
-                <CardContent className="py-2 px-3 space-y-3">
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-medium text-muted-foreground">Astăzi</p>
-                    <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-                      <div className="bg-muted/50 rounded p-1.5">
+                <CardContent className="py-2 px-4 space-y-4">
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">Astăzi</p>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="bg-muted/50 rounded p-2">
                         <p className="text-muted-foreground">Înreg.</p>
-                        <p className="font-semibold text-sm">
+                        <p className="font-bold text-lg">
                           {contorCTLData.filter(c => {
                             const today = new Date();
                             const [day, month, year] = c.data.split('/');
@@ -2303,9 +2303,9 @@ const Consumuri = () => {
                           }).length}
                         </p>
                       </div>
-                      <div className="bg-muted/50 rounded p-1.5">
+                      <div className="bg-muted/50 rounded p-2">
                         <p className="text-muted-foreground">Consum</p>
-                        <p className="font-semibold text-sm">
+                        <p className="font-bold text-lg">
                           {contorCTLData.filter(c => {
                             const today = new Date();
                             const [day, month, year] = c.data.split('/');
@@ -2313,17 +2313,17 @@ const Consumuri = () => {
                                    month === String(today.getMonth() + 1).padStart(2, '0') &&
                                    year === String(today.getFullYear());
                           }).reduce((sum, c) => sum + (c.consum_l || 0), 0).toFixed(0)}
-                          <span className="text-[8px] font-normal ml-0.5">L</span>
+                          <span className="text-xs font-normal ml-1">L</span>
                         </p>
                       </div>
                     </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-medium text-muted-foreground">Luna aceasta</p>
-                    <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-                      <div className="bg-muted/50 rounded p-1.5">
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">Luna aceasta</p>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="bg-muted/50 rounded p-2">
                         <p className="text-muted-foreground">Înreg.</p>
-                        <p className="font-semibold text-sm">
+                        <p className="font-bold text-lg">
                           {contorCTLData.filter(c => {
                             const today = new Date();
                             const [, month, year] = c.data.split('/');
@@ -2332,31 +2332,31 @@ const Consumuri = () => {
                           }).length}
                         </p>
                       </div>
-                      <div className="bg-muted/50 rounded p-1.5">
+                      <div className="bg-muted/50 rounded p-2">
                         <p className="text-muted-foreground">Consum</p>
-                        <p className="font-semibold text-sm">
+                        <p className="font-bold text-lg">
                           {(contorCTLData.filter(c => {
                             const today = new Date();
                             const [, month, year] = c.data.split('/');
                             return month === String(today.getMonth() + 1).padStart(2, '0') &&
                                    year === String(today.getFullYear());
                           }).reduce((sum, c) => sum + (c.consum_l || 0), 0) / 1000).toFixed(1)}
-                          <span className="text-[8px] font-normal ml-0.5">kL</span>
+                          <span className="text-xs font-normal ml-1">kL</span>
                         </p>
                       </div>
                     </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-medium text-muted-foreground">Consum TO Lunar</p>
-                    <div className="bg-primary/10 rounded p-1.5 text-center">
-                      <p className="font-semibold text-sm text-primary">
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">Consum TO Lunar</p>
+                    <div className="bg-primary/10 rounded p-2.5 text-center">
+                      <p className="font-bold text-lg text-primary">
                         {contorCTLData.filter(c => {
                           const today = new Date();
                           const [, month, year] = c.data.split('/');
                           return month === String(today.getMonth() + 1).padStart(2, '0') &&
                                  year === String(today.getFullYear());
                         }).reduce((sum, c) => sum + (c.consum_to || 0), 0).toFixed(1)}
-                        <span className="text-[8px] font-normal ml-0.5">TO</span>
+                        <span className="text-xs font-normal ml-1">TO</span>
                       </p>
                     </div>
                   </div>
