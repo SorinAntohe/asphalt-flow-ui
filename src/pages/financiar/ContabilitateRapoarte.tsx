@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, BookOpen, Calculator, FileText } from "lucide-react";
+import { BarChart3, BookOpen, Calculator } from "lucide-react";
 import JurnalTab from "./components/JurnalTab";
 import BalantaFiseTab from "./components/BalantaFiseTab";
-import RapoarteContabilitateTab from "./components/RapoarteContabilitateTab";
 
 const ContabilitateRapoarte = () => {
   const [activeTab, setActiveTab] = useState("jurnal");
@@ -16,7 +15,7 @@ const ContabilitateRapoarte = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
+        <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger value="jurnal" className="text-sm flex items-center gap-2">
             <BookOpen className="h-4 w-4" />
             <span className="hidden sm:inline">Jurnal</span>
@@ -24,10 +23,6 @@ const ContabilitateRapoarte = () => {
           <TabsTrigger value="balanta" className="text-sm flex items-center gap-2">
             <Calculator className="h-4 w-4" />
             <span className="hidden sm:inline">Balanță & Fișe</span>
-          </TabsTrigger>
-          <TabsTrigger value="rapoarte" className="text-sm flex items-center gap-2">
-            <FileText className="h-4 w-4" />
-            <span className="hidden sm:inline">Rapoarte</span>
           </TabsTrigger>
         </TabsList>
 
@@ -37,10 +32,6 @@ const ContabilitateRapoarte = () => {
 
         <TabsContent value="balanta">
           <BalantaFiseTab />
-        </TabsContent>
-
-        <TabsContent value="rapoarte">
-          <RapoarteContabilitateTab />
         </TabsContent>
       </Tabs>
     </div>
