@@ -3,15 +3,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { scadentarEntries } from "../parteneri-mockData";
 import { ScadentarEntry } from "../parteneri-types";
 import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
-import { FileText, TrendingUp, TrendingDown, Scale, Plus, Download } from "lucide-react";
+import { FileText, TrendingUp, TrendingDown, Scale, Plus, Download, Calendar, User } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { useToast } from "@/hooks/use-toast";
 
 const ScadentarTab = () => {
   const { toast } = useToast();
+  const [selectedEntry, setSelectedEntry] = useState<ScadentarEntry | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
@@ -296,7 +299,14 @@ const ScadentarTab = () => {
               </TableHeader>
               <TableBody>
                 {paginatedData.map((entry) => (
-                  <TableRow key={entry.id} className="hover:bg-muted/50">
+                  <TableRow 
+                    key={entry.id} 
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => {
+                      setSelectedEntry(entry);
+                      setDialogOpen(true);
+                    }}
+                  >
                     <TableCell>
                       <Badge variant={entry.tip_partener === "Client" ? "default" : "secondary"}>
                         {entry.tip_partener}
@@ -337,6 +347,77 @@ const ScadentarTab = () => {
           />
         </CardContent>
       </Card>
+      {/* Detail Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5" />
+              Detalii Scadență
+            </DialogTitle>
+          </DialogHeader>
+          
+          {selectedEntry && (
+            <div className="space-y-6">
+              {/* Partner Info */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Tip Partener</p>
+                  <Badge variant={selectedEntry.tip_partener === "Client" ? "default" : "secondary"}>
+                    {selectedEntry.tip_partener}
+                  </Badge>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Nume Partener</p>
+                  <p className="font-medium">{selectedEntry.nume_partener}</p>
+                </div>
+              </div>
+
+              {/* Document Info */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Tip Document</p>
+                  <p className="font-medium">{selectedEntry.tip_document}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Număr Document</p>
+                  <p className="font-medium">{selectedEntry.numar_document}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Dată Document</p>
+                  <p className="font-medium">{selectedEntry.data_document}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Dată Scadență</p>
+                  <p className="font-medium">{selectedEntry.data_scadenta}</p>
+                </div>
+              </div>
+
+              {/* Financial Info */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <p className="text-sm text-muted-foreground">Sumă Restantă</p>
+                  <p className="text-xl font-bold">{formatCurrency(selectedEntry.suma_restanta)}</p>
+                </div>
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <p className="text-sm text-muted-foreground">Zile Întârziere</p>
+                  <p className={`text-xl font-bold ${getZileIntarziereColor(selectedEntry.zile_intarziere)}`}>
+                    {selectedEntry.zile_intarziere} zile
+                  </p>
+                </div>
+              </div>
+
+              {/* Status */}
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">Status</p>
+                <Badge variant={selectedEntry.status === "La zi" ? "default" : "destructive"}>
+                  {selectedEntry.status}
+                </Badge>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

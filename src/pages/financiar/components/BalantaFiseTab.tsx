@@ -9,11 +9,13 @@ import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data
 import { Calculator, FileSpreadsheet, TrendingUp, TrendingDown, Plus, Download } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { useToast } from "@/hooks/use-toast";
+import { AddContBalantaDialog } from "./AddDialogs";
 
 const BalantaFiseTab = () => {
   const { toast } = useToast();
   const [selectedCont, setSelectedCont] = useState<ContBalanta | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
@@ -188,7 +190,7 @@ const BalantaFiseTab = () => {
               <Download className="h-4 w-4 mr-2" />
               Export CSV
             </Button>
-            <Button size="sm">
+            <Button size="sm" onClick={() => setAddDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Adaugă
             </Button>
@@ -446,6 +448,9 @@ const BalantaFiseTab = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Add Dialog */}
+      <AddContBalantaDialog open={addDialogOpen} onOpenChange={setAddDialogOpen} />
     </div>
   );
 };

@@ -227,7 +227,11 @@ const BancaCasaTab = () => {
                   <Download className="h-4 w-4 mr-2" />
                   Export CSV
                 </Button>
-                <Button size="sm">
+                <Button size="sm" onClick={() => {
+                  if (activeSubTab === "conturi") setAddContOpen(true);
+                  else if (activeSubTab === "miscari") setAddMiscareOpen(true);
+                  else if (activeSubTab === "casa") setAddCasaOpen(true);
+                }}>
                   <Plus className="h-4 w-4 mr-2" />
                   Adaugă
                 </Button>
@@ -594,6 +598,11 @@ const BancaCasaTab = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Add Dialogs */}
+      <AddContBancarDialog open={addContOpen} onOpenChange={setAddContOpen} />
+      <AddMiscareBancaDialog open={addMiscareOpen} onOpenChange={setAddMiscareOpen} />
+      <AddRegistruCasaDialog open={addCasaOpen} onOpenChange={setAddCasaOpen} />
     </div>
   );
 };

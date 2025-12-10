@@ -10,11 +10,13 @@ import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data
 import { BookOpen, FileText, Plus, Download } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { useToast } from "@/hooks/use-toast";
+import { AddNotaContabilaDialog } from "./AddDialogs";
 
 const JurnalTab = () => {
   const { toast } = useToast();
   const [selectedNota, setSelectedNota] = useState<NotaContabila | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
@@ -189,7 +191,7 @@ const JurnalTab = () => {
               <Download className="h-4 w-4 mr-2" />
               Export CSV
             </Button>
-            <Button size="sm">
+            <Button size="sm" onClick={() => setAddDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Adaugă
             </Button>
@@ -388,6 +390,9 @@ const JurnalTab = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Add Dialog */}
+      <AddNotaContabilaDialog open={addDialogOpen} onOpenChange={setAddDialogOpen} />
     </div>
   );
 };
