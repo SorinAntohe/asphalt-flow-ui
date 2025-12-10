@@ -1857,65 +1857,61 @@ const Consumuri = () => {
                 </div>
               </div>
 
-              {/* Form fields */}
-              <div className="space-y-3">
-                <div className="flex gap-3">
-                  <div className="flex-1 space-y-1.5">
-                    <Label className="text-xs">Index Vechi</Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={contorCurentFormData.index_vechi || ''}
-                      disabled
-                      className="bg-muted h-9"
-                    />
-                  </div>
-                  <div className="flex-1 space-y-1.5">
-                    <Label className="text-xs">Index Nou</Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      className="h-9"
-                      value={contorCurentFormData.index_nou || ''}
-                      onChange={(e) => {
-                        const indexNou = Number(e.target.value);
-                        const indexVechi = contorCurentFormData.index_vechi || 0;
-                        const consum = (indexNou - indexVechi) * 200;
-                        setContorCurentFormData({ 
-                          ...contorCurentFormData, 
-                          index_nou: indexNou,
-                          consum_kw: consum
-                        });
-                      }}
-                    />
-                  </div>
+              {/* Form fields in 2 columns */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Index Vechi</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={contorCurentFormData.index_vechi || ''}
+                    disabled
+                    className="bg-muted h-9"
+                  />
                 </div>
-                <div className="flex gap-3">
-                  <div className="flex-1 space-y-1.5">
-                    <Label className="text-xs">Consum (kW)</Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={contorCurentFormData.consum_kw || ''}
-                      disabled
-                      className="bg-muted h-9"
-                    />
-                  </div>
-                  <div className="flex-1 space-y-1.5">
-                    <Label className="text-xs">Preț unitar (RON/kW)</Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      className="h-9"
-                      value={contorCurentFormData.pret || ''}
-                      onChange={(e) => {
-                        setContorCurentFormData({ 
-                          ...contorCurentFormData, 
-                          pret: Number(e.target.value)
-                        });
-                      }}
-                    />
-                  </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Index Nou</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    className="h-9"
+                    value={contorCurentFormData.index_nou || ''}
+                    onChange={(e) => {
+                      const indexNou = Number(e.target.value);
+                      const indexVechi = contorCurentFormData.index_vechi || 0;
+                      const consum = (indexNou - indexVechi) * 200;
+                      setContorCurentFormData({ 
+                        ...contorCurentFormData, 
+                        index_nou: indexNou,
+                        consum_kw: consum
+                      });
+                    }}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Consum (kW)</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={contorCurentFormData.consum_kw || ''}
+                    disabled
+                    className="bg-muted h-9"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Preț unitar (RON/kW)</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    className="h-9"
+                    value={contorCurentFormData.pret || ''}
+                    onChange={(e) => {
+                      setContorCurentFormData({ 
+                        ...contorCurentFormData, 
+                        pret: Number(e.target.value)
+                      });
+                    }}
+                  />
                 </div>
               </div>
             </div>
@@ -2179,7 +2175,7 @@ const Consumuri = () => {
               )}
 
               {/* Form fields in 2 columns */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs">Index Vechi Tur</Label>
                   <Input
