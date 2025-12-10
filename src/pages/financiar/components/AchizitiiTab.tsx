@@ -116,43 +116,36 @@ const AchizitiiTab = () => {
   const paginatedReceptii = filteredReceptii.slice((receptiiPage - 1) * receptiiPerPage, receptiiPage * receptiiPerPage);
 
   const handleExport = (type: string) => {
-    let data: Record<string, unknown>[] = [];
-    let filename = "";
-    
     switch (type) {
       case "facturi":
-        data = filteredFacturi.map(f => ({
-          "Nr Factură": f.nr_factura,
-          "Dată": f.data,
-          "Furnizor": f.furnizor,
-          "Total fără TVA": f.total_fara_tva,
-          "TVA": f.tva,
-          "Total": f.total,
-          "Dată scadență": f.data_scadenta,
-          "Sumă plătită": f.suma_platita,
-          "Sumă restantă": f.suma_restanta,
-          "Status": f.status,
-        }));
-        filename = "facturi_furnizori";
+        exportToCSV(filteredFacturi, "facturi_furnizori", [
+          { key: "nr_factura", label: "Nr Factură" },
+          { key: "data", label: "Dată" },
+          { key: "furnizor", label: "Furnizor" },
+          { key: "total_fara_tva", label: "Total fără TVA" },
+          { key: "tva", label: "TVA" },
+          { key: "total", label: "Total" },
+          { key: "data_scadenta", label: "Dată scadență" },
+          { key: "suma_platita", label: "Sumă plătită" },
+          { key: "suma_restanta", label: "Sumă restantă" },
+          { key: "status", label: "Status" },
+        ]);
         break;
       case "receptii":
-        data = filteredReceptii.map(r => ({
-          "Dată": r.data,
-          "Cod": r.cod,
-          "Furnizor": r.furnizor,
-          "Material": r.material,
-          "Cantitate recepționată": r.cantitate_receptionata,
-          "Preț material total": r.pret_material_total,
-          "Preț transport total": r.pret_transport_total,
-          "Preț total": r.pret_total,
-          "Nr Factură": r.nr_factura,
-        }));
-        filename = "receptii_materiale";
+        exportToCSV(filteredReceptii, "receptii_materiale", [
+          { key: "data", label: "Dată" },
+          { key: "cod", label: "Cod" },
+          { key: "furnizor", label: "Furnizor" },
+          { key: "material", label: "Material" },
+          { key: "cantitate_receptionata", label: "Cantitate recepționată" },
+          { key: "pret_material_total", label: "Preț material total" },
+          { key: "pret_transport_total", label: "Preț transport total" },
+          { key: "pret_total", label: "Preț total" },
+          { key: "nr_factura", label: "Nr Factură" },
+        ]);
         break;
     }
-    
-    exportToCSV(data, filename);
-    toast({ title: "Export realizat", description: `Fișierul ${filename}.csv a fost descărcat.` });
+    toast({ title: "Export realizat", description: `Export CSV realizat cu succes.` });
   };
 
   return (

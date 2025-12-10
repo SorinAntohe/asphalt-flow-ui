@@ -116,44 +116,36 @@ const BancaCasaTab = () => {
   const paginatedCasa = filteredCasa.slice((casaPage - 1) * casaPerPage, casaPage * casaPerPage);
 
   const handleExport = (type: string) => {
-    let data: Record<string, unknown>[] = [];
-    let filename = "";
-    
     switch (type) {
       case "conturi":
-        data = filteredConturi.map(c => ({
-          "Bancă": c.banca,
-          "IBAN": c.iban,
-          "Monedă": c.moneda,
-          "Sold curent": c.sold_curent,
-        }));
-        filename = "conturi_bancare";
+        exportToCSV(filteredConturi, "conturi_bancare", [
+          { key: "banca", label: "Bancă" },
+          { key: "iban", label: "IBAN" },
+          { key: "moneda", label: "Monedă" },
+          { key: "sold_curent", label: "Sold curent" },
+        ]);
         break;
       case "miscari":
-        data = filteredMiscari.map(m => ({
-          "Dată": m.data,
-          "Cont bancar": m.cont_bancar,
-          "Tip": m.tip,
-          "Partener": m.partener,
-          "Sumă": m.suma,
-          "Document asociat": m.document_asociat,
-        }));
-        filename = "miscari_banca";
+        exportToCSV(filteredMiscari, "miscari_banca", [
+          { key: "data", label: "Dată" },
+          { key: "cont_bancar", label: "Cont bancar" },
+          { key: "tip", label: "Tip" },
+          { key: "partener", label: "Partener" },
+          { key: "suma", label: "Sumă" },
+          { key: "document_asociat", label: "Document asociat" },
+        ]);
         break;
       case "casa":
-        data = filteredCasa.map(c => ({
-          "Dată": c.data,
-          "Tip": c.tip,
-          "Partener": c.partener,
-          "Sumă": c.suma,
-          "Document asociat": c.document_asociat,
-        }));
-        filename = "registru_casa";
+        exportToCSV(filteredCasa, "registru_casa", [
+          { key: "data", label: "Dată" },
+          { key: "tip", label: "Tip" },
+          { key: "partener", label: "Partener" },
+          { key: "suma", label: "Sumă" },
+          { key: "document_asociat", label: "Document asociat" },
+        ]);
         break;
     }
-    
-    exportToCSV(data, filename);
-    toast({ title: "Export realizat", description: `Fișierul ${filename}.csv a fost descărcat.` });
+    toast({ title: "Export realizat", description: `Export CSV realizat cu succes.` });
   };
 
   return (

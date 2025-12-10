@@ -131,55 +131,47 @@ const VanzariTab = () => {
   const paginatedIncasari = filteredIncasari.slice((incasariPage - 1) * incasariPerPage, incasariPage * incasariPerPage);
 
   const handleExport = (type: string) => {
-    let data: Record<string, unknown>[] = [];
-    let filename = "";
-    
     switch (type) {
       case "facturi":
-        data = filteredFacturi.map(f => ({
-          "Nr Factură": f.nr_factura,
-          "Dată": f.data,
-          "Client": f.client,
-          "Total fără TVA": f.total_fara_tva,
-          "TVA": f.tva,
-          "Total": f.total,
-          "Dată scadență": f.data_scadenta,
-          "Sumă încasată": f.suma_incasata,
-          "Sumă restantă": f.suma_restanta,
-          "Status": f.status,
-        }));
-        filename = "facturi_clienti";
+        exportToCSV(filteredFacturi, "facturi_clienti", [
+          { key: "nr_factura", label: "Nr Factură" },
+          { key: "data", label: "Dată" },
+          { key: "client", label: "Client" },
+          { key: "total_fara_tva", label: "Total fără TVA" },
+          { key: "tva", label: "TVA" },
+          { key: "total", label: "Total" },
+          { key: "data_scadenta", label: "Dată scadență" },
+          { key: "suma_incasata", label: "Sumă încasată" },
+          { key: "suma_restanta", label: "Sumă restantă" },
+          { key: "status", label: "Status" },
+        ]);
         break;
       case "livrari":
-        data = filteredLivrari.map(l => ({
-          "Dată": l.data,
-          "Cod": l.cod,
-          "Nr Aviz": l.nr_aviz,
-          "Client": l.client,
-          "Produs": l.produs,
-          "Cantitate": l.cantitate,
-          "Valoare produs": l.valoare_produs,
-          "Valoare transport": l.valoare_transport,
-          "Total": l.total,
-          "Status facturare": l.status_facturare,
-        }));
-        filename = "livrari_clienti";
+        exportToCSV(filteredLivrari, "livrari_clienti", [
+          { key: "data", label: "Dată" },
+          { key: "cod", label: "Cod" },
+          { key: "nr_aviz", label: "Nr Aviz" },
+          { key: "client", label: "Client" },
+          { key: "produs", label: "Produs" },
+          { key: "cantitate", label: "Cantitate" },
+          { key: "valoare_produs", label: "Valoare produs" },
+          { key: "valoare_transport", label: "Valoare transport" },
+          { key: "total", label: "Total" },
+          { key: "status_facturare", label: "Status facturare" },
+        ]);
         break;
       case "incasari":
-        data = filteredIncasari.map(i => ({
-          "Dată": i.data,
-          "Client": i.client,
-          "Tip": i.tip,
-          "Sumă totală": i.suma_totala,
-          "Sumă alocată": i.suma_alocata,
-          "Sumă nealocată": i.suma_nealocata,
-        }));
-        filename = "incasari_clienti";
+        exportToCSV(filteredIncasari, "incasari_clienti", [
+          { key: "data", label: "Dată" },
+          { key: "client", label: "Client" },
+          { key: "tip", label: "Tip" },
+          { key: "suma_totala", label: "Sumă totală" },
+          { key: "suma_alocata", label: "Sumă alocată" },
+          { key: "suma_nealocata", label: "Sumă nealocată" },
+        ]);
         break;
     }
-    
-    exportToCSV(data, filename);
-    toast({ title: "Export realizat", description: `Fișierul ${filename}.csv a fost descărcat.` });
+    toast({ title: "Export realizat", description: `Export CSV realizat cu succes.` });
   };
 
   return (
