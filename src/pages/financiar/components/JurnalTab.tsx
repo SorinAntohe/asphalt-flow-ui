@@ -316,74 +316,80 @@ const JurnalTab = () => {
 
       {/* Detail Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5" />
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <BookOpen className="h-4 w-4" />
               Notă Contabilă {selectedNota?.nrNota}
             </DialogTitle>
           </DialogHeader>
           
           {selectedNota && (
-            <div className="space-y-6">
+            <div className="space-y-4">
               {/* Note Header Info */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-sm text-muted-foreground">Dată</p>
-                  <p className="font-medium">{formatDate(selectedNota.data)}</p>
+                  <p className="text-xs text-muted-foreground">Dată</p>
+                  <p className="font-medium text-sm">{formatDate(selectedNota.data)}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Tip Jurnal</p>
+                  <p className="text-xs text-muted-foreground">Tip Jurnal</p>
                   <Badge className={getTipJurnalColor(selectedNota.tipJurnal)} variant="secondary">
                     {selectedNota.tipJurnal}
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Sursă</p>
+                  <p className="text-xs text-muted-foreground">Sursă</p>
                   <Badge className={getSursaColor(selectedNota.sursa)} variant="secondary">
                     {selectedNota.sursa}
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Explicație</p>
-                  <p className="font-medium">{selectedNota.explicatie}</p>
+                  <p className="text-xs text-muted-foreground">Explicație</p>
+                  <p className="font-medium text-sm break-words">{selectedNota.explicatie}</p>
                 </div>
               </div>
 
-              {/* Lines Table */}
-              <div>
-                <h4 className="font-medium mb-3">Linii Notă Contabilă</h4>
-                <div className="overflow-x-auto border rounded-lg">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Cont</TableHead>
-                        <TableHead>Denumire Cont</TableHead>
-                        <TableHead className="text-right">Debit</TableHead>
-                        <TableHead className="text-right">Credit</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {getLiniiForNota(selectedNota.id).map((linie) => (
-                        <TableRow key={linie.id}>
-                          <TableCell className="font-mono">{linie.cont}</TableCell>
-                          <TableCell>{linie.denumireCont}</TableCell>
-                          <TableCell className="text-right">
+              {/* Totals Summary */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-green-50 dark:bg-green-950 rounded-lg">
+                  <p className="text-xs text-muted-foreground">Total Debit</p>
+                  <p className="text-lg font-bold text-green-600">{formatCurrency(selectedNota.totalDebit)}</p>
+                </div>
+                <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                  <p className="text-xs text-muted-foreground">Total Credit</p>
+                  <p className="text-lg font-bold text-blue-600">{formatCurrency(selectedNota.totalCredit)}</p>
+                </div>
+              </div>
+
+              {/* Lines as cards */}
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Linii Notă Contabilă</p>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {getLiniiForNota(selectedNota.id).map((linie) => (
+                    <div key={linie.id} className="p-3 border rounded-lg">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="font-mono font-medium text-sm">{linie.cont}</p>
+                          <p className="text-xs text-muted-foreground">{linie.denumireCont}</p>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                          <p className="text-muted-foreground">Debit</p>
+                          <p className="font-medium text-green-600">
                             {linie.debit > 0 ? formatCurrency(linie.debit) : '-'}
-                          </TableCell>
-                          <TableCell className="text-right">
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Credit</p>
+                          <p className="font-medium text-blue-600">
                             {linie.credit > 0 ? formatCurrency(linie.credit) : '-'}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                      {/* Totals Row */}
-                      <TableRow className="bg-muted/50 font-bold">
-                        <TableCell colSpan={2}>Total</TableCell>
-                        <TableCell className="text-right">{formatCurrency(selectedNota.totalDebit)}</TableCell>
-                        <TableCell className="text-right">{formatCurrency(selectedNota.totalCredit)}</TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
