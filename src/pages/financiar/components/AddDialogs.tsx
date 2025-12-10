@@ -1,10 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FilterableSelect } from "@/components/ui/filterable-select";
 import { useToast } from "@/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/api";
+
+interface ListeClient {
+  id: number;
+  denumire: string;
+  cui: string;
+  sediu: string;
+  nr_reg?: string;
+}
 
 // Add Factura Client Dialog
 interface AddFacturaClientDialogProps {
@@ -575,16 +585,45 @@ interface AddClientDialogProps {
 
 export const AddClientDialog = ({ open, onOpenChange }: AddClientDialogProps) => {
   const { toast } = useToast();
+  const [clientiListe, setClientiListe] = useState<ListeClient[]>([]);
   const [formData, setFormData] = useState({
     nume: "",
     cui: "",
     adresa: "",
+    sold_curent: "",
+    zile_intarziere_max: "",
   });
+
+  useEffect(() => {
+    if (open) {
+      fetch(`${API_BASE_URL}/liste/returneaza/clienti`)
+        .then(res => res.json())
+        .then(data => setClientiListe(data || []))
+        .catch(() => setClientiListe([]));
+    }
+  }, [open]);
+
+  const handleClientSelect = (clientNume: string) => {
+    const selectedClient = clientiListe.find(c => c.denumire === clientNume);
+    if (selectedClient) {
+      setFormData(prev => ({
+        ...prev,
+        nume: selectedClient.denumire,
+        cui: selectedClient.cui || "",
+        adresa: selectedClient.sediu || "",
+      }));
+    } else {
+      setFormData(prev => ({ ...prev, nume: clientNume }));
+    }
+  };
 
   const handleSubmit = () => {
     toast({ title: "Client adăugat", description: "Clientul a fost adăugat cu succes." });
     onOpenChange(false);
+    setFormData({ nume: "", cui: "", adresa: "", sold_curent: "", zile_intarziere_max: "" });
   };
+
+  const clientOptions = clientiListe.map(c => ({ value: c.denumire, label: c.denumire }));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -594,16 +633,43 @@ export const AddClientDialog = ({ open, onOpenChange }: AddClientDialogProps) =>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label>Nume</Label>
-            <Input value={formData.nume} onChange={(e) => setFormData(prev => ({ ...prev, nume: e.target.value }))} placeholder="Nume client" />
+            <Label>Nume Client</Label>
+            <FilterableSelect
+              options={clientOptions}
+              value={formData.nume}
+              onValueChange={handleClientSelect}
+              placeholder="Selectează client..."
+            />
           </div>
-          <div className="space-y-2">
-            <Label>CUI</Label>
-            <Input value={formData.cui} onChange={(e) => setFormData(prev => ({ ...prev, cui: e.target.value }))} placeholder="RO12345678" />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>CUI</Label>
+              <Input value={formData.cui} readOnly className="bg-muted" placeholder="Autocompletat" />
+            </div>
+            <div className="space-y-2">
+              <Label>Adresă</Label>
+              <Input value={formData.adresa} readOnly className="bg-muted" placeholder="Autocompletat" />
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label>Adresă</Label>
-            <Input value={formData.adresa} onChange={(e) => setFormData(prev => ({ ...prev, adresa: e.target.value }))} placeholder="Adresa completă" />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Sold Curent (RON)</Label>
+              <Input 
+                type="number" 
+                value={formData.sold_curent} 
+                onChange={(e) => setFormData(prev => ({ ...prev, sold_curent: e.target.value }))} 
+                placeholder="0.00" 
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Zile Întârziere Max</Label>
+              <Input 
+                type="number" 
+                value={formData.zile_intarziere_max} 
+                onChange={(e) => setFormData(prev => ({ ...prev, zile_intarziere_max: e.target.value }))} 
+                placeholder="0" 
+              />
+            </div>
           </div>
         </div>
         <DialogFooter>
@@ -621,18 +687,55 @@ interface AddFurnizorDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+interface ListeFurnizor {
+  id: number;
+  denumire: string;
+  cui: string;
+  sediu: string;
+  nr_reg?: string;
+}
+
 export const AddFurnizorDialog = ({ open, onOpenChange }: AddFurnizorDialogProps) => {
   const { toast } = useToast();
+  const [furnizoriListe, setFurnizoriListe] = useState<ListeFurnizor[]>([]);
   const [formData, setFormData] = useState({
     nume: "",
     cui: "",
     adresa: "",
+    sold_curent: "",
+    zile_intarziere_max: "",
   });
+
+  useEffect(() => {
+    if (open) {
+      fetch(`${API_BASE_URL}/liste/returneaza/furnizori`)
+        .then(res => res.json())
+        .then(data => setFurnizoriListe(data || []))
+        .catch(() => setFurnizoriListe([]));
+    }
+  }, [open]);
+
+  const handleFurnizorSelect = (furnizorNume: string) => {
+    const selectedFurnizor = furnizoriListe.find(f => f.denumire === furnizorNume);
+    if (selectedFurnizor) {
+      setFormData(prev => ({
+        ...prev,
+        nume: selectedFurnizor.denumire,
+        cui: selectedFurnizor.cui || "",
+        adresa: selectedFurnizor.sediu || "",
+      }));
+    } else {
+      setFormData(prev => ({ ...prev, nume: furnizorNume }));
+    }
+  };
 
   const handleSubmit = () => {
     toast({ title: "Furnizor adăugat", description: "Furnizorul a fost adăugat cu succes." });
     onOpenChange(false);
+    setFormData({ nume: "", cui: "", adresa: "", sold_curent: "", zile_intarziere_max: "" });
   };
+
+  const furnizorOptions = furnizoriListe.map(f => ({ value: f.denumire, label: f.denumire }));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -642,16 +745,43 @@ export const AddFurnizorDialog = ({ open, onOpenChange }: AddFurnizorDialogProps
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label>Nume</Label>
-            <Input value={formData.nume} onChange={(e) => setFormData(prev => ({ ...prev, nume: e.target.value }))} placeholder="Nume furnizor" />
+            <Label>Nume Furnizor</Label>
+            <FilterableSelect
+              options={furnizorOptions}
+              value={formData.nume}
+              onValueChange={handleFurnizorSelect}
+              placeholder="Selectează furnizor..."
+            />
           </div>
-          <div className="space-y-2">
-            <Label>CUI</Label>
-            <Input value={formData.cui} onChange={(e) => setFormData(prev => ({ ...prev, cui: e.target.value }))} placeholder="RO12345678" />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>CUI</Label>
+              <Input value={formData.cui} readOnly className="bg-muted" placeholder="Autocompletat" />
+            </div>
+            <div className="space-y-2">
+              <Label>Adresă</Label>
+              <Input value={formData.adresa} readOnly className="bg-muted" placeholder="Autocompletat" />
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label>Adresă</Label>
-            <Input value={formData.adresa} onChange={(e) => setFormData(prev => ({ ...prev, adresa: e.target.value }))} placeholder="Adresa completă" />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Sold Curent (RON)</Label>
+              <Input 
+                type="number" 
+                value={formData.sold_curent} 
+                onChange={(e) => setFormData(prev => ({ ...prev, sold_curent: e.target.value }))} 
+                placeholder="0.00" 
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Zile Întârziere Max</Label>
+              <Input 
+                type="number" 
+                value={formData.zile_intarziere_max} 
+                onChange={(e) => setFormData(prev => ({ ...prev, zile_intarziere_max: e.target.value }))} 
+                placeholder="0" 
+              />
+            </div>
           </div>
         </div>
         <DialogFooter>
