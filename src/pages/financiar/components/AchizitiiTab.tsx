@@ -11,6 +11,7 @@ import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data
 import { FileText, Package, Wallet, TrendingDown, Plus, Download } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { useToast } from "@/hooks/use-toast";
+import { AddFacturaFurnizorDialog, AddReceptieDialog } from "./AddDialogs";
 
 const AchizitiiTab = () => {
   const { toast } = useToast();
@@ -20,6 +21,10 @@ const AchizitiiTab = () => {
   const [selectedFactura, setSelectedFactura] = useState<FacturaFurnizor | null>(null);
   const [selectedReceptie, setSelectedReceptie] = useState<ReceptieMaterial | null>(null);
   
+  // Add dialog states
+  const [addFacturaOpen, setAddFacturaOpen] = useState(false);
+  const [addReceptieOpen, setAddReceptieOpen] = useState(false);
+
   // Pagination states
   const [facturiPage, setFacturiPage] = useState(1);
   const [facturiPerPage, setFacturiPerPage] = useState(10);
@@ -220,7 +225,10 @@ const AchizitiiTab = () => {
                   <Download className="h-4 w-4 mr-2" />
                   Export CSV
                 </Button>
-                <Button size="sm">
+                <Button size="sm" onClick={() => {
+                  if (activeSubTab === "facturi") setAddFacturaOpen(true);
+                  else setAddReceptieOpen(true);
+                }}>
                   <Plus className="h-4 w-4 mr-2" />
                   Adaugă
                 </Button>
@@ -525,6 +533,10 @@ const AchizitiiTab = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Add Dialogs */}
+      <AddFacturaFurnizorDialog open={addFacturaOpen} onOpenChange={setAddFacturaOpen} />
+      <AddReceptieDialog open={addReceptieOpen} onOpenChange={setAddReceptieOpen} />
     </div>
   );
 };
