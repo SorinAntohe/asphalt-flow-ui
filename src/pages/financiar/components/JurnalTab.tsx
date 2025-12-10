@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { noteContabile, liniiNoteContabile } from "../contabilitate-mockData";
 import { NotaContabila, LinieNotaContabila } from "../contabilitate-types";
@@ -22,7 +23,7 @@ const JurnalTab = () => {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [editFormData, setEditFormData] = useState({ explicatie: "" });
+  const [editFormData, setEditFormData] = useState({ tipJurnal: "", explicatie: "", totalDebit: "", totalCredit: "" });
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
@@ -348,7 +349,12 @@ const JurnalTab = () => {
                   size="sm" 
                   className="flex-1"
                   onClick={() => {
-                    setEditFormData({ explicatie: selectedNota.explicatie });
+                    setEditFormData({
+                      tipJurnal: selectedNota.tipJurnal,
+                      explicatie: selectedNota.explicatie,
+                      totalDebit: String(selectedNota.totalDebit),
+                      totalCredit: String(selectedNota.totalCredit),
+                    });
                     setEditDialogOpen(true);
                   }}
                 >
@@ -371,17 +377,48 @@ const JurnalTab = () => {
 
       {/* Edit Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Editează Notă Contabilă</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Tip Jurnal</Label>
+              <Select value={editFormData.tipJurnal} onValueChange={(val) => setEditFormData(prev => ({ ...prev, tipJurnal: val }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Vânzări">Vânzări</SelectItem>
+                  <SelectItem value="Cumpărări">Cumpărări</SelectItem>
+                  <SelectItem value="Bancă">Bancă</SelectItem>
+                  <SelectItem value="Casă">Casă</SelectItem>
+                  <SelectItem value="Diverse">Diverse</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <div className="space-y-2">
               <Label>Explicație</Label>
               <Input 
                 value={editFormData.explicatie} 
                 onChange={(e) => setEditFormData(prev => ({ ...prev, explicatie: e.target.value }))} 
               />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Total Debit (RON)</Label>
+                <Input 
+                  type="number" 
+                  value={editFormData.totalDebit} 
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, totalDebit: e.target.value }))} 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Total Credit (RON)</Label>
+                <Input 
+                  type="number" 
+                  value={editFormData.totalCredit} 
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, totalCredit: e.target.value }))} 
+                />
+              </div>
             </div>
           </div>
           <DialogFooter>

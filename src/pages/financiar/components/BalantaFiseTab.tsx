@@ -21,7 +21,7 @@ const BalantaFiseTab = () => {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [editFormData, setEditFormData] = useState({ denumire: "" });
+  const [editFormData, setEditFormData] = useState({ cont: "", denumire: "", soldInitialDebit: "", soldInitialCredit: "" });
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
@@ -447,7 +447,12 @@ const BalantaFiseTab = () => {
                   size="sm" 
                   className="flex-1"
                   onClick={() => {
-                    setEditFormData({ denumire: selectedCont.denumire });
+                    setEditFormData({
+                      cont: selectedCont.cont,
+                      denumire: selectedCont.denumire,
+                      soldInitialDebit: String(selectedCont.soldInitialDebit),
+                      soldInitialCredit: String(selectedCont.soldInitialCredit),
+                    });
                     setEditDialogOpen(true);
                   }}
                 >
@@ -470,17 +475,44 @@ const BalantaFiseTab = () => {
 
       {/* Edit Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Editează Cont</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Denumire Cont</Label>
-              <Input 
-                value={editFormData.denumire} 
-                onChange={(e) => setEditFormData(prev => ({ ...prev, denumire: e.target.value }))} 
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Simbol Cont</Label>
+                <Input 
+                  value={editFormData.cont} 
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, cont: e.target.value }))} 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Denumire Cont</Label>
+                <Input 
+                  value={editFormData.denumire} 
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, denumire: e.target.value }))} 
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Sold Inițial Debit</Label>
+                <Input 
+                  type="number" 
+                  value={editFormData.soldInitialDebit} 
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, soldInitialDebit: e.target.value }))} 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Sold Inițial Credit</Label>
+                <Input 
+                  type="number" 
+                  value={editFormData.soldInitialCredit} 
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, soldInitialCredit: e.target.value }))} 
+                />
+              </div>
             </div>
           </div>
           <DialogFooter>
