@@ -46,9 +46,9 @@ const comercialItems = [
   { title: "Calculator Preț", url: "/comercial/calculator", icon: Calculator },
 ];
 
-// Financiar module items
-const financiarItems = [
-  { title: "În curând", url: "/financiar", icon: Wallet },
+// Contabilitate module items
+const contabilitateItems = [
+  { title: "În curând", url: "/contabilitate", icon: Wallet },
 ];
 
 // Productie module items
@@ -94,14 +94,14 @@ export function AppSidebar() {
   const isGestiuneActive = gestiuneItems.some((item) => isActive(item.url));
   const isResurseUmaneActive = resurseUmaneItems.some((item) => isActive(item.url));
   const isComercialActive = comercialItems.some((item) => isActive(item.url));
-  const isFinanciarActive = financiarItems.some((item) => isActive(item.url));
+  const isContabilitateActive = contabilitateItems.some((item) => isActive(item.url));
   const isProductieActive = productieItems.some((item) => isActive(item.url));
   const isMentenantaActive = mentenantaItems.some((item) => isActive(item.url));
   
   const [gestiuneOpen, setGestiuneOpen] = useState(isGestiuneActive);
   const [resurseUmaneOpen, setResurseUmaneOpen] = useState(isResurseUmaneActive);
   const [comercialOpen, setComercialOpen] = useState(isComercialActive);
-  const [financiarOpen, setFinanciarOpen] = useState(isFinanciarActive);
+  const [contabilitateOpen, setContabilitateOpen] = useState(isContabilitateActive);
   const [productieOpen, setProductieOpen] = useState(isProductieActive);
   const [mentenantaOpen, setMentenantaOpen] = useState(isMentenantaActive);
 
@@ -477,8 +477,8 @@ export function AppSidebar() {
                 </CollapsibleContent>
               </Collapsible>
 
-              {/* Financiar Dropdown */}
-              <Collapsible open={financiarOpen} onOpenChange={setFinanciarOpen}>
+              {/* Contabilitate Dropdown */}
+              <Collapsible open={contabilitateOpen} onOpenChange={setContabilitateOpen}>
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton 
@@ -486,18 +486,18 @@ export function AppSidebar() {
                         isOpen ? 'gap-3 px-4 py-2.5' : 'justify-center py-2.5 w-full'
                       }`}
                       style={{
-                        background: financiarOpen ? 'hsl(var(--sidebar-accent))' : 'transparent',
+                        background: contabilitateOpen ? 'hsl(var(--sidebar-accent))' : 'transparent',
                       }}
-                      title={!isOpen ? 'Financiar' : undefined}
+                      title={!isOpen ? 'Contabilitate' : undefined}
                     >
                       <Wallet className="w-5 h-5 flex-shrink-0" />
                       {isOpen && (
                         <>
-                          <span className="flex-1">Financiar</span>
+                          <span className="flex-1">Contabilitate</span>
                           <ChevronDown 
                             className="w-4 h-4 transition-transform duration-300" 
                             style={{
-                              transform: financiarOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+                              transform: contabilitateOpen ? 'rotate(180deg)' : 'rotate(0deg)'
                             }}
                           />
                         </>
@@ -509,21 +509,21 @@ export function AppSidebar() {
                   className="overflow-hidden rounded-md"
                   style={{
                     transition: 'all 0.3s ease',
-                    opacity: financiarOpen ? 1 : 0,
-                    visibility: financiarOpen ? 'visible' : 'hidden',
-                    transform: financiarOpen ? 'translateY(0)' : 'translateY(-10px)',
-                    background: financiarOpen ? 'hsl(var(--sidebar-accent) / 0.5)' : 'transparent',
-                    padding: financiarOpen ? (isOpen ? '6px' : '4px 0') : '0',
-                    marginTop: financiarOpen ? '4px' : '0',
+                    opacity: contabilitateOpen ? 1 : 0,
+                    visibility: contabilitateOpen ? 'visible' : 'hidden',
+                    transform: contabilitateOpen ? 'translateY(0)' : 'translateY(-10px)',
+                    background: contabilitateOpen ? 'hsl(var(--sidebar-accent) / 0.5)' : 'transparent',
+                    padding: contabilitateOpen ? (isOpen ? '6px' : '4px 0') : '0',
+                    marginTop: contabilitateOpen ? '4px' : '0',
                     marginLeft: '0',
                     marginRight: '0',
                     width: '100%',
                     maxWidth: 'none',
-                    boxShadow: financiarOpen ? 'inset 0 2px 4px rgba(0, 0, 0, 0.1)' : 'none',
+                    boxShadow: contabilitateOpen ? 'inset 0 2px 4px rgba(0, 0, 0, 0.1)' : 'none',
                   }}
                 >
                   <SidebarMenu className={isOpen ? "space-y-0.5" : "space-y-1"} style={{ width: '100%' }}>
-                    {financiarItems.map((item, index) => (
+                    {contabilitateItems.map((item, index) => (
                       <SidebarMenuItem 
                         key={item.title}
                         style={{
