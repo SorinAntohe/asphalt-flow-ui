@@ -35,7 +35,6 @@ const JurnalTab = () => {
     nrNota: "",
     tipJurnal: "",
     explicatie: "",
-    sursa: "",
     totalDebit: "",
     totalCredit: "",
   });
@@ -58,11 +57,6 @@ const JurnalTab = () => {
     }
   };
 
-  const getSursaColor = (sursa: string) => {
-    return sursa === 'Automat' 
-      ? 'bg-primary/10 text-primary' 
-      : 'bg-secondary text-secondary-foreground';
-  };
 
   const handleRowClick = (nota: NotaContabila) => {
     setSelectedNota(nota);
@@ -84,8 +78,6 @@ const JurnalTab = () => {
 
   // Summary calculations
   const totalNote = noteContabile.length;
-  const noteAutomate = noteContabile.filter(n => n.sursa === 'Automat').length;
-  const noteManuale = noteContabile.filter(n => n.sursa === 'Manual').length;
 
   // Filter and sort data
   const filteredAndSortedData = useMemo(() => {
@@ -131,48 +123,20 @@ const JurnalTab = () => {
 
   return (
     <div className="space-y-6">
-      {/* Summary Cards - TOP */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <BookOpen className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Total Note</p>
-                <p className="text-2xl font-bold">{totalNote}</p>
-              </div>
+      {/* Summary Card - TOP */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <BookOpen className="h-5 w-5 text-primary" />
             </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                <FileText className="h-5 w-5 text-green-600 dark:text-green-400" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Note Automate</p>
-                <p className="text-2xl font-bold">{noteAutomate}</p>
-              </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Total Note</p>
+              <p className="text-2xl font-bold">{totalNote}</p>
             </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-                <FileText className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Note Manuale</p>
-                <p className="text-2xl font-bold">{noteManuale}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Journal Table */}
       <Card>
@@ -187,7 +151,6 @@ const JurnalTab = () => {
                   { key: "nrNota", label: "Nr. Notă" },
                   { key: "tipJurnal", label: "Tip Jurnal" },
                   { key: "explicatie", label: "Explicație" },
-                  { key: "sursa", label: "Sursă" },
                   { key: "totalDebit", label: "Total Debit" },
                   { key: "totalCredit", label: "Total Credit" },
                 ]);
@@ -246,16 +209,6 @@ const JurnalTab = () => {
                       onFilterChange={(val) => handleFilter("explicatie", val)}
                     />
                   </TableHead>
-                  <TableHead>
-                    <DataTableColumnHeader
-                      title="Sursă"
-                      sortKey="sursa"
-                      currentSort={currentSort}
-                      onSort={handleSort}
-                      filterValue={filters.sursa}
-                      onFilterChange={(val) => handleFilter("sursa", val)}
-                    />
-                  </TableHead>
                   <TableHead className="text-right">
                     <DataTableColumnHeader
                       title="Total Debit"
@@ -293,11 +246,6 @@ const JurnalTab = () => {
                       </Badge>
                     </TableCell>
                     <TableCell className="max-w-[200px] truncate">{nota.explicatie}</TableCell>
-                    <TableCell>
-                      <Badge className={getSursaColor(nota.sursa)} variant="secondary">
-                        {nota.sursa}
-                      </Badge>
-                    </TableCell>
                     <TableCell className="text-right font-medium">{formatCurrency(nota.totalDebit)}</TableCell>
                     <TableCell className="text-right font-medium">{formatCurrency(nota.totalCredit)}</TableCell>
                   </TableRow>
@@ -342,12 +290,6 @@ const JurnalTab = () => {
                   <p className="text-xs text-muted-foreground">Tip Jurnal</p>
                   <Badge className={getTipJurnalColor(selectedNota.tipJurnal)} variant="secondary">
                     {selectedNota.tipJurnal}
-                  </Badge>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Sursă</p>
-                  <Badge className={getSursaColor(selectedNota.sursa)} variant="secondary">
-                    {selectedNota.sursa}
                   </Badge>
                 </div>
                 <div>
