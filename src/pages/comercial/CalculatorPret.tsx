@@ -141,6 +141,9 @@ const CalculatorPret = () => {
     "Agregat 8/16": 18,
   };
 
+  // Products for competitor prices
+  const [produse, setProduse] = useState<string[]>([]);
+
   // Fetch retete (keeping for when API is available)
   useEffect(() => {
     const fetchRetete = async () => {
@@ -160,12 +163,38 @@ const CalculatorPret = () => {
     fetchRetete();
   }, []);
 
+  // Fetch products for competitor prices
+  useEffect(() => {
+    const fetchProduse = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/comenzi/returneaza_produse/produs`);
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data)) {
+            setProduse(data);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching produse:", error);
+      }
+    };
+    fetchProduse();
+  }, []);
+
   const retetaOptions = useMemo(() => 
     retete.map(r => ({ 
       value: r.cod_reteta, 
       label: `${r.cod_reteta} - ${r.denumire}` 
     })),
     [retete]
+  );
+
+  const produsOptions = useMemo(() => 
+    produse.map(p => ({ 
+      value: p, 
+      label: p 
+    })),
+    [produse]
   );
 
   // Check stock availability and open shortage dialog if needed
@@ -997,12 +1026,9 @@ const CalculatorPret = () => {
             <div className="space-y-2">
               <Label>Produs</Label>
               <FilterableSelect
-                options={retetaOptions}
+                options={produsOptions}
                 value={newConcurent.produs}
-                onValueChange={(value) => {
-                  const selectedRet = retete.find(r => r.cod_reteta === value);
-                  setNewConcurent(prev => ({ ...prev, produs: selectedRet?.denumire?.split(" - ")[0] || value }));
-                }}
+                onValueChange={(value) => setNewConcurent(prev => ({ ...prev, produs: value }))}
                 placeholder="Selectează produs"
               />
             </div>
