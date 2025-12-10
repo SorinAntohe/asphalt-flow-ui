@@ -2,11 +2,14 @@ import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { balanta, miscariCont } from "../contabilitate-mockData";
 import { ContBalanta, MiscareCont } from "../contabilitate-types";
 import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
-import { Calculator, FileSpreadsheet, TrendingUp, TrendingDown, Plus, Download } from "lucide-react";
+import { Calculator, FileSpreadsheet, TrendingUp, TrendingDown, Plus, Download, Pencil, Trash2 } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { useToast } from "@/hooks/use-toast";
 import { AddContBalantaDialog } from "./AddDialogs";
@@ -16,6 +19,9 @@ const BalantaFiseTab = () => {
   const [selectedCont, setSelectedCont] = useState<ContBalanta | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [editFormData, setEditFormData] = useState({ denumire: "" });
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
@@ -433,10 +439,85 @@ const BalantaFiseTab = () => {
                   )}
                 </div>
               </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2 pt-2 border-t">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1"
+                  onClick={() => {
+                    setEditFormData({ denumire: selectedCont.denumire });
+                    setEditDialogOpen(true);
+                  }}
+                >
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Editează
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={() => setDeleteDialogOpen(true)}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Șterge
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Edit Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Editează Cont</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Denumire Cont</Label>
+              <Input 
+                value={editFormData.denumire} 
+                onChange={(e) => setEditFormData(prev => ({ ...prev, denumire: e.target.value }))} 
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>Anulează</Button>
+            <Button onClick={() => {
+              toast({ title: "Cont actualizat", description: "Contul a fost actualizat cu succes." });
+              setEditDialogOpen(false);
+              setDialogOpen(false);
+            }}>Salvează</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmare ștergere</AlertDialogTitle>
+            <AlertDialogDescription>
+              Sigur doriți să ștergeți acest cont? Această acțiune nu poate fi anulată.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Anulează</AlertDialogCancel>
+            <AlertDialogAction 
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                toast({ title: "Cont șters", description: "Contul a fost șters cu succes." });
+                setDeleteDialogOpen(false);
+                setDialogOpen(false);
+              }}
+            >
+              Șterge
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Add Dialog */}
       <AddContBalantaDialog open={addDialogOpen} onOpenChange={setAddDialogOpen} />

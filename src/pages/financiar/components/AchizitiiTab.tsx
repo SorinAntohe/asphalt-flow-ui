@@ -4,11 +4,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { facturiFurnizori, receptiiMateriale } from "../mockData";
 import { FacturaFurnizor, ReceptieMaterial } from "../types";
 import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
-import { FileText, Package, Wallet, TrendingDown, Plus, Download } from "lucide-react";
+import { FileText, Package, Wallet, TrendingDown, Plus, Download, Pencil, Trash2 } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { useToast } from "@/hooks/use-toast";
 import { AddFacturaFurnizorDialog, AddReceptieDialog } from "./AddDialogs";
@@ -24,6 +25,9 @@ const AchizitiiTab = () => {
   // Add dialog states
   const [addFacturaOpen, setAddFacturaOpen] = useState(false);
   const [addReceptieOpen, setAddReceptieOpen] = useState(false);
+  
+  // Delete dialog states
+  const [deleteType, setDeleteType] = useState<"factura" | "receptie" | null>(null);
 
   // Pagination states
   const [facturiPage, setFacturiPage] = useState(1);
@@ -473,6 +477,22 @@ const AchizitiiTab = () => {
                   <p className="text-lg font-bold text-red-600">{formatCurrency(selectedFactura.suma_restanta)}</p>
                 </div>
               </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2 pt-2 border-t">
+                <Button variant="outline" size="sm" className="flex-1">
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Editează
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={() => setDeleteType("factura")}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Șterge
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
@@ -529,10 +549,52 @@ const AchizitiiTab = () => {
                   <p className="text-lg font-bold">{formatCurrency(selectedReceptie.pret_total)}</p>
                 </div>
               </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2 pt-2 border-t">
+                <Button variant="outline" size="sm" className="flex-1">
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Editează
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={() => setDeleteType("receptie")}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Șterge
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleteType} onOpenChange={() => setDeleteType(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmare ștergere</AlertDialogTitle>
+            <AlertDialogDescription>
+              Sigur doriți să ștergeți această înregistrare? Această acțiune nu poate fi anulată.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Anulează</AlertDialogCancel>
+            <AlertDialogAction 
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                toast({ title: "Înregistrare ștearsă", description: "Înregistrarea a fost ștearsă cu succes." });
+                if (deleteType === "factura") setSelectedFactura(null);
+                else setSelectedReceptie(null);
+                setDeleteType(null);
+              }}
+            >
+              Șterge
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Add Dialogs */}
       <AddFacturaFurnizorDialog open={addFacturaOpen} onOpenChange={setAddFacturaOpen} />
