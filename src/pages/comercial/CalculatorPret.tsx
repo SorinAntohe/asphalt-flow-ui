@@ -1015,14 +1015,6 @@ const CalculatorPret = () => {
                 onChange={(e) => setNewConcurent(prev => ({ ...prev, pret: e.target.value }))}
               />
             </div>
-            <div className="space-y-2">
-              <Label>Data</Label>
-              <Input
-                type="date"
-                value={newConcurent.data}
-                onChange={(e) => setNewConcurent(prev => ({ ...prev, data: e.target.value }))}
-              />
-            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddConcurentOpen(false)}>
