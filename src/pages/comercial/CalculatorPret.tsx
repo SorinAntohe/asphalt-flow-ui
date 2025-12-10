@@ -66,13 +66,6 @@ const mockRetete: Reteta[] = [
   { cod_reteta: "RET005", denumire: "BAD 22.4 - Beton Asfaltic Deschis", tip: "Asfalt" },
 ];
 
-const mockPreturiConcurenti: PretConcurent[] = [
-  { id: "1", concurent: "Strabag", produs: "BA 16", pret: 385, data: "05/12/2024" },
-  { id: "2", concurent: "Porr", produs: "BA 16", pret: 392, data: "03/12/2024" },
-  { id: "3", concurent: "Colas", produs: "BA 16", pret: 378, data: "01/12/2024" },
-  { id: "4", concurent: "Eurovia", produs: "MASF 16", pret: 410, data: "28/11/2024" },
-  { id: "5", concurent: "Bitumex", produs: "BA 16", pret: 365, data: "25/11/2024" },
-];
 
 const mockCostBreakdown: CostBreakdown = {
   materiale: [
@@ -115,7 +108,7 @@ const CalculatorPret = () => {
   const [preturiCalculate, setPreturiCalculate] = useState<PretCalculat[]>([]);
 
   // Competitor prices state
-  const [preturiConcurenti, setPreturiConcurenti] = useState<PretConcurent[]>(mockPreturiConcurenti);
+  const [preturiConcurenti, setPreturiConcurenti] = useState<PretConcurent[]>([]);
   const [newConcurent, setNewConcurent] = useState({ concurent: "", produs: "", pret: "", data: "" });
   
   // Details dialog state
@@ -181,6 +174,31 @@ const CalculatorPret = () => {
       }
     };
     fetchProduse();
+  }, []);
+
+  // Fetch competitor prices
+  useEffect(() => {
+    const fetchPreturiConcurenti = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/comercial/returneaza/preturi_concurenta`);
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data)) {
+            const preturi = data.map((item: { id: number; concurent: string; produs: string; pret: number; data: string }) => ({
+              id: String(item.id),
+              concurent: item.concurent,
+              produs: item.produs,
+              pret: item.pret,
+              data: item.data
+            }));
+            setPreturiConcurenti(preturi);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching preturi concurenti:", error);
+      }
+    };
+    fetchPreturiConcurenti();
   }, []);
 
   const retetaOptions = useMemo(() => 
