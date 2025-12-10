@@ -3,6 +3,7 @@ export interface FacturaClient {
   id: number;
   nr_factura: string;
   data: string;
+  cod_comanda?: string;
   client: string;
   total_fara_tva: number;
   tva: number;
@@ -18,6 +19,7 @@ export interface LivrareClient {
   id: number;
   data: string;
   cod: string;
+  cod_comanda?: string;
   nr_aviz: string;
   client: string;
   produs: string;
@@ -32,6 +34,7 @@ export interface LivrareClient {
 export interface IncasareClient {
   id: number;
   data: string;
+  cod_comanda?: string;
   client: string;
   tip: "OP" | "Numerar" | "Card" | "CEC";
   suma_totala: number;
