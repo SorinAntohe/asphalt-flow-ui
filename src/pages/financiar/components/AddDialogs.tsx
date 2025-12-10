@@ -16,6 +16,17 @@ interface ListeClient {
   nr_reg?: string;
 }
 
+// Livrare interface for auto-complete
+interface LivrareData {
+  cod: string;
+  client: string;
+  produs: string;
+  cantitate: number;
+  valoare_produs: number;
+  valoare_transport: number;
+  total: number;
+}
+
 // Add Factura Client Dialog
 interface AddFacturaClientDialogProps {
   open: boolean;
@@ -24,19 +35,48 @@ interface AddFacturaClientDialogProps {
 
 export const AddFacturaClientDialog = ({ open, onOpenChange }: AddFacturaClientDialogProps) => {
   const { toast } = useToast();
+  const [livrariOptions, setLivrariOptions] = useState<{ value: string; label: string }[]>([]);
+  const [livrariData, setLivrariData] = useState<LivrareData[]>([]);
   const [formData, setFormData] = useState({
-    nr_factura: "",
-    data: "",
+    nr_comanda: "",
     client: "",
     total_fara_tva: "",
     tva: "",
     data_scadenta: "",
   });
 
+  useEffect(() => {
+    if (open) {
+      fetch(`${API_BASE_URL}/livrari/returneaza/livrari`)
+        .then(res => res.json())
+        .then(data => {
+          const options = data.map((l: LivrareData) => ({ value: l.cod, label: l.cod }));
+          setLivrariOptions(options);
+          setLivrariData(data);
+        })
+        .catch(console.error);
+    }
+  }, [open]);
+
+  const handleNrComandaChange = (value: string) => {
+    setFormData(prev => ({ ...prev, nr_comanda: value }));
+    const livrare = livrariData.find(l => l.cod === value);
+    if (livrare) {
+      const tva = livrare.total * 0.19;
+      setFormData(prev => ({
+        ...prev,
+        nr_comanda: value,
+        client: livrare.client,
+        total_fara_tva: String(livrare.total),
+        tva: String(tva.toFixed(2)),
+      }));
+    }
+  };
+
   const handleSubmit = () => {
     toast({ title: "Factură adăugată", description: "Factura a fost adăugată cu succes." });
     onOpenChange(false);
-    setFormData({ nr_factura: "", data: "", client: "", total_fara_tva: "", tva: "", data_scadenta: "" });
+    setFormData({ nr_comanda: "", client: "", total_fara_tva: "", tva: "", data_scadenta: "" });
   };
 
   return (
@@ -46,28 +86,28 @@ export const AddFacturaClientDialog = ({ open, onOpenChange }: AddFacturaClientD
           <DialogTitle>Adaugă Factură Client</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Nr Factură</Label>
-              <Input value={formData.nr_factura} onChange={(e) => setFormData(prev => ({ ...prev, nr_factura: e.target.value }))} placeholder="FC-001" />
-            </div>
-            <div className="space-y-2">
-              <Label>Dată</Label>
-              <Input type="date" value={formData.data} onChange={(e) => setFormData(prev => ({ ...prev, data: e.target.value }))} />
-            </div>
+          <div className="space-y-2">
+            <Label>Nr Comandă (Livrare)</Label>
+            <FilterableSelect
+              value={formData.nr_comanda}
+              onValueChange={handleNrComandaChange}
+              options={livrariOptions}
+              placeholder="Selectează comandă..."
+              searchPlaceholder="Caută comandă..."
+            />
           </div>
           <div className="space-y-2">
             <Label>Client</Label>
-            <Input value={formData.client} onChange={(e) => setFormData(prev => ({ ...prev, client: e.target.value }))} placeholder="Nume client" />
+            <Input value={formData.client} readOnly className="bg-muted" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Total fără TVA (RON)</Label>
-              <Input type="number" value={formData.total_fara_tva} onChange={(e) => setFormData(prev => ({ ...prev, total_fara_tva: e.target.value }))} placeholder="0.00" />
+              <Input type="number" value={formData.total_fara_tva} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>TVA (RON)</Label>
-              <Input type="number" value={formData.tva} onChange={(e) => setFormData(prev => ({ ...prev, tva: e.target.value }))} placeholder="0.00" />
+              <Input type="number" value={formData.tva} readOnly className="bg-muted" />
             </div>
           </div>
           <div className="space-y-2">
@@ -92,16 +132,46 @@ interface AddLivrareDialogProps {
 
 export const AddLivrareDialog = ({ open, onOpenChange }: AddLivrareDialogProps) => {
   const { toast } = useToast();
+  const [livrariOptions, setLivrariOptions] = useState<{ value: string; label: string }[]>([]);
+  const [livrariData, setLivrariData] = useState<LivrareData[]>([]);
   const [formData, setFormData] = useState({
-    cod: "",
+    nr_comanda: "",
     nr_aviz: "",
-    data: "",
     client: "",
     produs: "",
     cantitate: "",
     valoare_produs: "",
     valoare_transport: "",
   });
+
+  useEffect(() => {
+    if (open) {
+      fetch(`${API_BASE_URL}/livrari/returneaza/livrari`)
+        .then(res => res.json())
+        .then(data => {
+          const options = data.map((l: LivrareData) => ({ value: l.cod, label: l.cod }));
+          setLivrariOptions(options);
+          setLivrariData(data);
+        })
+        .catch(console.error);
+    }
+  }, [open]);
+
+  const handleNrComandaChange = (value: string) => {
+    setFormData(prev => ({ ...prev, nr_comanda: value }));
+    const livrare = livrariData.find(l => l.cod === value);
+    if (livrare) {
+      setFormData(prev => ({
+        ...prev,
+        nr_comanda: value,
+        client: livrare.client,
+        produs: livrare.produs,
+        cantitate: String(livrare.cantitate),
+        valoare_produs: String(livrare.valoare_produs),
+        valoare_transport: String(livrare.valoare_transport),
+      }));
+    }
+  };
 
   const handleSubmit = () => {
     toast({ title: "Livrare adăugată", description: "Livrarea a fost adăugată cu succes." });
@@ -117,8 +187,14 @@ export const AddLivrareDialog = ({ open, onOpenChange }: AddLivrareDialogProps) 
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Cod</Label>
-              <Input value={formData.cod} onChange={(e) => setFormData(prev => ({ ...prev, cod: e.target.value }))} placeholder="LIV-001" />
+              <Label>Nr Comandă (Livrare)</Label>
+              <FilterableSelect
+                value={formData.nr_comanda}
+                onValueChange={handleNrComandaChange}
+                options={livrariOptions}
+                placeholder="Selectează comandă..."
+                searchPlaceholder="Caută comandă..."
+              />
             </div>
             <div className="space-y-2">
               <Label>Nr Aviz</Label>
@@ -127,32 +203,26 @@ export const AddLivrareDialog = ({ open, onOpenChange }: AddLivrareDialogProps) 
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Dată</Label>
-              <Input type="date" value={formData.data} onChange={(e) => setFormData(prev => ({ ...prev, data: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
               <Label>Client</Label>
-              <Input value={formData.client} onChange={(e) => setFormData(prev => ({ ...prev, client: e.target.value }))} placeholder="Nume client" />
+              <Input value={formData.client} readOnly className="bg-muted" />
             </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Produs</Label>
-              <Input value={formData.produs} onChange={(e) => setFormData(prev => ({ ...prev, produs: e.target.value }))} placeholder="BA 16" />
+              <Input value={formData.produs} readOnly className="bg-muted" />
             </div>
-            <div className="space-y-2">
-              <Label>Cantitate (t)</Label>
-              <Input type="number" value={formData.cantitate} onChange={(e) => setFormData(prev => ({ ...prev, cantitate: e.target.value }))} placeholder="0" />
-            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Cantitate (t)</Label>
+            <Input type="number" value={formData.cantitate} readOnly className="bg-muted" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Valoare produs (RON)</Label>
-              <Input type="number" value={formData.valoare_produs} onChange={(e) => setFormData(prev => ({ ...prev, valoare_produs: e.target.value }))} placeholder="0.00" />
+              <Input type="number" value={formData.valoare_produs} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Valoare transport (RON)</Label>
-              <Input type="number" value={formData.valoare_transport} onChange={(e) => setFormData(prev => ({ ...prev, valoare_transport: e.target.value }))} placeholder="0.00" />
+              <Input type="number" value={formData.valoare_transport} readOnly className="bg-muted" />
             </div>
           </div>
         </div>
@@ -173,12 +243,40 @@ interface AddIncasareDialogProps {
 
 export const AddIncasareDialog = ({ open, onOpenChange }: AddIncasareDialogProps) => {
   const { toast } = useToast();
+  const [livrariOptions, setLivrariOptions] = useState<{ value: string; label: string }[]>([]);
+  const [livrariData, setLivrariData] = useState<LivrareData[]>([]);
   const [formData, setFormData] = useState({
-    data: "",
+    nr_comanda: "",
     client: "",
     tip: "OP",
     suma_totala: "",
   });
+
+  useEffect(() => {
+    if (open) {
+      fetch(`${API_BASE_URL}/livrari/returneaza/livrari`)
+        .then(res => res.json())
+        .then(data => {
+          const options = data.map((l: LivrareData) => ({ value: l.cod, label: l.cod }));
+          setLivrariOptions(options);
+          setLivrariData(data);
+        })
+        .catch(console.error);
+    }
+  }, [open]);
+
+  const handleNrComandaChange = (value: string) => {
+    setFormData(prev => ({ ...prev, nr_comanda: value }));
+    const livrare = livrariData.find(l => l.cod === value);
+    if (livrare) {
+      setFormData(prev => ({
+        ...prev,
+        nr_comanda: value,
+        client: livrare.client,
+        suma_totala: String(livrare.total),
+      }));
+    }
+  };
 
   const handleSubmit = () => {
     toast({ title: "Încasare adăugată", description: "Încasarea a fost adăugată cu succes." });
@@ -192,31 +290,35 @@ export const AddIncasareDialog = ({ open, onOpenChange }: AddIncasareDialogProps
           <DialogTitle>Adaugă Încasare</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Dată</Label>
-              <Input type="date" value={formData.data} onChange={(e) => setFormData(prev => ({ ...prev, data: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
-              <Label>Tip plată</Label>
-              <Select value={formData.tip} onValueChange={(val) => setFormData(prev => ({ ...prev, tip: val }))}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="OP">OP</SelectItem>
-                  <SelectItem value="Numerar">Numerar</SelectItem>
-                  <SelectItem value="Card">Card</SelectItem>
-                  <SelectItem value="CEC">CEC</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="space-y-2">
+            <Label>Nr Comandă (Livrare)</Label>
+            <FilterableSelect
+              value={formData.nr_comanda}
+              onValueChange={handleNrComandaChange}
+              options={livrariOptions}
+              placeholder="Selectează comandă..."
+              searchPlaceholder="Caută comandă..."
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Tip plată</Label>
+            <Select value={formData.tip} onValueChange={(val) => setFormData(prev => ({ ...prev, tip: val }))}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="OP">OP</SelectItem>
+                <SelectItem value="Numerar">Numerar</SelectItem>
+                <SelectItem value="Card">Card</SelectItem>
+                <SelectItem value="CEC">CEC</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-2">
             <Label>Client</Label>
-            <Input value={formData.client} onChange={(e) => setFormData(prev => ({ ...prev, client: e.target.value }))} placeholder="Nume client" />
+            <Input value={formData.client} readOnly className="bg-muted" />
           </div>
           <div className="space-y-2">
             <Label>Sumă totală (RON)</Label>
-            <Input type="number" value={formData.suma_totala} onChange={(e) => setFormData(prev => ({ ...prev, suma_totala: e.target.value }))} placeholder="0.00" />
+            <Input type="number" value={formData.suma_totala} readOnly className="bg-muted" />
           </div>
         </div>
         <DialogFooter>
