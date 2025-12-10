@@ -18,11 +18,11 @@ export const facturiClienti: FacturaClient[] = [
 ];
 
 export const livrariClienti: LivrareClient[] = [
-  { id: 1, data: "2024-01-15", cod: "LIV-001", nr_aviz: "AVZ-001", client: "STRABAG SRL", produs: "BA 16", cantitate: 120, valoare_produs: 12000, valoare_transport: 1500, total: 13500, status_facturare: "Facturat FC-001" },
-  { id: 2, data: "2024-01-16", cod: "LIV-002", nr_aviz: "AVZ-002", client: "PORR CONSTRUCT SRL", produs: "BAD 22.4", cantitate: 85, valoare_produs: 9350, valoare_transport: 1200, total: 10550, status_facturare: "Facturat FC-002" },
-  { id: 3, data: "2024-01-18", cod: "LIV-003", nr_aviz: "AVZ-003", client: "COLAS ROMANIA SA", produs: "BA 16", cantitate: 200, valoare_produs: 20000, valoare_transport: 2500, total: 22500, status_facturare: "Nefacturat" },
-  { id: 4, data: "2024-01-20", cod: "LIV-004", nr_aviz: "AVZ-004", client: "ROMSTRADE SRL", produs: "BINDER", cantitate: 150, valoare_produs: 13500, valoare_transport: 1800, total: 15300, status_facturare: "Nefacturat" },
-  { id: 5, data: "2024-01-22", cod: "LIV-005", nr_aviz: "AVZ-005", client: "EUROCONSTRUCT SA", produs: "BAD 22.4", cantitate: 300, valoare_produs: 33000, valoare_transport: 3600, total: 36600, status_facturare: "Nefacturat" },
+  { id: 1, data: "2024-01-15", cod: "LIV-001", cod_comanda: "CMD-PF-001", nr_aviz: "AVZ-001", client: "STRABAG SRL", produs: "BA 16", cantitate: 120, valoare_produs: 12000, valoare_transport: 1500, total: 13500, status_facturare: "Facturat FC-001" },
+  { id: 2, data: "2024-01-16", cod: "LIV-002", cod_comanda: "CMD-PF-002", nr_aviz: "AVZ-002", client: "PORR CONSTRUCT SRL", produs: "BAD 22.4", cantitate: 85, valoare_produs: 9350, valoare_transport: 1200, total: 10550, status_facturare: "Facturat FC-002" },
+  { id: 3, data: "2024-01-18", cod: "LIV-003", cod_comanda: "CMD-PF-003", nr_aviz: "AVZ-003", client: "COLAS ROMANIA SA", produs: "BA 16", cantitate: 200, valoare_produs: 20000, valoare_transport: 2500, total: 22500, status_facturare: "Nefacturat" },
+  { id: 4, data: "2024-01-20", cod: "LIV-004", cod_comanda: "CMD-PF-004", nr_aviz: "AVZ-004", client: "ROMSTRADE SRL", produs: "BINDER", cantitate: 150, valoare_produs: 13500, valoare_transport: 1800, total: 15300, status_facturare: "Nefacturat" },
+  { id: 5, data: "2024-01-22", cod: "LIV-005", cod_comanda: "CMD-PF-005", nr_aviz: "AVZ-005", client: "EUROCONSTRUCT SA", produs: "BAD 22.4", cantitate: 300, valoare_produs: 33000, valoare_transport: 3600, total: 36600, status_facturare: "Nefacturat" },
 ];
 
 export const incasariClienti: IncasareClient[] = [
