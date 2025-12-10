@@ -802,15 +802,16 @@ interface AddNotaContabilaDialogProps {
 export const AddNotaContabilaDialog = ({ open, onOpenChange }: AddNotaContabilaDialogProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
-    data: "",
-    nrNota: "",
     tipJurnal: "Diverse",
     explicatie: "",
+    totalDebit: "",
+    totalCredit: "",
   });
 
   const handleSubmit = () => {
     toast({ title: "Notă adăugată", description: "Nota contabilă a fost adăugată cu succes." });
     onOpenChange(false);
+    setFormData({ tipJurnal: "Diverse", explicatie: "", totalDebit: "", totalCredit: "" });
   };
 
   return (
@@ -820,16 +821,6 @@ export const AddNotaContabilaDialog = ({ open, onOpenChange }: AddNotaContabilaD
           <DialogTitle>Adaugă Notă Contabilă</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Dată</Label>
-              <Input type="date" value={formData.data} onChange={(e) => setFormData(prev => ({ ...prev, data: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
-              <Label>Nr Notă</Label>
-              <Input value={formData.nrNota} onChange={(e) => setFormData(prev => ({ ...prev, nrNota: e.target.value }))} placeholder="NC-001" />
-            </div>
-          </div>
           <div className="space-y-2">
             <Label>Tip Jurnal</Label>
             <Select value={formData.tipJurnal} onValueChange={(val) => setFormData(prev => ({ ...prev, tipJurnal: val }))}>
@@ -846,6 +837,16 @@ export const AddNotaContabilaDialog = ({ open, onOpenChange }: AddNotaContabilaD
           <div className="space-y-2">
             <Label>Explicație</Label>
             <Input value={formData.explicatie} onChange={(e) => setFormData(prev => ({ ...prev, explicatie: e.target.value }))} placeholder="Descriere operațiune" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Total Debit (RON)</Label>
+              <Input type="number" value={formData.totalDebit} onChange={(e) => setFormData(prev => ({ ...prev, totalDebit: e.target.value }))} placeholder="0.00" />
+            </div>
+            <div className="space-y-2">
+              <Label>Total Credit (RON)</Label>
+              <Input type="number" value={formData.totalCredit} onChange={(e) => setFormData(prev => ({ ...prev, totalCredit: e.target.value }))} placeholder="0.00" />
+            </div>
           </div>
         </div>
         <DialogFooter>
