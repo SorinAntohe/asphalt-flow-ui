@@ -59,6 +59,8 @@ interface ContorCTL {
   retur_exces_nou: number;
   consum_l: number;
   consum_to: number;
+  pret_unitar: number;
+  pret_total: number;
 }
 
 interface Consum {
@@ -526,7 +528,8 @@ const Consumuri = () => {
             retur_exces_vechi: contorCTLFormData.retur_exces_vechi || 0,
             retur_exces_nou: contorCTLFormData.retur_exces_nou || 0,
             consum_l: contorCTLFormData.consum_l || 0,
-            consum_to: contorCTLFormData.consum_to || 0
+            consum_to: contorCTLFormData.consum_to || 0,
+            pret_unitar: contorCTLFormData.pret_unitar || 0
           }
         };
 
@@ -552,7 +555,8 @@ const Consumuri = () => {
           retur_exces_vechi: contorCTLFormData.retur_exces_vechi || 0,
           retur_exces_nou: contorCTLFormData.retur_exces_nou || 0,
           consum_l: contorCTLFormData.consum_l || 0,
-          consum_to: contorCTLFormData.consum_to || 0
+          consum_to: contorCTLFormData.consum_to || 0,
+          pret_unitar: contorCTLFormData.pret_unitar || 0
         };
 
         const response = await fetch(`${API_BASE_URL}/contori/adauga/ctl`, {
@@ -1263,12 +1267,30 @@ const Consumuri = () => {
                           onSort={(dir) => handleContorCTLSort('consum_to', dir)}
                         />
                       </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="Preț Unitar (lei/TO)"
+                          filterValue={contorCTLFilters['pret_unitar'] || ''}
+                          onFilterChange={(value) => handleContorCTLFilterChange('pret_unitar', value)}
+                          sortDirection={contorCTLSort?.field === 'pret_unitar' ? contorCTLSort.direction : null}
+                          onSort={(dir) => handleContorCTLSort('pret_unitar', dir)}
+                        />
+                      </TableHead>
+                      <TableHead className="text-xs">
+                        <FilterHeader
+                          label="Preț Total"
+                          filterValue={contorCTLFilters['pret_total'] || ''}
+                          onFilterChange={(value) => handleContorCTLFilterChange('pret_total', value)}
+                          sortDirection={contorCTLSort?.field === 'pret_total' ? contorCTLSort.direction : null}
+                          onSort={(dir) => handleContorCTLSort('pret_total', dir)}
+                        />
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {paginatedContorCTL.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                        <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
                           Nu există înregistrări
                         </TableCell>
                       </TableRow>
@@ -1287,6 +1309,8 @@ const Consumuri = () => {
                           <TableCell className="py-1 text-xs">{item.retur_exces_nou}</TableCell>
                           <TableCell className="py-1 text-xs">{item.consum_l}</TableCell>
                           <TableCell className="py-1 text-xs">{item.consum_to}</TableCell>
+                          <TableCell className="py-1 text-xs">{item.pret_unitar || 0}</TableCell>
+                          <TableCell className="py-1 text-xs">{((item.pret_unitar || 0) * (item.consum_to || 0)).toFixed(2)}</TableCell>
                         </TableRow>
                       ))
                     )}
@@ -2043,6 +2067,14 @@ const Consumuri = () => {
                   <Label className="text-muted-foreground text-xs">Consum (TO)</Label>
                   <p className="font-medium">{selectedContorCTL.consum_to}</p>
                 </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Preț Unitar (lei/TO)</Label>
+                  <p className="font-medium">{selectedContorCTL.pret_unitar || 0}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-xs">Preț Total</Label>
+                  <p className="font-medium">{((selectedContorCTL.pret_unitar || 0) * (selectedContorCTL.consum_to || 0)).toFixed(2)}</p>
+                </div>
               </div>
             </div>
           )}
@@ -2222,6 +2254,34 @@ const Consumuri = () => {
                     type="number"
                     step="0.01"
                     value={contorCTLFormData.consum_to || ''}
+                    disabled
+                    className="bg-muted h-9"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Preț Unitar (lei/TO)</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    className="h-9"
+                    value={contorCTLFormData.pret_unitar || ''}
+                    onChange={(e) => {
+                      const pretUnitar = Number(e.target.value);
+                      const consumTo = contorCTLFormData.consum_to || 0;
+                      setContorCTLFormData({ 
+                        ...contorCTLFormData, 
+                        pret_unitar: pretUnitar,
+                        pret_total: pretUnitar * consumTo
+                      });
+                    }}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Preț Total</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={((contorCTLFormData.pret_unitar || 0) * (contorCTLFormData.consum_to || 0)).toFixed(2)}
                     disabled
                     className="bg-muted h-9"
                   />
