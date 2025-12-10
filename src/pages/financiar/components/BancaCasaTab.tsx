@@ -4,11 +4,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { conturiBancare, miscariBanca, registruCasa } from "../mockData";
 import { ContBancar, MiscareBanca, InregistrareCasa } from "../types";
 import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
-import { Building, Wallet, ArrowUpDown, Landmark, Plus, Download } from "lucide-react";
+import { Building, Wallet, ArrowUpDown, Landmark, Plus, Download, Pencil, Trash2 } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { useToast } from "@/hooks/use-toast";
 import { AddContBancarDialog, AddMiscareBancaDialog, AddRegistruCasaDialog } from "./AddDialogs";
@@ -26,6 +27,9 @@ const BancaCasaTab = () => {
   const [addContOpen, setAddContOpen] = useState(false);
   const [addMiscareOpen, setAddMiscareOpen] = useState(false);
   const [addCasaOpen, setAddCasaOpen] = useState(false);
+  
+  // Delete dialog states
+  const [deleteType, setDeleteType] = useState<"cont" | "miscare" | "casa" | null>(null);
   
   // Pagination states
   const [conturiPage, setConturiPage] = useState(1);
@@ -506,6 +510,18 @@ const BancaCasaTab = () => {
                 <p className="text-sm text-muted-foreground">Sold curent</p>
                 <p className="text-2xl font-bold">{formatCurrency(selectedCont.sold_curent, selectedCont.moneda)}</p>
               </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2 pt-2 border-t">
+                <Button variant="outline" size="sm" className="flex-1">
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Editează
+                </Button>
+                <Button variant="destructive" size="sm" onClick={() => setDeleteType("cont")}>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Șterge
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
@@ -552,6 +568,18 @@ const BancaCasaTab = () => {
                   {selectedMiscare.tip === "Încasare" ? "+" : "-"}{formatCurrency(selectedMiscare.suma)}
                 </p>
               </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2 pt-2 border-t">
+                <Button variant="outline" size="sm" className="flex-1">
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Editează
+                </Button>
+                <Button variant="destructive" size="sm" onClick={() => setDeleteType("miscare")}>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Șterge
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
@@ -594,10 +622,53 @@ const BancaCasaTab = () => {
                   {selectedCasa.tip === "Încasare" ? "+" : "-"}{formatCurrency(selectedCasa.suma)}
                 </p>
               </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2 pt-2 border-t">
+                <Button variant="outline" size="sm" className="flex-1">
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Editează
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={() => setDeleteType("casa")}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Șterge
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleteType} onOpenChange={() => setDeleteType(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmare ștergere</AlertDialogTitle>
+            <AlertDialogDescription>
+              Sigur doriți să ștergeți această înregistrare? Această acțiune nu poate fi anulată.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Anulează</AlertDialogCancel>
+            <AlertDialogAction 
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                toast({ title: "Înregistrare ștearsă", description: "Înregistrarea a fost ștearsă cu succes." });
+                if (deleteType === "cont") setSelectedCont(null);
+                else if (deleteType === "miscare") setSelectedMiscare(null);
+                else setSelectedCasa(null);
+                setDeleteType(null);
+              }}
+            >
+              Șterge
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Add Dialogs */}
       <AddContBancarDialog open={addContOpen} onOpenChange={setAddContOpen} />

@@ -3,11 +3,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { scadentarEntries } from "../parteneri-mockData";
 import { ScadentarEntry } from "../parteneri-types";
 import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
-import { FileText, TrendingUp, TrendingDown, Scale, Plus, Download, Calendar } from "lucide-react";
+import { FileText, TrendingUp, TrendingDown, Scale, Plus, Download, Calendar, Pencil, Trash2 } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { useToast } from "@/hooks/use-toast";
 import { AddScadentarDialog } from "./AddDialogs";
@@ -17,6 +20,9 @@ const ScadentarTab = () => {
   const [selectedEntry, setSelectedEntry] = useState<ScadentarEntry | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [editFormData, setEditFormData] = useState({ data_scadenta: "", suma_restanta: "", zile_intarziere: "" });
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
@@ -416,10 +422,108 @@ const ScadentarTab = () => {
                   {selectedEntry.status}
                 </Badge>
               </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2 pt-2 border-t">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1"
+                  onClick={() => {
+                    setEditFormData({
+                      data_scadenta: selectedEntry.data_scadenta,
+                      suma_restanta: String(selectedEntry.suma_restanta),
+                      zile_intarziere: String(selectedEntry.zile_intarziere),
+                    });
+                    setEditDialogOpen(true);
+                  }}
+                >
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Editează
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={() => setDeleteDialogOpen(true)}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Șterge
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Edit Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Editează Scadență</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Dată Scadență</Label>
+              <Input 
+                type="date" 
+                value={editFormData.data_scadenta} 
+                onChange={(e) => setEditFormData(prev => ({ ...prev, data_scadenta: e.target.value }))} 
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Sumă Restantă (RON)</Label>
+                <Input 
+                  type="number" 
+                  value={editFormData.suma_restanta} 
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, suma_restanta: e.target.value }))} 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Zile Întârziere</Label>
+                <Input 
+                  type="number" 
+                  value={editFormData.zile_intarziere} 
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, zile_intarziere: e.target.value }))} 
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>Anulează</Button>
+            <Button onClick={() => {
+              toast({ title: "Scadență actualizată", description: "Înregistrarea a fost actualizată cu succes." });
+              setEditDialogOpen(false);
+              setDialogOpen(false);
+            }}>Salvează</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmare ștergere</AlertDialogTitle>
+            <AlertDialogDescription>
+              Sigur doriți să ștergeți această scadență? Această acțiune nu poate fi anulată.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Anulează</AlertDialogCancel>
+            <AlertDialogAction 
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                toast({ title: "Scadență ștearsă", description: "Înregistrarea a fost ștearsă cu succes." });
+                setDeleteDialogOpen(false);
+                setDialogOpen(false);
+              }}
+            >
+              Șterge
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Add Dialog */}
       <AddScadentarDialog open={addDialogOpen} onOpenChange={setAddDialogOpen} />
