@@ -10,27 +10,27 @@ import {
 } from "./types";
 
 export const facturiClienti: FacturaClient[] = [
-  { id: 1, nr_factura: "FC-001", data: "2024-01-15", cod_comanda: "LIV-001", client: "STRABAG SRL", total_fara_tva: 15000, tva: 2850, total: 17850, data_scadenta: "2024-02-15", suma_incasata: 17850, suma_restanta: 0, status: "Încasată" },
-  { id: 2, nr_factura: "FC-002", data: "2024-01-18", cod_comanda: "LIV-002", client: "PORR CONSTRUCT SRL", total_fara_tva: 28500, tva: 5415, total: 33915, data_scadenta: "2024-02-18", suma_incasata: 20000, suma_restanta: 13915, status: "Parțial" },
-  { id: 3, nr_factura: "FC-003", data: "2024-01-22", cod_comanda: "LIV-003", client: "COLAS ROMANIA SA", total_fara_tva: 42000, tva: 7980, total: 49980, data_scadenta: "2024-02-22", suma_incasata: 0, suma_restanta: 49980, status: "Neîncasată" },
-  { id: 4, nr_factura: "FC-004", data: "2024-01-25", cod_comanda: "LIV-004", client: "ROMSTRADE SRL", total_fara_tva: 18750, tva: 3562.5, total: 22312.5, data_scadenta: "2024-02-25", suma_incasata: 22312.5, suma_restanta: 0, status: "Încasată" },
-  { id: 5, nr_factura: "FC-005", data: "2024-01-28", cod_comanda: "LIV-005", client: "EUROCONSTRUCT SA", total_fara_tva: 65000, tva: 12350, total: 77350, data_scadenta: "2024-02-28", suma_incasata: 0, suma_restanta: 77350, status: "Neîncasată" },
+  { id: 1, nr_factura: "FC-001", data: "2024-01-15", client: "STRABAG SRL", total_fara_tva: 15000, tva: 2850, total: 17850, data_scadenta: "2024-02-15", suma_incasata: 17850, suma_restanta: 0, status: "Încasată" },
+  { id: 2, nr_factura: "FC-002", data: "2024-01-18", client: "PORR CONSTRUCT SRL", total_fara_tva: 28500, tva: 5415, total: 33915, data_scadenta: "2024-02-18", suma_incasata: 20000, suma_restanta: 13915, status: "Parțial" },
+  { id: 3, nr_factura: "FC-003", data: "2024-01-22", client: "COLAS ROMANIA SA", total_fara_tva: 42000, tva: 7980, total: 49980, data_scadenta: "2024-02-22", suma_incasata: 0, suma_restanta: 49980, status: "Neîncasată" },
+  { id: 4, nr_factura: "FC-004", data: "2024-01-25", client: "ROMSTRADE SRL", total_fara_tva: 18750, tva: 3562.5, total: 22312.5, data_scadenta: "2024-02-25", suma_incasata: 22312.5, suma_restanta: 0, status: "Încasată" },
+  { id: 5, nr_factura: "FC-005", data: "2024-01-28", client: "EUROCONSTRUCT SA", total_fara_tva: 65000, tva: 12350, total: 77350, data_scadenta: "2024-02-28", suma_incasata: 0, suma_restanta: 77350, status: "Neîncasată" },
 ];
 
 export const livrariClienti: LivrareClient[] = [
-  { id: 1, data: "2024-01-15", cod: "LIV-001", cod_comanda: "CMD-001", nr_aviz: "AVZ-001", client: "STRABAG SRL", produs: "BA 16", cantitate: 120, valoare_produs: 12000, valoare_transport: 1500, total: 13500, status_facturare: "Facturat FC-001" },
-  { id: 2, data: "2024-01-16", cod: "LIV-002", cod_comanda: "CMD-002", nr_aviz: "AVZ-002", client: "PORR CONSTRUCT SRL", produs: "BAD 22.4", cantitate: 85, valoare_produs: 9350, valoare_transport: 1200, total: 10550, status_facturare: "Facturat FC-002" },
-  { id: 3, data: "2024-01-18", cod: "LIV-003", cod_comanda: "CMD-003", nr_aviz: "AVZ-003", client: "COLAS ROMANIA SA", produs: "BA 16", cantitate: 200, valoare_produs: 20000, valoare_transport: 2500, total: 22500, status_facturare: "Nefacturat" },
-  { id: 4, data: "2024-01-20", cod: "LIV-004", cod_comanda: "CMD-004", nr_aviz: "AVZ-004", client: "ROMSTRADE SRL", produs: "BINDER", cantitate: 150, valoare_produs: 13500, valoare_transport: 1800, total: 15300, status_facturare: "Nefacturat" },
-  { id: 5, data: "2024-01-22", cod: "LIV-005", cod_comanda: "CMD-005", nr_aviz: "AVZ-005", client: "EUROCONSTRUCT SA", produs: "BAD 22.4", cantitate: 300, valoare_produs: 33000, valoare_transport: 3600, total: 36600, status_facturare: "Nefacturat" },
+  { id: 1, data: "2024-01-15", cod: "LIV-001", nr_aviz: "AVZ-001", client: "STRABAG SRL", produs: "BA 16", cantitate: 120, valoare_produs: 12000, valoare_transport: 1500, total: 13500, status_facturare: "Facturat FC-001" },
+  { id: 2, data: "2024-01-16", cod: "LIV-002", nr_aviz: "AVZ-002", client: "PORR CONSTRUCT SRL", produs: "BAD 22.4", cantitate: 85, valoare_produs: 9350, valoare_transport: 1200, total: 10550, status_facturare: "Facturat FC-002" },
+  { id: 3, data: "2024-01-18", cod: "LIV-003", nr_aviz: "AVZ-003", client: "COLAS ROMANIA SA", produs: "BA 16", cantitate: 200, valoare_produs: 20000, valoare_transport: 2500, total: 22500, status_facturare: "Nefacturat" },
+  { id: 4, data: "2024-01-20", cod: "LIV-004", nr_aviz: "AVZ-004", client: "ROMSTRADE SRL", produs: "BINDER", cantitate: 150, valoare_produs: 13500, valoare_transport: 1800, total: 15300, status_facturare: "Nefacturat" },
+  { id: 5, data: "2024-01-22", cod: "LIV-005", nr_aviz: "AVZ-005", client: "EUROCONSTRUCT SA", produs: "BAD 22.4", cantitate: 300, valoare_produs: 33000, valoare_transport: 3600, total: 36600, status_facturare: "Nefacturat" },
 ];
 
 export const incasariClienti: IncasareClient[] = [
-  { id: 1, data: "2024-01-20", cod_comanda: "LIV-001", client: "STRABAG SRL", tip: "OP", suma_totala: 17850, suma_alocata: 17850, suma_nealocata: 0 },
-  { id: 2, data: "2024-01-22", cod_comanda: "LIV-002", client: "PORR CONSTRUCT SRL", tip: "OP", suma_totala: 20000, suma_alocata: 20000, suma_nealocata: 0 },
-  { id: 3, data: "2024-01-25", cod_comanda: "LIV-004", client: "ROMSTRADE SRL", tip: "OP", suma_totala: 22312.5, suma_alocata: 22312.5, suma_nealocata: 0 },
-  { id: 4, data: "2024-01-28", cod_comanda: "LIV-003", client: "COLAS ROMANIA SA", tip: "Numerar", suma_totala: 5000, suma_alocata: 0, suma_nealocata: 5000 },
-  { id: 5, data: "2024-01-30", cod_comanda: "LIV-005", client: "EUROCONSTRUCT SA", tip: "OP", suma_totala: 30000, suma_alocata: 0, suma_nealocata: 30000 },
+  { id: 1, data: "2024-01-20", client: "STRABAG SRL", tip: "OP", suma_totala: 17850, suma_alocata: 17850, suma_nealocata: 0 },
+  { id: 2, data: "2024-01-22", client: "PORR CONSTRUCT SRL", tip: "OP", suma_totala: 20000, suma_alocata: 20000, suma_nealocata: 0 },
+  { id: 3, data: "2024-01-25", client: "ROMSTRADE SRL", tip: "OP", suma_totala: 22312.5, suma_alocata: 22312.5, suma_nealocata: 0 },
+  { id: 4, data: "2024-01-28", client: "COLAS ROMANIA SA", tip: "Numerar", suma_totala: 5000, suma_alocata: 0, suma_nealocata: 5000 },
+  { id: 5, data: "2024-01-30", client: "EUROCONSTRUCT SA", tip: "OP", suma_totala: 30000, suma_alocata: 0, suma_nealocata: 30000 },
 ];
 
 export const facturiFurnizori: FacturaFurnizor[] = [

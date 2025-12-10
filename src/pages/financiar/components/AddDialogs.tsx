@@ -87,7 +87,7 @@ export const AddFacturaClientDialog = ({ open, onOpenChange }: AddFacturaClientD
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label>Cod Comandă</Label>
+            <Label>Nr Comandă (Livrare)</Label>
             <FilterableSelect
               value={formData.nr_comanda}
               onValueChange={handleNrComandaChange}
@@ -187,7 +187,7 @@ export const AddLivrareDialog = ({ open, onOpenChange }: AddLivrareDialogProps) 
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Cod Comandă</Label>
+              <Label>Nr Comandă (Livrare)</Label>
               <FilterableSelect
                 value={formData.nr_comanda}
                 onValueChange={handleNrComandaChange}
@@ -291,7 +291,7 @@ export const AddIncasareDialog = ({ open, onOpenChange }: AddIncasareDialogProps
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label>Cod Comandă</Label>
+            <Label>Nr Comandă (Livrare)</Label>
             <FilterableSelect
               value={formData.nr_comanda}
               onValueChange={handleNrComandaChange}

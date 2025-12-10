@@ -38,15 +38,15 @@ const VanzariTab = () => {
   
   // Edit form data
   const [editFacturaData, setEditFacturaData] = useState({
-    cod_comanda: "", client: "", total_fara_tva: "", tva: "", total: "",
+    client: "", total_fara_tva: "", tva: "", total: "",
     data_scadenta: "", suma_incasata: "", suma_restanta: "", status: ""
   });
   const [editLivrareData, setEditLivrareData] = useState({
-    cod_comanda: "", nr_aviz: "", client: "", produs: "", cantitate: "",
+    nr_aviz: "", client: "", produs: "", cantitate: "",
     valoare_produs: "", valoare_transport: "", total: "", status_facturare: ""
   });
   const [editIncasareData, setEditIncasareData] = useState({
-    cod_comanda: "", client: "", tip: "", suma_totala: "", suma_alocata: "", suma_nealocata: ""
+    client: "", tip: "", suma_totala: "", suma_alocata: "", suma_nealocata: ""
   });
   
   // Delete dialog states
@@ -56,7 +56,6 @@ const VanzariTab = () => {
   const openEditFactura = () => {
     if (selectedFactura) {
       setEditFacturaData({
-        cod_comanda: selectedFactura.cod_comanda || "",
         client: selectedFactura.client,
         total_fara_tva: String(selectedFactura.total_fara_tva),
         tva: String(selectedFactura.tva),
@@ -73,7 +72,6 @@ const VanzariTab = () => {
   const openEditLivrare = () => {
     if (selectedLivrare) {
       setEditLivrareData({
-        cod_comanda: selectedLivrare.cod_comanda || "",
         nr_aviz: selectedLivrare.nr_aviz,
         client: selectedLivrare.client,
         produs: selectedLivrare.produs,
@@ -90,7 +88,6 @@ const VanzariTab = () => {
   const openEditIncasare = () => {
     if (selectedIncasare) {
       setEditIncasareData({
-        cod_comanda: selectedIncasare.cod_comanda || "",
         client: selectedIncasare.client,
         tip: selectedIncasare.tip,
         suma_totala: String(selectedIncasare.suma_totala),
@@ -134,13 +131,13 @@ const VanzariTab = () => {
   
   // Filter states
   const [facturiFilters, setFacturiFilters] = useState<Record<string, string>>({
-    nr_factura: "", data: "", cod_comanda: "", client: "", status: "",
+    nr_factura: "", data: "", client: "", status: "",
   });
   const [livrariFilters, setLivrariFilters] = useState<Record<string, string>>({
-    data: "", cod: "", cod_comanda: "", client: "",
+    data: "", cod: "", client: "",
   });
   const [incasariFilters, setIncasariFilters] = useState<Record<string, string>>({
-    data: "", cod_comanda: "", client: "", tip: "",
+    data: "", client: "", tip: "",
   });
 
   const getStatusBadgeVariant = (status: string) => {
@@ -383,16 +380,6 @@ const VanzariTab = () => {
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
-                          title="Cod Comandă"
-                          sortKey="cod_comanda"
-                          currentSort={facturiSort}
-                          onSort={(key, dir) => setFacturiSort({ key, direction: dir })}
-                          filterValue={facturiFilters.cod_comanda}
-                          onFilterChange={(val) => { setFacturiFilters(prev => ({ ...prev, cod_comanda: val })); setFacturiPage(1); }}
-                        />
-                      </TableHead>
-                      <TableHead>
-                        <DataTableColumnHeader
                           title="Client"
                           sortKey="client"
                           currentSort={facturiSort}
@@ -428,7 +415,6 @@ const VanzariTab = () => {
                       >
                         <TableCell className="font-medium">{factura.nr_factura}</TableCell>
                         <TableCell>{factura.data}</TableCell>
-                        <TableCell>{factura.cod_comanda || "-"}</TableCell>
                         <TableCell>{factura.client}</TableCell>
                         <TableCell className="text-right">{formatCurrency(factura.total_fara_tva)}</TableCell>
                         <TableCell className="text-right">{formatCurrency(factura.tva)}</TableCell>
@@ -481,16 +467,6 @@ const VanzariTab = () => {
                           onFilterChange={(val) => { setLivrariFilters(prev => ({ ...prev, cod: val })); setLivrariPage(1); }}
                         />
                       </TableHead>
-                      <TableHead>
-                        <DataTableColumnHeader
-                          title="Cod Comandă"
-                          sortKey="cod_comanda"
-                          currentSort={livrariSort}
-                          onSort={(key, dir) => setLivrariSort({ key, direction: dir })}
-                          filterValue={livrariFilters.cod_comanda}
-                          onFilterChange={(val) => { setLivrariFilters(prev => ({ ...prev, cod_comanda: val })); setLivrariPage(1); }}
-                        />
-                      </TableHead>
                       <TableHead>Nr Aviz</TableHead>
                       <TableHead>
                         <DataTableColumnHeader
@@ -519,7 +495,6 @@ const VanzariTab = () => {
                       >
                         <TableCell>{livrare.data}</TableCell>
                         <TableCell className="font-medium">{livrare.cod}</TableCell>
-                        <TableCell>{livrare.cod_comanda || "-"}</TableCell>
                         <TableCell>{livrare.nr_aviz}</TableCell>
                         <TableCell>{livrare.client}</TableCell>
                         <TableCell>{livrare.produs}</TableCell>
@@ -564,16 +539,6 @@ const VanzariTab = () => {
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
-                          title="Cod Comandă"
-                          sortKey="cod_comanda"
-                          currentSort={incasariSort}
-                          onSort={(key, dir) => setIncasariSort({ key, direction: dir })}
-                          filterValue={incasariFilters.cod_comanda}
-                          onFilterChange={(val) => { setIncasariFilters(prev => ({ ...prev, cod_comanda: val })); setIncasariPage(1); }}
-                        />
-                      </TableHead>
-                      <TableHead>
-                        <DataTableColumnHeader
                           title="Client"
                           sortKey="client"
                           currentSort={incasariSort}
@@ -605,7 +570,6 @@ const VanzariTab = () => {
                         onClick={() => setSelectedIncasare(incasare)}
                       >
                         <TableCell>{incasare.data}</TableCell>
-                        <TableCell>{incasare.cod_comanda || "-"}</TableCell>
                         <TableCell className="font-medium">{incasare.client}</TableCell>
                         <TableCell>
                           <Badge variant="outline">{incasare.tip}</Badge>
@@ -857,10 +821,6 @@ const VanzariTab = () => {
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Cod Comandă</Label>
-              <Input value={editFacturaData.cod_comanda} readOnly className="bg-muted" />
-            </div>
-            <div className="space-y-2">
               <Label>Client</Label>
               <Input value={editFacturaData.client} readOnly className="bg-muted" />
             </div>
@@ -915,10 +875,6 @@ const VanzariTab = () => {
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Cod Comandă</Label>
-              <Input value={editLivrareData.cod_comanda} readOnly className="bg-muted" />
-            </div>
-            <div className="space-y-2">
               <Label>Nr Aviz</Label>
               <Input value={editLivrareData.nr_aviz} onChange={(e) => setEditLivrareData(prev => ({ ...prev, nr_aviz: e.target.value }))} />
             </div>
@@ -971,10 +927,6 @@ const VanzariTab = () => {
             <DialogTitle>Editează Încasare</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Cod Comandă</Label>
-              <Input value={editIncasareData.cod_comanda} readOnly className="bg-muted" />
-            </div>
             <div className="space-y-2">
               <Label>Client</Label>
               <Input value={editIncasareData.client} readOnly className="bg-muted" />
