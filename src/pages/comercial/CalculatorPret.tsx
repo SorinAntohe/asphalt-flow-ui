@@ -22,6 +22,11 @@ interface Reteta {
   tip: string;
 }
 
+interface RetetaMaterial {
+  material: string;
+  cantitate: number; // cantitate per tona (kg)
+}
+
 interface CostBreakdown {
   materiale: { material: string; cantitate: number; pretUnitar: number; total: number }[];
   curentActiv: number;
@@ -103,6 +108,9 @@ const CalculatorPret = () => {
 
   // Calculation result state
   const [costBreakdown, setCostBreakdown] = useState<CostBreakdown | null>(mockCostBreakdown);
+  
+  // Recipe materials from API
+  const [retetaMateriale, setRetetaMateriale] = useState<RetetaMaterial[]>([]);
 
   // Saved calculations state
   const [preturiCalculate, setPreturiCalculate] = useState<PretCalculat[]>([]);
@@ -156,7 +164,59 @@ const CalculatorPret = () => {
     fetchRetete();
   }, []);
 
-  // Fetch products for competitor prices
+  // Fetch recipe materials when recipe is selected
+  useEffect(() => {
+    const fetchRetetaMateriale = async () => {
+      if (!selectedReteta) {
+        setRetetaMateriale([]);
+        return;
+      }
+      
+      const reteta = retete.find(r => r.cod_reteta === selectedReteta);
+      if (!reteta) return;
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/comercial/returneaza/cod_reteta_reteta/${selectedReteta}/${encodeURIComponent(reteta.denumire)}`);
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Recipe materials response:", data);
+          
+          // Parse response - expecting materiale as comma-separated string or array
+          if (data && data.length > 0) {
+            const record = data[0];
+            let materials: RetetaMaterial[] = [];
+            
+            // Handle different response formats
+            if (record.materiale) {
+              const materialeList = typeof record.materiale === 'string' 
+                ? record.materiale.split(',').map((m: string) => m.trim())
+                : record.materiale;
+              
+              const cantitatiList = record.cantitati 
+                ? (typeof record.cantitati === 'string' 
+                    ? record.cantitati.split(',').map((c: string) => parseFloat(c.trim()))
+                    : record.cantitati)
+                : [];
+              
+              materials = materialeList.map((mat: string, idx: number) => ({
+                material: mat,
+                cantitate: cantitatiList[idx] || 0
+              }));
+            }
+            
+            setRetetaMateriale(materials);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching recipe materials:", error);
+        setRetetaMateriale([]);
+      }
+    };
+    
+    fetchRetetaMateriale();
+  }, [selectedReteta, retete]);
+
+
   useEffect(() => {
     const fetchProduse = async () => {
       try {
@@ -307,15 +367,28 @@ const CalculatorPret = () => {
     setTimeout(() => {
       const marja = marjaProfit / 100;
       
-      // Mock cost breakdown based on quantity
-      const mockBreakdown: CostBreakdown = {
-        materiale: [
-          { material: "Bitum 50/70", cantitate: qty * 0.05, pretUnitar: shortagesWithPrices?.find(s => s.material === "Bitum 50/70")?.pretUnitar ? parseFloat(shortagesWithPrices.find(s => s.material === "Bitum 50/70")!.pretUnitar) : 3500, total: 0 },
-          { material: "Agregat 0/4", cantitate: qty * 0.35, pretUnitar: shortagesWithPrices?.find(s => s.material === "Agregat 0/4")?.pretUnitar ? parseFloat(shortagesWithPrices.find(s => s.material === "Agregat 0/4")!.pretUnitar) : 45, total: 0 },
-          { material: "Agregat 4/8", cantitate: qty * 0.25, pretUnitar: shortagesWithPrices?.find(s => s.material === "Agregat 4/8")?.pretUnitar ? parseFloat(shortagesWithPrices.find(s => s.material === "Agregat 4/8")!.pretUnitar) : 50, total: 0 },
-          { material: "Filler", cantitate: qty * 0.08, pretUnitar: shortagesWithPrices?.find(s => s.material === "Filler")?.pretUnitar ? parseFloat(shortagesWithPrices.find(s => s.material === "Filler")!.pretUnitar) : 120, total: 0 },
-          { material: "Agregat 8/16", cantitate: qty * 0.27, pretUnitar: shortagesWithPrices?.find(s => s.material === "Agregat 8/16")?.pretUnitar ? parseFloat(shortagesWithPrices.find(s => s.material === "Agregat 8/16")!.pretUnitar) : 55, total: 0 },
-        ],
+      // Use materials from API or fallback to mock
+      const materialsToUse = retetaMateriale.length > 0 
+        ? retetaMateriale.map(m => ({
+            material: m.material,
+            // cantitate per tona * cantitate dorita / 1000 (kg to tone conversion)
+            cantitate: (m.cantitate / 1000) * qty,
+            pretUnitar: shortagesWithPrices?.find(s => s.material === m.material)?.pretUnitar 
+              ? parseFloat(shortagesWithPrices.find(s => s.material === m.material)!.pretUnitar) 
+              : 100, // Default unit price - should come from API
+            total: 0
+          }))
+        : [
+            { material: "Bitum 50/70", cantitate: qty * 0.05, pretUnitar: shortagesWithPrices?.find(s => s.material === "Bitum 50/70")?.pretUnitar ? parseFloat(shortagesWithPrices.find(s => s.material === "Bitum 50/70")!.pretUnitar) : 3500, total: 0 },
+            { material: "Agregat 0/4", cantitate: qty * 0.35, pretUnitar: shortagesWithPrices?.find(s => s.material === "Agregat 0/4")?.pretUnitar ? parseFloat(shortagesWithPrices.find(s => s.material === "Agregat 0/4")!.pretUnitar) : 45, total: 0 },
+            { material: "Agregat 4/8", cantitate: qty * 0.25, pretUnitar: shortagesWithPrices?.find(s => s.material === "Agregat 4/8")?.pretUnitar ? parseFloat(shortagesWithPrices.find(s => s.material === "Agregat 4/8")!.pretUnitar) : 50, total: 0 },
+            { material: "Filler", cantitate: qty * 0.08, pretUnitar: shortagesWithPrices?.find(s => s.material === "Filler")?.pretUnitar ? parseFloat(shortagesWithPrices.find(s => s.material === "Filler")!.pretUnitar) : 120, total: 0 },
+            { material: "Agregat 8/16", cantitate: qty * 0.27, pretUnitar: shortagesWithPrices?.find(s => s.material === "Agregat 8/16")?.pretUnitar ? parseFloat(shortagesWithPrices.find(s => s.material === "Agregat 8/16")!.pretUnitar) : 55, total: 0 },
+          ];
+      
+      // Build cost breakdown
+      const breakdown: CostBreakdown = {
+        materiale: materialsToUse,
         curentActiv: qty * 12,
         consumCTL: qty * 8,
         costuriIndirecte: {
@@ -330,23 +403,23 @@ const CalculatorPret = () => {
       };
       
       // Calculate totals for each material
-      mockBreakdown.materiale = mockBreakdown.materiale.map(m => ({
+      breakdown.materiale = breakdown.materiale.map(m => ({
         ...m,
         total: m.cantitate * m.pretUnitar
       }));
 
-      const costMateriale = mockBreakdown.materiale.reduce((sum, m) => sum + m.total, 0);
-      const costIndirecte = Object.values(mockBreakdown.costuriIndirecte).reduce((sum, c) => sum + c, 0);
-      mockBreakdown.costTotal = costMateriale + mockBreakdown.curentActiv + mockBreakdown.consumCTL + costIndirecte;
+      const costMateriale = breakdown.materiale.reduce((sum, m) => sum + m.total, 0);
+      const costIndirecte = Object.values(breakdown.costuriIndirecte).reduce((sum, c) => sum + (c as number), 0);
+      breakdown.costTotal = costMateriale + breakdown.curentActiv + breakdown.consumCTL + costIndirecte;
       
       // Calculate total margin including reserve fund if enabled
       const totalMargin = fondRezervaEnabled 
         ? marja + (fondRezerva / 100)
         : marja;
       
-      mockBreakdown.pretRecomandat = mockBreakdown.costTotal * (1 + totalMargin);
+      breakdown.pretRecomandat = breakdown.costTotal * (1 + totalMargin);
 
-      setCostBreakdown(mockBreakdown);
+      setCostBreakdown(breakdown);
 
       // Auto-save calculation
       const reteta = retete.find(r => r.cod_reteta === selectedReteta);
@@ -357,9 +430,9 @@ const CalculatorPret = () => {
         denumireReteta: reteta?.denumire || selectedReteta,
         cantitate: qty,
         marjaProfit: marjaProfit,
-        costTotal: mockBreakdown.costTotal,
-        pretRecomandat: mockBreakdown.pretRecomandat,
-        pretPeTona: mockBreakdown.pretRecomandat / qty
+        costTotal: breakdown.costTotal,
+        pretRecomandat: breakdown.pretRecomandat,
+        pretPeTona: breakdown.pretRecomandat / qty
       };
       setPreturiCalculate(prev => [newCalculation, ...prev]);
 
