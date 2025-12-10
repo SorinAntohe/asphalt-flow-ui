@@ -1,15 +1,19 @@
 import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { furnizoriCuSold, facturiFurnizoriIstoric, platiFurnizori, soldIntervaleFurnizori } from "../parteneri-mockData";
 import { FurnizorCuSold } from "../parteneri-types";
 import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
-import { Building2, TrendingDown, AlertTriangle, Clock } from "lucide-react";
+import { Building2, TrendingDown, AlertTriangle, Clock, Plus, Download } from "lucide-react";
+import { exportToCSV } from "@/lib/exportUtils";
+import { useToast } from "@/hooks/use-toast";
 
 const FurnizoriTab = () => {
+  const { toast } = useToast();
   const [selectedFurnizor, setSelectedFurnizor] = useState<FurnizorCuSold | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -168,6 +172,29 @@ const FurnizoriTab = () => {
       {/* Table */}
       <Card>
         <CardContent className="pt-6">
+          <div className="flex justify-end gap-2 mb-4">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              onClick={() => {
+                exportToCSV(filteredAndSortedData, "furnizori_solduri", [
+                  { key: "nume", label: "Furnizor" },
+                  { key: "cui", label: "CUI" },
+                  { key: "adresa", label: "Adresă" },
+                  { key: "sold_curent", label: "Sold curent" },
+                  { key: "zile_intarziere_max", label: "Zile întârziere max." },
+                ]);
+                toast({ title: "Export realizat", description: "Export CSV realizat cu succes." });
+              }}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export CSV
+            </Button>
+            <Button size="sm">
+              <Plus className="h-4 w-4 mr-2" />
+              Adaugă
+            </Button>
+          </div>
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
