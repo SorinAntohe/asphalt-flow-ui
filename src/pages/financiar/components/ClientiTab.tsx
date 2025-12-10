@@ -16,11 +16,16 @@ const ClientiTab = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
   // Sorting state
-  const [sortColumn, setSortColumn] = useState<string | null>(null);
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [currentSort, setCurrentSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
   
   // Filter state
-  const [filters, setFilters] = useState<Record<string, string>>({});
+  const [filters, setFilters] = useState<Record<string, string>>({
+    nume: "",
+    cui: "",
+    adresa: "",
+    sold_curent: "",
+    zile_intarziere_max: "",
+  });
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("ro-RO", {
@@ -41,13 +46,12 @@ const ClientiTab = () => {
     return "text-red-600";
   };
 
-  const handleSort = (column: string, direction: "asc" | "desc") => {
-    setSortColumn(column);
-    setSortDirection(direction);
+  const handleSort = (key: string, direction: "asc" | "desc") => {
+    setCurrentSort({ key, direction });
   };
 
-  const handleFilter = (column: string, value: string) => {
-    setFilters(prev => ({ ...prev, [column]: value }));
+  const handleFilter = (key: string, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
     setCurrentPage(1);
   };
 
@@ -66,25 +70,25 @@ const ClientiTab = () => {
     });
     
     // Apply sorting
-    if (sortColumn) {
+    if (currentSort) {
       data.sort((a, b) => {
-        const aValue = a[sortColumn as keyof ClientCuSold];
-        const bValue = b[sortColumn as keyof ClientCuSold];
+        const aValue = a[currentSort.key as keyof ClientCuSold];
+        const bValue = b[currentSort.key as keyof ClientCuSold];
         
         if (typeof aValue === "number" && typeof bValue === "number") {
-          return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+          return currentSort.direction === "asc" ? aValue - bValue : bValue - aValue;
         }
         
         const aStr = String(aValue || "");
         const bStr = String(bValue || "");
-        return sortDirection === "asc" 
+        return currentSort.direction === "asc" 
           ? aStr.localeCompare(bStr) 
           : bStr.localeCompare(aStr);
       });
     }
     
     return data;
-  }, [filters, sortColumn, sortDirection]);
+  }, [filters, currentSort]);
 
   // Pagination
   const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
@@ -171,46 +175,51 @@ const ClientiTab = () => {
                   <TableHead>
                     <DataTableColumnHeader
                       title="Client"
-                      sortDirection={sortColumn === "nume" ? sortDirection : null}
-                      onSort={(dir) => handleSort("nume", dir)}
-                      filterValue={filters.nume || ""}
-                      onFilter={(val) => handleFilter("nume", val)}
+                      sortKey="nume"
+                      currentSort={currentSort}
+                      onSort={handleSort}
+                      filterValue={filters.nume}
+                      onFilterChange={(val) => handleFilter("nume", val)}
                     />
                   </TableHead>
                   <TableHead>
                     <DataTableColumnHeader
                       title="CUI"
-                      sortDirection={sortColumn === "cui" ? sortDirection : null}
-                      onSort={(dir) => handleSort("cui", dir)}
-                      filterValue={filters.cui || ""}
-                      onFilter={(val) => handleFilter("cui", val)}
+                      sortKey="cui"
+                      currentSort={currentSort}
+                      onSort={handleSort}
+                      filterValue={filters.cui}
+                      onFilterChange={(val) => handleFilter("cui", val)}
                     />
                   </TableHead>
                   <TableHead>
                     <DataTableColumnHeader
                       title="Adresă"
-                      sortDirection={sortColumn === "adresa" ? sortDirection : null}
-                      onSort={(dir) => handleSort("adresa", dir)}
-                      filterValue={filters.adresa || ""}
-                      onFilter={(val) => handleFilter("adresa", val)}
+                      sortKey="adresa"
+                      currentSort={currentSort}
+                      onSort={handleSort}
+                      filterValue={filters.adresa}
+                      onFilterChange={(val) => handleFilter("adresa", val)}
                     />
                   </TableHead>
                   <TableHead className="text-right">
                     <DataTableColumnHeader
                       title="Sold curent"
-                      sortDirection={sortColumn === "sold_curent" ? sortDirection : null}
-                      onSort={(dir) => handleSort("sold_curent", dir)}
-                      filterValue={filters.sold_curent || ""}
-                      onFilter={(val) => handleFilter("sold_curent", val)}
+                      sortKey="sold_curent"
+                      currentSort={currentSort}
+                      onSort={handleSort}
+                      filterValue={filters.sold_curent}
+                      onFilterChange={(val) => handleFilter("sold_curent", val)}
                     />
                   </TableHead>
                   <TableHead className="text-right">
                     <DataTableColumnHeader
                       title="Zile întârziere max."
-                      sortDirection={sortColumn === "zile_intarziere_max" ? sortDirection : null}
-                      onSort={(dir) => handleSort("zile_intarziere_max", dir)}
-                      filterValue={filters.zile_intarziere_max || ""}
-                      onFilter={(val) => handleFilter("zile_intarziere_max", val)}
+                      sortKey="zile_intarziere_max"
+                      currentSort={currentSort}
+                      onSort={handleSort}
+                      filterValue={filters.zile_intarziere_max}
+                      onFilterChange={(val) => handleFilter("zile_intarziere_max", val)}
                     />
                   </TableHead>
                 </TableRow>

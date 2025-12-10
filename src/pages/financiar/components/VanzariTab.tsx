@@ -19,14 +19,20 @@ const VanzariTab = () => {
   const [incasariPerPage, setIncasariPerPage] = useState(10);
   
   // Sorting states
-  const [facturiSort, setFacturiSort] = useState<{ column: string | null; direction: "asc" | "desc" }>({ column: null, direction: "asc" });
-  const [livrariSort, setLivrariSort] = useState<{ column: string | null; direction: "asc" | "desc" }>({ column: null, direction: "asc" });
-  const [incasariSort, setIncasariSort] = useState<{ column: string | null; direction: "asc" | "desc" }>({ column: null, direction: "asc" });
+  const [facturiSort, setFacturiSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
+  const [livrariSort, setLivrariSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
+  const [incasariSort, setIncasariSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
   
   // Filter states
-  const [facturiFilters, setFacturiFilters] = useState<Record<string, string>>({});
-  const [livrariFilters, setLivrariFilters] = useState<Record<string, string>>({});
-  const [incasariFilters, setIncasariFilters] = useState<Record<string, string>>({});
+  const [facturiFilters, setFacturiFilters] = useState<Record<string, string>>({
+    nr_factura: "", data: "", client: "", status: "",
+  });
+  const [livrariFilters, setLivrariFilters] = useState<Record<string, string>>({
+    data: "", cod: "", client: "",
+  });
+  const [incasariFilters, setIncasariFilters] = useState<Record<string, string>>({
+    data: "", client: "", tip: "",
+  });
 
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
@@ -58,35 +64,34 @@ const VanzariTab = () => {
   const totalLivrari = livrariClienti.reduce((sum, l) => sum + l.total, 0);
 
   // Filter and sort helper
-  const filterAndSort = <T extends Record<string, unknown>>(
+  const filterAndSort = <T,>(
     data: T[],
     filters: Record<string, string>,
-    sortColumn: string | null,
-    sortDirection: "asc" | "desc"
-  ) => {
+    sort: { key: string; direction: "asc" | "desc" } | null
+  ): T[] => {
     let result = [...data];
     
     Object.entries(filters).forEach(([column, value]) => {
       if (value) {
         result = result.filter(item => {
-          const itemValue = String(item[column] || "").toLowerCase();
+          const itemValue = String((item as Record<string, unknown>)[column] || "").toLowerCase();
           return itemValue.includes(value.toLowerCase());
         });
       }
     });
     
-    if (sortColumn) {
+    if (sort) {
       result.sort((a, b) => {
-        const aValue = a[sortColumn];
-        const bValue = b[sortColumn];
+        const aValue = (a as Record<string, unknown>)[sort.key];
+        const bValue = (b as Record<string, unknown>)[sort.key];
         
         if (typeof aValue === "number" && typeof bValue === "number") {
-          return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+          return sort.direction === "asc" ? aValue - bValue : bValue - aValue;
         }
         
         const aStr = String(aValue || "");
         const bStr = String(bValue || "");
-        return sortDirection === "asc" ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr);
+        return sort.direction === "asc" ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr);
       });
     }
     
@@ -95,17 +100,17 @@ const VanzariTab = () => {
 
   // Processed data
   const filteredFacturi = useMemo(() => 
-    filterAndSort(facturiClienti, facturiFilters, facturiSort.column, facturiSort.direction),
+    filterAndSort(facturiClienti, facturiFilters, facturiSort),
     [facturiFilters, facturiSort]
   );
   
   const filteredLivrari = useMemo(() => 
-    filterAndSort(livrariClienti, livrariFilters, livrariSort.column, livrariSort.direction),
+    filterAndSort(livrariClienti, livrariFilters, livrariSort),
     [livrariFilters, livrariSort]
   );
   
   const filteredIncasari = useMemo(() => 
-    filterAndSort(incasariClienti, incasariFilters, incasariSort.column, incasariSort.direction),
+    filterAndSort(incasariClienti, incasariFilters, incasariSort),
     [incasariFilters, incasariSort]
   );
 
@@ -190,28 +195,31 @@ const VanzariTab = () => {
                       <TableHead>
                         <DataTableColumnHeader
                           title="Nr Factură"
-                          sortDirection={facturiSort.column === "nr_factura" ? facturiSort.direction : null}
-                          onSort={(dir) => setFacturiSort({ column: "nr_factura", direction: dir })}
-                          filterValue={facturiFilters.nr_factura || ""}
-                          onFilter={(val) => { setFacturiFilters(prev => ({ ...prev, nr_factura: val })); setFacturiPage(1); }}
+                          sortKey="nr_factura"
+                          currentSort={facturiSort}
+                          onSort={(key, dir) => setFacturiSort({ key, direction: dir })}
+                          filterValue={facturiFilters.nr_factura}
+                          onFilterChange={(val) => { setFacturiFilters(prev => ({ ...prev, nr_factura: val })); setFacturiPage(1); }}
                         />
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="Dată"
-                          sortDirection={facturiSort.column === "data" ? facturiSort.direction : null}
-                          onSort={(dir) => setFacturiSort({ column: "data", direction: dir })}
-                          filterValue={facturiFilters.data || ""}
-                          onFilter={(val) => { setFacturiFilters(prev => ({ ...prev, data: val })); setFacturiPage(1); }}
+                          sortKey="data"
+                          currentSort={facturiSort}
+                          onSort={(key, dir) => setFacturiSort({ key, direction: dir })}
+                          filterValue={facturiFilters.data}
+                          onFilterChange={(val) => { setFacturiFilters(prev => ({ ...prev, data: val })); setFacturiPage(1); }}
                         />
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="Client"
-                          sortDirection={facturiSort.column === "client" ? facturiSort.direction : null}
-                          onSort={(dir) => setFacturiSort({ column: "client", direction: dir })}
-                          filterValue={facturiFilters.client || ""}
-                          onFilter={(val) => { setFacturiFilters(prev => ({ ...prev, client: val })); setFacturiPage(1); }}
+                          sortKey="client"
+                          currentSort={facturiSort}
+                          onSort={(key, dir) => setFacturiSort({ key, direction: dir })}
+                          filterValue={facturiFilters.client}
+                          onFilterChange={(val) => { setFacturiFilters(prev => ({ ...prev, client: val })); setFacturiPage(1); }}
                         />
                       </TableHead>
                       <TableHead className="text-right">Total fără TVA</TableHead>
@@ -223,10 +231,11 @@ const VanzariTab = () => {
                       <TableHead>
                         <DataTableColumnHeader
                           title="Status"
-                          sortDirection={facturiSort.column === "status" ? facturiSort.direction : null}
-                          onSort={(dir) => setFacturiSort({ column: "status", direction: dir })}
-                          filterValue={facturiFilters.status || ""}
-                          onFilter={(val) => { setFacturiFilters(prev => ({ ...prev, status: val })); setFacturiPage(1); }}
+                          sortKey="status"
+                          currentSort={facturiSort}
+                          onSort={(key, dir) => setFacturiSort({ key, direction: dir })}
+                          filterValue={facturiFilters.status}
+                          onFilterChange={(val) => { setFacturiFilters(prev => ({ ...prev, status: val })); setFacturiPage(1); }}
                         />
                       </TableHead>
                     </TableRow>
@@ -271,29 +280,32 @@ const VanzariTab = () => {
                       <TableHead>
                         <DataTableColumnHeader
                           title="Dată"
-                          sortDirection={livrariSort.column === "data" ? livrariSort.direction : null}
-                          onSort={(dir) => setLivrariSort({ column: "data", direction: dir })}
-                          filterValue={livrariFilters.data || ""}
-                          onFilter={(val) => { setLivrariFilters(prev => ({ ...prev, data: val })); setLivrariPage(1); }}
+                          sortKey="data"
+                          currentSort={livrariSort}
+                          onSort={(key, dir) => setLivrariSort({ key, direction: dir })}
+                          filterValue={livrariFilters.data}
+                          onFilterChange={(val) => { setLivrariFilters(prev => ({ ...prev, data: val })); setLivrariPage(1); }}
                         />
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="Cod"
-                          sortDirection={livrariSort.column === "cod" ? livrariSort.direction : null}
-                          onSort={(dir) => setLivrariSort({ column: "cod", direction: dir })}
-                          filterValue={livrariFilters.cod || ""}
-                          onFilter={(val) => { setLivrariFilters(prev => ({ ...prev, cod: val })); setLivrariPage(1); }}
+                          sortKey="cod"
+                          currentSort={livrariSort}
+                          onSort={(key, dir) => setLivrariSort({ key, direction: dir })}
+                          filterValue={livrariFilters.cod}
+                          onFilterChange={(val) => { setLivrariFilters(prev => ({ ...prev, cod: val })); setLivrariPage(1); }}
                         />
                       </TableHead>
                       <TableHead>Nr Aviz</TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="Client"
-                          sortDirection={livrariSort.column === "client" ? livrariSort.direction : null}
-                          onSort={(dir) => setLivrariSort({ column: "client", direction: dir })}
-                          filterValue={livrariFilters.client || ""}
-                          onFilter={(val) => { setLivrariFilters(prev => ({ ...prev, client: val })); setLivrariPage(1); }}
+                          sortKey="client"
+                          currentSort={livrariSort}
+                          onSort={(key, dir) => setLivrariSort({ key, direction: dir })}
+                          filterValue={livrariFilters.client}
+                          onFilterChange={(val) => { setLivrariFilters(prev => ({ ...prev, client: val })); setLivrariPage(1); }}
                         />
                       </TableHead>
                       <TableHead>Produs</TableHead>
@@ -344,28 +356,31 @@ const VanzariTab = () => {
                       <TableHead>
                         <DataTableColumnHeader
                           title="Dată"
-                          sortDirection={incasariSort.column === "data" ? incasariSort.direction : null}
-                          onSort={(dir) => setIncasariSort({ column: "data", direction: dir })}
-                          filterValue={incasariFilters.data || ""}
-                          onFilter={(val) => { setIncasariFilters(prev => ({ ...prev, data: val })); setIncasariPage(1); }}
+                          sortKey="data"
+                          currentSort={incasariSort}
+                          onSort={(key, dir) => setIncasariSort({ key, direction: dir })}
+                          filterValue={incasariFilters.data}
+                          onFilterChange={(val) => { setIncasariFilters(prev => ({ ...prev, data: val })); setIncasariPage(1); }}
                         />
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="Client"
-                          sortDirection={incasariSort.column === "client" ? incasariSort.direction : null}
-                          onSort={(dir) => setIncasariSort({ column: "client", direction: dir })}
-                          filterValue={incasariFilters.client || ""}
-                          onFilter={(val) => { setIncasariFilters(prev => ({ ...prev, client: val })); setIncasariPage(1); }}
+                          sortKey="client"
+                          currentSort={incasariSort}
+                          onSort={(key, dir) => setIncasariSort({ key, direction: dir })}
+                          filterValue={incasariFilters.client}
+                          onFilterChange={(val) => { setIncasariFilters(prev => ({ ...prev, client: val })); setIncasariPage(1); }}
                         />
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="Tip"
-                          sortDirection={incasariSort.column === "tip" ? incasariSort.direction : null}
-                          onSort={(dir) => setIncasariSort({ column: "tip", direction: dir })}
-                          filterValue={incasariFilters.tip || ""}
-                          onFilter={(val) => { setIncasariFilters(prev => ({ ...prev, tip: val })); setIncasariPage(1); }}
+                          sortKey="tip"
+                          currentSort={incasariSort}
+                          onSort={(key, dir) => setIncasariSort({ key, direction: dir })}
+                          filterValue={incasariFilters.tip}
+                          onFilterChange={(val) => { setIncasariFilters(prev => ({ ...prev, tip: val })); setIncasariPage(1); }}
                         />
                       </TableHead>
                       <TableHead className="text-right">Sumă totală</TableHead>

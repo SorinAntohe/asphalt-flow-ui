@@ -14,11 +14,19 @@ const BalantaFiseTab = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
   // Sorting state
-  const [sortColumn, setSortColumn] = useState<string | null>(null);
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [currentSort, setCurrentSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
   
   // Filter state
-  const [filters, setFilters] = useState<Record<string, string>>({});
+  const [filters, setFilters] = useState<Record<string, string>>({
+    cont: "",
+    denumire: "",
+    soldInitialDebit: "",
+    soldInitialCredit: "",
+    rulajDebit: "",
+    rulajCredit: "",
+    soldFinalDebit: "",
+    soldFinalCredit: "",
+  });
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('ro-RO', { style: 'currency', currency: 'RON' }).format(amount);
@@ -37,13 +45,12 @@ const BalantaFiseTab = () => {
     return miscariCont[cont] || [];
   };
 
-  const handleSort = (column: string, direction: "asc" | "desc") => {
-    setSortColumn(column);
-    setSortDirection(direction);
+  const handleSort = (key: string, direction: "asc" | "desc") => {
+    setCurrentSort({ key, direction });
   };
 
-  const handleFilter = (column: string, value: string) => {
-    setFilters(prev => ({ ...prev, [column]: value }));
+  const handleFilter = (key: string, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
     setCurrentPage(1);
   };
 
@@ -68,25 +75,25 @@ const BalantaFiseTab = () => {
     });
     
     // Apply sorting
-    if (sortColumn) {
+    if (currentSort) {
       data.sort((a, b) => {
-        const aValue = a[sortColumn as keyof ContBalanta];
-        const bValue = b[sortColumn as keyof ContBalanta];
+        const aValue = a[currentSort.key as keyof ContBalanta];
+        const bValue = b[currentSort.key as keyof ContBalanta];
         
         if (typeof aValue === "number" && typeof bValue === "number") {
-          return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+          return currentSort.direction === "asc" ? aValue - bValue : bValue - aValue;
         }
         
         const aStr = String(aValue || "");
         const bStr = String(bValue || "");
-        return sortDirection === "asc" 
+        return currentSort.direction === "asc" 
           ? aStr.localeCompare(bStr) 
           : bStr.localeCompare(aStr);
       });
     }
     
     return data;
-  }, [filters, sortColumn, sortDirection]);
+  }, [filters, currentSort]);
 
   // Pagination
   const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
@@ -163,73 +170,81 @@ const BalantaFiseTab = () => {
                   <TableHead>
                     <DataTableColumnHeader
                       title="Cont"
-                      sortDirection={sortColumn === "cont" ? sortDirection : null}
-                      onSort={(dir) => handleSort("cont", dir)}
-                      filterValue={filters.cont || ""}
-                      onFilter={(val) => handleFilter("cont", val)}
+                      sortKey="cont"
+                      currentSort={currentSort}
+                      onSort={handleSort}
+                      filterValue={filters.cont}
+                      onFilterChange={(val) => handleFilter("cont", val)}
                     />
                   </TableHead>
                   <TableHead>
                     <DataTableColumnHeader
                       title="Denumire"
-                      sortDirection={sortColumn === "denumire" ? sortDirection : null}
-                      onSort={(dir) => handleSort("denumire", dir)}
-                      filterValue={filters.denumire || ""}
-                      onFilter={(val) => handleFilter("denumire", val)}
+                      sortKey="denumire"
+                      currentSort={currentSort}
+                      onSort={handleSort}
+                      filterValue={filters.denumire}
+                      onFilterChange={(val) => handleFilter("denumire", val)}
                     />
                   </TableHead>
                   <TableHead className="text-right">
                     <DataTableColumnHeader
                       title="Sold Inițial D"
-                      sortDirection={sortColumn === "soldInitialDebit" ? sortDirection : null}
-                      onSort={(dir) => handleSort("soldInitialDebit", dir)}
-                      filterValue={filters.soldInitialDebit || ""}
-                      onFilter={(val) => handleFilter("soldInitialDebit", val)}
+                      sortKey="soldInitialDebit"
+                      currentSort={currentSort}
+                      onSort={handleSort}
+                      filterValue={filters.soldInitialDebit}
+                      onFilterChange={(val) => handleFilter("soldInitialDebit", val)}
                     />
                   </TableHead>
                   <TableHead className="text-right">
                     <DataTableColumnHeader
                       title="Sold Inițial C"
-                      sortDirection={sortColumn === "soldInitialCredit" ? sortDirection : null}
-                      onSort={(dir) => handleSort("soldInitialCredit", dir)}
-                      filterValue={filters.soldInitialCredit || ""}
-                      onFilter={(val) => handleFilter("soldInitialCredit", val)}
+                      sortKey="soldInitialCredit"
+                      currentSort={currentSort}
+                      onSort={handleSort}
+                      filterValue={filters.soldInitialCredit}
+                      onFilterChange={(val) => handleFilter("soldInitialCredit", val)}
                     />
                   </TableHead>
                   <TableHead className="text-right">
                     <DataTableColumnHeader
                       title="Rulaj D"
-                      sortDirection={sortColumn === "rulajDebit" ? sortDirection : null}
-                      onSort={(dir) => handleSort("rulajDebit", dir)}
-                      filterValue={filters.rulajDebit || ""}
-                      onFilter={(val) => handleFilter("rulajDebit", val)}
+                      sortKey="rulajDebit"
+                      currentSort={currentSort}
+                      onSort={handleSort}
+                      filterValue={filters.rulajDebit}
+                      onFilterChange={(val) => handleFilter("rulajDebit", val)}
                     />
                   </TableHead>
                   <TableHead className="text-right">
                     <DataTableColumnHeader
                       title="Rulaj C"
-                      sortDirection={sortColumn === "rulajCredit" ? sortDirection : null}
-                      onSort={(dir) => handleSort("rulajCredit", dir)}
-                      filterValue={filters.rulajCredit || ""}
-                      onFilter={(val) => handleFilter("rulajCredit", val)}
+                      sortKey="rulajCredit"
+                      currentSort={currentSort}
+                      onSort={handleSort}
+                      filterValue={filters.rulajCredit}
+                      onFilterChange={(val) => handleFilter("rulajCredit", val)}
                     />
                   </TableHead>
                   <TableHead className="text-right">
                     <DataTableColumnHeader
                       title="Sold Final D"
-                      sortDirection={sortColumn === "soldFinalDebit" ? sortDirection : null}
-                      onSort={(dir) => handleSort("soldFinalDebit", dir)}
-                      filterValue={filters.soldFinalDebit || ""}
-                      onFilter={(val) => handleFilter("soldFinalDebit", val)}
+                      sortKey="soldFinalDebit"
+                      currentSort={currentSort}
+                      onSort={handleSort}
+                      filterValue={filters.soldFinalDebit}
+                      onFilterChange={(val) => handleFilter("soldFinalDebit", val)}
                     />
                   </TableHead>
                   <TableHead className="text-right">
                     <DataTableColumnHeader
                       title="Sold Final C"
-                      sortDirection={sortColumn === "soldFinalCredit" ? sortDirection : null}
-                      onSort={(dir) => handleSort("soldFinalCredit", dir)}
-                      filterValue={filters.soldFinalCredit || ""}
-                      onFilter={(val) => handleFilter("soldFinalCredit", val)}
+                      sortKey="soldFinalCredit"
+                      currentSort={currentSort}
+                      onSort={handleSort}
+                      filterValue={filters.soldFinalCredit}
+                      onFilterChange={(val) => handleFilter("soldFinalCredit", val)}
                     />
                   </TableHead>
                 </TableRow>

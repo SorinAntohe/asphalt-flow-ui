@@ -17,12 +17,16 @@ const AchizitiiTab = () => {
   const [receptiiPerPage, setReceptiiPerPage] = useState(10);
   
   // Sorting states
-  const [facturiSort, setFacturiSort] = useState<{ column: string | null; direction: "asc" | "desc" }>({ column: null, direction: "asc" });
-  const [receptiiSort, setReceptiiSort] = useState<{ column: string | null; direction: "asc" | "desc" }>({ column: null, direction: "asc" });
+  const [facturiSort, setFacturiSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
+  const [receptiiSort, setReceptiiSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
   
   // Filter states
-  const [facturiFilters, setFacturiFilters] = useState<Record<string, string>>({});
-  const [receptiiFilters, setReceptiiFilters] = useState<Record<string, string>>({});
+  const [facturiFilters, setFacturiFilters] = useState<Record<string, string>>({
+    nr_factura: "", data: "", furnizor: "", status: "",
+  });
+  const [receptiiFilters, setReceptiiFilters] = useState<Record<string, string>>({
+    data: "", cod: "", furnizor: "", material: "",
+  });
 
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
@@ -52,35 +56,34 @@ const AchizitiiTab = () => {
   const totalReceptii = receptiiMateriale.reduce((sum, r) => sum + r.pret_total, 0);
 
   // Filter and sort helper
-  const filterAndSort = <T extends Record<string, unknown>>(
+  const filterAndSort = <T,>(
     data: T[],
     filters: Record<string, string>,
-    sortColumn: string | null,
-    sortDirection: "asc" | "desc"
-  ) => {
+    sort: { key: string; direction: "asc" | "desc" } | null
+  ): T[] => {
     let result = [...data];
     
     Object.entries(filters).forEach(([column, value]) => {
       if (value) {
         result = result.filter(item => {
-          const itemValue = String(item[column] || "").toLowerCase();
+          const itemValue = String((item as Record<string, unknown>)[column] || "").toLowerCase();
           return itemValue.includes(value.toLowerCase());
         });
       }
     });
     
-    if (sortColumn) {
+    if (sort) {
       result.sort((a, b) => {
-        const aValue = a[sortColumn];
-        const bValue = b[sortColumn];
+        const aValue = (a as Record<string, unknown>)[sort.key];
+        const bValue = (b as Record<string, unknown>)[sort.key];
         
         if (typeof aValue === "number" && typeof bValue === "number") {
-          return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+          return sort.direction === "asc" ? aValue - bValue : bValue - aValue;
         }
         
         const aStr = String(aValue || "");
         const bStr = String(bValue || "");
-        return sortDirection === "asc" ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr);
+        return sort.direction === "asc" ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr);
       });
     }
     
@@ -89,12 +92,12 @@ const AchizitiiTab = () => {
 
   // Processed data
   const filteredFacturi = useMemo(() => 
-    filterAndSort(facturiFurnizori, facturiFilters, facturiSort.column, facturiSort.direction),
+    filterAndSort(facturiFurnizori, facturiFilters, facturiSort),
     [facturiFilters, facturiSort]
   );
   
   const filteredReceptii = useMemo(() => 
-    filterAndSort(receptiiMateriale, receptiiFilters, receptiiSort.column, receptiiSort.direction),
+    filterAndSort(receptiiMateriale, receptiiFilters, receptiiSort),
     [receptiiFilters, receptiiSort]
   );
 
@@ -177,28 +180,31 @@ const AchizitiiTab = () => {
                       <TableHead>
                         <DataTableColumnHeader
                           title="Nr Factură"
-                          sortDirection={facturiSort.column === "nr_factura" ? facturiSort.direction : null}
-                          onSort={(dir) => setFacturiSort({ column: "nr_factura", direction: dir })}
-                          filterValue={facturiFilters.nr_factura || ""}
-                          onFilter={(val) => { setFacturiFilters(prev => ({ ...prev, nr_factura: val })); setFacturiPage(1); }}
+                          sortKey="nr_factura"
+                          currentSort={facturiSort}
+                          onSort={(key, dir) => setFacturiSort({ key, direction: dir })}
+                          filterValue={facturiFilters.nr_factura}
+                          onFilterChange={(val) => { setFacturiFilters(prev => ({ ...prev, nr_factura: val })); setFacturiPage(1); }}
                         />
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="Dată"
-                          sortDirection={facturiSort.column === "data" ? facturiSort.direction : null}
-                          onSort={(dir) => setFacturiSort({ column: "data", direction: dir })}
-                          filterValue={facturiFilters.data || ""}
-                          onFilter={(val) => { setFacturiFilters(prev => ({ ...prev, data: val })); setFacturiPage(1); }}
+                          sortKey="data"
+                          currentSort={facturiSort}
+                          onSort={(key, dir) => setFacturiSort({ key, direction: dir })}
+                          filterValue={facturiFilters.data}
+                          onFilterChange={(val) => { setFacturiFilters(prev => ({ ...prev, data: val })); setFacturiPage(1); }}
                         />
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="Furnizor"
-                          sortDirection={facturiSort.column === "furnizor" ? facturiSort.direction : null}
-                          onSort={(dir) => setFacturiSort({ column: "furnizor", direction: dir })}
-                          filterValue={facturiFilters.furnizor || ""}
-                          onFilter={(val) => { setFacturiFilters(prev => ({ ...prev, furnizor: val })); setFacturiPage(1); }}
+                          sortKey="furnizor"
+                          currentSort={facturiSort}
+                          onSort={(key, dir) => setFacturiSort({ key, direction: dir })}
+                          filterValue={facturiFilters.furnizor}
+                          onFilterChange={(val) => { setFacturiFilters(prev => ({ ...prev, furnizor: val })); setFacturiPage(1); }}
                         />
                       </TableHead>
                       <TableHead className="text-right">Total fără TVA</TableHead>
@@ -210,10 +216,11 @@ const AchizitiiTab = () => {
                       <TableHead>
                         <DataTableColumnHeader
                           title="Status"
-                          sortDirection={facturiSort.column === "status" ? facturiSort.direction : null}
-                          onSort={(dir) => setFacturiSort({ column: "status", direction: dir })}
-                          filterValue={facturiFilters.status || ""}
-                          onFilter={(val) => { setFacturiFilters(prev => ({ ...prev, status: val })); setFacturiPage(1); }}
+                          sortKey="status"
+                          currentSort={facturiSort}
+                          onSort={(key, dir) => setFacturiSort({ key, direction: dir })}
+                          filterValue={facturiFilters.status}
+                          onFilterChange={(val) => { setFacturiFilters(prev => ({ ...prev, status: val })); setFacturiPage(1); }}
                         />
                       </TableHead>
                     </TableRow>
@@ -258,37 +265,41 @@ const AchizitiiTab = () => {
                       <TableHead>
                         <DataTableColumnHeader
                           title="Dată"
-                          sortDirection={receptiiSort.column === "data" ? receptiiSort.direction : null}
-                          onSort={(dir) => setReceptiiSort({ column: "data", direction: dir })}
-                          filterValue={receptiiFilters.data || ""}
-                          onFilter={(val) => { setReceptiiFilters(prev => ({ ...prev, data: val })); setReceptiiPage(1); }}
+                          sortKey="data"
+                          currentSort={receptiiSort}
+                          onSort={(key, dir) => setReceptiiSort({ key, direction: dir })}
+                          filterValue={receptiiFilters.data}
+                          onFilterChange={(val) => { setReceptiiFilters(prev => ({ ...prev, data: val })); setReceptiiPage(1); }}
                         />
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="Cod (comandă)"
-                          sortDirection={receptiiSort.column === "cod" ? receptiiSort.direction : null}
-                          onSort={(dir) => setReceptiiSort({ column: "cod", direction: dir })}
-                          filterValue={receptiiFilters.cod || ""}
-                          onFilter={(val) => { setReceptiiFilters(prev => ({ ...prev, cod: val })); setReceptiiPage(1); }}
+                          sortKey="cod"
+                          currentSort={receptiiSort}
+                          onSort={(key, dir) => setReceptiiSort({ key, direction: dir })}
+                          filterValue={receptiiFilters.cod}
+                          onFilterChange={(val) => { setReceptiiFilters(prev => ({ ...prev, cod: val })); setReceptiiPage(1); }}
                         />
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="Furnizor"
-                          sortDirection={receptiiSort.column === "furnizor" ? receptiiSort.direction : null}
-                          onSort={(dir) => setReceptiiSort({ column: "furnizor", direction: dir })}
-                          filterValue={receptiiFilters.furnizor || ""}
-                          onFilter={(val) => { setReceptiiFilters(prev => ({ ...prev, furnizor: val })); setReceptiiPage(1); }}
+                          sortKey="furnizor"
+                          currentSort={receptiiSort}
+                          onSort={(key, dir) => setReceptiiSort({ key, direction: dir })}
+                          filterValue={receptiiFilters.furnizor}
+                          onFilterChange={(val) => { setReceptiiFilters(prev => ({ ...prev, furnizor: val })); setReceptiiPage(1); }}
                         />
                       </TableHead>
                       <TableHead>
                         <DataTableColumnHeader
                           title="Material"
-                          sortDirection={receptiiSort.column === "material" ? receptiiSort.direction : null}
-                          onSort={(dir) => setReceptiiSort({ column: "material", direction: dir })}
-                          filterValue={receptiiFilters.material || ""}
-                          onFilter={(val) => { setReceptiiFilters(prev => ({ ...prev, material: val })); setReceptiiPage(1); }}
+                          sortKey="material"
+                          currentSort={receptiiSort}
+                          onSort={(key, dir) => setReceptiiSort({ key, direction: dir })}
+                          filterValue={receptiiFilters.material}
+                          onFilterChange={(val) => { setReceptiiFilters(prev => ({ ...prev, material: val })); setReceptiiPage(1); }}
                         />
                       </TableHead>
                       <TableHead className="text-right">Cantitate recepționată</TableHead>
