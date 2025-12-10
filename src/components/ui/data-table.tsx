@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { ArrowUp, ArrowDown, ArrowUpDown, Database, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Unified Column Header with Filter & Sort
 interface DataTableColumnHeaderProps {
@@ -90,15 +91,24 @@ export function DataTableColumnHeader({
   );
 }
 
-// Unified Table Wrapper
+// Unified Table Wrapper with Sticky Header Support
 interface DataTableWrapperProps {
   children: React.ReactNode;
   className?: string;
+  stickyHeader?: boolean;
+  maxHeight?: string;
 }
 
-export function DataTableWrapper({ children, className }: DataTableWrapperProps) {
+export function DataTableWrapper({ children, className, stickyHeader = false, maxHeight = "calc(100vh - 300px)" }: DataTableWrapperProps) {
   return (
-    <div className={cn("overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0", className)}>
+    <div 
+      className={cn(
+        "overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0",
+        stickyHeader && "overflow-y-auto",
+        className
+      )}
+      style={stickyHeader ? { maxHeight } : undefined}
+    >
       {children}
     </div>
   );
@@ -108,34 +118,81 @@ export function DataTableWrapper({ children, className }: DataTableWrapperProps)
 interface DataTableEmptyProps {
   colSpan: number;
   message?: string;
+  description?: string;
+  icon?: "default" | "search";
+  onAction?: () => void;
+  actionLabel?: string;
 }
 
-export function DataTableEmpty({ colSpan, message = "Nu există date disponibile" }: DataTableEmptyProps) {
+export function DataTableEmpty({ 
+  colSpan, 
+  message = "Nu există date disponibile",
+  description,
+  icon = "default",
+  onAction,
+  actionLabel = "Adaugă"
+}: DataTableEmptyProps) {
+  const Icon = icon === "search" ? Search : Database;
+  
   return (
     <tr>
-      <td colSpan={colSpan} className="h-32 text-center">
-        <div className="flex flex-col items-center justify-center text-muted-foreground">
-          <svg
-            className="h-12 w-12 mb-3 opacity-30"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-            />
-          </svg>
-          <p className="text-sm">{message}</p>
+      <td colSpan={colSpan} className="h-40">
+        <div className="flex flex-col items-center justify-center text-center py-8">
+          <div className="rounded-full bg-muted w-14 h-14 flex items-center justify-center mb-4">
+            <Icon className="h-7 w-7 text-muted-foreground" />
+          </div>
+          <p className="text-sm font-medium text-foreground">{message}</p>
+          {description && (
+            <p className="text-xs text-muted-foreground mt-1 max-w-xs">{description}</p>
+          )}
+          {onAction && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mt-4"
+              onClick={onAction}
+            >
+              {actionLabel}
+            </Button>
+          )}
         </div>
       </td>
     </tr>
   );
 }
 
-// Unified Loading State
+// Skeleton Loading State with Animation
+interface DataTableSkeletonProps {
+  colSpan: number;
+  rows?: number;
+}
+
+export function DataTableSkeleton({ colSpan, rows = 5 }: DataTableSkeletonProps) {
+  return (
+    <>
+      {Array.from({ length: rows }).map((_, rowIndex) => (
+        <tr 
+          key={rowIndex} 
+          className="border-b border-border/50 animate-in fade-in"
+          style={{ animationDelay: `${rowIndex * 50}ms`, animationFillMode: 'both' }}
+        >
+          {Array.from({ length: colSpan }).map((_, colIndex) => (
+            <td key={colIndex} className="p-4">
+              <Skeleton 
+                className={cn(
+                  "h-4",
+                  colIndex === 0 ? "w-20" : colIndex === colSpan - 1 ? "w-16" : "w-24"
+                )} 
+              />
+            </td>
+          ))}
+        </tr>
+      ))}
+    </>
+  );
+}
+
+// Legacy Loading State (spinner)
 interface DataTableLoadingProps {
   colSpan: number;
 }
