@@ -35,11 +35,11 @@ const AchizitiiTab = () => {
   
   // Edit form data
   const [editFacturaData, setEditFacturaData] = useState({
-    nr_factura: "", data: "", furnizor: "", total_fara_tva: "", tva: "", total: "",
+    furnizor: "", total_fara_tva: "", tva: "", total: "",
     data_scadenta: "", suma_platita: "", suma_restanta: "", status: ""
   });
   const [editReceptieData, setEditReceptieData] = useState({
-    cod: "", data: "", furnizor: "", material: "", cantitate_receptionata: "",
+    furnizor: "", material: "", cantitate_receptionata: "",
     pret_material_total: "", pret_transport_total: "", pret_total: "", nr_factura: ""
   });
   
@@ -50,8 +50,6 @@ const AchizitiiTab = () => {
   const openEditFactura = () => {
     if (selectedFactura) {
       setEditFacturaData({
-        nr_factura: selectedFactura.nr_factura,
-        data: selectedFactura.data,
         furnizor: selectedFactura.furnizor,
         total_fara_tva: String(selectedFactura.total_fara_tva),
         tva: String(selectedFactura.tva),
@@ -68,8 +66,6 @@ const AchizitiiTab = () => {
   const openEditReceptie = () => {
     if (selectedReceptie) {
       setEditReceptieData({
-        cod: selectedReceptie.cod,
-        data: selectedReceptie.data,
         furnizor: selectedReceptie.furnizor,
         material: selectedReceptie.material,
         cantitate_receptionata: String(selectedReceptie.cantitate_receptionata),
@@ -643,16 +639,8 @@ const AchizitiiTab = () => {
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Nr Factură</Label>
-              <Input value={editFacturaData.nr_factura} onChange={(e) => setEditFacturaData(prev => ({ ...prev, nr_factura: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
-              <Label>Dată</Label>
-              <Input type="date" value={editFacturaData.data} onChange={(e) => setEditFacturaData(prev => ({ ...prev, data: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
               <Label>Furnizor</Label>
-              <Input value={editFacturaData.furnizor} onChange={(e) => setEditFacturaData(prev => ({ ...prev, furnizor: e.target.value }))} />
+              <Input value={editFacturaData.furnizor} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Dată scadență</Label>
@@ -660,15 +648,15 @@ const AchizitiiTab = () => {
             </div>
             <div className="space-y-2">
               <Label>Total fără TVA</Label>
-              <Input type="number" value={editFacturaData.total_fara_tva} onChange={(e) => setEditFacturaData(prev => ({ ...prev, total_fara_tva: e.target.value }))} />
+              <Input type="number" value={editFacturaData.total_fara_tva} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>TVA</Label>
-              <Input type="number" value={editFacturaData.tva} onChange={(e) => setEditFacturaData(prev => ({ ...prev, tva: e.target.value }))} />
+              <Input type="number" value={editFacturaData.tva} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Total</Label>
-              <Input type="number" value={editFacturaData.total} onChange={(e) => setEditFacturaData(prev => ({ ...prev, total: e.target.value }))} />
+              <Input type="number" value={editFacturaData.total} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Sumă plătită</Label>
@@ -705,24 +693,16 @@ const AchizitiiTab = () => {
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Cod</Label>
-              <Input value={editReceptieData.cod} onChange={(e) => setEditReceptieData(prev => ({ ...prev, cod: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
-              <Label>Dată</Label>
-              <Input type="date" value={editReceptieData.data} onChange={(e) => setEditReceptieData(prev => ({ ...prev, data: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
               <Label>Furnizor</Label>
-              <Input value={editReceptieData.furnizor} onChange={(e) => setEditReceptieData(prev => ({ ...prev, furnizor: e.target.value }))} />
+              <Input value={editReceptieData.furnizor} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Material</Label>
-              <Input value={editReceptieData.material} onChange={(e) => setEditReceptieData(prev => ({ ...prev, material: e.target.value }))} />
+              <Input value={editReceptieData.material} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Cantitate recepționată (t)</Label>
-              <Input type="number" value={editReceptieData.cantitate_receptionata} onChange={(e) => setEditReceptieData(prev => ({ ...prev, cantitate_receptionata: e.target.value }))} />
+              <Input type="number" value={editReceptieData.cantitate_receptionata} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Nr Factură</Label>
@@ -730,15 +710,15 @@ const AchizitiiTab = () => {
             </div>
             <div className="space-y-2">
               <Label>Preț material total</Label>
-              <Input type="number" value={editReceptieData.pret_material_total} onChange={(e) => setEditReceptieData(prev => ({ ...prev, pret_material_total: e.target.value }))} />
+              <Input type="number" value={editReceptieData.pret_material_total} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Preț transport total</Label>
-              <Input type="number" value={editReceptieData.pret_transport_total} onChange={(e) => setEditReceptieData(prev => ({ ...prev, pret_transport_total: e.target.value }))} />
+              <Input type="number" value={editReceptieData.pret_transport_total} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Preț total</Label>
-              <Input type="number" value={editReceptieData.pret_total} onChange={(e) => setEditReceptieData(prev => ({ ...prev, pret_total: e.target.value }))} />
+              <Input type="number" value={editReceptieData.pret_total} readOnly className="bg-muted" />
             </div>
           </div>
           <DialogFooter>

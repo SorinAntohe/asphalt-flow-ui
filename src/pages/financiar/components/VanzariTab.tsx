@@ -38,15 +38,15 @@ const VanzariTab = () => {
   
   // Edit form data
   const [editFacturaData, setEditFacturaData] = useState({
-    nr_factura: "", data: "", client: "", total_fara_tva: "", tva: "", total: "",
+    client: "", total_fara_tva: "", tva: "", total: "",
     data_scadenta: "", suma_incasata: "", suma_restanta: "", status: ""
   });
   const [editLivrareData, setEditLivrareData] = useState({
-    cod: "", nr_aviz: "", data: "", client: "", produs: "", cantitate: "",
+    nr_aviz: "", client: "", produs: "", cantitate: "",
     valoare_produs: "", valoare_transport: "", total: "", status_facturare: ""
   });
   const [editIncasareData, setEditIncasareData] = useState({
-    data: "", client: "", tip: "", suma_totala: "", suma_alocata: "", suma_nealocata: ""
+    client: "", tip: "", suma_totala: "", suma_alocata: "", suma_nealocata: ""
   });
   
   // Delete dialog states
@@ -56,8 +56,6 @@ const VanzariTab = () => {
   const openEditFactura = () => {
     if (selectedFactura) {
       setEditFacturaData({
-        nr_factura: selectedFactura.nr_factura,
-        data: selectedFactura.data,
         client: selectedFactura.client,
         total_fara_tva: String(selectedFactura.total_fara_tva),
         tva: String(selectedFactura.tva),
@@ -74,9 +72,7 @@ const VanzariTab = () => {
   const openEditLivrare = () => {
     if (selectedLivrare) {
       setEditLivrareData({
-        cod: selectedLivrare.cod,
         nr_aviz: selectedLivrare.nr_aviz,
-        data: selectedLivrare.data,
         client: selectedLivrare.client,
         produs: selectedLivrare.produs,
         cantitate: String(selectedLivrare.cantitate),
@@ -92,7 +88,6 @@ const VanzariTab = () => {
   const openEditIncasare = () => {
     if (selectedIncasare) {
       setEditIncasareData({
-        data: selectedIncasare.data,
         client: selectedIncasare.client,
         tip: selectedIncasare.tip,
         suma_totala: String(selectedIncasare.suma_totala),
@@ -826,16 +821,8 @@ const VanzariTab = () => {
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Nr Factură</Label>
-              <Input value={editFacturaData.nr_factura} onChange={(e) => setEditFacturaData(prev => ({ ...prev, nr_factura: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
-              <Label>Dată</Label>
-              <Input type="date" value={editFacturaData.data} onChange={(e) => setEditFacturaData(prev => ({ ...prev, data: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
               <Label>Client</Label>
-              <Input value={editFacturaData.client} onChange={(e) => setEditFacturaData(prev => ({ ...prev, client: e.target.value }))} />
+              <Input value={editFacturaData.client} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Dată scadență</Label>
@@ -843,15 +830,15 @@ const VanzariTab = () => {
             </div>
             <div className="space-y-2">
               <Label>Total fără TVA</Label>
-              <Input type="number" value={editFacturaData.total_fara_tva} onChange={(e) => setEditFacturaData(prev => ({ ...prev, total_fara_tva: e.target.value }))} />
+              <Input type="number" value={editFacturaData.total_fara_tva} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>TVA</Label>
-              <Input type="number" value={editFacturaData.tva} onChange={(e) => setEditFacturaData(prev => ({ ...prev, tva: e.target.value }))} />
+              <Input type="number" value={editFacturaData.tva} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Total</Label>
-              <Input type="number" value={editFacturaData.total} onChange={(e) => setEditFacturaData(prev => ({ ...prev, total: e.target.value }))} />
+              <Input type="number" value={editFacturaData.total} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Sumă încasată</Label>
@@ -888,40 +875,32 @@ const VanzariTab = () => {
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Cod</Label>
-              <Input value={editLivrareData.cod} onChange={(e) => setEditLivrareData(prev => ({ ...prev, cod: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
               <Label>Nr Aviz</Label>
               <Input value={editLivrareData.nr_aviz} onChange={(e) => setEditLivrareData(prev => ({ ...prev, nr_aviz: e.target.value }))} />
             </div>
             <div className="space-y-2">
-              <Label>Dată</Label>
-              <Input type="date" value={editLivrareData.data} onChange={(e) => setEditLivrareData(prev => ({ ...prev, data: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
               <Label>Client</Label>
-              <Input value={editLivrareData.client} onChange={(e) => setEditLivrareData(prev => ({ ...prev, client: e.target.value }))} />
+              <Input value={editLivrareData.client} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Produs</Label>
-              <Input value={editLivrareData.produs} onChange={(e) => setEditLivrareData(prev => ({ ...prev, produs: e.target.value }))} />
+              <Input value={editLivrareData.produs} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Cantitate (t)</Label>
-              <Input type="number" value={editLivrareData.cantitate} onChange={(e) => setEditLivrareData(prev => ({ ...prev, cantitate: e.target.value }))} />
+              <Input type="number" value={editLivrareData.cantitate} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Valoare produs</Label>
-              <Input type="number" value={editLivrareData.valoare_produs} onChange={(e) => setEditLivrareData(prev => ({ ...prev, valoare_produs: e.target.value }))} />
+              <Input type="number" value={editLivrareData.valoare_produs} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Valoare transport</Label>
-              <Input type="number" value={editLivrareData.valoare_transport} onChange={(e) => setEditLivrareData(prev => ({ ...prev, valoare_transport: e.target.value }))} />
+              <Input type="number" value={editLivrareData.valoare_transport} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Total</Label>
-              <Input type="number" value={editLivrareData.total} onChange={(e) => setEditLivrareData(prev => ({ ...prev, total: e.target.value }))} />
+              <Input type="number" value={editLivrareData.total} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Status facturare</Label>
@@ -949,12 +928,8 @@ const VanzariTab = () => {
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Dată</Label>
-              <Input type="date" value={editIncasareData.data} onChange={(e) => setEditIncasareData(prev => ({ ...prev, data: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
               <Label>Client</Label>
-              <Input value={editIncasareData.client} onChange={(e) => setEditIncasareData(prev => ({ ...prev, client: e.target.value }))} />
+              <Input value={editIncasareData.client} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Tip plată</Label>
@@ -969,7 +944,7 @@ const VanzariTab = () => {
             </div>
             <div className="space-y-2">
               <Label>Sumă totală</Label>
-              <Input type="number" value={editIncasareData.suma_totala} onChange={(e) => setEditIncasareData(prev => ({ ...prev, suma_totala: e.target.value }))} />
+              <Input type="number" value={editIncasareData.suma_totala} readOnly className="bg-muted" />
             </div>
             <div className="space-y-2">
               <Label>Sumă alocată</Label>
