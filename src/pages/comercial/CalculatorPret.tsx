@@ -284,14 +284,13 @@ const CalculatorPret = () => {
       const response = await fetch(`${API_BASE_URL}/comercial/returneaza/stoc_total_materiale`);
       if (response.ok) {
         const data = await response.json();
-        // Assuming API returns { materiale: [{ material: "...", cantitate: ... }, ...] }
         const stocMap: Record<string, number> = {};
-        if (data.materiale && Array.isArray(data.materiale)) {
-          data.materiale.forEach((item: { material?: string; denumire?: string; cantitate?: number; stoc?: number }) => {
-            const materialName = item.material || item.denumire || '';
-            const quantity = item.cantitate ?? item.stoc ?? 0;
-            if (materialName) {
-              stocMap[materialName] = quantity;
+        // API returns { materiale: [{ material_prim: "...", stoc_total: ... }, ...] }
+        const materiale = data.materiale || data;
+        if (Array.isArray(materiale)) {
+          materiale.forEach((item: { material_prim?: string; stoc_total?: number }) => {
+            if (item.material_prim) {
+              stocMap[item.material_prim] = item.stoc_total ?? 0;
             }
           });
         }
