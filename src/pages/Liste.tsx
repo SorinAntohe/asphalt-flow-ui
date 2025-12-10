@@ -29,6 +29,7 @@ const Liste = () => {
   const [clientiPerPage, setClientiPerPage] = useState(10);
   const [furnizoriPerPage, setFurnizoriPerPage] = useState(10);
   const [angajatiPerPage, setAngajatiPerPage] = useState(10);
+  const [chiriiPerPage, setChiriiPerPage] = useState(10);
   
   const [autoturismePage, setAutoturismePage] = useState(1);
   const [soferiPage, setSoferiPage] = useState(1);
@@ -37,6 +38,7 @@ const Liste = () => {
   const [clientiPage, setClientiPage] = useState(1);
   const [furnizoriPage, setFurnizoriPage] = useState(1);
   const [angajatiPage, setAngajatiPage] = useState(1);
+  const [chiriiPage, setChiriiPage] = useState(1);
 
   // Filters
   const [autoturismeFilters, setAutoturismeFilters] = useState({ id: "", tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "", tara: "" });
@@ -46,6 +48,7 @@ const Liste = () => {
   const [clientiFilters, setClientiFilters] = useState({ id: "", denumire: "", sediu: "", cui: "", nrReg: "" });
   const [furnizoriFilters, setFurnizoriFilters] = useState({ id: "", denumire: "", sediu: "", cui: "", nrReg: "" });
   const [angajatiFilters, setAngajatiFilters] = useState({ id: "", nume: "", functie: "", data_angajari: "", salariu: "" });
+  const [chiriiFilters, setChiriiFilters] = useState({ id: "", denumire: "", pretLuna: "" });
 
   // Sorting
   const [autoturismeSort, setAutoturismeSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
@@ -55,6 +58,7 @@ const Liste = () => {
   const [clientiSort, setClientiSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
   const [furnizoriSort, setFurnizoriSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
   const [angajatiSort, setAngajatiSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
+  const [chiriiSort, setChiriiSort] = useState<{ field: string; direction: 'asc' | 'desc' | null }>({ field: '', direction: null });
 
   // Dialog states
   const [autoturismeDialog, setAutoturismeDialog] = useState<{ open: boolean; mode: 'add' | 'edit'; data?: any }>({ open: false, mode: 'add' });
@@ -64,6 +68,7 @@ const Liste = () => {
   const [clientiDialog, setClientiDialog] = useState<{ open: boolean; mode: 'add' | 'edit'; data?: any }>({ open: false, mode: 'add' });
   const [furnizoriDialog, setFurnizoriDialog] = useState<{ open: boolean; mode: 'add' | 'edit'; data?: any }>({ open: false, mode: 'add' });
   const [angajatiDialog, setAngajatiDialog] = useState<{ open: boolean; mode: 'add' | 'edit'; data?: any }>({ open: false, mode: 'add' });
+  const [chiriiDialog, setChiriiDialog] = useState<{ open: boolean; mode: 'add' | 'edit'; data?: any }>({ open: false, mode: 'add' });
 
   // Delete dialog states
   const [autoturismeDeleteDialog, setAutoturismeDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
@@ -73,6 +78,7 @@ const Liste = () => {
   const [clientiDeleteDialog, setClientiDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
   const [furnizoriDeleteDialog, setFurnizoriDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
   const [angajatiDeleteDialog, setAngajatiDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
+  const [chiriiDeleteDialog, setChiriiDeleteDialog] = useState<{ open: boolean; id?: number }>({ open: false });
 
   // Details view states
   const [viewingAutoturism, setViewingAutoturism] = useState<any | null>(null);
@@ -82,6 +88,7 @@ const Liste = () => {
   const [viewingClient, setViewingClient] = useState<any | null>(null);
   const [viewingFurnizor, setViewingFurnizor] = useState<any | null>(null);
   const [viewingAngajat, setViewingAngajat] = useState<any | null>(null);
+  const [viewingChirie, setViewingChirie] = useState<any | null>(null);
 
   // Form data states
   const [autoturismeFormData, setAutoturismeFormData] = useState({ tipMasina: "", nrAuto: "", sarcinaMax: "", tipTransport: "", tara: "" });
@@ -91,6 +98,7 @@ const Liste = () => {
   const [clientiFormData, setClientiFormData] = useState({ denumire: "", sediu: "", cui: "", nrReg: "" });
   const [furnizoriFormData, setFurnizoriFormData] = useState({ denumire: "", sediu: "", cui: "", nrReg: "" });
   const [angajatiFormData, setAngajatiFormData] = useState({ nume: "", functie: "", data_angajari: "", salariu: "", zile_concediu_calculate: "", zile_concediu_luate: "", zile_concediu_ramase: "" });
+  const [chiriiFormData, setChiriiFormData] = useState({ denumire: "", pretLuna: "" });
   const [activeTab, setActiveTab] = useState("autoturisme");
   const [angajatiLoading, setAngajatiLoading] = useState(true);
   
@@ -110,6 +118,7 @@ const Liste = () => {
   const [clienti, setClienti] = useState<any[]>([]);
   const [furnizori, setFurnizori] = useState<any[]>([]);
   const [angajati, setAngajati] = useState<any[]>([]);
+  const [chirii, setChirii] = useState<any[]>([]);
 
   // Date formatting helpers for angajati
   const formatDateForDisplay = (dateStr: string): string => {
@@ -295,6 +304,31 @@ const Liste = () => {
     fetchAngajati();
   }, []);
 
+  // Fetch chirii data
+  const fetchChirii = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/liste/returneaza/chirii`);
+      if (response.ok) {
+        const data = await response.json();
+        const mappedData = Array.isArray(data) ? data.map((item: any) => ({
+          id: item.id,
+          denumire: item.denumire,
+          pretLuna: item.pret_luna
+        })) : [];
+        setChirii(mappedData);
+      } else {
+        setChirii([]);
+      }
+    } catch (error) {
+      console.error('Error fetching chirii:', error);
+      setChirii([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchChirii();
+  }, []);
+
   // Handle URL params for opening add dialogs from other pages
   useEffect(() => {
     const tab = searchParams.get('tab');
@@ -327,6 +361,9 @@ const Liste = () => {
               break;
             case 'angajati':
               setAngajatiDialog({ open: true, mode: 'add' });
+              break;
+            case 'chirii':
+              setChiriiDialog({ open: true, mode: 'add' });
               break;
           }
         }, 100);
@@ -408,6 +445,12 @@ const Liste = () => {
     (item.salariu?.toString() || '').includes(angajatiFilters.salariu)
   );
 
+  const filterChirii = chirii.filter(item =>
+    (item.id?.toString() || '').includes(chiriiFilters.id) &&
+    (item.denumire?.toLowerCase() || '').includes(chiriiFilters.denumire.toLowerCase()) &&
+    (item.pretLuna?.toString() || '').includes(chiriiFilters.pretLuna)
+  );
+
   const sortedAutoturisme = sortData(filterAutoturisme, autoturismeSort.field, autoturismeSort.direction);
   const sortedSoferi = sortData(filterSoferi, soferiSort.field, soferiSort.direction);
   const sortedMateriiPrime = sortData(filterMateriiPrime, materiiPrimeSort.field, materiiPrimeSort.direction);
@@ -415,6 +458,7 @@ const Liste = () => {
   const sortedClienti = sortData(filterClienti, clientiSort.field, clientiSort.direction);
   const sortedFurnizori = sortData(filterFurnizori, furnizoriSort.field, furnizoriSort.direction);
   const sortedAngajati = sortData(filterAngajati, angajatiSort.field, angajatiSort.direction);
+  const sortedChirii = sortData(filterChirii, chiriiSort.field, chiriiSort.direction);
 
   const paginatedAutoturisme = getPaginatedData(sortedAutoturisme, autoturismePage, autoturismePerPage);
   const paginatedSoferi = getPaginatedData(sortedSoferi, soferiPage, soferiPerPage);
@@ -423,6 +467,7 @@ const Liste = () => {
   const paginatedClienti = getPaginatedData(sortedClienti, clientiPage, clientiPerPage);
   const paginatedFurnizori = getPaginatedData(sortedFurnizori, furnizoriPage, furnizoriPerPage);
   const paginatedAngajati = getPaginatedData(sortedAngajati, angajatiPage, angajatiPerPage);
+  const paginatedChirii = getPaginatedData(sortedChirii, chiriiPage, chiriiPerPage);
   
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -445,6 +490,7 @@ const Liste = () => {
             <TabsTrigger value="clienti" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 min-w-[calc(33.333%-4px)] sm:min-w-0 sm:flex-none">Clienți</TabsTrigger>
             <TabsTrigger value="furnizori" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 min-w-[calc(33.333%-4px)] sm:min-w-0 sm:flex-none">Furnizori</TabsTrigger>
             <TabsTrigger value="angajati" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 min-w-[calc(33.333%-4px)] sm:min-w-0 sm:flex-none">Angajați</TabsTrigger>
+            <TabsTrigger value="chirii" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 min-w-[calc(33.333%-4px)] sm:min-w-0 sm:flex-none">Chirii</TabsTrigger>
           </TabsList>
           <div className="flex gap-2">
             <Button 
@@ -480,6 +526,10 @@ const Liste = () => {
                     { key: 'zile_concediu_luate', label: 'Zile Concediu Luate' },
                     { key: 'zile_concediu_ramase', label: 'Zile Concediu Rămase' }
                   ]);
+                } else if (activeTab === 'chirii') {
+                  exportToCSV(sortedChirii, 'chirii', [
+                    { key: 'id', label: 'ID' }, { key: 'denumire', label: 'Denumire' }, { key: 'pretLuna', label: 'Preț/Lună' }
+                  ]);
                 }
               }}
             >
@@ -508,6 +558,9 @@ const Liste = () => {
               } else if (activeTab === 'angajati') {
                 setAngajatiFormData({ nume: "", functie: "", data_angajari: "", salariu: "", zile_concediu_calculate: "", zile_concediu_luate: "", zile_concediu_ramase: "" });
                 setAngajatiDialog({ open: true, mode: 'add' });
+              } else if (activeTab === 'chirii') {
+                setChiriiFormData({ denumire: "", pretLuna: "" });
+                setChiriiDialog({ open: true, mode: 'add' });
               }
             }}>
               <Plus className="w-4 h-4 sm:mr-2" />
@@ -519,6 +572,7 @@ const Liste = () => {
                 {activeTab === 'clienti' && 'Adaugă Client'}
                 {activeTab === 'furnizori' && 'Adaugă Furnizor'}
                 {activeTab === 'angajati' && 'Adaugă Angajat'}
+                {activeTab === 'chirii' && 'Adaugă Chirie'}
               </span>
             </Button>
           </div>
@@ -3000,6 +3054,263 @@ const Liste = () => {
              </AlertDialogContent>
            </AlertDialog>
          </TabsContent>
+
+         {/* Chirii Tab */}
+         <TabsContent value="chirii">
+           <Card>
+             <CardHeader className="p-3 sm:p-6">
+               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                 <CardTitle className="text-base sm:text-lg">Lista Chirii</CardTitle>
+                 <div className="flex items-center gap-2">
+                   <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
+                   <Select value={chiriiPerPage.toString()} onValueChange={(value) => { setChiriiPerPage(Number(value)); setChiriiPage(1); }}>
+                     <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
+                       <SelectValue />
+                     </SelectTrigger>
+                     <SelectContent>
+                       <SelectItem value="5">5</SelectItem>
+                       <SelectItem value="10">10</SelectItem>
+                       <SelectItem value="20">20</SelectItem>
+                       <SelectItem value="50">50</SelectItem>
+                       <SelectItem value="100">100</SelectItem>
+                     </SelectContent>
+                   </Select>
+                 </div>
+               </div>
+             </CardHeader>
+             <CardContent>
+               <Table>
+                 <TableHeader>
+                   <TableRow>
+                     <TableHead className="h-10 text-xs">
+                       <div className="flex items-center gap-1">
+                         <Popover>
+                           <PopoverTrigger asChild>
+                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                               <span>ID</span>
+                               {chiriiSort.field === 'id' ? (chiriiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                             </Button>
+                           </PopoverTrigger>
+                           <PopoverContent className="w-56 p-2">
+                             <div className="space-y-2">
+                               <Input placeholder="Caută ID..." value={chiriiFilters.id} onChange={(e) => { setChiriiFilters({...chiriiFilters, id: e.target.value}); setChiriiPage(1); }} className="h-7 text-xs" />
+                               <div className="flex gap-1">
+                                 <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setChiriiSort({ field: 'id', direction: 'asc' })}>
+                                   <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
+                                 </Button>
+                                 <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setChiriiSort({ field: 'id', direction: 'desc' })}>
+                                   <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
+                                 </Button>
+                               </div>
+                             </div>
+                           </PopoverContent>
+                         </Popover>
+                       </div>
+                     </TableHead>
+                     <TableHead className="h-10 text-xs">
+                       <div className="flex items-center gap-1">
+                         <Popover>
+                           <PopoverTrigger asChild>
+                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                               <span>Denumire</span>
+                               {chiriiSort.field === 'denumire' ? (chiriiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                             </Button>
+                           </PopoverTrigger>
+                           <PopoverContent className="w-56 p-2">
+                             <div className="space-y-2">
+                               <Input placeholder="Caută denumire..." value={chiriiFilters.denumire} onChange={(e) => { setChiriiFilters({...chiriiFilters, denumire: e.target.value}); setChiriiPage(1); }} className="h-7 text-xs" />
+                               <div className="flex gap-1">
+                                 <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setChiriiSort({ field: 'denumire', direction: 'asc' })}>
+                                   <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                 </Button>
+                                 <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setChiriiSort({ field: 'denumire', direction: 'desc' })}>
+                                   <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                 </Button>
+                               </div>
+                             </div>
+                           </PopoverContent>
+                         </Popover>
+                       </div>
+                     </TableHead>
+                     <TableHead className="h-10 text-xs">
+                       <div className="flex items-center gap-1">
+                         <Popover>
+                           <PopoverTrigger asChild>
+                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                               <span>Preț/Lună</span>
+                               {chiriiSort.field === 'pretLuna' ? (chiriiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                             </Button>
+                           </PopoverTrigger>
+                           <PopoverContent className="w-56 p-2">
+                             <div className="space-y-2">
+                               <Input placeholder="Caută preț..." value={chiriiFilters.pretLuna} onChange={(e) => { setChiriiFilters({...chiriiFilters, pretLuna: e.target.value}); setChiriiPage(1); }} className="h-7 text-xs" />
+                               <div className="flex gap-1">
+                                 <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setChiriiSort({ field: 'pretLuna', direction: 'asc' })}>
+                                   <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
+                                 </Button>
+                                 <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setChiriiSort({ field: 'pretLuna', direction: 'desc' })}>
+                                   <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
+                                 </Button>
+                               </div>
+                             </div>
+                           </PopoverContent>
+                         </Popover>
+                       </div>
+                     </TableHead>
+                   </TableRow>
+                 </TableHeader>
+                 <TableBody key={`chirii-page-${chiriiPage}`} className="animate-fade-in">
+                   {paginatedChirii.map(chirie => (
+                     <TableRow key={chirie.id} className="h-10 cursor-pointer hover:bg-muted/50" onClick={() => setViewingChirie(chirie)}>
+                       <TableCell className="font-medium py-1 text-xs">{chirie.id}</TableCell>
+                       <TableCell className="py-1 text-xs">{chirie.denumire}</TableCell>
+                       <TableCell className="py-1 text-xs">{chirie.pretLuna?.toLocaleString("ro-RO")} RON</TableCell>
+                     </TableRow>
+                   ))}
+                 </TableBody>
+               </Table>
+               {getTotalPages(sortedChirii.length, chiriiPerPage) > 1 && (
+                 <Pagination className="mt-4">
+                   <PaginationContent>
+                     <PaginationItem>
+                       <PaginationPrevious 
+                         onClick={() => setChiriiPage(p => Math.max(1, p - 1))}
+                         className={chiriiPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                       />
+                     </PaginationItem>
+                     {Array.from({ length: getTotalPages(sortedChirii.length, chiriiPerPage) }, (_, i) => i + 1).map(page => (
+                       <PaginationItem key={page}>
+                         <PaginationLink
+                           onClick={() => setChiriiPage(page)}
+                           isActive={chiriiPage === page}
+                           className="cursor-pointer"
+                         >
+                           {page}
+                         </PaginationLink>
+                       </PaginationItem>
+                     ))}
+                     <PaginationItem>
+                       <PaginationNext 
+                         onClick={() => setChiriiPage(p => Math.min(getTotalPages(sortedChirii.length, chiriiPerPage), p + 1))}
+                         className={chiriiPage === getTotalPages(sortedChirii.length, chiriiPerPage) ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                       />
+                     </PaginationItem>
+                   </PaginationContent>
+                 </Pagination>
+               )}
+             </CardContent>
+           </Card>
+
+           {/* Chirii Add/Edit Dialog */}
+           <Dialog open={chiriiDialog.open} onOpenChange={(open) => setChiriiDialog({ ...chiriiDialog, open })}>
+             <DialogContent className="sm:max-w-[500px]">
+               <DialogHeader>
+                 <DialogTitle>{chiriiDialog.mode === 'add' ? 'Adaugă Chirie' : 'Editează Chirie'}</DialogTitle>
+                 <DialogDescription>
+                   {chiriiDialog.mode === 'add' ? 'Completați formularul pentru a adăuga o chirie nouă.' : 'Modificați detaliile chiriei.'}
+                 </DialogDescription>
+               </DialogHeader>
+               <div className="grid gap-4 py-4">
+                 {chiriiDialog.mode === 'edit' && chiriiDialog.data && (
+                   <div className="grid gap-2">
+                     <Label htmlFor="id">ID</Label>
+                     <Input id="id" value={chiriiDialog.data.id} disabled className="bg-muted" />
+                   </div>
+                 )}
+                 <div className="grid gap-2">
+                   <Label htmlFor="denumire">Denumire</Label>
+                   <Input
+                     id="denumire"
+                     value={chiriiFormData.denumire}
+                     onChange={(e) => setChiriiFormData({ ...chiriiFormData, denumire: e.target.value })}
+                     placeholder="Introduceți denumirea"
+                   />
+                 </div>
+                 <div className="grid gap-2">
+                   <Label htmlFor="pretLuna">Preț/Lună (RON)</Label>
+                   <Input
+                     id="pretLuna"
+                     type="number"
+                     value={chiriiFormData.pretLuna}
+                     onChange={(e) => setChiriiFormData({ ...chiriiFormData, pretLuna: e.target.value })}
+                     placeholder="Introduceți prețul lunar"
+                   />
+                 </div>
+               </div>
+               <DialogFooter>
+                 <Button variant="outline" onClick={() => setChiriiDialog({ open: false, mode: 'add' })}>Anulează</Button>
+                 <Button onClick={async () => {
+                   try {
+                     if (chiriiDialog.mode === 'add') {
+                       const response = await fetch(`${API_BASE_URL}/liste/adauga/chirie`, {
+                         method: 'POST',
+                         headers: { 'Content-Type': 'application/json' },
+                         body: JSON.stringify({
+                           denumire: chiriiFormData.denumire,
+                           pret_luna: parseFloat(chiriiFormData.pretLuna) || 0
+                         })
+                       });
+                       if (!response.ok) throw new Error('Eroare la adăugare');
+                       toast({ title: "Succes", description: "Chiria a fost adăugată cu succes" });
+                     } else {
+                       const response = await fetch(`${API_BASE_URL}/editeaza`, {
+                         method: 'PATCH',
+                         headers: { 'Content-Type': 'application/json' },
+                         body: JSON.stringify({
+                           tabel: "lista_chirii",
+                           id: chiriiDialog.data.id,
+                           denumire: chiriiFormData.denumire,
+                           pret_luna: parseFloat(chiriiFormData.pretLuna) || 0
+                         })
+                       });
+                       if (!response.ok) throw new Error('Eroare la editare');
+                       toast({ title: "Succes", description: "Chiria a fost actualizată cu succes" });
+                     }
+                     setChiriiDialog({ open: false, mode: 'add' });
+                     fetchChirii();
+                   } catch (error) {
+                     toast({ title: "Eroare", description: "Operațiunea a eșuat", variant: "destructive" });
+                   }
+                 }}>
+                   {chiriiDialog.mode === 'add' ? 'Adaugă' : 'Salvează'}
+                 </Button>
+               </DialogFooter>
+             </DialogContent>
+           </Dialog>
+
+           {/* Chirii Delete Dialog */}
+           <AlertDialog open={chiriiDeleteDialog.open} onOpenChange={(open) => setChiriiDeleteDialog({ ...chiriiDeleteDialog, open })}>
+             <AlertDialogContent>
+               <AlertDialogHeader>
+                 <AlertDialogTitle>Confirmare ștergere</AlertDialogTitle>
+                 <AlertDialogDescription>
+                   Sunteți sigur că doriți să ștergeți această chirie? Această acțiune nu poate fi anulată.
+                 </AlertDialogDescription>
+               </AlertDialogHeader>
+               <AlertDialogFooter>
+                 <AlertDialogCancel>Anulează</AlertDialogCancel>
+                 <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
+                   try {
+                     const response = await fetch(`${API_BASE_URL}/sterge`, {
+                       method: 'DELETE',
+                       headers: { 'Content-Type': 'application/json' },
+                       body: JSON.stringify({
+                         tabel: "lista_chirii",
+                         id: chiriiDeleteDialog.id
+                       })
+                     });
+                     if (!response.ok) throw new Error('Eroare la ștergere');
+                     toast({ title: "Succes", description: "Chiria a fost ștearsă cu succes" });
+                     setChiriiDeleteDialog({ open: false });
+                     fetchChirii();
+                   } catch (error) {
+                     toast({ title: "Eroare", description: "Nu s-a putut șterge chiria", variant: "destructive" });
+                   }
+                 }}>Șterge</AlertDialogAction>
+               </AlertDialogFooter>
+             </AlertDialogContent>
+           </AlertDialog>
+         </TabsContent>
        </Tabs>
 
       {/* Details Dialogs */}
@@ -3422,6 +3733,58 @@ const Liste = () => {
               Șterge
             </Button>
             <Button variant="outline" size="sm" onClick={() => setViewingAngajat(null)}>
+              <X className="w-4 h-4 mr-2" />
+              Închide
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Chirii Details */}
+      <Dialog open={!!viewingChirie} onOpenChange={() => setViewingChirie(null)}>
+        <DialogContent className="max-w-lg" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle>Detalii Chirie</DialogTitle>
+          </DialogHeader>
+          {viewingChirie && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">ID</Label>
+                  <p className="font-medium">{viewingChirie.id}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground">Denumire</Label>
+                  <p className="font-medium">{viewingChirie.denumire}</p>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-muted-foreground">Preț/Lună</Label>
+                <p className="font-medium">{viewingChirie.pretLuna?.toLocaleString("ro-RO")} RON</p>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => {
+              if (viewingChirie) {
+                setChiriiFormData({ denumire: viewingChirie.denumire, pretLuna: String(viewingChirie.pretLuna) });
+                setChiriiDialog({ open: true, mode: 'edit', data: viewingChirie });
+                setViewingChirie(null);
+              }
+            }}>
+              <Pencil className="w-4 h-4 mr-2" />
+              Editează
+            </Button>
+            <Button variant="destructive" size="sm" onClick={() => {
+              if (viewingChirie) {
+                setChiriiDeleteDialog({ open: true, id: viewingChirie.id });
+                setViewingChirie(null);
+              }
+            }}>
+              <Trash2 className="w-4 h-4 mr-2" />
+              Șterge
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setViewingChirie(null)}>
               <X className="w-4 h-4 mr-2" />
               Închide
             </Button>
