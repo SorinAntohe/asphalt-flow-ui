@@ -519,6 +519,7 @@ const Consumuri = () => {
     try {
       if (isEditingContorCTL && contorCTLFormData.id) {
         // Edit mode
+        const pretTotal = (contorCTLFormData.pret_unitar || 0) * (contorCTLFormData.consum_l || 0);
         const payload = {
           tabel: "contor_ctl",
           id: contorCTLFormData.id,
@@ -529,7 +530,8 @@ const Consumuri = () => {
             retur_exces_nou: contorCTLFormData.retur_exces_nou || 0,
             consum_l: contorCTLFormData.consum_l || 0,
             consum_to: contorCTLFormData.consum_to || 0,
-            pret_unitar: contorCTLFormData.pret_unitar || 0
+            pret_unitar: contorCTLFormData.pret_unitar || 0,
+            pret_total: pretTotal
           }
         };
 
@@ -549,6 +551,7 @@ const Consumuri = () => {
         });
       } else {
         // Add mode
+        const pretTotal = (contorCTLFormData.pret_unitar || 0) * (contorCTLFormData.consum_l || 0);
         const payload = {
           index_vechi_tur: contorCTLFormData.index_vechi_tur || 0,
           index_nou_tur: contorCTLFormData.index_nou_tur || 0,
@@ -556,7 +559,8 @@ const Consumuri = () => {
           retur_exces_nou: contorCTLFormData.retur_exces_nou || 0,
           consum_l: contorCTLFormData.consum_l || 0,
           consum_to: contorCTLFormData.consum_to || 0,
-          pret_unitar: contorCTLFormData.pret_unitar || 0
+          pret_unitar: contorCTLFormData.pret_unitar || 0,
+          pret_total: pretTotal
         };
 
         const response = await fetch(`${API_BASE_URL}/contori/adauga/ctl`, {
