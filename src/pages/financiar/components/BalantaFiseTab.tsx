@@ -227,7 +227,7 @@ const BalantaFiseTab = () => {
                   </TableHead>
                   <TableHead className="text-right">
                     <DataTableColumnHeader
-                      title="Sold Inițial D"
+                      title="Sold Inițial Debit"
                       sortKey="soldInitialDebit"
                       currentSort={currentSort}
                       onSort={handleSort}
@@ -237,7 +237,7 @@ const BalantaFiseTab = () => {
                   </TableHead>
                   <TableHead className="text-right">
                     <DataTableColumnHeader
-                      title="Sold Inițial C"
+                      title="Sold Inițial Credit"
                       sortKey="soldInitialCredit"
                       currentSort={currentSort}
                       onSort={handleSort}
@@ -247,7 +247,7 @@ const BalantaFiseTab = () => {
                   </TableHead>
                   <TableHead className="text-right">
                     <DataTableColumnHeader
-                      title="Rulaj D"
+                      title="Rulaj Debit"
                       sortKey="rulajDebit"
                       currentSort={currentSort}
                       onSort={handleSort}
@@ -257,7 +257,7 @@ const BalantaFiseTab = () => {
                   </TableHead>
                   <TableHead className="text-right">
                     <DataTableColumnHeader
-                      title="Rulaj C"
+                      title="Rulaj Credit"
                       sortKey="rulajCredit"
                       currentSort={currentSort}
                       onSort={handleSort}
@@ -267,7 +267,7 @@ const BalantaFiseTab = () => {
                   </TableHead>
                   <TableHead className="text-right">
                     <DataTableColumnHeader
-                      title="Sold Final D"
+                      title="Sold Final Debit"
                       sortKey="soldFinalDebit"
                       currentSort={currentSort}
                       onSort={handleSort}
@@ -277,7 +277,7 @@ const BalantaFiseTab = () => {
                   </TableHead>
                   <TableHead className="text-right">
                     <DataTableColumnHeader
-                      title="Sold Final C"
+                      title="Sold Final Credit"
                       sortKey="soldFinalCredit"
                       currentSort={currentSort}
                       onSort={handleSort}
