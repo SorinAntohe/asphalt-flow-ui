@@ -171,7 +171,9 @@ const CalculatorPret = () => {
         if (response.ok) {
           const data = await response.json();
           if (Array.isArray(data)) {
-            setProduse(data);
+            // API returns [{produs: 'BAD 22.4'}, ...] - extract produs values
+            const produseList = data.map((item: { produs: string }) => item.produs);
+            setProduse(produseList);
           }
         }
       } catch (error) {
