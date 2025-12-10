@@ -293,154 +293,129 @@ const ClientiTab = () => {
 
       {/* Client Detail Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 text-base">
               Fișă Client: {selectedClient?.nume}
             </DialogTitle>
           </DialogHeader>
 
           {selectedClient && (
-            <div className="space-y-6">
+            <div className="space-y-4">
               {/* Client Info */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <div className="text-sm text-muted-foreground">CUI</div>
-                  <div className="font-medium">{selectedClient.cui}</div>
+                  <p className="text-xs text-muted-foreground">CUI</p>
+                  <p className="font-medium text-sm">{selectedClient.cui}</p>
                 </div>
                 <div>
-                  <div className="text-sm text-muted-foreground">Adresă</div>
-                  <div className="font-medium">{selectedClient.adresa}</div>
+                  <p className="text-xs text-muted-foreground">Adresă</p>
+                  <p className="font-medium text-sm break-words">{selectedClient.adresa}</p>
                 </div>
-                <div>
-                  <div className="text-sm text-muted-foreground">Sold Curent</div>
-                  <div className={`font-bold text-lg ${selectedClient.sold_curent > 0 ? "text-red-600" : "text-green-600"}`}>
+              </div>
+
+              {/* Financial Summary */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-muted/50 rounded-lg">
+                  <p className="text-xs text-muted-foreground">Sold Curent</p>
+                  <p className={`font-bold text-lg ${selectedClient.sold_curent > 0 ? "text-red-600" : "text-green-600"}`}>
                     {formatCurrency(selectedClient.sold_curent)}
-                  </div>
+                  </p>
                 </div>
-                <div>
-                  <div className="text-sm text-muted-foreground">Zile Întârziere Max.</div>
-                  <div className={`font-bold text-lg ${getZileIntarziereColor(selectedClient.zile_intarziere_max)}`}>
+                <div className="p-3 bg-muted/50 rounded-lg">
+                  <p className="text-xs text-muted-foreground">Zile Întârziere Max.</p>
+                  <p className={`font-bold text-lg ${getZileIntarziereColor(selectedClient.zile_intarziere_max)}`}>
                     {selectedClient.zile_intarziere_max} zile
-                  </div>
+                  </p>
                 </div>
               </div>
 
               {/* Sold pe Intervale */}
               {clientSoldIntervale && (
-                <Card>
-                  <CardContent className="pt-4">
-                    <div className="text-base font-medium mb-3">Sold pe Intervale</div>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="text-center p-4 bg-green-50 dark:bg-green-950 rounded-lg">
-                        <div className="text-sm text-muted-foreground">0-30 zile</div>
-                        <div className="text-xl font-bold text-green-600">
-                          {formatCurrency(clientSoldIntervale.interval_0_30)}
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">Sold pe Intervale</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="text-center p-2 bg-green-50 dark:bg-green-950 rounded-lg">
+                      <p className="text-xs text-muted-foreground">0-30 zile</p>
+                      <p className="text-sm font-bold text-green-600">
+                        {formatCurrency(clientSoldIntervale.interval_0_30)}
+                      </p>
+                    </div>
+                    <div className="text-center p-2 bg-amber-50 dark:bg-amber-950 rounded-lg">
+                      <p className="text-xs text-muted-foreground">30-60 zile</p>
+                      <p className="text-sm font-bold text-amber-600">
+                        {formatCurrency(clientSoldIntervale.interval_30_60)}
+                      </p>
+                    </div>
+                    <div className="text-center p-2 bg-red-50 dark:bg-red-950 rounded-lg">
+                      <p className="text-xs text-muted-foreground">60+ zile</p>
+                      <p className="text-sm font-bold text-red-600">
+                        {formatCurrency(clientSoldIntervale.interval_60_plus)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Facturi & Încasări as cards */}
+              <Tabs defaultValue="facturi" className="w-full">
+                <TabsList className="w-full grid grid-cols-2">
+                  <TabsTrigger value="facturi" className="text-xs">Facturi ({clientFacturi.length})</TabsTrigger>
+                  <TabsTrigger value="incasari" className="text-xs">Încasări ({clientIncasari.length})</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="facturi" className="mt-3 space-y-2 max-h-48 overflow-y-auto">
+                  {clientFacturi.map((factura) => (
+                    <div key={factura.id} className="p-3 border rounded-lg space-y-2">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium text-sm">{factura.nr_factura}</p>
+                          <p className="text-xs text-muted-foreground">{factura.data}</p>
                         </div>
+                        <Badge variant={
+                          factura.status === "Achitată" ? "default" :
+                          factura.status === "Parțial" ? "secondary" : "destructive"
+                        } className="text-xs">
+                          {factura.status}
+                        </Badge>
                       </div>
-                      <div className="text-center p-4 bg-amber-50 dark:bg-amber-950 rounded-lg">
-                        <div className="text-sm text-muted-foreground">30-60 zile</div>
-                        <div className="text-xl font-bold text-amber-600">
-                          {formatCurrency(clientSoldIntervale.interval_30_60)}
+                      <div className="grid grid-cols-3 gap-2 text-xs">
+                        <div>
+                          <p className="text-muted-foreground">Total</p>
+                          <p className="font-medium">{formatCurrency(factura.total)}</p>
                         </div>
-                      </div>
-                      <div className="text-center p-4 bg-red-50 dark:bg-red-950 rounded-lg">
-                        <div className="text-sm text-muted-foreground">60+ zile</div>
-                        <div className="text-xl font-bold text-red-600">
-                          {formatCurrency(clientSoldIntervale.interval_60_plus)}
+                        <div>
+                          <p className="text-muted-foreground">Achitat</p>
+                          <p className="font-medium text-green-600">{formatCurrency(factura.suma_achitata)}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Restant</p>
+                          <p className="font-medium text-red-600">{formatCurrency(factura.suma_restanta)}</p>
                         </div>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Tabs for Facturi & Încasări */}
-              <Tabs defaultValue="facturi">
-                <TabsList>
-                  <TabsTrigger value="facturi">Istoric Facturi ({clientFacturi.length})</TabsTrigger>
-                  <TabsTrigger value="incasari">Istoric Încasări ({clientIncasari.length})</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="facturi" className="mt-4">
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Nr Factură</TableHead>
-                          <TableHead>Dată</TableHead>
-                          <TableHead>Dată Scadență</TableHead>
-                          <TableHead className="text-right">Total</TableHead>
-                          <TableHead className="text-right">Achitat</TableHead>
-                          <TableHead className="text-right">Restant</TableHead>
-                          <TableHead>Status</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {clientFacturi.map((factura) => (
-                          <TableRow key={factura.id}>
-                            <TableCell className="font-medium">{factura.nr_factura}</TableCell>
-                            <TableCell>{factura.data}</TableCell>
-                            <TableCell>{factura.data_scadenta}</TableCell>
-                            <TableCell className="text-right">{formatCurrency(factura.total)}</TableCell>
-                            <TableCell className="text-right">{formatCurrency(factura.suma_achitata)}</TableCell>
-                            <TableCell className="text-right">{formatCurrency(factura.suma_restanta)}</TableCell>
-                            <TableCell>
-                              <Badge variant={
-                                factura.status === "Achitată" ? "default" :
-                                factura.status === "Parțial" ? "secondary" : "destructive"
-                              }>
-                                {factura.status}
-                              </Badge>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                        {clientFacturi.length === 0 && (
-                          <TableRow>
-                            <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                              Nu există facturi pentru acest client
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
-                  </div>
+                  ))}
+                  {clientFacturi.length === 0 && (
+                    <p className="text-center text-muted-foreground py-4 text-sm">Nu există facturi</p>
+                  )}
                 </TabsContent>
 
-                <TabsContent value="incasari" className="mt-4">
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Dată</TableHead>
-                          <TableHead>Tip</TableHead>
-                          <TableHead className="text-right">Sumă</TableHead>
-                          <TableHead>Document Referință</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {clientIncasari.map((incasare) => (
-                          <TableRow key={incasare.id}>
-                            <TableCell>{incasare.data}</TableCell>
-                            <TableCell>
-                              <Badge variant="outline">{incasare.tip}</Badge>
-                            </TableCell>
-                            <TableCell className="text-right font-medium text-green-600">
-                              +{formatCurrency(incasare.suma)}
-                            </TableCell>
-                            <TableCell>{incasare.document_referinta}</TableCell>
-                          </TableRow>
-                        ))}
-                        {clientIncasari.length === 0 && (
-                          <TableRow>
-                            <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
-                              Nu există încasări pentru acest client
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
-                  </div>
+                <TabsContent value="incasari" className="mt-3 space-y-2 max-h-48 overflow-y-auto">
+                  {clientIncasari.map((incasare) => (
+                    <div key={incasare.id} className="p-3 border rounded-lg flex justify-between items-center">
+                      <div>
+                        <p className="font-medium text-sm">{incasare.data}</p>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-xs">{incasare.tip}</Badge>
+                          <span className="text-xs text-muted-foreground">{incasare.document_referinta}</span>
+                        </div>
+                      </div>
+                      <p className="font-bold text-green-600">+{formatCurrency(incasare.suma)}</p>
+                    </div>
+                  ))}
+                  {clientIncasari.length === 0 && (
+                    <p className="text-center text-muted-foreground py-4 text-sm">Nu există încasări</p>
+                  )}
                 </TabsContent>
               </Tabs>
             </div>

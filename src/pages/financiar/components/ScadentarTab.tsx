@@ -349,59 +349,59 @@ const ScadentarTab = () => {
       </Card>
       {/* Detail Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <Calendar className="h-4 w-4" />
               Detalii Scadență
             </DialogTitle>
           </DialogHeader>
           
           {selectedEntry && (
-            <div className="space-y-6">
+            <div className="space-y-4">
               {/* Partner Info */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-sm text-muted-foreground">Tip Partener</p>
-                  <Badge variant={selectedEntry.tip_partener === "Client" ? "default" : "secondary"}>
+                  <p className="text-xs text-muted-foreground">Tip Partener</p>
+                  <Badge variant={selectedEntry.tip_partener === "Client" ? "default" : "secondary"} className="mt-1">
                     {selectedEntry.tip_partener}
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Nume Partener</p>
-                  <p className="font-medium">{selectedEntry.nume_partener}</p>
+                  <p className="text-xs text-muted-foreground">Nume Partener</p>
+                  <p className="font-medium text-sm">{selectedEntry.nume_partener}</p>
                 </div>
               </div>
 
               {/* Document Info */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-sm text-muted-foreground">Tip Document</p>
-                  <p className="font-medium">{selectedEntry.tip_document}</p>
+                  <p className="text-xs text-muted-foreground">Tip Document</p>
+                  <p className="font-medium text-sm">{selectedEntry.tip_document}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Număr Document</p>
-                  <p className="font-medium">{selectedEntry.numar_document}</p>
+                  <p className="text-xs text-muted-foreground">Număr Document</p>
+                  <p className="font-medium text-sm">{selectedEntry.numar_document}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Dată Document</p>
-                  <p className="font-medium">{selectedEntry.data_document}</p>
+                  <p className="text-xs text-muted-foreground">Dată Document</p>
+                  <p className="font-medium text-sm">{selectedEntry.data_document}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Dată Scadență</p>
-                  <p className="font-medium">{selectedEntry.data_scadenta}</p>
+                  <p className="text-xs text-muted-foreground">Dată Scadență</p>
+                  <p className="font-medium text-sm">{selectedEntry.data_scadenta}</p>
                 </div>
               </div>
 
               {/* Financial Info */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-muted/50 rounded-lg">
-                  <p className="text-sm text-muted-foreground">Sumă Restantă</p>
-                  <p className="text-xl font-bold">{formatCurrency(selectedEntry.suma_restanta)}</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-muted/50 rounded-lg">
+                  <p className="text-xs text-muted-foreground">Sumă Restantă</p>
+                  <p className="text-lg font-bold">{formatCurrency(selectedEntry.suma_restanta)}</p>
                 </div>
-                <div className="p-4 bg-muted/50 rounded-lg">
-                  <p className="text-sm text-muted-foreground">Zile Întârziere</p>
-                  <p className={`text-xl font-bold ${getZileIntarziereColor(selectedEntry.zile_intarziere)}`}>
+                <div className="p-3 bg-muted/50 rounded-lg">
+                  <p className="text-xs text-muted-foreground">Zile Întârziere</p>
+                  <p className={`text-lg font-bold ${getZileIntarziereColor(selectedEntry.zile_intarziere)}`}>
                     {selectedEntry.zile_intarziere} zile
                   </p>
                 </div>
@@ -409,7 +409,7 @@ const ScadentarTab = () => {
 
               {/* Status */}
               <div>
-                <p className="text-sm text-muted-foreground mb-2">Status</p>
+                <p className="text-xs text-muted-foreground mb-1">Status</p>
                 <Badge variant={selectedEntry.status === "La zi" ? "default" : "destructive"}>
                   {selectedEntry.status}
                 </Badge>

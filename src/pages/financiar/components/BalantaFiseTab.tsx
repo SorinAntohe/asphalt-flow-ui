@@ -348,100 +348,89 @@ const BalantaFiseTab = () => {
 
       {/* Account Statement Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <FileSpreadsheet className="h-5 w-5" />
-              Fișă Cont {selectedCont?.cont} - {selectedCont?.denumire}
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <FileSpreadsheet className="h-4 w-4" />
+              Fișă Cont {selectedCont?.cont}
             </DialogTitle>
           </DialogHeader>
           
           {selectedCont && (
-            <div className="space-y-6">
-              {/* Account Summary */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Card>
-                  <CardContent className="pt-4">
-                    <p className="text-sm text-muted-foreground">Sold Inițial</p>
-                    <p className="text-lg font-bold">
-                      {selectedCont.soldInitialDebit > 0 
-                        ? `${formatCurrency(selectedCont.soldInitialDebit)} D`
-                        : `${formatCurrency(selectedCont.soldInitialCredit)} C`
-                      }
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="pt-4">
-                    <p className="text-sm text-muted-foreground">Rulaj Debit</p>
-                    <p className="text-lg font-bold text-green-600 dark:text-green-400">
-                      {formatCurrency(selectedCont.rulajDebit)}
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="pt-4">
-                    <p className="text-sm text-muted-foreground">Rulaj Credit</p>
-                    <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                      {formatCurrency(selectedCont.rulajCredit)}
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="pt-4">
-                    <p className="text-sm text-muted-foreground">Sold Final</p>
-                    <p className="text-lg font-bold">
-                      {selectedCont.soldFinalDebit > 0 
-                        ? `${formatCurrency(selectedCont.soldFinalDebit)} D`
-                        : `${formatCurrency(selectedCont.soldFinalCredit)} C`
-                      }
-                    </p>
-                  </CardContent>
-                </Card>
+            <div className="space-y-4">
+              {/* Account Name */}
+              <div>
+                <p className="text-xs text-muted-foreground">Denumire Cont</p>
+                <p className="font-medium text-sm">{selectedCont.denumire}</p>
               </div>
 
-              {/* Movements Table */}
-              <div>
-                <h4 className="font-medium mb-3">Mișcări Cont</h4>
-                <div className="overflow-x-auto border rounded-lg">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Dată</TableHead>
-                        <TableHead>Document</TableHead>
-                        <TableHead>Explicație</TableHead>
-                        <TableHead className="text-right">Debit</TableHead>
-                        <TableHead className="text-right">Credit</TableHead>
-                        <TableHead className="text-right">Sold</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {getMiscariForCont(selectedCont.cont).length > 0 ? (
-                        getMiscariForCont(selectedCont.cont).map((miscare) => (
-                          <TableRow key={miscare.id}>
-                            <TableCell>{formatDate(miscare.data)}</TableCell>
-                            <TableCell className="font-mono">{miscare.document}</TableCell>
-                            <TableCell>{miscare.explicatie}</TableCell>
-                            <TableCell className="text-right text-green-600 dark:text-green-400">
+              {/* Account Summary */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-muted/50 rounded-lg">
+                  <p className="text-xs text-muted-foreground">Sold Inițial</p>
+                  <p className="text-lg font-bold">
+                    {selectedCont.soldInitialDebit > 0 
+                      ? `${formatCurrency(selectedCont.soldInitialDebit)} D`
+                      : `${formatCurrency(selectedCont.soldInitialCredit)} C`
+                    }
+                  </p>
+                </div>
+                <div className="p-3 bg-muted/50 rounded-lg">
+                  <p className="text-xs text-muted-foreground">Sold Final</p>
+                  <p className="text-lg font-bold">
+                    {selectedCont.soldFinalDebit > 0 
+                      ? `${formatCurrency(selectedCont.soldFinalDebit)} D`
+                      : `${formatCurrency(selectedCont.soldFinalCredit)} C`
+                    }
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-green-50 dark:bg-green-950 rounded-lg">
+                  <p className="text-xs text-muted-foreground">Rulaj Debit</p>
+                  <p className="text-lg font-bold text-green-600">{formatCurrency(selectedCont.rulajDebit)}</p>
+                </div>
+                <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                  <p className="text-xs text-muted-foreground">Rulaj Credit</p>
+                  <p className="text-lg font-bold text-blue-600">{formatCurrency(selectedCont.rulajCredit)}</p>
+                </div>
+              </div>
+
+              {/* Movements as cards */}
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Mișcări Cont</p>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {getMiscariForCont(selectedCont.cont).length > 0 ? (
+                    getMiscariForCont(selectedCont.cont).map((miscare) => (
+                      <div key={miscare.id} className="p-3 border rounded-lg space-y-2">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="font-medium text-sm">{formatDate(miscare.data)}</p>
+                            <p className="text-xs text-muted-foreground font-mono">{miscare.document}</p>
+                          </div>
+                          <p className="font-bold text-sm">{formatCurrency(miscare.soldDupa)}</p>
+                        </div>
+                        <p className="text-xs text-muted-foreground">{miscare.explicatie}</p>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <p className="text-muted-foreground">Debit</p>
+                            <p className="font-medium text-green-600">
                               {miscare.debit > 0 ? formatCurrency(miscare.debit) : '-'}
-                            </TableCell>
-                            <TableCell className="text-right text-blue-600 dark:text-blue-400">
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">Credit</p>
+                            <p className="font-medium text-blue-600">
                               {miscare.credit > 0 ? formatCurrency(miscare.credit) : '-'}
-                            </TableCell>
-                            <TableCell className="text-right font-medium">
-                              {formatCurrency(miscare.soldDupa)}
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      ) : (
-                        <TableRow>
-                          <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                            Nu există mișcări pentru acest cont
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-muted-foreground py-4 text-sm">Nu există mișcări</p>
+                  )}
                 </div>
               </div>
             </div>
