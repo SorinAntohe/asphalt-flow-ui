@@ -50,7 +50,7 @@ const comercialItems = [
 const financiarItems = [
   { title: "Parteneri & Solduri", url: "/financiar/parteneri-solduri", icon: Users },
   { title: "Documente & Trezorerie", url: "/financiar/documente-trezorerie", icon: FileText },
-  { title: "Contabilitate & Rapoarte", url: "/financiar/rapoarte", icon: BarChart3 },
+  { title: "Contabilitate", url: "/financiar/rapoarte", icon: BarChart3 },
 ];
 
 // Productie module items

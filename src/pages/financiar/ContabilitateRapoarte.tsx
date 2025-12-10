@@ -14,7 +14,7 @@ const ContabilitateRapoarte = () => {
           <BarChart3 className="h-7 w-7 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Contabilitate & Rapoarte</h1>
+          <h1 className="text-2xl font-bold text-foreground">Contabilitate</h1>
           <p className="text-sm text-muted-foreground">Jurnal contabil și balanțe de verificare</p>
         </div>
       </div>
