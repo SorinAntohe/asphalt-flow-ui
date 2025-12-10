@@ -2,13 +2,24 @@ import { useState, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { conturiBancare, miscariBanca, registruCasa } from "../mockData";
+import { ContBancar, MiscareBanca, InregistrareCasa } from "../types";
 import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data-table";
-import { Building, Wallet, ArrowUpDown, Landmark } from "lucide-react";
+import { Building, Wallet, ArrowUpDown, Landmark, Plus, Download } from "lucide-react";
+import { exportToCSV } from "@/lib/exportUtils";
+import { useToast } from "@/hooks/use-toast";
 
 const BancaCasaTab = () => {
+  const { toast } = useToast();
   const [activeSubTab, setActiveSubTab] = useState("conturi");
+  
+  // Dialog states
+  const [selectedCont, setSelectedCont] = useState<ContBancar | null>(null);
+  const [selectedMiscare, setSelectedMiscare] = useState<MiscareBanca | null>(null);
+  const [selectedCasa, setSelectedCasa] = useState<InregistrareCasa | null>(null);
   
   // Pagination states
   const [conturiPage, setConturiPage] = useState(1);
@@ -104,6 +115,47 @@ const BancaCasaTab = () => {
   const paginatedMiscari = filteredMiscari.slice((miscariPage - 1) * miscariPerPage, miscariPage * miscariPerPage);
   const paginatedCasa = filteredCasa.slice((casaPage - 1) * casaPerPage, casaPage * casaPerPage);
 
+  const handleExport = (type: string) => {
+    let data: Record<string, unknown>[] = [];
+    let filename = "";
+    
+    switch (type) {
+      case "conturi":
+        data = filteredConturi.map(c => ({
+          "Bancă": c.banca,
+          "IBAN": c.iban,
+          "Monedă": c.moneda,
+          "Sold curent": c.sold_curent,
+        }));
+        filename = "conturi_bancare";
+        break;
+      case "miscari":
+        data = filteredMiscari.map(m => ({
+          "Dată": m.data,
+          "Cont bancar": m.cont_bancar,
+          "Tip": m.tip,
+          "Partener": m.partener,
+          "Sumă": m.suma,
+          "Document asociat": m.document_asociat,
+        }));
+        filename = "miscari_banca";
+        break;
+      case "casa":
+        data = filteredCasa.map(c => ({
+          "Dată": c.data,
+          "Tip": c.tip,
+          "Partener": c.partener,
+          "Sumă": c.suma,
+          "Document asociat": c.document_asociat,
+        }));
+        filename = "registru_casa";
+        break;
+    }
+    
+    exportToCSV(data, filename);
+    toast({ title: "Export realizat", description: `Fișierul ${filename}.csv a fost descărcat.` });
+  };
+
   return (
     <div className="space-y-6">
       {/* Summary Cards - TOP */}
@@ -166,11 +218,23 @@ const BancaCasaTab = () => {
       <Card>
         <CardContent className="pt-6">
           <Tabs value={activeSubTab} onValueChange={setActiveSubTab}>
-            <TabsList className="mb-4">
-              <TabsTrigger value="conturi">Conturi bancare</TabsTrigger>
-              <TabsTrigger value="miscari">Mișcări bancă</TabsTrigger>
-              <TabsTrigger value="casa">Registru de casă</TabsTrigger>
-            </TabsList>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+              <TabsList>
+                <TabsTrigger value="conturi">Conturi bancare</TabsTrigger>
+                <TabsTrigger value="miscari">Mișcări bancă</TabsTrigger>
+                <TabsTrigger value="casa">Registru de casă</TabsTrigger>
+              </TabsList>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => handleExport(activeSubTab)}>
+                  <Download className="h-4 w-4 mr-2" />
+                  Export CSV
+                </Button>
+                <Button size="sm">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adaugă
+                </Button>
+              </div>
+            </div>
 
             <TabsContent value="conturi">
               <div className="overflow-x-auto">
@@ -221,7 +285,11 @@ const BancaCasaTab = () => {
                   </TableHeader>
                   <TableBody>
                     {paginatedConturi.map((cont) => (
-                      <TableRow key={cont.id} className="cursor-pointer hover:bg-muted/50">
+                      <TableRow 
+                        key={cont.id} 
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => setSelectedCont(cont)}
+                      >
                         <TableCell className="font-medium">{cont.banca}</TableCell>
                         <TableCell className="font-mono text-sm">{cont.iban}</TableCell>
                         <TableCell>
@@ -296,7 +364,11 @@ const BancaCasaTab = () => {
                   </TableHeader>
                   <TableBody>
                     {paginatedMiscari.map((miscare) => (
-                      <TableRow key={miscare.id} className="cursor-pointer hover:bg-muted/50">
+                      <TableRow 
+                        key={miscare.id} 
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => setSelectedMiscare(miscare)}
+                      >
                         <TableCell>{miscare.data}</TableCell>
                         <TableCell className="font-medium">{miscare.cont_bancar}</TableCell>
                         <TableCell>
@@ -367,7 +439,11 @@ const BancaCasaTab = () => {
                   </TableHeader>
                   <TableBody>
                     {paginatedCasa.map((inregistrare) => (
-                      <TableRow key={inregistrare.id} className="cursor-pointer hover:bg-muted/50">
+                      <TableRow 
+                        key={inregistrare.id} 
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => setSelectedCasa(inregistrare)}
+                      >
                         <TableCell>{inregistrare.data}</TableCell>
                         <TableCell>
                           <Badge variant={inregistrare.tip === "Încasare" ? "default" : "secondary"}>
@@ -398,6 +474,128 @@ const BancaCasaTab = () => {
           </Tabs>
         </CardContent>
       </Card>
+
+      {/* Cont Bancar Detail Dialog */}
+      <Dialog open={!!selectedCont} onOpenChange={() => setSelectedCont(null)}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Landmark className="h-5 w-5" />
+              Detalii Cont Bancar
+            </DialogTitle>
+          </DialogHeader>
+          {selectedCont && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Bancă</p>
+                  <p className="font-medium">{selectedCont.banca}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Monedă</p>
+                  <Badge variant="outline">{selectedCont.moneda}</Badge>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-sm text-muted-foreground">IBAN</p>
+                  <p className="font-mono font-medium">{selectedCont.iban}</p>
+                </div>
+              </div>
+              <div className="p-4 bg-muted/50 rounded-lg">
+                <p className="text-sm text-muted-foreground">Sold curent</p>
+                <p className="text-2xl font-bold">{formatCurrency(selectedCont.sold_curent, selectedCont.moneda)}</p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Miscare Banca Detail Dialog */}
+      <Dialog open={!!selectedMiscare} onOpenChange={() => setSelectedMiscare(null)}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Building className="h-5 w-5" />
+              Detalii Mișcare Bancă
+            </DialogTitle>
+          </DialogHeader>
+          {selectedMiscare && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Dată</p>
+                  <p className="font-medium">{selectedMiscare.data}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Tip</p>
+                  <Badge variant={selectedMiscare.tip === "Încasare" ? "default" : "secondary"}>
+                    {selectedMiscare.tip}
+                  </Badge>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Cont bancar</p>
+                  <p className="font-medium">{selectedMiscare.cont_bancar}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Partener</p>
+                  <p className="font-medium">{selectedMiscare.partener}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Document asociat</p>
+                  <Badge variant="outline">{selectedMiscare.document_asociat}</Badge>
+                </div>
+              </div>
+              <div className="p-4 bg-muted/50 rounded-lg">
+                <p className="text-sm text-muted-foreground">Sumă</p>
+                <p className={`text-2xl font-bold ${selectedMiscare.tip === "Încasare" ? "text-green-600" : "text-red-600"}`}>
+                  {selectedMiscare.tip === "Încasare" ? "+" : "-"}{formatCurrency(selectedMiscare.suma)}
+                </p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Registru Casa Detail Dialog */}
+      <Dialog open={!!selectedCasa} onOpenChange={() => setSelectedCasa(null)}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Wallet className="h-5 w-5" />
+              Detalii Înregistrare Casă
+            </DialogTitle>
+          </DialogHeader>
+          {selectedCasa && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Dată</p>
+                  <p className="font-medium">{selectedCasa.data}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Tip</p>
+                  <Badge variant={selectedCasa.tip === "Încasare" ? "default" : "secondary"}>
+                    {selectedCasa.tip}
+                  </Badge>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Partener</p>
+                  <p className="font-medium">{selectedCasa.partener}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Document asociat</p>
+                  <Badge variant="outline">{selectedCasa.document_asociat}</Badge>
+                </div>
+              </div>
+              <div className="p-4 bg-muted/50 rounded-lg">
+                <p className="text-sm text-muted-foreground">Sumă</p>
+                <p className={`text-2xl font-bold ${selectedCasa.tip === "Încasare" ? "text-green-600" : "text-red-600"}`}>
+                  {selectedCasa.tip === "Încasare" ? "+" : "-"}{formatCurrency(selectedCasa.suma)}
+                </p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
