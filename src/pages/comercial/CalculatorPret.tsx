@@ -204,7 +204,7 @@ const CalculatorPret = () => {
   const retetaOptions = useMemo(() => 
     retete.map(r => ({ 
       value: r.cod_reteta, 
-      label: r.denumire 
+      label: `${r.cod_reteta} - ${r.denumire}` 
     })),
     [retete]
   );
