@@ -11,11 +11,13 @@ import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data
 import { Building2, TrendingDown, AlertTriangle, Clock, Plus, Download } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { useToast } from "@/hooks/use-toast";
+import { AddFurnizorDialog } from "./AddDialogs";
 
 const FurnizoriTab = () => {
   const { toast } = useToast();
   const [selectedFurnizor, setSelectedFurnizor] = useState<FurnizorCuSold | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
@@ -190,7 +192,7 @@ const FurnizoriTab = () => {
               <Download className="h-4 w-4 mr-2" />
               Export CSV
             </Button>
-            <Button size="sm">
+            <Button size="sm" onClick={() => setAddDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Adaugă
             </Button>
@@ -445,6 +447,9 @@ const FurnizoriTab = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Add Dialog */}
+      <AddFurnizorDialog open={addDialogOpen} onOpenChange={setAddDialogOpen} />
     </div>
   );
 };

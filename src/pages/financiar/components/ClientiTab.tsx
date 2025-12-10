@@ -11,11 +11,13 @@ import { DataTableColumnHeader, DataTablePagination } from "@/components/ui/data
 import { Users, TrendingUp, AlertTriangle, Clock, Plus, Download } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { useToast } from "@/hooks/use-toast";
+import { AddClientDialog } from "./AddDialogs";
 
 const ClientiTab = () => {
   const { toast } = useToast();
   const [selectedClient, setSelectedClient] = useState<ClientCuSold | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
@@ -190,7 +192,7 @@ const ClientiTab = () => {
               <Download className="h-4 w-4 mr-2" />
               Export CSV
             </Button>
-            <Button size="sm">
+            <Button size="sm" onClick={() => setAddDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Adaugă
             </Button>
@@ -445,6 +447,9 @@ const ClientiTab = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Add Dialog */}
+      <AddClientDialog open={addDialogOpen} onOpenChange={setAddDialogOpen} />
     </div>
   );
 };
