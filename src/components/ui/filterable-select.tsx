@@ -79,9 +79,10 @@ export function FilterableSelect({
         </Button>
       </PopoverTrigger>
       <PopoverContent 
-        className="w-[--radix-popover-trigger-width] p-0 bg-popover border border-border shadow-md z-[100]" 
+        className="w-[--radix-popover-trigger-width] p-0 bg-popover border border-border shadow-md z-[9999]" 
         align="start"
         sideOffset={4}
+        onWheel={(e) => e.stopPropagation()}
       >
         <Command shouldFilter={false}>
           <CommandInput 
@@ -90,7 +91,7 @@ export function FilterableSelect({
             onValueChange={setSearchValue}
             className="h-10 border-b border-border"
           />
-          <CommandList className="max-h-60 overflow-y-auto overscroll-contain">
+          <CommandList className="max-h-48 overflow-y-auto overscroll-contain" onWheel={(e) => e.stopPropagation()}>
             <CommandEmpty>{emptyText}</CommandEmpty>
             <CommandGroup>
               {filteredOptions.map((option) => (
