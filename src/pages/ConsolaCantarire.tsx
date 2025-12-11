@@ -130,8 +130,13 @@ export default function ConsolaCantarire() {
   };
 
   const handleSessionClick = (session: WeighSession) => {
+    console.log('handleSessionClick called with session:', session);
+    if (!session) {
+      console.error('Session is null/undefined');
+      return;
+    }
     setActiveSession(session);
-    setNrAuto(session.nrAuto);
+    setNrAuto(session.nrAuto || '');
   };
 
   const handleStartSession = async () => {
@@ -212,28 +217,32 @@ export default function ConsolaCantarire() {
   };
 
   const handleNewWeighingCreated = (sessionData: { direction: Direction; orderNo?: string; poNo?: string; rowId: string; nrAuto: string; sofer: string }) => {
+    console.log('handleNewWeighingCreated called with:', sessionData);
+    
     const newSession: WeighSession = {
       id: `new-${Date.now()}`,
       sessionCode: `SC-${String(Date.now()).slice(-3)}`,
       direction: sessionData.direction,
-      poNo: sessionData.poNo,
-      orderNo: sessionData.orderNo,
-      rowId: sessionData.rowId,
-      nrAuto: sessionData.nrAuto,
+      poNo: sessionData.poNo || '',
+      orderNo: sessionData.orderNo || '',
+      rowId: sessionData.rowId || '',
+      nrAuto: sessionData.nrAuto || '',
       step: '1/2',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      createdBy: sessionData.sofer,
+      createdBy: sessionData.sofer || '',
       plantId: selectedPlant,
       financeApproved: true,
     };
+    
+    console.log('New session created:', newSession);
     
     // Adaugă doar în coadă, nu setează ca sesiune activă
     setQueue1(prev => [...prev, newSession]);
     
     toast({
       title: "Cântărire adăugată în coadă",
-      description: `${sessionData.nrAuto} - ${sessionData.sofer}`
+      description: `${sessionData.nrAuto || 'N/A'} - ${sessionData.sofer || 'N/A'}`
     });
   };
 
