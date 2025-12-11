@@ -16,7 +16,7 @@ interface ActiveWeighPanelProps {
   nrAuto: string;
   onNrAutoChange: (value: string) => void;
   onStartSession: () => void;
-  onWeightEntered: (type: 'TARA' | 'BRUT', value: number) => Promise<boolean>;
+  onWeightEntered: (type: 'TARA' | 'BRUT', value: number, observatii?: string) => Promise<boolean>;
   onSessionCompleted?: (sessionId: string) => void;
   isLoading?: boolean;
   hasExistingSession?: boolean;
@@ -47,10 +47,10 @@ export function ActiveWeighPanel({
     setWeightDialogOpen(true);
   };
 
-  const handleWeightConfirm = async (weight: number) => {
+  const handleWeightConfirm = async (weight: number, observatii?: string) => {
     setIsSaving(true);
     try {
-      const success = await onWeightEntered(weightType, weight);
+      const success = await onWeightEntered(weightType, weight, observatii);
       if (success) {
         toast({
           title: "Greutate salvată",
@@ -212,6 +212,7 @@ export function ActiveWeighPanel({
         weightType={weightType}
         onConfirm={handleWeightConfirm}
         isLoading={isSaving}
+        isStep2={session?.step === '2/2'}
       />
     </Card>
   );

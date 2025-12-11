@@ -3,18 +3,21 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { AlertTriangle, Check, Loader2 } from "lucide-react";
 
 interface ManualWeightDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   weightType: 'TARA' | 'BRUT';
-  onConfirm: (weight: number) => void;
+  onConfirm: (weight: number, observatii?: string) => void;
   isLoading?: boolean;
+  isStep2?: boolean;
 }
 
-export function ManualWeightDialog({ open, onOpenChange, weightType, onConfirm, isLoading }: ManualWeightDialogProps) {
+export function ManualWeightDialog({ open, onOpenChange, weightType, onConfirm, isLoading, isStep2 }: ManualWeightDialogProps) {
   const [value, setValue] = useState("");
+  const [observatii, setObservatii] = useState("");
   const [error, setError] = useState("");
 
   const handleConfirm = () => {
@@ -24,12 +27,13 @@ export function ManualWeightDialog({ open, onOpenChange, weightType, onConfirm, 
       return;
     }
 
-    onConfirm(numValue);
+    onConfirm(numValue, isStep2 ? observatii : undefined);
     handleClose();
   };
 
   const handleClose = () => {
     setValue("");
+    setObservatii("");
     setError("");
     onOpenChange(false);
   };
@@ -66,6 +70,18 @@ export function ManualWeightDialog({ open, onOpenChange, weightType, onConfirm, 
               }}
             />
           </div>
+
+          {isStep2 && (
+            <div className="mb-4">
+              <Label className="text-sm text-muted-foreground">Observații</Label>
+              <Textarea
+                placeholder="Observații opționale..."
+                value={observatii}
+                onChange={(e) => setObservatii(e.target.value)}
+                className="mt-2 min-h-[80px]"
+              />
+            </div>
+          )}
 
           {error && (
             <div className="flex items-center gap-2 p-3 mb-4 bg-destructive/10 text-destructive rounded-lg text-sm">
