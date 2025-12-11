@@ -26,7 +26,7 @@ interface NewWeighingDialogProps {
 }
 
 // Simple string arrays from new API endpoints
-  
+
 export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewWeighingDialogProps) {
   const [direction, setDirection] = useState<Direction>("INBOUND");
   const [selectedOrder, setSelectedOrder] = useState("");
