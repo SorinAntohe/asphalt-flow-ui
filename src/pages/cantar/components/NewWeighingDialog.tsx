@@ -171,30 +171,20 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
                     <RadioGroupItem value="INBOUND" id="inbound" className="peer sr-only" />
                     <Label
                       htmlFor="inbound"
-                      className="flex items-center gap-3 rounded-lg border-2 border-muted bg-card p-3 hover:bg-accent/50 hover:border-accent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/10 cursor-pointer transition-all"
+                      className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card p-4 hover:bg-accent/50 hover:border-accent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground cursor-pointer transition-all"
                     >
-                      <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
-                        <Package className="h-5 w-5 text-blue-500" />
-                      </div>
-                      <div>
-                        <span className="font-medium block">Recepție</span>
-                        <span className="text-xs text-muted-foreground">Intrare materiale</span>
-                      </div>
+                      <Package className="mb-2 h-6 w-6" />
+                      <span className="font-medium">Recepție</span>
                     </Label>
                   </div>
                   <div>
                     <RadioGroupItem value="OUTBOUND" id="outbound" className="peer sr-only" />
                     <Label
                       htmlFor="outbound"
-                      className="flex items-center gap-3 rounded-lg border-2 border-muted bg-card p-3 hover:bg-accent/50 hover:border-accent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/10 cursor-pointer transition-all"
+                      className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card p-4 hover:bg-accent/50 hover:border-accent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground cursor-pointer transition-all"
                     >
-                      <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
-                        <Truck className="h-5 w-5 text-amber-500" />
-                      </div>
-                      <div>
-                        <span className="font-medium block">Livrare</span>
-                        <span className="text-xs text-muted-foreground">Ieșire produse</span>
-                      </div>
+                      <Truck className="mb-2 h-6 w-6" />
+                      <span className="font-medium">Livrare</span>
                     </Label>
                   </div>
                 </RadioGroup>
