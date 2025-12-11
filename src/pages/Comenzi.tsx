@@ -132,10 +132,10 @@ export default function Comenzi() {
     furnizor: "",
     material: "",
     unitate_masura: "",
-    cantitate: 0,
+    cantitate: "0",
     punct_descarcare: "",
-    pret_fara_tva: 0,
-    pret_transport: 0,
+    pret_fara_tva: "0",
+    pret_transport: "0",
     observatii: ""
   });
   const [formErrorsMP, setFormErrorsMP] = useState<Record<string, string>>({});
@@ -145,10 +145,10 @@ export default function Comenzi() {
     client: "",
     produs: "",
     unitate_de_masura: "",
-    cantitate: 0,
+    cantitate: "0",
     punct_descarcare: "",
-    pret_fara_tva: 0,
-    pret_transport: 0,
+    pret_fara_tva: "0",
+    pret_transport: "0",
     observatii: ""
   });
   const [formErrorsPF, setFormErrorsPF] = useState<Record<string, string>>({});
@@ -247,10 +247,10 @@ export default function Comenzi() {
       furnizor: "",
       material: "",
       unitate_masura: "",
-      cantitate: 0,
+      cantitate: "0",
       punct_descarcare: "",
-      pret_fara_tva: 0,
-      pret_transport: 0,
+      pret_fara_tva: "0",
+      pret_transport: "0",
       observatii: ""
     });
     setFormErrorsMP({});
@@ -263,10 +263,10 @@ export default function Comenzi() {
       furnizor: comanda.furnizor,
       material: comanda.material,
       unitate_masura: comanda.unitate_masura,
-      cantitate: comanda.cantitate,
+      cantitate: String(comanda.cantitate ?? "0"),
       punct_descarcare: comanda.punct_descarcare || "",
-      pret_fara_tva: comanda.pret_fara_tva,
-      pret_transport: comanda.pret_transport || 0,
+      pret_fara_tva: String(comanda.pret_fara_tva ?? "0"),
+      pret_transport: String(comanda.pret_transport ?? "0"),
       observatii: comanda.observatii
     });
     setFormErrorsMP({});
@@ -275,11 +275,19 @@ export default function Comenzi() {
   
   const handleSaveMP = async () => {
     try {
+      // Convert string values to numbers for validation
+      const numericFormMP = {
+        ...formMP,
+        cantitate: parseFloat(formMP.cantitate) || 0,
+        pret_fara_tva: parseFloat(formMP.pret_fara_tva) || 0,
+        pret_transport: parseFloat(formMP.pret_transport) || 0,
+      };
+      
       // Validate
       const validatedData = comandaMPSchema.parse({
-        ...formMP,
+        ...numericFormMP,
         punct_descarcare: formMP.punct_descarcare || undefined,
-        pret_transport: formMP.pret_transport || undefined,
+        pret_transport: numericFormMP.pret_transport || undefined,
         observatii: formMP.observatii || undefined
       });
       
@@ -389,10 +397,10 @@ export default function Comenzi() {
       client: "",
       produs: "",
       unitate_de_masura: "",
-      cantitate: 0,
+      cantitate: "0",
       punct_descarcare: "",
-      pret_fara_tva: 0,
-      pret_transport: 0,
+      pret_fara_tva: "0",
+      pret_transport: "0",
       observatii: ""
     });
     setFormErrorsPF({});
@@ -405,10 +413,10 @@ export default function Comenzi() {
       client: comanda.client,
       produs: comanda.produs,
       unitate_de_masura: comanda.unitate_de_masura,
-      cantitate: comanda.cantitate,
+      cantitate: String(comanda.cantitate ?? "0"),
       punct_descarcare: comanda.punct_descarcare || "",
-      pret_fara_tva: comanda.pret_fara_tva,
-      pret_transport: comanda.pret_transport || 0,
+      pret_fara_tva: String(comanda.pret_fara_tva ?? "0"),
+      pret_transport: String(comanda.pret_transport ?? "0"),
       observatii: comanda.observatii
     });
     setFormErrorsPF({});
@@ -417,11 +425,19 @@ export default function Comenzi() {
   
   const handleSavePF = async () => {
     try {
+      // Convert string values to numbers for validation
+      const numericFormPF = {
+        ...formPF,
+        cantitate: parseFloat(formPF.cantitate) || 0,
+        pret_fara_tva: parseFloat(formPF.pret_fara_tva) || 0,
+        pret_transport: parseFloat(formPF.pret_transport) || 0,
+      };
+      
       // Validate
       const validatedData = comandaPFSchema.parse({
-        ...formPF,
+        ...numericFormPF,
         punct_descarcare: formPF.punct_descarcare || undefined,
-        pret_transport: formPF.pret_transport || undefined,
+        pret_transport: numericFormPF.pret_transport || undefined,
         observatii: formPF.observatii || undefined
       });
       
@@ -1462,7 +1478,7 @@ export default function Comenzi() {
                     id="cantitate"
                     type="number"
                     value={formMP.cantitate}
-                    onChange={(e) => setFormMP({ ...formMP, cantitate: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => setFormMP({ ...formMP, cantitate: e.target.value })}
                     className={`h-9 text-sm font-mono ${formErrorsMP.cantitate ? "border-destructive" : ""}`}
                   />
                 </div>
@@ -1499,7 +1515,7 @@ export default function Comenzi() {
                     type="number"
                     step="0.01"
                     value={formMP.pret_fara_tva}
-                    onChange={(e) => setFormMP({ ...formMP, pret_fara_tva: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => setFormMP({ ...formMP, pret_fara_tva: e.target.value })}
                     className={`h-9 text-sm font-mono ${formErrorsMP.pret_fara_tva ? "border-destructive" : ""}`}
                   />
                 </div>
@@ -1510,7 +1526,7 @@ export default function Comenzi() {
                     type="number"
                     step="0.01"
                     value={formMP.pret_transport}
-                    onChange={(e) => setFormMP({ ...formMP, pret_transport: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => setFormMP({ ...formMP, pret_transport: e.target.value })}
                     className="h-9 text-sm font-mono"
                   />
                 </div>
@@ -1721,7 +1737,7 @@ export default function Comenzi() {
                     id="cantitate_pf"
                     type="number"
                     value={formPF.cantitate}
-                    onChange={(e) => setFormPF({ ...formPF, cantitate: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => setFormPF({ ...formPF, cantitate: e.target.value })}
                     className={`h-9 text-sm font-mono ${formErrorsPF.cantitate ? "border-destructive" : ""}`}
                   />
                 </div>
@@ -1758,7 +1774,7 @@ export default function Comenzi() {
                     type="number"
                     step="0.01"
                     value={formPF.pret_fara_tva}
-                    onChange={(e) => setFormPF({ ...formPF, pret_fara_tva: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => setFormPF({ ...formPF, pret_fara_tva: e.target.value })}
                     className={`h-9 text-sm font-mono ${formErrorsPF.pret_fara_tva ? "border-destructive" : ""}`}
                   />
                 </div>
@@ -1769,7 +1785,7 @@ export default function Comenzi() {
                     type="number"
                     step="0.01"
                     value={formPF.pret_transport}
-                    onChange={(e) => setFormPF({ ...formPF, pret_transport: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => setFormPF({ ...formPF, pret_transport: e.target.value })}
                     className="h-9 text-sm font-mono"
                   />
                 </div>
