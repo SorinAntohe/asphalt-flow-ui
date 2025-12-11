@@ -220,33 +220,27 @@ const Livrari = () => {
       pret_fara_tva: 0,
       pret_transport: 0
     });
-  };
 
-  // Fetch prices when tara changes (after cod is selected)
-  useEffect(() => {
-    const fetchPrices = async () => {
-      if (form.cod && form.tara > 0) {
-        try {
-          const response = await fetch(`${API_BASE_URL}/livrari/returneaza_preturi_dupa_cod_livrari/livrari/${form.cod}`);
-          if (response.ok) {
-            const data = await response.json();
-            setUnitPrices({
-              pret_fara_tva: data.pret_fara_tva || 0,
-              pret_transport: data.pret_transport || 0
-            });
-            setForm(prev => ({ 
-              ...prev,
-              produs: data.produs || ""
-            }));
-          }
-        } catch (error) {
-          console.error("Error fetching prices:", error);
+    // Fetch prices immediately when cod is selected
+    if (value) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/livrari/returneaza_preturi_dupa_cod_livrari/livrari/${value}`);
+        if (response.ok) {
+          const data = await response.json();
+          setUnitPrices({
+            pret_fara_tva: data.pret_fara_tva || 0,
+            pret_transport: data.pret_transport || 0
+          });
+          setForm(prev => ({ 
+            ...prev,
+            produs: data.produs || ""
+          }));
         }
+      } catch (error) {
+        console.error("Error fetching prices:", error);
       }
-    };
-
-    fetchPrices();
-  }, [form.tara, form.cod]);
+    }
+  };
 
   // Calculate masa_net when masa_brut or tara changes
   useEffect(() => {
