@@ -56,7 +56,7 @@ export function SessionCard({ session, isActive, onClick, showWaitTime }: Sessio
       
       <div className="mt-1.5 sm:mt-2 space-y-0.5 sm:space-y-1">
         <p className={cn("font-medium text-xs sm:text-sm", isActive && "text-primary-foreground")}>
-          {isInbound ? `PO: ${session.poNo}` : `Comandă: ${session.orderNo}`}
+          {isInbound ? `Comandă: ${session.poNo}` : `Comandă: ${session.orderNo}`}
         </p>
         <div className={cn(
           "flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs flex-wrap",
