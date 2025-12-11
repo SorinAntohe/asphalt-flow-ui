@@ -221,16 +221,6 @@ export function ActiveWeighPanel({
               </Alert>
             )}
 
-            {/* Footer Info */}
-            <div className="mt-auto pt-3 sm:pt-4 border-t space-y-2">
-              <p className="text-[10px] sm:text-xs text-muted-foreground">
-                Creat de {session.createdBy} la {new Date(session.createdAt).toLocaleString('ro-RO')}
-              </p>
-              <Button variant="link" size="sm" className="h-auto p-0 text-[10px] sm:text-xs">
-                <ExternalLink className="h-3 w-3 mr-1" />
-                Deschide rândul în listă
-              </Button>
-            </div>
           </>
         )}
 
