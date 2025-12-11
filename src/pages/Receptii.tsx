@@ -891,7 +891,10 @@ export default function Receptii() {
                   <FilterableSelect
                     id="cod"
                     value={form.cod}
-                    onValueChange={(value) => setForm(prev => ({ ...prev, cod: value }))}
+                    onValueChange={(value) => {
+                      setForm(prev => ({ ...prev, cod: value }));
+                      setFormErrors(prev => ({ ...prev, cod: '' }));
+                    }}
                     options={availableCodes.map(code => ({ value: code, label: code }))}
                     placeholder="Cod"
                     searchPlaceholder="Caută..."
@@ -918,7 +921,10 @@ export default function Receptii() {
                   <FilterableSelect
                     id="nume_sofer"
                     value={form.nume_sofer}
-                    onValueChange={(value) => setForm({ ...form, nume_sofer: value })}
+                    onValueChange={(value) => {
+                      setForm(prev => ({ ...prev, nume_sofer: value }));
+                      setFormErrors(prev => ({ ...prev, nume_sofer: '' }));
+                    }}
                     options={availableDrivers.map(driver => ({ value: driver, label: driver }))}
                     placeholder="Șofer"
                     searchPlaceholder="Caută..."
@@ -930,7 +936,10 @@ export default function Receptii() {
                   <FilterableSelect
                     id="nr_inmatriculare"
                     value={form.nr_inmatriculare}
-                    onValueChange={(value) => setForm({ ...form, nr_inmatriculare: value })}
+                    onValueChange={(value) => {
+                      setForm(prev => ({ ...prev, nr_inmatriculare: value }));
+                      setFormErrors(prev => ({ ...prev, nr_inmatriculare: '' }));
+                    }}
                     options={availableRegistrationNumbers.map(regNum => ({ value: regNum, label: regNum }))}
                     placeholder="Nr. auto"
                     searchPlaceholder="Caută..."
@@ -966,7 +975,10 @@ export default function Receptii() {
                     type="number"
                     step="0.01"
                     value={form.cantitate_receptionata}
-                    onChange={(e) => setForm(prev => ({ ...prev, cantitate_receptionata: parseFloat(e.target.value) || 0 }))}
+                    onChange={(e) => {
+                      setForm(prev => ({ ...prev, cantitate_receptionata: parseFloat(e.target.value) || 0 }));
+                      setFormErrors(prev => ({ ...prev, cantitate_receptionata: '' }));
+                    }}
                     className={`h-9 text-sm font-mono ${formErrors.cantitate_receptionata ? "border-destructive" : ""}`}
                   />
                 </div>
@@ -977,7 +989,10 @@ export default function Receptii() {
                     type="number"
                     step="0.01"
                     value={form.tara}
-                    onChange={(e) => setForm(prev => ({ ...prev, tara: parseFloat(e.target.value) || 0 }))}
+                    onChange={(e) => {
+                      setForm(prev => ({ ...prev, tara: parseFloat(e.target.value) || 0 }));
+                      setFormErrors(prev => ({ ...prev, tara: '' }));
+                    }}
                     className={`h-9 text-sm font-mono ${formErrors.tara ? "border-destructive" : ""}`}
                   />
                 </div>
