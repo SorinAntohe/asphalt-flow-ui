@@ -269,24 +269,7 @@ export default function ConsolaCantarire() {
     // Move to step 2/2 or complete
     if (activeSession.step === '1/2') {
       updatedSession.step = '2/2';
-      updatedSession.updatedAt = new Date().toISOString();
-      
-      // Remove from queue1 if present
-      setQueue1(prev => prev.filter(s => s.id !== activeSession.id));
-      
-      // Add to queue2
       setQueue2(prev => [...prev, updatedSession]);
-      
-      // Clear active session - it's now in queue 2
-      setActiveSession(null);
-      setNrAuto("");
-      
-      toast({
-        title: "Sesiune mutată în Pas 2/2",
-        description: `${updatedSession.nrAuto} așteaptă a doua cântărire`
-      });
-      
-      return true;
     }
 
     updatedSession.updatedAt = new Date().toISOString();
