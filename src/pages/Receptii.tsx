@@ -202,11 +202,11 @@ export default function Receptii() {
     fetchRegistrationNumbers();
   }, []);
 
-  // Calculate diferenta when cantitate_livrata or cantitate_receptionata changes
+  // Calculate diferenta when masa_net or cantitate_livrata changes
   useEffect(() => {
-    const diferenta = form.cantitate_livrata - form.cantitate_receptionata;
+    const diferenta = form.masa_net - form.cantitate_livrata;
     setForm(prev => ({ ...prev, diferenta }));
-  }, [form.cantitate_livrata, form.cantitate_receptionata]);
+  }, [form.masa_net, form.cantitate_livrata]);
 
   // Calculate masa_net when cantitate_receptionata or tara changes
   useEffect(() => {
