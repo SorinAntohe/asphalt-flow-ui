@@ -153,13 +153,15 @@ const Loturi = () => {
           const options: { value: string; label: string }[] = [];
           if (Array.isArray(data)) {
             data.forEach((r: any) => {
-              const code = r.cod_ordin || r;
-              if (code && !uniqueCodes.has(code)) {
+              const code = typeof r === 'string' ? r.trim() : (r.cod_ordin?.trim() || '');
+              if (code && code.length > 0 && !uniqueCodes.has(code)) {
                 uniqueCodes.add(code);
                 options.push({ value: code, label: code });
               }
             });
           }
+          // Sort alphabetically
+          options.sort((a, b) => a.label.localeCompare(b.label));
           setOrdineDisponibile(options);
         }
       } catch (error) {
