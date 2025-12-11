@@ -532,7 +532,7 @@ const Livrari = () => {
 
   const FilterHeader = ({ field, label }: { field: keyof typeof filters; label: string }) => (
     <TableHead className="h-10 text-xs">
-      <Popover>
+      <Popover modal={true}>
         <PopoverTrigger asChild>
           <div className="flex items-center cursor-pointer hover:text-primary">
             <span>{label}</span>
