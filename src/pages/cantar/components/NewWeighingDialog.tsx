@@ -45,7 +45,8 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
   const [temperatura, setTemperatura] = useState("");
   
   // Data - simple string arrays from API
-  const [coduriComanda, setCoduriComanda] = useState<string[]>([]);
+  const [coduriComandaMaterial, setCoduriComandaMaterial] = useState<string[]>([]);
+  const [coduriComandaProdusFinit, setCoduriComandaProdusFinit] = useState<string[]>([]);
   const [numeSoferi, setNumeSoferi] = useState<string[]>([]);
   const [nrInmatriculare, setNrInmatriculare] = useState<string[]>([]);
 
@@ -59,15 +60,20 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [coduriRes, soferiRes, nrAutoRes] = await Promise.all([
+      const [coduriMaterialRes, coduriProdusRes, soferiRes, nrAutoRes] = await Promise.all([
         fetch(`${API_BASE_URL}/gestionare/cantar/returneaza/coduri_comanda_material`),
+        fetch(`${API_BASE_URL}/gestionare/cantar/returneaza/coduri_comanda_produs_finit`),
         fetch(`${API_BASE_URL}/gestionare/cantar/returneaza/nume_soferi`),
         fetch(`${API_BASE_URL}/gestionare/cantar/returneaza/nr_inmatriculare`)
       ]);
 
-      if (coduriRes.ok) {
-        const data = await coduriRes.json();
-        setCoduriComanda(Array.isArray(data) ? data : []);
+      if (coduriMaterialRes.ok) {
+        const data = await coduriMaterialRes.json();
+        setCoduriComandaMaterial(Array.isArray(data) ? data : []);
+      }
+      if (coduriProdusRes.ok) {
+        const data = await coduriProdusRes.json();
+        setCoduriComandaProdusFinit(Array.isArray(data) ? data : []);
       }
       if (soferiRes.ok) {
         const data = await soferiRes.json();
@@ -205,12 +211,14 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
                 
                 {/* Order Selection */}
                 <div className="space-y-1.5">
-                  <Label htmlFor="order" className="text-xs">Cod Comandă Material</Label>
+                  <Label htmlFor="order" className="text-xs">
+                    {direction === 'INBOUND' ? 'Cod Comandă Material' : 'Cod Comandă Produs Finit'}
+                  </Label>
                   <FilterableSelect
                     id="order"
                     value={selectedOrder}
                     onValueChange={setSelectedOrder}
-                    options={coduriComanda.map((cod) => ({
+                    options={(direction === 'INBOUND' ? coduriComandaMaterial : coduriComandaProdusFinit).map((cod) => ({
                       value: cod,
                       label: cod
                     }))}
