@@ -171,7 +171,7 @@ export default function ConsolaCantarire() {
 
         // 2. Calculate masa_net and diferenta
         const masaNet = updatedSession.masaBrut - updatedSession.tara;
-        const diferenta = cantitateLivrata - masaNet;
+        const diferenta = masaNet - cantitateLivrata;
 
         // 3. Fetch prices - convert masaNet from kg to tons for price calculation
         const masaNetTons = masaNet / 1000;
