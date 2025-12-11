@@ -1314,7 +1314,7 @@ const OrdineProductie = () => {
 
               <Separator />
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <div className="space-y-1">
                   <Label className="text-xs">Start Planificat *</Label>
                   <Input
@@ -1323,18 +1323,6 @@ const OrdineProductie = () => {
                     value={wizardForm.startPlanificat}
                     onChange={(e) => setWizardForm(prev => ({ ...prev, startPlanificat: e.target.value }))}
                   />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">Unitate măsură</Label>
-                  <Select value={wizardForm.unitateMasura} onValueChange={(v) => setWizardForm(prev => ({ ...prev, unitateMasura: v }))}>
-                    <SelectTrigger className="h-9 text-xs">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="tone">Tone</SelectItem>
-                      <SelectItem value="mc">m³</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Operator</Label>
