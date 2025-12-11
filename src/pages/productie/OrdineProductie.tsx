@@ -1217,8 +1217,8 @@ const OrdineProductie = () => {
         setWizardOpen(open);
         if (!open) setWizardStep(1);
       }}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" hideCloseButton>
-          <DialogHeader>
+        <DialogContent className="w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+          <DialogHeader className="px-5 pt-4 pb-2">
             <DialogTitle>Lansează Ordin de Producție</DialogTitle>
             <DialogDescription>
               Pasul {wizardStep} din 2: {wizardStep === 1 ? "Produse și Cantități" : "Confirmare"}
@@ -1226,119 +1226,108 @@ const OrdineProductie = () => {
           </DialogHeader>
 
           {/* Progress Indicator */}
-          <div className="flex items-center justify-center gap-2 py-2">
+          <div className="flex items-center justify-center gap-2 px-5 py-2">
             {[1, 2].map((step) => (
               <div key={step} className="flex items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium ${
                   step === wizardStep ? "bg-primary text-primary-foreground" : 
                   step < wizardStep ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
                 }`}>
                   {step}
                 </div>
-                {step < 2 && <div className={`w-12 h-0.5 ${step < wizardStep ? "bg-primary" : "bg-muted"}`} />}
+                {step < 2 && <div className={`w-10 h-0.5 ${step < wizardStep ? "bg-primary" : "bg-muted"}`} />}
               </div>
             ))}
           </div>
 
           {/* Step 1: Produse și Cantități */}
           {wizardStep === 1 && (
-            <div className="space-y-4">
+            <div className="px-5 py-3 space-y-4">
               <div className="flex items-center justify-between">
-                <Label className="text-base font-medium">Produse Finite *</Label>
-                <Button variant="outline" size="sm" onClick={addProdus}>
-                  <Plus className="h-4 w-4 mr-1" />
-                  Adaugă Produs
+                <Label className="text-xs font-medium">Produse Finite *</Label>
+                <Button variant="outline" size="sm" onClick={addProdus} className="h-7 text-xs">
+                  <Plus className="h-3 w-3 mr-1" />
+                  Adaugă
                 </Button>
               </div>
               
-              <div className="space-y-3">
+              <div className="rounded-md border bg-muted/30 p-2 space-y-2 max-h-[180px] overflow-y-auto">
                 {wizardForm.produse.map((item, index) => (
-                  <div key={index} className="p-3 border rounded-lg bg-muted/30 space-y-3">
+                  <div key={index} className="bg-background rounded-md p-2 border space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Produs {index + 1}</span>
+                      <span className="text-xs font-medium text-muted-foreground">Produs {index + 1}</span>
                       {wizardForm.produse.length > 1 && (
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => removeProdus(index)}>
-                          <X className="h-4 w-4 text-destructive" />
+                        <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive hover:text-destructive" onClick={() => removeProdus(index)}>
+                          <X className="h-3.5 w-3.5" />
                         </Button>
                       )}
                     </div>
-                    <div className="grid grid-cols-4 gap-3">
-                      <div>
-                        <Label className="text-xs">Produs Finit</Label>
-                        <Select value={item.produs} onValueChange={(v) => updateProdus(index, "produs", v)}>
-                          <SelectTrigger className="h-9">
-                            <SelectValue placeholder="Selectează" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {produseFinite.map((p) => (
-                              <SelectItem key={p} value={p}>{p}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label className="text-xs">Cantitate (tone)</Label>
-                        <Input
-                          type="number"
-                          className="h-9"
-                          placeholder="Ex: 100"
-                          value={item.cantitate}
-                          onChange={(e) => updateProdus(index, "cantitate", e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Rețetă</Label>
-                        <Select value={item.reteta} onValueChange={(v) => updateProdus(index, "reteta", v)}>
-                          <SelectTrigger className="h-9">
-                            <SelectValue placeholder="Selectează" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {retete.map((r) => (
-                              <SelectItem key={r} value={r}>{r}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label className="text-xs">Comandă Asociată</Label>
-                        <Select value={item.comandaAsociata} onValueChange={(v) => updateProdus(index, "comandaAsociata", v)}>
-                          <SelectTrigger className="h-9">
-                            <SelectValue placeholder="Selectează" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {comenziDisponibile.map((cmd) => (
-                              <SelectItem key={cmd} value={cmd}>{cmd}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Select value={item.produs} onValueChange={(v) => updateProdus(index, "produs", v)}>
+                        <SelectTrigger className="h-8 text-xs">
+                          <SelectValue placeholder="Produs..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {produseFinite.map((p) => (
+                            <SelectItem key={p} value={p}>{p}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        type="number"
+                        className="h-8 text-xs"
+                        placeholder="Cantitate (t)"
+                        value={item.cantitate}
+                        onChange={(e) => updateProdus(index, "cantitate", e.target.value)}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Select value={item.reteta} onValueChange={(v) => updateProdus(index, "reteta", v)}>
+                        <SelectTrigger className="h-8 text-xs">
+                          <SelectValue placeholder="Rețetă..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {retete.map((r) => (
+                            <SelectItem key={r} value={r}>{r}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Select value={item.comandaAsociata} onValueChange={(v) => updateProdus(index, "comandaAsociata", v)}>
+                        <SelectTrigger className="h-8 text-xs">
+                          <SelectValue placeholder="Comandă..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {comenziDisponibile.map((cmd) => (
+                            <SelectItem key={cmd} value={cmd}>{cmd}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div className="p-3 bg-primary/10 rounded-lg">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">Masă Totală:</span>
-                  <span className="text-xl font-bold">{cantitateTotalaForm} tone</span>
-                </div>
+              <div className="p-2 bg-primary/10 rounded-md flex items-center justify-between">
+                <span className="text-xs font-medium">Masă Totală:</span>
+                <span className="text-sm font-bold">{cantitateTotalaForm} tone</span>
               </div>
 
               <Separator />
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Start Planificat *</Label>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label className="text-xs">Start Planificat *</Label>
                   <Input
                     type="datetime-local"
+                    className="h-9 text-xs"
                     value={wizardForm.startPlanificat}
                     onChange={(e) => setWizardForm(prev => ({ ...prev, startPlanificat: e.target.value }))}
                   />
                 </div>
-                <div>
-                  <Label>Unitate măsură</Label>
+                <div className="space-y-1">
+                  <Label className="text-xs">Unitate măsură</Label>
                   <Select value={wizardForm.unitateMasura} onValueChange={(v) => setWizardForm(prev => ({ ...prev, unitateMasura: v }))}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-9 text-xs">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1347,11 +1336,11 @@ const OrdineProductie = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <div>
-                  <Label>Operator</Label>
+                <div className="space-y-1">
+                  <Label className="text-xs">Operator</Label>
                   <Select value={wizardForm.operator} onValueChange={(v) => setWizardForm(prev => ({ ...prev, operator: v }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selectează operator" />
+                    <SelectTrigger className="h-9 text-xs">
+                      <SelectValue placeholder="Selectează..." />
                     </SelectTrigger>
                     <SelectContent>
                       {operatori.map((o) => (
@@ -1360,11 +1349,11 @@ const OrdineProductie = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <div>
-                  <Label>Șef Schimb</Label>
+                <div className="space-y-1">
+                  <Label className="text-xs">Șef Schimb</Label>
                   <Select value={wizardForm.sefSchimb} onValueChange={(v) => setWizardForm(prev => ({ ...prev, sefSchimb: v }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selectează șef schimb" />
+                    <SelectTrigger className="h-9 text-xs">
+                      <SelectValue placeholder="Selectează..." />
                     </SelectTrigger>
                     <SelectContent>
                       {sefiSchimb.map((s) => (
@@ -1373,95 +1362,96 @@ const OrdineProductie = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="col-span-2">
-                  <Label>Observații</Label>
-                  <Textarea
-                    value={wizardForm.observatii}
-                    onChange={(e) => setWizardForm(prev => ({ ...prev, observatii: e.target.value }))}
-                    placeholder="Observații suplimentare..."
-                  />
-                </div>
+              </div>
+              
+              <div className="space-y-1">
+                <Label className="text-xs">Observații</Label>
+                <textarea
+                  value={wizardForm.observatii}
+                  onChange={(e) => setWizardForm(prev => ({ ...prev, observatii: e.target.value }))}
+                  placeholder="Observații suplimentare..."
+                  className="flex min-h-[50px] w-full rounded-md border border-input bg-background px-3 py-2 text-xs ring-offset-background placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                />
               </div>
             </div>
           )}
 
           {/* Step 2: Confirmă */}
           {wizardStep === 2 && (
-            <div className="space-y-4">
-              <div className="bg-muted/50 rounded-lg p-4 space-y-3">
-                <h4 className="font-medium">Rezumat Ordin</h4>
+            <div className="px-5 py-3 space-y-3">
+              <div className="bg-muted/50 rounded-md p-3 space-y-3">
+                <h4 className="text-xs font-semibold">Rezumat Ordin</h4>
                 
-                <div>
-                  <Label className="text-xs text-muted-foreground">Produse:</Label>
+                <div className="rounded-md border overflow-hidden">
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Produs</TableHead>
-                        <TableHead>Cantitate</TableHead>
-                        <TableHead>Rețetă</TableHead>
+                        <TableHead className="text-xs py-2">Produs</TableHead>
+                        <TableHead className="text-xs py-2">Cantitate</TableHead>
+                        <TableHead className="text-xs py-2">Rețetă</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {wizardForm.produse.filter(p => p.produs && p.cantitate).map((p, idx) => (
                         <TableRow key={idx}>
-                          <TableCell>{p.produs}</TableCell>
-                          <TableCell>{p.cantitate} {wizardForm.unitateMasura}</TableCell>
-                          <TableCell>{p.reteta}</TableCell>
+                          <TableCell className="text-xs py-1.5">{p.produs}</TableCell>
+                          <TableCell className="text-xs py-1.5">{p.cantitate} {wizardForm.unitateMasura}</TableCell>
+                          <TableCell className="text-xs py-1.5">{p.reteta}</TableCell>
                         </TableRow>
                       ))}
                       <TableRow className="font-bold bg-muted/30">
-                        <TableCell>TOTAL</TableCell>
-                        <TableCell>{cantitateTotalaForm} {wizardForm.unitateMasura}</TableCell>
-                        <TableCell></TableCell>
+                        <TableCell className="text-xs py-1.5">TOTAL</TableCell>
+                        <TableCell className="text-xs py-1.5">{cantitateTotalaForm} {wizardForm.unitateMasura}</TableCell>
+                        <TableCell className="text-xs py-1.5"></TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-sm">
+                <div className="grid grid-cols-2 gap-1 text-xs">
                   <div><span className="text-muted-foreground">Start:</span> {wizardForm.startPlanificat}</div>
                   <div><span className="text-muted-foreground">Operator:</span> {wizardForm.operator || "-"}</div>
                   <div><span className="text-muted-foreground">Șef Schimb:</span> {wizardForm.sefSchimb || "-"}</div>
                 </div>
                 {wizardForm.observatii && (
-                  <div className="text-sm">
+                  <div className="text-xs">
                     <span className="text-muted-foreground">Observații:</span> {wizardForm.observatii}
                   </div>
                 )}
                 {wizardForm.produse.some(p => p.comandaAsociata) && (
-                  <div className="text-sm">
+                  <div className="text-xs">
                     <span className="text-muted-foreground">Comenzi Asociate:</span>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {wizardForm.produse.filter(p => p.comandaAsociata).map((p, i) => (
-                        <Badge key={i} variant="secondary" className="text-xs">{p.produs}: {p.comandaAsociata}</Badge>
+                        <Badge key={i} variant="secondary" className="text-[10px] px-1.5 py-0.5">{p.produs}: {p.comandaAsociata}</Badge>
                       ))}
                     </div>
                   </div>
                 )}
               </div>
-              <div className="flex items-center gap-2 p-3 bg-yellow-500/10 rounded-lg">
-                <AlertTriangle className="h-5 w-5 text-yellow-600" />
-                <span className="text-sm">Verificați datele înainte de confirmare. Ordinul va fi creat în status Planificat.</span>
+              <div className="flex items-center gap-2 p-2 bg-yellow-500/10 rounded-md">
+                <AlertTriangle className="h-4 w-4 text-yellow-600 shrink-0" />
+                <span className="text-xs">Verificați datele înainte de confirmare.</span>
               </div>
             </div>
           )}
 
-          <DialogFooter>
+          <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
             {wizardStep > 1 && (
-              <Button variant="outline" onClick={() => setWizardStep(s => s - 1)}>
-                <ChevronLeft className="h-4 w-4 mr-1" />
+              <Button variant="outline" size="sm" onClick={() => setWizardStep(s => s - 1)}>
+                <ChevronLeft className="h-3.5 w-3.5 mr-1" />
                 Înapoi
               </Button>
             )}
-            <Button onClick={handleWizardNext}>
+            <Button size="sm" onClick={handleWizardNext}>
               {wizardStep < 2 ? (
                 <>
                   Continuă
-                  <ChevronRight className="h-4 w-4 ml-1" />
+                  <ChevronRight className="h-3.5 w-3.5 ml-1" />
                 </>
               ) : (
                 <>
-                  <CheckCircle2 className="h-4 w-4 mr-1" />
+                  <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
                   Creează Ordin
                 </>
               )}
