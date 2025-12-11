@@ -167,15 +167,15 @@ export default function ConsolaCantarire() {
         // 1. Fetch cantitate_livrata
         const cantitateResponse = await fetch(`http://192.168.1.23:8002/gestionare/cantar/returneaza_cantitate_dupa_cod/${cod}`);
         const cantitateData = await cantitateResponse.json();
-        const cantitateLivrata = cantitateData?.cantitate || cantitateData || 0;
+        // API returns array, extract first element
+        const cantitateLivrata = Array.isArray(cantitateData) ? cantitateData[0] : (cantitateData?.cantitate || cantitateData || 0);
 
         // 2. Calculate masa_net and diferenta
         const masaNet = updatedSession.masaBrut - updatedSession.tara;
         const diferenta = masaNet - cantitateLivrata;
 
-        // 3. Fetch prices - convert masaNet from kg to tons for price calculation
-        const masaNetTons = masaNet / 1000;
-        const preturiResponse = await fetch(`http://192.168.1.23:8002/receptii/materiale/returneaza_preturi_dupa_cod/${cod}/${masaNetTons}`);
+        // 3. Fetch prices - send masa_net in kg, backend handles calculation
+        const preturiResponse = await fetch(`http://192.168.1.23:8002/receptii/materiale/returneaza_preturi_dupa_cod/${cod}/${masaNet}`);
         const preturiData = await preturiResponse.json();
 
         // 4. Console log all reception data
