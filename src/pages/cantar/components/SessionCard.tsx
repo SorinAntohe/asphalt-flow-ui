@@ -56,20 +56,20 @@ export function SessionCard({ session, isActive, onClick, showWaitTime }: Sessio
       
       <div className="mt-1.5 sm:mt-2 space-y-0.5 sm:space-y-1">
         <p className={cn("font-medium text-xs sm:text-sm", isActive && "text-primary-foreground")}>
-          {isInbound ? `Comandă: ${session.poNo}` : `Comandă: ${session.orderNo}`}
+          Comandă: {isInbound ? (session.poNo || '—') : (session.orderNo || '—')}
         </p>
         <div className={cn(
           "flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs flex-wrap",
           isActive ? "text-primary-foreground/80" : "text-muted-foreground"
         )}>
-          <span>Nr înmatriculare: <span className="font-mono">{session.nrAuto}</span></span>
+          <span>Nr înmatriculare: <span className="font-mono">{session.nrAuto || '—'}</span></span>
         </div>
         <div className={cn(
           "flex items-center gap-1 text-[10px] sm:text-xs",
           isActive ? "text-primary-foreground/80" : "text-muted-foreground"
         )}>
           <User className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-          <span>Șofer: {session.createdBy}</span>
+          <span>Șofer: {session.createdBy || '—'}</span>
         </div>
         {showWaitTime && (
           <div className={cn(
