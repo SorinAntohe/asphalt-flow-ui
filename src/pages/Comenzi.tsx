@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown, Download } from "lucide-react";
+import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown, Download, Package } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
@@ -1403,116 +1403,141 @@ export default function Comenzi() {
 
       {/* Add/Edit Dialog for Materie Prima */}
       <Dialog open={openAddEditMP} onOpenChange={setOpenAddEditMP}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{editingMP ? "Editează Comanda" : "Adaugă Comandă Nouă"}</DialogTitle>
-            <DialogDescription>
-              {editingMP ? "Modifică detaliile comenzii de materie primă" : "Completează detaliile pentru noua comandă de materie primă"}
+        <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto p-0">
+          <DialogHeader className="px-5 pt-5 pb-3 border-b bg-muted/30">
+            <DialogTitle className="text-base font-semibold flex items-center gap-2">
+              <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Package className="h-3.5 w-3.5 text-primary" />
+              </div>
+              {editingMP ? "Editează Comanda" : "Adaugă Comandă Materie Primă"}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              {editingMP ? "Modifică detaliile comenzii" : "Completează detaliile pentru noua comandă"}
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="furnizor">Furnizor *</Label>
-              <FilterableSelect
-                id="furnizor"
-                value={formMP.furnizor}
-                onValueChange={(value) => setFormMP({ ...formMP, furnizor: value })}
-                options={loadingFurnizori ? [] : furnizori.map(f => ({ value: f.nume, label: f.nume }))}
-                placeholder={loadingFurnizori ? "Se încarcă..." : "Selectează furnizor"}
-                searchPlaceholder="Caută furnizor..."
-                emptyText="Fără furnizori"
-                className={formErrorsMP.furnizor ? "border-destructive" : ""}
-                disabled={loadingFurnizori}
-              />
-              {formErrorsMP.furnizor && <p className="text-sm text-destructive">{formErrorsMP.furnizor}</p>}
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="material">Material *</Label>
-              <FilterableSelect
-                id="material"
-                value={formMP.material}
-                onValueChange={(value) => setFormMP({ ...formMP, material: value })}
-                options={loadingMateriale ? [] : materiale.map(m => ({ value: m.materiale_prime, label: m.materiale_prime }))}
-                placeholder={loadingMateriale ? "Se încarcă..." : "Selectează material"}
-                searchPlaceholder="Caută material..."
-                emptyText="Fără materiale"
-                className={formErrorsMP.material ? "border-destructive" : ""}
-                disabled={loadingMateriale}
-              />
-              {formErrorsMP.material && <p className="text-sm text-destructive">{formErrorsMP.material}</p>}
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="unitate_masura">Unitate Măsură *</Label>
-                <Input
-                  id="unitate_masura"
-                  value={formMP.unitate_masura}
-                  onChange={(e) => setFormMP({ ...formMP, unitate_masura: e.target.value })}
-                  className={formErrorsMP.unitate_masura ? "border-destructive" : ""}
-                />
-                {formErrorsMP.unitate_masura && <p className="text-sm text-destructive">{formErrorsMP.unitate_masura}</p>}
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="cantitate">Cantitate *</Label>
-                <Input
-                  id="cantitate"
-                  type="number"
-                  value={formMP.cantitate}
-                  onChange={(e) => setFormMP({ ...formMP, cantitate: parseFloat(e.target.value) || 0 })}
-                  className={formErrorsMP.cantitate ? "border-destructive" : ""}
-                />
-                {formErrorsMP.cantitate && <p className="text-sm text-destructive">{formErrorsMP.cantitate}</p>}
+          
+          <div className="px-5 py-4 space-y-4">
+            {/* Furnizor & Material */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Furnizor & Material</p>
+              <div className="grid grid-cols-2 gap-3 p-3 rounded-lg border bg-card">
+                <div className="space-y-1">
+                  <Label htmlFor="furnizor" className="text-xs">Furnizor *</Label>
+                  <FilterableSelect
+                    id="furnizor"
+                    value={formMP.furnizor}
+                    onValueChange={(value) => setFormMP({ ...formMP, furnizor: value })}
+                    options={loadingFurnizori ? [] : furnizori.map(f => ({ value: f.nume, label: f.nume }))}
+                    placeholder={loadingFurnizori ? "Se încarcă..." : "Furnizor"}
+                    searchPlaceholder="Caută..."
+                    emptyText="Fără furnizori"
+                    className={`h-9 text-sm ${formErrorsMP.furnizor ? "border-destructive" : ""}`}
+                    disabled={loadingFurnizori}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="material" className="text-xs">Material *</Label>
+                  <FilterableSelect
+                    id="material"
+                    value={formMP.material}
+                    onValueChange={(value) => setFormMP({ ...formMP, material: value })}
+                    options={loadingMateriale ? [] : materiale.map(m => ({ value: m.materiale_prime, label: m.materiale_prime }))}
+                    placeholder={loadingMateriale ? "Se încarcă..." : "Material"}
+                    searchPlaceholder="Caută..."
+                    emptyText="Fără materiale"
+                    className={`h-9 text-sm ${formErrorsMP.material ? "border-destructive" : ""}`}
+                    disabled={loadingMateriale}
+                  />
+                </div>
               </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="punct_descarcare">Punct Descărcare</Label>
-              <Input
-                id="punct_descarcare"
-                value={formMP.punct_descarcare}
-                onChange={(e) => setFormMP({ ...formMP, punct_descarcare: e.target.value })}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="pret_fara_tva">Preț fără TVA *</Label>
-                <Input
-                  id="pret_fara_tva"
-                  type="number"
-                  step="0.01"
-                  value={formMP.pret_fara_tva}
-                  onChange={(e) => setFormMP({ ...formMP, pret_fara_tva: parseFloat(e.target.value) || 0 })}
-                  className={formErrorsMP.pret_fara_tva ? "border-destructive" : ""}
-                />
-                {formErrorsMP.pret_fara_tva && <p className="text-sm text-destructive">{formErrorsMP.pret_fara_tva}</p>}
+
+            {/* Cantitate & Unitate */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Cantitate</p>
+              <div className="grid grid-cols-3 gap-3 p-3 rounded-lg border bg-card">
+                <div className="space-y-1">
+                  <Label htmlFor="cantitate" className="text-xs">Cantitate *</Label>
+                  <Input
+                    id="cantitate"
+                    type="number"
+                    value={formMP.cantitate}
+                    onChange={(e) => setFormMP({ ...formMP, cantitate: parseFloat(e.target.value) || 0 })}
+                    className={`h-9 text-sm font-mono ${formErrorsMP.cantitate ? "border-destructive" : ""}`}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="unitate_masura" className="text-xs">Unitate *</Label>
+                  <Input
+                    id="unitate_masura"
+                    value={formMP.unitate_masura}
+                    onChange={(e) => setFormMP({ ...formMP, unitate_masura: e.target.value })}
+                    className={`h-9 text-sm ${formErrorsMP.unitate_masura ? "border-destructive" : ""}`}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="punct_descarcare" className="text-xs">Punct Descărcare</Label>
+                  <Input
+                    id="punct_descarcare"
+                    value={formMP.punct_descarcare}
+                    onChange={(e) => setFormMP({ ...formMP, punct_descarcare: e.target.value })}
+                    className="h-9 text-sm"
+                    placeholder="Opțional"
+                  />
+                </div>
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="pret_transport">Preț Transport</Label>
-                <Input
-                  id="pret_transport"
-                  type="number"
-                  step="0.01"
-                  value={formMP.pret_transport}
-                  onChange={(e) => setFormMP({ ...formMP, pret_transport: parseFloat(e.target.value) || 0 })}
-                />
+            </div>
+
+            {/* Prețuri */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Prețuri (RON)</p>
+              <div className="grid grid-cols-2 gap-3 p-3 rounded-lg border bg-card">
+                <div className="space-y-1">
+                  <Label htmlFor="pret_fara_tva" className="text-xs">Preț fără TVA *</Label>
+                  <Input
+                    id="pret_fara_tva"
+                    type="number"
+                    step="0.01"
+                    value={formMP.pret_fara_tva}
+                    onChange={(e) => setFormMP({ ...formMP, pret_fara_tva: parseFloat(e.target.value) || 0 })}
+                    className={`h-9 text-sm font-mono ${formErrorsMP.pret_fara_tva ? "border-destructive" : ""}`}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="pret_transport" className="text-xs">Preț Transport</Label>
+                  <Input
+                    id="pret_transport"
+                    type="number"
+                    step="0.01"
+                    value={formMP.pret_transport}
+                    onChange={(e) => setFormMP({ ...formMP, pret_transport: parseFloat(e.target.value) || 0 })}
+                    className="h-9 text-sm font-mono"
+                  />
+                </div>
               </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="observatii">Observații</Label>
-              <Textarea
-                id="observatii"
-                value={formMP.observatii}
-                onChange={(e) => setFormMP({ ...formMP, observatii: e.target.value })}
-                rows={3}
-                maxLength={1000}
-              />
+
+            {/* Observații */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Observații</p>
+              <div className="p-3 rounded-lg border bg-card">
+                <Textarea
+                  id="observatii"
+                  value={formMP.observatii}
+                  onChange={(e) => setFormMP({ ...formMP, observatii: e.target.value })}
+                  rows={2}
+                  maxLength={1000}
+                  placeholder="Observații suplimentare..."
+                  className="resize-none text-sm"
+                />
+              </div>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenAddEditMP(false)}>
-              Anulează
-            </Button>
-            <Button onClick={handleSaveMP}>
-              {editingMP ? "Salvează Modificările" : "Adaugă Comanda"}
+
+          <DialogFooter className="px-5 py-3 border-t bg-muted/30 flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => setOpenAddEditMP(false)}>Anulează</Button>
+            <Button size="sm" onClick={handleSaveMP}>
+              {editingMP ? "Salvează" : "Adaugă"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1638,116 +1663,141 @@ export default function Comenzi() {
 
       {/* Add/Edit Dialog for Produs Finit */}
       <Dialog open={openAddEditPF} onOpenChange={setOpenAddEditPF}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{editingPF ? "Editează Comanda" : "Adaugă Comandă Nouă"}</DialogTitle>
-            <DialogDescription>
-              {editingPF ? "Modifică detaliile comenzii de produs finit" : "Completează detaliile pentru noua comandă de produs finit"}
+        <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto p-0">
+          <DialogHeader className="px-5 pt-5 pb-3 border-b bg-muted/30">
+            <DialogTitle className="text-base font-semibold flex items-center gap-2">
+              <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Package className="h-3.5 w-3.5 text-primary" />
+              </div>
+              {editingPF ? "Editează Comanda" : "Adaugă Comandă Produs Finit"}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              {editingPF ? "Modifică detaliile comenzii" : "Completează detaliile pentru noua comandă"}
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="client">Client *</Label>
-              <FilterableSelect
-                id="client"
-                value={formPF.client}
-                onValueChange={(value) => setFormPF({ ...formPF, client: value })}
-                options={loadingClienti ? [] : clienti.map(c => ({ value: c.nume, label: c.nume }))}
-                placeholder={loadingClienti ? "Se încarcă..." : "Selectează client"}
-                searchPlaceholder="Caută client..."
-                emptyText="Fără clienți"
-                className={formErrorsPF.client ? "border-destructive" : ""}
-                disabled={loadingClienti}
-              />
-              {formErrorsPF.client && <p className="text-sm text-destructive">{formErrorsPF.client}</p>}
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="produs">Produs *</Label>
-              <FilterableSelect
-                id="produs"
-                value={formPF.produs}
-                onValueChange={(value) => setFormPF({ ...formPF, produs: value })}
-                options={loadingProduse ? [] : produse.map(p => ({ value: p.produs, label: p.produs }))}
-                placeholder={loadingProduse ? "Se încarcă..." : "Selectează produs"}
-                searchPlaceholder="Caută produs..."
-                emptyText="Fără produse"
-                className={formErrorsPF.produs ? "border-destructive" : ""}
-                disabled={loadingProduse}
-              />
-              {formErrorsPF.produs && <p className="text-sm text-destructive">{formErrorsPF.produs}</p>}
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="unitate_masura_pf">Unitate Măsură *</Label>
-                <Input
-                  id="unitate_masura_pf"
-                  value={formPF.unitate_de_masura}
-                  onChange={(e) => setFormPF({ ...formPF, unitate_de_masura: e.target.value })}
-                  className={formErrorsPF.unitate_de_masura ? "border-destructive" : ""}
-                />
-                {formErrorsPF.unitate_de_masura && <p className="text-sm text-destructive">{formErrorsPF.unitate_de_masura}</p>}
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="cantitate_pf">Cantitate *</Label>
-                <Input
-                  id="cantitate_pf"
-                  type="number"
-                  value={formPF.cantitate}
-                  onChange={(e) => setFormPF({ ...formPF, cantitate: parseFloat(e.target.value) || 0 })}
-                  className={formErrorsPF.cantitate ? "border-destructive" : ""}
-                />
-                {formErrorsPF.cantitate && <p className="text-sm text-destructive">{formErrorsPF.cantitate}</p>}
+          
+          <div className="px-5 py-4 space-y-4">
+            {/* Client & Produs */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Client & Produs</p>
+              <div className="grid grid-cols-2 gap-3 p-3 rounded-lg border bg-card">
+                <div className="space-y-1">
+                  <Label htmlFor="client" className="text-xs">Client *</Label>
+                  <FilterableSelect
+                    id="client"
+                    value={formPF.client}
+                    onValueChange={(value) => setFormPF({ ...formPF, client: value })}
+                    options={loadingClienti ? [] : clienti.map(c => ({ value: c.nume, label: c.nume }))}
+                    placeholder={loadingClienti ? "Se încarcă..." : "Client"}
+                    searchPlaceholder="Caută..."
+                    emptyText="Fără clienți"
+                    className={`h-9 text-sm ${formErrorsPF.client ? "border-destructive" : ""}`}
+                    disabled={loadingClienti}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="produs" className="text-xs">Produs *</Label>
+                  <FilterableSelect
+                    id="produs"
+                    value={formPF.produs}
+                    onValueChange={(value) => setFormPF({ ...formPF, produs: value })}
+                    options={loadingProduse ? [] : produse.map(p => ({ value: p.produs, label: p.produs }))}
+                    placeholder={loadingProduse ? "Se încarcă..." : "Produs"}
+                    searchPlaceholder="Caută..."
+                    emptyText="Fără produse"
+                    className={`h-9 text-sm ${formErrorsPF.produs ? "border-destructive" : ""}`}
+                    disabled={loadingProduse}
+                  />
+                </div>
               </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="punct_descarcare_pf">Punct Descărcare</Label>
-              <Input
-                id="punct_descarcare_pf"
-                value={formPF.punct_descarcare}
-                onChange={(e) => setFormPF({ ...formPF, punct_descarcare: e.target.value })}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="pret_fara_tva_pf">Preț fără TVA *</Label>
-                <Input
-                  id="pret_fara_tva_pf"
-                  type="number"
-                  step="0.01"
-                  value={formPF.pret_fara_tva}
-                  onChange={(e) => setFormPF({ ...formPF, pret_fara_tva: parseFloat(e.target.value) || 0 })}
-                  className={formErrorsPF.pret_fara_tva ? "border-destructive" : ""}
-                />
-                {formErrorsPF.pret_fara_tva && <p className="text-sm text-destructive">{formErrorsPF.pret_fara_tva}</p>}
+
+            {/* Cantitate & Unitate */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Cantitate</p>
+              <div className="grid grid-cols-3 gap-3 p-3 rounded-lg border bg-card">
+                <div className="space-y-1">
+                  <Label htmlFor="cantitate_pf" className="text-xs">Cantitate *</Label>
+                  <Input
+                    id="cantitate_pf"
+                    type="number"
+                    value={formPF.cantitate}
+                    onChange={(e) => setFormPF({ ...formPF, cantitate: parseFloat(e.target.value) || 0 })}
+                    className={`h-9 text-sm font-mono ${formErrorsPF.cantitate ? "border-destructive" : ""}`}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="unitate_masura_pf" className="text-xs">Unitate *</Label>
+                  <Input
+                    id="unitate_masura_pf"
+                    value={formPF.unitate_de_masura}
+                    onChange={(e) => setFormPF({ ...formPF, unitate_de_masura: e.target.value })}
+                    className={`h-9 text-sm ${formErrorsPF.unitate_de_masura ? "border-destructive" : ""}`}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="punct_descarcare_pf" className="text-xs">Punct Descărcare</Label>
+                  <Input
+                    id="punct_descarcare_pf"
+                    value={formPF.punct_descarcare}
+                    onChange={(e) => setFormPF({ ...formPF, punct_descarcare: e.target.value })}
+                    className="h-9 text-sm"
+                    placeholder="Opțional"
+                  />
+                </div>
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="pret_transport_pf">Preț Transport</Label>
-                <Input
-                  id="pret_transport_pf"
-                  type="number"
-                  step="0.01"
-                  value={formPF.pret_transport}
-                  onChange={(e) => setFormPF({ ...formPF, pret_transport: parseFloat(e.target.value) || 0 })}
-                />
+            </div>
+
+            {/* Prețuri */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Prețuri (RON)</p>
+              <div className="grid grid-cols-2 gap-3 p-3 rounded-lg border bg-card">
+                <div className="space-y-1">
+                  <Label htmlFor="pret_fara_tva_pf" className="text-xs">Preț fără TVA *</Label>
+                  <Input
+                    id="pret_fara_tva_pf"
+                    type="number"
+                    step="0.01"
+                    value={formPF.pret_fara_tva}
+                    onChange={(e) => setFormPF({ ...formPF, pret_fara_tva: parseFloat(e.target.value) || 0 })}
+                    className={`h-9 text-sm font-mono ${formErrorsPF.pret_fara_tva ? "border-destructive" : ""}`}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="pret_transport_pf" className="text-xs">Preț Transport</Label>
+                  <Input
+                    id="pret_transport_pf"
+                    type="number"
+                    step="0.01"
+                    value={formPF.pret_transport}
+                    onChange={(e) => setFormPF({ ...formPF, pret_transport: parseFloat(e.target.value) || 0 })}
+                    className="h-9 text-sm font-mono"
+                  />
+                </div>
               </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="observatii_pf">Observații</Label>
-              <Textarea
-                id="observatii_pf"
-                value={formPF.observatii}
-                onChange={(e) => setFormPF({ ...formPF, observatii: e.target.value })}
-                rows={3}
-                maxLength={1000}
-              />
+
+            {/* Observații */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Observații</p>
+              <div className="p-3 rounded-lg border bg-card">
+                <Textarea
+                  id="observatii_pf"
+                  value={formPF.observatii}
+                  onChange={(e) => setFormPF({ ...formPF, observatii: e.target.value })}
+                  rows={2}
+                  maxLength={1000}
+                  placeholder="Observații suplimentare..."
+                  className="resize-none text-sm"
+                />
+              </div>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenAddEditPF(false)}>
-              Anulează
-            </Button>
-            <Button onClick={handleSavePF}>
-              {editingPF ? "Salvează Modificările" : "Adaugă Comanda"}
+
+          <DialogFooter className="px-5 py-3 border-t bg-muted/30 flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => setOpenAddEditPF(false)}>Anulează</Button>
+            <Button size="sm" onClick={handleSavePF}>
+              {editingPF ? "Salvează" : "Adaugă"}
             </Button>
           </DialogFooter>
         </DialogContent>
