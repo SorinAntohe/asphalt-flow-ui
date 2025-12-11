@@ -62,7 +62,7 @@ export function SessionCard({ session, isActive, onClick, showWaitTime }: Sessio
           "flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs flex-wrap",
           isActive ? "text-primary-foreground/80" : "text-muted-foreground"
         )}>
-          <span className="font-mono">{session.nrAuto}</span>
+          <span>Nr înmatriculare: <span className="font-mono">{session.nrAuto}</span></span>
         </div>
         <div className={cn(
           "flex items-center gap-1 text-[10px] sm:text-xs",
