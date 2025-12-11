@@ -153,7 +153,7 @@ export default function ConsolaCantarire() {
     });
   };
 
-  const handleWeightEntered = async (type: 'TARA' | 'BRUT', value: number): Promise<boolean> => {
+  const handleWeightEntered = async (type: 'TARA' | 'BRUT', value: number, observatii?: string): Promise<boolean> => {
     if (!activeSession) return false;
 
     const updatedSession = { ...activeSession };
@@ -189,11 +189,11 @@ export default function ConsolaCantarire() {
       const nrAvizProvizoriu = updatedSession.nrAvizProvizoriu || '';
       const nrAvizIntrare = updatedSession.nrAvizIntrare || '';
       const nrFactura = updatedSession.nrFactura || '';
-      const observatii = '';
+      const obs = observatii || '';
       
       try {
         const response = await fetch(
-          `http://192.168.1.23:8002/gestionare/cantar/adauga/receptie/${encodeURIComponent(cod)}/${encodeURIComponent(sofer)}/${encodeURIComponent(nrAuto)}/${brut}/${tara}/${umiditate}/${encodeURIComponent(nrAvizProvizoriu)}/${encodeURIComponent(nrAvizIntrare)}/${encodeURIComponent(nrFactura)}/${encodeURIComponent(observatii)}`,
+          `http://192.168.1.23:8002/gestionare/cantar/adauga/receptie/${encodeURIComponent(cod)}/${encodeURIComponent(sofer)}/${encodeURIComponent(nrAuto)}/${brut}/${tara}/${umiditate}/${encodeURIComponent(nrAvizProvizoriu)}/${encodeURIComponent(nrAvizIntrare)}/${encodeURIComponent(nrFactura)}/${encodeURIComponent(obs)}`,
           { method: 'POST' }
         );
         
