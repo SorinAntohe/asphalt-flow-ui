@@ -791,167 +791,203 @@ const Livrari = () => {
 
       {/* Add/Edit Dialog */}
       <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{editing ? "Editează Livrarea" : "Adaugă Livrare Nouă"}</DialogTitle>
-            <DialogDescription>
+        <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto p-0">
+          <DialogHeader className="px-5 pt-5 pb-3 border-b bg-muted/30">
+            <DialogTitle className="text-base font-semibold flex items-center gap-2">
+              <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Truck className="h-3.5 w-3.5 text-primary" />
+              </div>
+              {editing ? "Editează Livrarea" : "Adaugă Livrare Nouă"}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
               {editing ? "Modifică detaliile livrării" : "Completează detaliile pentru noua livrare"}
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="cod">Cod</Label>
-                <FilterableSelect
-                  id="cod"
-                  value={form.cod}
-                  onValueChange={handleCodChange}
-                  options={codOptions}
-                  placeholder="Selectează cod..."
-                  searchPlaceholder="Caută cod..."
-                  emptyText="Nu s-au găsit coduri."
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="nr_comanda">Cod Comandă</Label>
-                <Input
-                  id="nr_comanda"
-                  value={form.nr_comanda}
-                  onChange={(e) => setForm({ ...form, nr_comanda: e.target.value })}
-                  placeholder="Introdu cod comandă..."
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="nr_inmatriculare">Nr. Înmatriculare</Label>
-                <FilterableSelect
-                  id="nr_inmatriculare"
-                  value={form.nr_inmatriculare}
-                  onValueChange={handleNrInmatriculareChange}
-                  options={nrInmatriculareOptions}
-                  placeholder="Selectează nr. înmatriculare..."
-                  searchPlaceholder="Caută nr. înmatriculare..."
-                  emptyText="Nu s-au găsit numere de înmatriculare."
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="tip_masina">Tip Mașină</Label>
-                <Input
-                  id="tip_masina"
-                  value={form.tip_masina}
-                  disabled
-                  className="bg-muted"
-                />
+          
+          <div className="px-5 py-4 space-y-4">
+            {/* Identificare */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Identificare</p>
+              <div className="grid grid-cols-2 gap-3 p-3 rounded-lg border bg-card">
+                <div className="space-y-1">
+                  <Label htmlFor="cod" className="text-xs">Cod</Label>
+                  <FilterableSelect
+                    id="cod"
+                    value={form.cod}
+                    onValueChange={handleCodChange}
+                    options={codOptions}
+                    placeholder="Cod"
+                    searchPlaceholder="Caută..."
+                    emptyText="Nu s-au găsit coduri."
+                    className="h-9 text-sm"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="nr_comanda" className="text-xs">Cod Comandă</Label>
+                  <Input
+                    id="nr_comanda"
+                    value={form.nr_comanda}
+                    onChange={(e) => setForm({ ...form, nr_comanda: e.target.value })}
+                    placeholder="Cod comandă"
+                    className="h-9 text-sm"
+                  />
+                </div>
               </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="nume_sofer">Nume Șofer</Label>
-              <FilterableSelect
-                id="nume_sofer"
-                value={form.nume_sofer}
-                onValueChange={(value) => setForm({ ...form, nume_sofer: value })}
-                options={numeSoferOptions}
-                placeholder="Selectează șofer..."
-                searchPlaceholder="Caută șofer..."
-                emptyText="Nu s-au găsit șoferi."
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="temperatura">Temperatură</Label>
-              <Input
-                id="temperatura"
-                type="number"
-                step="0.1"
-                value={form.temperatura}
-                onChange={(e) => setForm({ ...form, temperatura: parseFloat(e.target.value) || 0 })}
-              />
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="masa_brut">Masa Brut</Label>
-                <Input
-                  id="masa_brut"
-                  type="number"
-                  step="0.01"
-                  value={form.masa_brut}
-                  onChange={(e) => setForm({ ...form, masa_brut: parseFloat(e.target.value) || 0 })}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="masa_net">Masa Net</Label>
-                <Input
-                  id="masa_net"
-                  type="number"
-                  step="0.01"
-                  value={form.masa_net}
-                  disabled
-                  className="bg-muted"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="tara">Tara</Label>
-                <Input
-                  id="tara"
-                  type="number"
-                  step="0.01"
-                  value={form.tara}
-                  onChange={(e) => setForm({ ...form, tara: parseFloat(e.target.value) || 0 })}
-                />
+
+            {/* Transport */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Transport</p>
+              <div className="grid grid-cols-3 gap-3 p-3 rounded-lg border bg-card">
+                <div className="space-y-1">
+                  <Label htmlFor="nr_inmatriculare" className="text-xs">Nr. Înmatr.</Label>
+                  <FilterableSelect
+                    id="nr_inmatriculare"
+                    value={form.nr_inmatriculare}
+                    onValueChange={handleNrInmatriculareChange}
+                    options={nrInmatriculareOptions}
+                    placeholder="Nr. auto"
+                    searchPlaceholder="Caută..."
+                    emptyText="Nu s-au găsit."
+                    className="h-9 text-sm"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="tip_masina" className="text-xs">Tip Mașină</Label>
+                  <Input
+                    id="tip_masina"
+                    value={form.tip_masina}
+                    disabled
+                    className="h-9 text-sm bg-muted/50"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="nume_sofer" className="text-xs">Șofer</Label>
+                  <FilterableSelect
+                    id="nume_sofer"
+                    value={form.nume_sofer}
+                    onValueChange={(value) => setForm({ ...form, nume_sofer: value })}
+                    options={numeSoferOptions}
+                    placeholder="Șofer"
+                    searchPlaceholder="Caută..."
+                    emptyText="Nu s-au găsit."
+                    className="h-9 text-sm"
+                  />
+                </div>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="pret_produs_total">Preț Produs Total</Label>
-                <Input
-                  id="pret_produs_total"
-                  type="number"
-                  step="0.01"
-                  value={form.pret_produs_total}
-                  disabled
-                  className="bg-muted"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="pret_transport_total">Preț Transport Total</Label>
-                <Input
-                  id="pret_transport_total"
-                  type="number"
-                  step="0.01"
-                  value={form.pret_transport_total}
-                  disabled
-                  className="bg-muted"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="pret_total">Preț Total</Label>
-                <Input
-                  id="pret_total"
-                  type="number"
-                  step="0.01"
-                  value={form.pret_total}
-                  disabled
-                  className="bg-muted"
-                />
+
+            {/* Cantități */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Cantități & Măsurători</p>
+              <div className="grid grid-cols-4 gap-3 p-3 rounded-lg border bg-card">
+                <div className="space-y-1">
+                  <Label htmlFor="temperatura" className="text-xs">Temperatură</Label>
+                  <Input
+                    id="temperatura"
+                    type="number"
+                    step="0.1"
+                    value={form.temperatura}
+                    onChange={(e) => setForm({ ...form, temperatura: parseFloat(e.target.value) || 0 })}
+                    className="h-9 text-sm font-mono"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="masa_brut" className="text-xs">Masa Brut</Label>
+                  <Input
+                    id="masa_brut"
+                    type="number"
+                    step="0.01"
+                    value={form.masa_brut}
+                    onChange={(e) => setForm({ ...form, masa_brut: parseFloat(e.target.value) || 0 })}
+                    className="h-9 text-sm font-mono"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="tara" className="text-xs">Tara</Label>
+                  <Input
+                    id="tara"
+                    type="number"
+                    step="0.01"
+                    value={form.tara}
+                    onChange={(e) => setForm({ ...form, tara: parseFloat(e.target.value) || 0 })}
+                    className="h-9 text-sm font-mono"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="masa_net" className="text-xs">Masa Net</Label>
+                  <Input
+                    id="masa_net"
+                    type="number"
+                    step="0.01"
+                    value={form.masa_net}
+                    disabled
+                    className="h-9 text-sm bg-muted/50 font-mono"
+                  />
+                </div>
               </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="observatii">Observații</Label>
-              <Textarea
-                id="observatii"
-                value={form.observatii}
-                onChange={(e) => setForm({ ...form, observatii: e.target.value })}
-                placeholder="Adaugă observații..."
-                rows={3}
-              />
+
+            {/* Prețuri */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Prețuri (RON)</p>
+              <div className="grid grid-cols-3 gap-3 p-3 rounded-lg border bg-card">
+                <div className="space-y-1">
+                  <Label htmlFor="pret_produs_total" className="text-xs">Preț Produs</Label>
+                  <Input
+                    id="pret_produs_total"
+                    type="number"
+                    step="0.01"
+                    value={form.pret_produs_total}
+                    disabled
+                    className="h-9 text-sm bg-muted/50 font-mono"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="pret_transport_total" className="text-xs">Preț Transport</Label>
+                  <Input
+                    id="pret_transport_total"
+                    type="number"
+                    step="0.01"
+                    value={form.pret_transport_total}
+                    disabled
+                    className="h-9 text-sm bg-muted/50 font-mono"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="pret_total" className="text-xs text-primary font-medium">Preț Total</Label>
+                  <Input
+                    id="pret_total"
+                    type="number"
+                    step="0.01"
+                    value={form.pret_total}
+                    disabled
+                    className="h-9 text-sm bg-primary/5 font-mono font-semibold border-primary/20"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Observații */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Observații</p>
+              <div className="p-3 rounded-lg border bg-card">
+                <Textarea
+                  id="observatii"
+                  value={form.observatii}
+                  onChange={(e) => setForm({ ...form, observatii: e.target.value })}
+                  placeholder="Observații suplimentare..."
+                  rows={2}
+                  className="resize-none text-sm"
+                />
+              </div>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenAddEdit(false)}>
-              Anulează
-            </Button>
-            <Button onClick={handleSave}>
-              {editing ? "Salvează Modificările" : "Adaugă Livrarea"}
+
+          <DialogFooter className="px-5 py-3 border-t bg-muted/30 flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => setOpenAddEdit(false)}>Anulează</Button>
+            <Button size="sm" onClick={handleSave}>
+              {editing ? "Salvează" : "Adaugă"}
             </Button>
           </DialogFooter>
         </DialogContent>
