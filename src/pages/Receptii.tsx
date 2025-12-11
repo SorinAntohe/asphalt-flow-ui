@@ -158,6 +158,14 @@ export default function Receptii() {
     setLoading(false);
   };
   
+  // Helper to flatten and extract strings from API responses
+  const flattenArray = (arr: any[]): string[] => {
+    return arr.map(item => {
+      if (Array.isArray(item)) return item[0];
+      return item;
+    }).filter(item => item != null && item !== '');
+  };
+
   useEffect(() => {
     fetchReceptii();
     
@@ -166,7 +174,7 @@ export default function Receptii() {
         const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_coduri`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setAvailableCodes(Array.isArray(data) ? data : []);
+        setAvailableCodes(Array.isArray(data) ? flattenArray(data) : []);
       } catch (error) {
         console.error('Error fetching codes:', error);
         setAvailableCodes([]);
@@ -178,7 +186,7 @@ export default function Receptii() {
         const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_nume_soferi`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setAvailableDrivers(Array.isArray(data) ? data : []);
+        setAvailableDrivers(Array.isArray(data) ? flattenArray(data) : []);
       } catch (error) {
         console.error('Error fetching drivers:', error);
         setAvailableDrivers([]);
@@ -190,7 +198,7 @@ export default function Receptii() {
         const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_nr_inmatriculare`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setAvailableRegistrationNumbers(Array.isArray(data) ? data : []);
+        setAvailableRegistrationNumbers(Array.isArray(data) ? flattenArray(data) : []);
       } catch (error) {
         console.error('Error fetching registration numbers:', error);
         setAvailableRegistrationNumbers([]);
@@ -895,17 +903,6 @@ export default function Receptii() {
             </DialogDescription>
           </DialogHeader>
           
-          {/* DEBUG LOG */}
-          {(() => {
-            console.log('=== RENDER DEBUG ===');
-            console.log('form.cod:', form.cod, '| typeof:', typeof form.cod, '| isArray:', Array.isArray(form.cod));
-            console.log('form.nume_sofer:', form.nume_sofer, '| typeof:', typeof form.nume_sofer, '| isArray:', Array.isArray(form.nume_sofer));
-            console.log('form.nr_inmatriculare:', form.nr_inmatriculare, '| typeof:', typeof form.nr_inmatriculare, '| isArray:', Array.isArray(form.nr_inmatriculare));
-            console.log('formErrors.cod:', formErrors.cod);
-            console.log('formErrors.nume_sofer:', formErrors.nume_sofer);
-            console.log('formErrors.nr_inmatriculare:', formErrors.nr_inmatriculare);
-            return null;
-          })()}
           <div className="px-5 py-3 space-y-3">
             {/* Identificare Comandă */}
             <div className="space-y-1.5">
