@@ -202,11 +202,6 @@ export default function Receptii() {
     fetchRegistrationNumbers();
   }, []);
 
-  // Debug: Log formErrors whenever they change
-  useEffect(() => {
-    console.log('=== formErrors changed ===', formErrors);
-    console.log('Error keys with values:', Object.entries(formErrors).filter(([k, v]) => v));
-  }, [formErrors]);
 
   // Calculate diferenta when masa_net or cantitate_livrata changes
   useEffect(() => {
@@ -220,16 +215,25 @@ export default function Receptii() {
     setForm(prev => ({ ...prev, masa_net }));
   }, [form.cantitate_receptionata, form.tara]);
 
+  // Helper function to extract value from array or return as-is
+  const extractValue = (data: any): any => {
+    if (Array.isArray(data)) {
+      return data[0] ?? '';
+    }
+    return data;
+  };
+
   // Fetch tip_masina based on selected nr_inmatriculare
   useEffect(() => {
     const fetchTipMasina = async () => {
       if (!form.nr_inmatriculare) return;
       
       try {
-        const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_tip_masina_dupa_nr/${form.nr_inmatriculare}`);
+        const nrInmatr = extractValue(form.nr_inmatriculare);
+        const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_tip_masina_dupa_nr/${nrInmatr}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setForm(prev => ({ ...prev, tip_masina: data }));
+        setForm(prev => ({ ...prev, tip_masina: extractValue(data) }));
       } catch (error) {
         console.error('Error fetching tip masina:', error);
       }
@@ -244,10 +248,12 @@ export default function Receptii() {
       if (!form.cod) return;
       
       try {
-        const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_cantitate_dupa_cod/${form.cod}`);
+        const cod = extractValue(form.cod);
+        const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_cantitate_dupa_cod/${cod}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setForm(prev => ({ ...prev, cantitate_livrata: data }));
+        const value = extractValue(data);
+        setForm(prev => ({ ...prev, cantitate_livrata: typeof value === 'number' ? value : parseFloat(value) || 0 }));
       } catch (error) {
         console.error('Error fetching cantitate livrata:', error);
       }
@@ -262,10 +268,11 @@ export default function Receptii() {
       if (!form.cod) return;
       
       try {
-        const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_furnizor_dupa_cod/${form.cod}`);
+        const cod = extractValue(form.cod);
+        const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_furnizor_dupa_cod/${cod}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setForm(prev => ({ ...prev, furnizor: data }));
+        setForm(prev => ({ ...prev, furnizor: extractValue(data) }));
       } catch (error) {
         console.error('Error fetching furnizor:', error);
       }
@@ -280,10 +287,11 @@ export default function Receptii() {
       if (!form.cod) return;
       
       try {
-        const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_material_dupa_cod/${form.cod}`);
+        const cod = extractValue(form.cod);
+        const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_material_dupa_cod/${cod}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setForm(prev => ({ ...prev, material: data }));
+        setForm(prev => ({ ...prev, material: extractValue(data) }));
       } catch (error) {
         console.error('Error fetching material:', error);
       }
@@ -317,8 +325,6 @@ export default function Receptii() {
 
   // Add/Edit handlers
   const handleOpenAdd = () => {
-    console.log('=== handleOpenAdd called ===');
-    console.log('Current formErrors before reset:', formErrors);
     setEditing(null);
     setForm({
       data: "",
@@ -344,7 +350,6 @@ export default function Receptii() {
       observatii: ""
     });
     setFormErrors({});
-    console.log('formErrors reset to {}');
     setOpenAddEdit(true);
   };
   
@@ -379,8 +384,6 @@ export default function Receptii() {
   };
   
   const handleSave = async () => {
-    console.log('=== handleSave called ===');
-    console.log('Form data:', form);
     try {
       // Validate
       const validatedData = receptieSchema.parse({
@@ -390,7 +393,6 @@ export default function Receptii() {
         observatii: form.observatii || undefined
       });
       
-      console.log('Validation passed, clearing errors');
       setFormErrors({});
       
       if (editing) {
@@ -460,16 +462,13 @@ export default function Receptii() {
       setOpenAddEdit(false);
       fetchReceptii();
     } catch (error) {
-      console.log('=== handleSave error ===', error);
       if (error instanceof z.ZodError) {
         const errors: Record<string, string> = {};
         error.errors.forEach((err) => {
-          console.log('Zod validation error:', err);
           if (err.path) {
             errors[err.path[0]] = err.message;
           }
         });
-        console.log('Setting formErrors to:', errors);
         setFormErrors(errors);
       } else {
         toast({
