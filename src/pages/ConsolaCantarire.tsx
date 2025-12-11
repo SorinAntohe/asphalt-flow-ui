@@ -181,13 +181,14 @@ export default function ConsolaCantarire() {
     // For INBOUND (Recepție): After TARA is entered (step 2/2), fetch additional data
     if (updatedSession.direction === 'INBOUND' && type === 'TARA' && updatedSession.masaBrut && updatedSession.tara) {
       const cod = updatedSession.poNo || '';
-      const nrAuto = updatedSession.nrAuto || '';
+      // Handle nrAuto as array or string
+      const nrAuto = Array.isArray(updatedSession.nrAuto) ? updatedSession.nrAuto[0] : (updatedSession.nrAuto || '');
       
       try {
         // 1. Fetch cantitate_livrata and tip_masina in parallel
         const [cantitateResponse, tipMasinaResponse] = await Promise.all([
           fetch(`http://192.168.1.23:8002/gestionare/cantar/returneaza_cantitate_dupa_cod/${cod}`),
-          fetch(`http://192.168.1.23:8002/gestionare/cantar/returneaza_tip_masina_dupa_nr/${nrAuto}`)
+          fetch(`http://192.168.1.23:8002/gestionare/cantar/returneaza_tip_masina_dupa_nr/${encodeURIComponent(nrAuto)}`)
         ]);
         
         const cantitateData = await cantitateResponse.json();
