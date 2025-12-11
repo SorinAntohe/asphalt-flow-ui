@@ -202,6 +202,12 @@ export default function Receptii() {
     fetchRegistrationNumbers();
   }, []);
 
+  // Debug: Log formErrors whenever they change
+  useEffect(() => {
+    console.log('=== formErrors changed ===', formErrors);
+    console.log('Error keys with values:', Object.entries(formErrors).filter(([k, v]) => v));
+  }, [formErrors]);
+
   // Calculate diferenta when masa_net or cantitate_livrata changes
   useEffect(() => {
     const diferenta = form.masa_net - form.cantitate_livrata;
@@ -311,6 +317,8 @@ export default function Receptii() {
 
   // Add/Edit handlers
   const handleOpenAdd = () => {
+    console.log('=== handleOpenAdd called ===');
+    console.log('Current formErrors before reset:', formErrors);
     setEditing(null);
     setForm({
       data: "",
@@ -336,6 +344,7 @@ export default function Receptii() {
       observatii: ""
     });
     setFormErrors({});
+    console.log('formErrors reset to {}');
     setOpenAddEdit(true);
   };
   
@@ -370,6 +379,8 @@ export default function Receptii() {
   };
   
   const handleSave = async () => {
+    console.log('=== handleSave called ===');
+    console.log('Form data:', form);
     try {
       // Validate
       const validatedData = receptieSchema.parse({
@@ -379,6 +390,7 @@ export default function Receptii() {
         observatii: form.observatii || undefined
       });
       
+      console.log('Validation passed, clearing errors');
       setFormErrors({});
       
       if (editing) {
@@ -448,13 +460,16 @@ export default function Receptii() {
       setOpenAddEdit(false);
       fetchReceptii();
     } catch (error) {
+      console.log('=== handleSave error ===', error);
       if (error instanceof z.ZodError) {
         const errors: Record<string, string> = {};
         error.errors.forEach((err) => {
+          console.log('Zod validation error:', err);
           if (err.path) {
             errors[err.path[0]] = err.message;
           }
         });
+        console.log('Setting formErrors to:', errors);
         setFormErrors(errors);
       } else {
         toast({
