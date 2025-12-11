@@ -97,15 +97,15 @@ export default function Receptii() {
     nume_sofer: "",
     nr_inmatriculare: "",
     tip_masina: "",
-    cantitate_livrata: 0,
-    cantitate_receptionata: 0,
-    tara: 0,
-    masa_net: 0,
-    diferenta: 0,
-    umiditate: 0,
-    pret_material_total: 0,
-    pret_total: 0,
-    pret_transport_total: 0,
+    cantitate_livrata: "",
+    cantitate_receptionata: "",
+    tara: "",
+    masa_net: "",
+    diferenta: "",
+    umiditate: "",
+    pret_material_total: "",
+    pret_total: "",
+    pret_transport_total: "",
     observatii: ""
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -213,14 +213,18 @@ export default function Receptii() {
 
   // Calculate diferenta when masa_net or cantitate_livrata changes
   useEffect(() => {
-    const diferenta = form.masa_net - form.cantitate_livrata;
-    setForm(prev => ({ ...prev, diferenta }));
+    const masaNetNum = parseFloat(form.masa_net) || 0;
+    const cantLivrataNum = parseFloat(form.cantitate_livrata) || 0;
+    const diferenta = masaNetNum - cantLivrataNum;
+    setForm(prev => ({ ...prev, diferenta: diferenta.toString() }));
   }, [form.masa_net, form.cantitate_livrata]);
 
   // Calculate masa_net when cantitate_receptionata or tara changes
   useEffect(() => {
-    const masa_net = form.cantitate_receptionata - form.tara;
-    setForm(prev => ({ ...prev, masa_net }));
+    const cantRecepNum = parseFloat(form.cantitate_receptionata) || 0;
+    const taraNum = parseFloat(form.tara) || 0;
+    const masa_net = cantRecepNum - taraNum;
+    setForm(prev => ({ ...prev, masa_net: masa_net.toString() }));
   }, [form.cantitate_receptionata, form.tara]);
 
   // Helper function to extract value from array or return as-is
@@ -261,7 +265,7 @@ export default function Receptii() {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         const value = extractValue(data);
-        setForm(prev => ({ ...prev, cantitate_livrata: typeof value === 'number' ? value : parseFloat(value) || 0 }));
+        setForm(prev => ({ ...prev, cantitate_livrata: String(typeof value === 'number' ? value : parseFloat(value) || '') }));
       } catch (error) {
         console.error('Error fetching cantitate livrata:', error);
       }
@@ -319,9 +323,9 @@ export default function Receptii() {
         const data = await response.json();
         setForm(prev => ({ 
           ...prev, 
-          pret_transport_total: data.pret_transport_total,
-          pret_material_total: data.pret_material_total,
-          pret_total: data.pret_total
+          pret_transport_total: String(data.pret_transport_total ?? ''),
+          pret_material_total: String(data.pret_material_total ?? ''),
+          pret_total: String(data.pret_total ?? '')
         }));
       } catch (error) {
         console.error('Error fetching prices:', error);
@@ -346,15 +350,15 @@ export default function Receptii() {
       nume_sofer: "",
       nr_inmatriculare: "",
       tip_masina: "",
-      cantitate_livrata: 0,
-      cantitate_receptionata: 0,
-      tara: 0,
-      masa_net: 0,
-      diferenta: 0,
-      umiditate: 0,
-      pret_material_total: 0,
-      pret_total: 0,
-      pret_transport_total: 0,
+      cantitate_livrata: "",
+      cantitate_receptionata: "",
+      tara: "",
+      masa_net: "",
+      diferenta: "",
+      umiditate: "",
+      pret_material_total: "",
+      pret_total: "",
+      pret_transport_total: "",
       observatii: ""
     });
     setFormErrors({});
@@ -376,15 +380,15 @@ export default function Receptii() {
       nume_sofer: receptie.nume_sofer,
       nr_inmatriculare: receptie.nr_inmatriculare,
       tip_masina: receptie.tip_masina,
-      cantitate_livrata: receptie.cantitate_livrata,
-      cantitate_receptionata: receptie.cantitate_receptionata,
-      tara: receptie.tara,
-      masa_net: receptie.masa_net,
-      diferenta: receptie.diferenta,
-      umiditate: receptie.umiditate || 0,
-      pret_material_total: receptie.pret_material_total,
-      pret_total: receptie.pret_total,
-      pret_transport_total: receptie.pret_transport_total,
+      cantitate_livrata: String(receptie.cantitate_livrata ?? ''),
+      cantitate_receptionata: String(receptie.cantitate_receptionata ?? ''),
+      tara: String(receptie.tara ?? ''),
+      masa_net: String(receptie.masa_net ?? ''),
+      diferenta: String(receptie.diferenta ?? ''),
+      umiditate: String(receptie.umiditate ?? ''),
+      pret_material_total: String(receptie.pret_material_total ?? ''),
+      pret_total: String(receptie.pret_total ?? ''),
+      pret_transport_total: String(receptie.pret_transport_total ?? ''),
       observatii: receptie.observatii || ""
     });
     setFormErrors({});
@@ -393,9 +397,23 @@ export default function Receptii() {
   
   const handleSave = async () => {
     try {
+      // Convert string values to numbers for validation
+      const numericForm = {
+        ...form,
+        cantitate_livrata: parseFloat(form.cantitate_livrata) || 0,
+        cantitate_receptionata: parseFloat(form.cantitate_receptionata) || 0,
+        tara: parseFloat(form.tara) || 0,
+        masa_net: parseFloat(form.masa_net) || 0,
+        diferenta: parseFloat(form.diferenta) || 0,
+        umiditate: parseFloat(form.umiditate) || 0,
+        pret_material_total: parseFloat(form.pret_material_total) || 0,
+        pret_total: parseFloat(form.pret_total) || 0,
+        pret_transport_total: parseFloat(form.pret_transport_total) || 0,
+      };
+      
       // Validate
       const validatedData = receptieSchema.parse({
-        ...form,
+        ...numericForm,
         nr_aviz_provizoriu: form.nr_aviz_provizoriu || undefined,
         nr_aviz_intrare: form.nr_aviz_intrare || undefined,
         observatii: form.observatii || undefined
@@ -408,7 +426,7 @@ export default function Receptii() {
         // Exclude 'data' field from update payload
         const { data, ...updatePayload } = validatedData;
         
-        const response = await fetch(`${API_BASE_URL}/receptii/editeaza/material/${form.cod}/${form.cantitate_receptionata}`, {
+        const response = await fetch(`${API_BASE_URL}/receptii/editeaza/material/${form.cod}/${numericForm.cantitate_receptionata}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -436,21 +454,21 @@ export default function Receptii() {
           nume_sofer: form.nume_sofer,
           nr_inmatriculare: form.nr_inmatriculare,
           tip_masina: form.tip_masina,
-          cantitate_livrata: form.cantitate_livrata,
-          cantitate_receptionata: form.cantitate_receptionata,
-          tara: form.tara,
-          masa_net: form.masa_net,
-          diferenta: form.diferenta,
-          umiditate: form.umiditate,
-          pret_material_total: form.pret_material_total,
-          pret_total: form.pret_total,
-          pret_transport_total: form.pret_transport_total,
+          cantitate_livrata: numericForm.cantitate_livrata,
+          cantitate_receptionata: numericForm.cantitate_receptionata,
+          tara: numericForm.tara,
+          masa_net: numericForm.masa_net,
+          diferenta: numericForm.diferenta,
+          umiditate: numericForm.umiditate,
+          pret_material_total: numericForm.pret_material_total,
+          pret_total: numericForm.pret_total,
+          pret_transport_total: numericForm.pret_transport_total,
           observatii: form.observatii || ""
         };
         
         const tostoc = {
           cod: form.cod,
-          cantitate_receptionata: form.cantitate_receptionata
+          cantitate_receptionata: numericForm.cantitate_receptionata
         };
         
         const response = await fetch(`${API_BASE_URL}/receptii/materiale/adauga`, {
@@ -995,7 +1013,7 @@ export default function Receptii() {
                     step="0.01"
                     value={form.cantitate_receptionata}
                     onChange={(e) => {
-                      setForm(prev => ({ ...prev, cantitate_receptionata: parseFloat(e.target.value) || 0 }));
+                      setForm(prev => ({ ...prev, cantitate_receptionata: e.target.value }));
                       setFormErrors(prev => ({ ...prev, cantitate_receptionata: '' }));
                     }}
                     className={`h-9 text-sm font-mono ${formErrors.cantitate_receptionata ? "border-destructive" : ""}`}
@@ -1009,7 +1027,7 @@ export default function Receptii() {
                     step="0.01"
                     value={form.tara}
                     onChange={(e) => {
-                      setForm(prev => ({ ...prev, tara: parseFloat(e.target.value) || 0 }));
+                      setForm(prev => ({ ...prev, tara: e.target.value }));
                       setFormErrors(prev => ({ ...prev, tara: '' }));
                     }}
                     className={`h-9 text-sm font-mono ${formErrors.tara ? "border-destructive" : ""}`}
@@ -1033,7 +1051,7 @@ export default function Receptii() {
                     type="number" 
                     value={form.diferenta} 
                     disabled 
-                    className={`h-9 text-sm bg-muted/50 font-mono ${form.diferenta !== 0 ? 'text-destructive' : ''}`}
+                    className={`h-9 text-sm bg-muted/50 font-mono ${parseFloat(form.diferenta) !== 0 ? 'text-destructive' : ''}`}
                   />
                 </div>
                 <div className="space-y-0.5">
@@ -1045,7 +1063,7 @@ export default function Receptii() {
                     min="0"
                     max="100"
                     value={form.umiditate}
-                    onChange={(e) => setForm(prev => ({ ...prev, umiditate: parseFloat(e.target.value) || 0 }))}
+                    onChange={(e) => setForm(prev => ({ ...prev, umiditate: e.target.value }))}
                     className={`h-9 text-sm font-mono ${formErrors.umiditate ? "border-destructive" : ""}`}
                   />
                 </div>
