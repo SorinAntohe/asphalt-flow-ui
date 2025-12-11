@@ -119,21 +119,21 @@ export default function PontareAngajat() {
           <TabsList className="grid w-full grid-cols-3 bg-transparent border-b border-border rounded-none h-auto p-0">
             <TabsTrigger 
               value="pontaj" 
-              className="flex items-center gap-2 py-3 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              className="flex items-center gap-2 py-3 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-foreground text-muted-foreground"
             >
               <Clock className="h-4 w-4" />
               <span>Pontaj</span>
             </TabsTrigger>
             <TabsTrigger 
               value="dashboard" 
-              className="flex items-center gap-2 py-3 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              className="flex items-center gap-2 py-3 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-foreground text-muted-foreground"
             >
               <LayoutDashboard className="h-4 w-4" />
               <span>Dashboard</span>
             </TabsTrigger>
             <TabsTrigger 
               value="concedii" 
-              className="flex items-center gap-2 py-3 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              className="flex items-center gap-2 py-3 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-foreground text-muted-foreground"
             >
               <Calendar className="h-4 w-4" />
               <span>Concedii</span>
