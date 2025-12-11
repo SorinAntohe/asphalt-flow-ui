@@ -80,14 +80,6 @@ export const TableFilterPopover = React.memo(({
                 Descresc.
               </Button>
             </div>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => setOpen(false)}
-              className="w-full h-7 text-xs"
-            >
-              Închide
-            </Button>
           </div>
         </PopoverContent>
       </Popover>
