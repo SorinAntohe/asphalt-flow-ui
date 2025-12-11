@@ -79,7 +79,7 @@ export function FilterableSelect({
         </Button>
       </PopoverTrigger>
       <PopoverContent 
-        className="w-[--radix-popover-trigger-width] p-0 bg-popover border border-border shadow-md z-[9999]" 
+        className="w-[--radix-popover-trigger-width] p-0 bg-popover border border-border shadow-lg rounded-md z-[9999]" 
         align="start"
         sideOffset={4}
         onWheel={(e) => e.stopPropagation()}
@@ -89,11 +89,11 @@ export function FilterableSelect({
             placeholder={searchPlaceholder} 
             value={searchValue}
             onValueChange={setSearchValue}
-            className="h-10 border-b border-border"
+            className="h-9 text-sm"
           />
-          <CommandList className="max-h-48 overflow-y-auto overscroll-contain" onWheel={(e) => e.stopPropagation()}>
-            <CommandEmpty>{emptyText}</CommandEmpty>
-            <CommandGroup>
+          <CommandList className="max-h-[200px] overflow-y-auto overscroll-contain" onWheel={(e) => e.stopPropagation()}>
+            <CommandEmpty className="py-3 text-sm">{emptyText}</CommandEmpty>
+            <CommandGroup className="p-1">
               {filteredOptions.map((option) => (
                 <CommandItem
                   key={option.value}
@@ -102,7 +102,7 @@ export function FilterableSelect({
                     onValueChange(option.value === value ? "" : option.value)
                     setOpen(false)
                   }}
-                  className="cursor-pointer"
+                  className="cursor-pointer rounded-sm py-2 px-2 text-sm hover:bg-accent/50 data-[selected=true]:bg-accent"
                 >
                   <Check
                     className={cn(
