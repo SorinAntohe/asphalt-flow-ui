@@ -401,7 +401,6 @@ export default function ConsolaCantarire() {
                         session={session}
                         isActive={activeSession?.id === session.id}
                         onClick={() => handleSessionClick(session)}
-                        showWaitTime
                       />
                     ))}
                   </div>
