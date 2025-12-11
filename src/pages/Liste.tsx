@@ -800,96 +800,105 @@ const Liste = () => {
            </Card>
 
            <Dialog open={autoturismeDialog.open} onOpenChange={(open) => setAutoturismeDialog({ ...autoturismeDialog, open })}>
-             <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                  <DialogTitle>{autoturismeDialog.mode === 'add' ? 'Adaugă Autoturism' : 'Editează Autoturism'}</DialogTitle>
-                  <DialogDescription>
+             <DialogContent className="w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+                <DialogHeader className="px-5 pt-4 pb-2">
+                  <DialogTitle className="text-base font-semibold">{autoturismeDialog.mode === 'add' ? 'Adaugă Autoturism' : 'Editează Autoturism'}</DialogTitle>
+                  <DialogDescription className="text-xs text-muted-foreground">
                     {autoturismeDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un autoturism nou.' : 'Modificați detaliile autoturismului.'}
                   </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
+                <div className="px-5 py-3 space-y-3">
                   {autoturismeDialog.mode === 'edit' && autoturismeDialog.data && (
-                    <div className="grid gap-2">
-                      <Label htmlFor="id">ID</Label>
+                    <div className="space-y-1">
+                      <Label htmlFor="id" className="text-xs">ID</Label>
                       <Input
                         id="id"
                         value={autoturismeDialog.data.id}
                         disabled
-                        className="bg-muted"
+                        className="h-9 text-sm bg-muted"
                       />
                     </div>
                   )}
-                  <div className="grid gap-2">
-                    <Label htmlFor="tipMasina">Tip Mașină *</Label>
-                    <FilterableSelect
-                      id="tipMasina"
-                      value={autoturismeFormData.tipMasina}
-                      onValueChange={(value) => {
-                        const sarcinaMap: Record<string, string> = {
-                          "Articulata": "40",
-                          "8X4": "30",
-                          "4X2": "12"
-                        };
-                        setAutoturismeFormData({ 
-                          ...autoturismeFormData, 
-                          tipMasina: value,
-                          sarcinaMax: sarcinaMap[value] || ""
-                        });
-                      }}
-                      options={[
-                        { value: "Articulata", label: "Articulata" },
-                        { value: "8X4", label: "8X4" },
-                        { value: "4X2", label: "4X2" }
-                      ]}
-                      placeholder="Selectează tip mașină"
-                      searchPlaceholder="Caută tip mașină..."
-                    />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label htmlFor="tipMasina" className="text-xs">Tip Mașină *</Label>
+                      <FilterableSelect
+                        id="tipMasina"
+                        value={autoturismeFormData.tipMasina}
+                        onValueChange={(value) => {
+                          const sarcinaMap: Record<string, string> = {
+                            "Articulata": "40",
+                            "8X4": "30",
+                            "4X2": "12"
+                          };
+                          setAutoturismeFormData({ 
+                            ...autoturismeFormData, 
+                            tipMasina: value,
+                            sarcinaMax: sarcinaMap[value] || ""
+                          });
+                        }}
+                        options={[
+                          { value: "Articulata", label: "Articulata" },
+                          { value: "8X4", label: "8X4" },
+                          { value: "4X2", label: "4X2" }
+                        ]}
+                        placeholder="Selectează tip mașină"
+                        searchPlaceholder="Caută tip mașină..."
+                        className="h-9 text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="nrAuto" className="text-xs">Număr Auto *</Label>
+                      <Input
+                        id="nrAuto"
+                        placeholder="Ex: B-123-ABC"
+                        value={autoturismeFormData.nrAuto}
+                        onChange={(e) => setAutoturismeFormData({ ...autoturismeFormData, nrAuto: e.target.value })}
+                        className="h-9 text-sm"
+                      />
+                    </div>
                   </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="nrAuto">Număr Auto *</Label>
-                    <Input
-                      id="nrAuto"
-                      placeholder="Ex: B-123-ABC"
-                      value={autoturismeFormData.nrAuto}
-                      onChange={(e) => setAutoturismeFormData({ ...autoturismeFormData, nrAuto: e.target.value })}
-                    />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label htmlFor="sarcinaMax" className="text-xs">Sarcină Maximă *</Label>
+                      <Input
+                        id="sarcinaMax"
+                        placeholder="Se completează automat"
+                        value={autoturismeFormData.sarcinaMax}
+                        disabled
+                        className="h-9 text-sm bg-muted"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="tipTransport" className="text-xs">Tip Transport *</Label>
+                      <FilterableSelect
+                        id="tipTransport"
+                        value={autoturismeFormData.tipTransport}
+                        onValueChange={(value) => setAutoturismeFormData({ ...autoturismeFormData, tipTransport: value })}
+                        options={[
+                          { value: "Propriu", label: "Propriu" },
+                          { value: "Inchiriat", label: "Închiriat" },
+                          { value: "Extern", label: "Extern" }
+                        ]}
+                        placeholder="Selectează tip transport"
+                        searchPlaceholder="Caută tip transport..."
+                        className="h-9 text-sm"
+                      />
+                    </div>
                   </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="sarcinaMax">Sarcină Maximă *</Label>
-                    <Input
-                      id="sarcinaMax"
-                      placeholder="Se completează automat"
-                      value={autoturismeFormData.sarcinaMax}
-                      disabled
-                    />
-                  </div>
-                 <div className="grid gap-2">
-                   <Label htmlFor="tipTransport">Tip Transport *</Label>
-                   <FilterableSelect
-                     id="tipTransport"
-                     value={autoturismeFormData.tipTransport}
-                     onValueChange={(value) => setAutoturismeFormData({ ...autoturismeFormData, tipTransport: value })}
-                     options={[
-                       { value: "Propriu", label: "Propriu" },
-                       { value: "Inchiriat", label: "Închiriat" },
-                       { value: "Extern", label: "Extern" }
-                     ]}
-                     placeholder="Selectează tip transport"
-                     searchPlaceholder="Caută tip transport..."
-                   />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="tara">Tara *</Label>
+                  <div className="space-y-1">
+                    <Label htmlFor="tara" className="text-xs">Tara *</Label>
                     <Input
                       id="tara"
                       placeholder="Ex: 1000"
                       value={autoturismeFormData.tara}
                       onChange={(e) => setAutoturismeFormData({ ...autoturismeFormData, tara: e.target.value })}
+                      className="h-9 text-sm"
                     />
                   </div>
                 </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setAutoturismeDialog({ ...autoturismeDialog, open: false })}>
+                <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
+                  <Button variant="outline" size="sm" onClick={() => setAutoturismeDialog({ ...autoturismeDialog, open: false })}>
                     Anulează
                   </Button>
                   <Button onClick={async () => {
@@ -1188,46 +1197,48 @@ const Liste = () => {
            </Card>
 
            <Dialog open={soferiDialog.open} onOpenChange={(open) => setSoferiDialog({ ...soferiDialog, open })}>
-             <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                  <DialogTitle>{soferiDialog.mode === 'add' ? 'Adaugă Șofer' : 'Editează Șofer'}</DialogTitle>
-                  <DialogDescription>
+             <DialogContent className="w-[95vw] max-w-md max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+                <DialogHeader className="px-5 pt-4 pb-2">
+                  <DialogTitle className="text-base font-semibold">{soferiDialog.mode === 'add' ? 'Adaugă Șofer' : 'Editează Șofer'}</DialogTitle>
+                  <DialogDescription className="text-xs text-muted-foreground">
                     {soferiDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un șofer nou.' : 'Modificați detaliile șoferului.'}
                   </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
+                <div className="px-5 py-3 space-y-3">
                   {soferiDialog.mode === 'edit' && soferiDialog.data && (
-                    <div className="grid gap-2">
-                      <Label htmlFor="id">ID</Label>
+                    <div className="space-y-1">
+                      <Label htmlFor="id" className="text-xs">ID</Label>
                       <Input
                         id="id"
                         value={soferiDialog.data.id}
                         disabled
-                        className="bg-muted"
+                        className="h-9 text-sm bg-muted"
                       />
                     </div>
                   )}
-                  <div className="grid gap-2">
-                    <Label htmlFor="numeSofer">Nume Șofer *</Label>
+                  <div className="space-y-1">
+                    <Label htmlFor="numeSofer" className="text-xs">Nume Șofer *</Label>
                    <Input
                      id="numeSofer"
                      placeholder="Ex: Ion Popescu"
                      value={soferiFormData.numeSofer}
                      onChange={(e) => setSoferiFormData({ ...soferiFormData, numeSofer: e.target.value })}
+                     className="h-9 text-sm"
                    />
                  </div>
-                 <div className="grid gap-2">
-                   <Label htmlFor="ci">C.I. *</Label>
+                 <div className="space-y-1">
+                   <Label htmlFor="ci" className="text-xs">C.I. *</Label>
                    <Input
                      id="ci"
                      placeholder="Ex: AB123456"
                      value={soferiFormData.ci}
                      onChange={(e) => setSoferiFormData({ ...soferiFormData, ci: e.target.value })}
+                     className="h-9 text-sm"
                    />
                  </div>
                </div>
-               <DialogFooter>
-                 <Button variant="outline" onClick={() => setSoferiDialog({ ...soferiDialog, open: false })}>
+               <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
+                 <Button variant="outline" size="sm" onClick={() => setSoferiDialog({ ...soferiDialog, open: false })}>
                    Anulează
                  </Button>
                   <Button onClick={async () => {
@@ -1486,37 +1497,38 @@ const Liste = () => {
            </Card>
 
             <Dialog open={materiiPrimeDialog.open} onOpenChange={(open) => setMateriiPrimeDialog({ ...materiiPrimeDialog, open })}>
-              <DialogContent className="sm:max-w-[500px]">
-                 <DialogHeader>
-                   <DialogTitle>{materiiPrimeDialog.mode === 'add' ? 'Adaugă Materie Primă' : 'Editează Materie Primă'}</DialogTitle>
-                   <DialogDescription>
+              <DialogContent className="w-[95vw] max-w-md max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+                 <DialogHeader className="px-5 pt-4 pb-2">
+                   <DialogTitle className="text-base font-semibold">{materiiPrimeDialog.mode === 'add' ? 'Adaugă Materie Primă' : 'Editează Materie Primă'}</DialogTitle>
+                   <DialogDescription className="text-xs text-muted-foreground">
                      {materiiPrimeDialog.mode === 'add' ? 'Completați formularul pentru a adăuga o materie primă nouă.' : 'Modificați denumirea materiei prime.'}
                    </DialogDescription>
                  </DialogHeader>
-                 <div className="grid gap-4 py-4">
+                 <div className="px-5 py-3 space-y-3">
                    {materiiPrimeDialog.mode === 'edit' && materiiPrimeDialog.data && (
-                     <div className="grid gap-2">
-                       <Label htmlFor="id">ID</Label>
+                     <div className="space-y-1">
+                       <Label htmlFor="id" className="text-xs">ID</Label>
                        <Input
                          id="id"
                          value={materiiPrimeDialog.data.id}
                          disabled
-                         className="bg-muted"
+                         className="h-9 text-sm bg-muted"
                        />
                      </div>
                    )}
-                   <div className="grid gap-2">
-                     <Label htmlFor="denumire">Denumire *</Label>
+                   <div className="space-y-1">
+                     <Label htmlFor="denumire" className="text-xs">Denumire *</Label>
                     <Input
                       id="denumire"
                       placeholder="Ex: 0/4 NAT, BITUM 50/70, CTL"
                       value={materiiPrimeFormData.denumire}
                       onChange={(e) => setMateriiPrimeFormData({ denumire: e.target.value })}
+                      className="h-9 text-sm"
                     />
                   </div>
                 </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setMateriiPrimeDialog({ ...materiiPrimeDialog, open: false })}>
+                <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
+                  <Button variant="outline" size="sm" onClick={() => setMateriiPrimeDialog({ ...materiiPrimeDialog, open: false })}>
                     Anulează
                   </Button>
                    <Button onClick={async () => {
@@ -1771,37 +1783,38 @@ const Liste = () => {
            </Card>
 
            <Dialog open={produseFiniteDialog.open} onOpenChange={(open) => setProduseFiniteDialog({ ...produseFiniteDialog, open })}>
-             <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                  <DialogTitle>{produseFiniteDialog.mode === 'add' ? 'Adaugă Produs Finit' : 'Editează Produs Finit'}</DialogTitle>
-                  <DialogDescription>
+             <DialogContent className="w-[95vw] max-w-md max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+                <DialogHeader className="px-5 pt-4 pb-2">
+                  <DialogTitle className="text-base font-semibold">{produseFiniteDialog.mode === 'add' ? 'Adaugă Produs Finit' : 'Editează Produs Finit'}</DialogTitle>
+                  <DialogDescription className="text-xs text-muted-foreground">
                     {produseFiniteDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un produs finit nou.' : 'Modificați detaliile produsului finit.'}
                   </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
+                <div className="px-5 py-3 space-y-3">
                   {produseFiniteDialog.mode === 'edit' && produseFiniteDialog.data && (
-                    <div className="grid gap-2">
-                      <Label htmlFor="id">ID</Label>
+                    <div className="space-y-1">
+                      <Label htmlFor="id" className="text-xs">ID</Label>
                       <Input
                         id="id"
                         value={produseFiniteDialog.data.id}
                         disabled
-                        className="bg-muted"
+                        className="h-9 text-sm bg-muted"
                       />
                     </div>
                   )}
-                  <div className="grid gap-2">
-                    <Label htmlFor="denumire">Denumire *</Label>
+                  <div className="space-y-1">
+                    <Label htmlFor="denumire" className="text-xs">Denumire *</Label>
                    <Input
                      id="denumire"
                      placeholder="Ex: Asfalt tip A"
                      value={produseFiniteFormData.denumire}
                      onChange={(e) => setProduseFiniteFormData({ denumire: e.target.value })}
+                     className="h-9 text-sm"
                    />
                  </div>
                </div>
-               <DialogFooter>
-                 <Button variant="outline" onClick={() => setProduseFiniteDialog({ ...produseFiniteDialog, open: false })}>
+               <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
+                 <Button variant="outline" size="sm" onClick={() => setProduseFiniteDialog({ ...produseFiniteDialog, open: false })}>
                    Anulează
                  </Button>
                   <Button onClick={async () => {
@@ -2134,64 +2147,72 @@ const Liste = () => {
            </Card>
 
            <Dialog open={clientiDialog.open} onOpenChange={(open) => setClientiDialog({ ...clientiDialog, open })}>
-             <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                  <DialogTitle>{clientiDialog.mode === 'add' ? 'Adaugă Client' : 'Editează Client'}</DialogTitle>
-                  <DialogDescription>
+             <DialogContent className="w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+                <DialogHeader className="px-5 pt-4 pb-2">
+                  <DialogTitle className="text-base font-semibold">{clientiDialog.mode === 'add' ? 'Adaugă Client' : 'Editează Client'}</DialogTitle>
+                  <DialogDescription className="text-xs text-muted-foreground">
                     {clientiDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un client nou.' : 'Modificați detaliile clientului.'}
                   </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
+                <div className="px-5 py-3 space-y-3">
                   {clientiDialog.mode === 'edit' && clientiDialog.data && (
-                    <div className="grid gap-2">
-                      <Label htmlFor="id">ID</Label>
+                    <div className="space-y-1">
+                      <Label htmlFor="id" className="text-xs">ID</Label>
                       <Input
                         id="id"
                         value={clientiDialog.data.id}
                         disabled
-                        className="bg-muted"
+                        className="h-9 text-sm bg-muted"
                       />
                     </div>
                   )}
-                  <div className="grid gap-2">
-                    <Label htmlFor="denumire">Denumire *</Label>
-                   <Input
-                     id="denumire"
-                     placeholder="Ex: Construct Pro SRL"
-                     value={clientiFormData.denumire}
-                     onChange={(e) => setClientiFormData({ ...clientiFormData, denumire: e.target.value })}
-                   />
-                 </div>
-                 <div className="grid gap-2">
-                   <Label htmlFor="sediu">Sediu *</Label>
-                   <Input
-                     id="sediu"
-                     placeholder="Ex: București"
-                     value={clientiFormData.sediu}
-                     onChange={(e) => setClientiFormData({ ...clientiFormData, sediu: e.target.value })}
-                   />
-                 </div>
-                 <div className="grid gap-2">
-                   <Label htmlFor="cui">CUI *</Label>
-                   <Input
-                     id="cui"
-                     placeholder="Ex: RO12345678"
-                     value={clientiFormData.cui}
-                     onChange={(e) => setClientiFormData({ ...clientiFormData, cui: e.target.value })}
-                   />
-                 </div>
-                 <div className="grid gap-2">
-                   <Label htmlFor="nrReg">Nr. REG *</Label>
-                   <Input
-                     id="nrReg"
-                     placeholder="Ex: J40/1234/2020"
-                     value={clientiFormData.nrReg}
-                     onChange={(e) => setClientiFormData({ ...clientiFormData, nrReg: e.target.value })}
-                   />
-                 </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label htmlFor="denumire" className="text-xs">Denumire *</Label>
+                     <Input
+                       id="denumire"
+                       placeholder="Ex: Construct Pro SRL"
+                       value={clientiFormData.denumire}
+                       onChange={(e) => setClientiFormData({ ...clientiFormData, denumire: e.target.value })}
+                       className="h-9 text-sm"
+                     />
+                   </div>
+                   <div className="space-y-1">
+                     <Label htmlFor="sediu" className="text-xs">Sediu *</Label>
+                     <Input
+                       id="sediu"
+                       placeholder="Ex: București"
+                       value={clientiFormData.sediu}
+                       onChange={(e) => setClientiFormData({ ...clientiFormData, sediu: e.target.value })}
+                       className="h-9 text-sm"
+                     />
+                   </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label htmlFor="cui" className="text-xs">CUI *</Label>
+                      <Input
+                        id="cui"
+                        placeholder="Ex: RO12345678"
+                        value={clientiFormData.cui}
+                        onChange={(e) => setClientiFormData({ ...clientiFormData, cui: e.target.value })}
+                        className="h-9 text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="nrReg" className="text-xs">Nr. REG *</Label>
+                      <Input
+                        id="nrReg"
+                        placeholder="Ex: J40/1234/2020"
+                        value={clientiFormData.nrReg}
+                        onChange={(e) => setClientiFormData({ ...clientiFormData, nrReg: e.target.value })}
+                       className="h-9 text-sm"
+                     />
+                   </div>
+                  </div>
                </div>
-               <DialogFooter>
-                 <Button variant="outline" onClick={() => setClientiDialog({ ...clientiDialog, open: false })}>
+               <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
+                 <Button variant="outline" size="sm" onClick={() => setClientiDialog({ ...clientiDialog, open: false })}>
                    Anulează
                  </Button>
                   <Button onClick={async () => {
@@ -2536,64 +2557,72 @@ const Liste = () => {
            </Card>
 
            <Dialog open={furnizoriDialog.open} onOpenChange={(open) => setFurnizoriDialog({ ...furnizoriDialog, open })}>
-             <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                  <DialogTitle>{furnizoriDialog.mode === 'add' ? 'Adaugă Furnizor' : 'Editează Furnizor'}</DialogTitle>
-                  <DialogDescription>
+             <DialogContent className="w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+                <DialogHeader className="px-5 pt-4 pb-2">
+                  <DialogTitle className="text-base font-semibold">{furnizoriDialog.mode === 'add' ? 'Adaugă Furnizor' : 'Editează Furnizor'}</DialogTitle>
+                  <DialogDescription className="text-xs text-muted-foreground">
                     {furnizoriDialog.mode === 'add' ? 'Completați formularul pentru a adăuga un furnizor nou.' : 'Modificați detaliile furnizorului.'}
                   </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
+                <div className="px-5 py-3 space-y-3">
                   {furnizoriDialog.mode === 'edit' && furnizoriDialog.data && (
-                    <div className="grid gap-2">
-                      <Label htmlFor="id">ID</Label>
+                    <div className="space-y-1">
+                      <Label htmlFor="id" className="text-xs">ID</Label>
                       <Input
                         id="id"
                         value={furnizoriDialog.data.id}
                         disabled
-                        className="bg-muted"
+                        className="h-9 text-sm bg-muted"
                       />
                     </div>
                   )}
-                  <div className="grid gap-2">
-                    <Label htmlFor="denumire">Denumire *</Label>
-                   <Input
-                     id="denumire"
-                     placeholder="Ex: Agregat SRL"
-                     value={furnizoriFormData.denumire}
-                     onChange={(e) => setFurnizoriFormData({ ...furnizoriFormData, denumire: e.target.value })}
-                   />
-                 </div>
-                 <div className="grid gap-2">
-                   <Label htmlFor="sediu">Sediu *</Label>
-                   <Input
-                     id="sediu"
-                     placeholder="Ex: Ploiești"
-                     value={furnizoriFormData.sediu}
-                     onChange={(e) => setFurnizoriFormData({ ...furnizoriFormData, sediu: e.target.value })}
-                   />
-                 </div>
-                 <div className="grid gap-2">
-                   <Label htmlFor="cui">CUI *</Label>
-                   <Input
-                     id="cui"
-                     placeholder="Ex: RO11111111"
-                     value={furnizoriFormData.cui}
-                     onChange={(e) => setFurnizoriFormData({ ...furnizoriFormData, cui: e.target.value })}
-                   />
-                 </div>
-                 <div className="grid gap-2">
-                   <Label htmlFor="nrReg">Nr. REG *</Label>
-                   <Input
-                     id="nrReg"
-                     placeholder="Ex: J29/1111/2017"
-                     value={furnizoriFormData.nrReg}
-                     onChange={(e) => setFurnizoriFormData({ ...furnizoriFormData, nrReg: e.target.value })}
-                   />
-                 </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label htmlFor="denumire" className="text-xs">Denumire *</Label>
+                     <Input
+                       id="denumire"
+                       placeholder="Ex: Agregat SRL"
+                       value={furnizoriFormData.denumire}
+                       onChange={(e) => setFurnizoriFormData({ ...furnizoriFormData, denumire: e.target.value })}
+                       className="h-9 text-sm"
+                     />
+                   </div>
+                   <div className="space-y-1">
+                     <Label htmlFor="sediu" className="text-xs">Sediu *</Label>
+                     <Input
+                       id="sediu"
+                       placeholder="Ex: Ploiești"
+                       value={furnizoriFormData.sediu}
+                       onChange={(e) => setFurnizoriFormData({ ...furnizoriFormData, sediu: e.target.value })}
+                       className="h-9 text-sm"
+                     />
+                   </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label htmlFor="cui" className="text-xs">CUI *</Label>
+                      <Input
+                        id="cui"
+                        placeholder="Ex: RO11111111"
+                        value={furnizoriFormData.cui}
+                        onChange={(e) => setFurnizoriFormData({ ...furnizoriFormData, cui: e.target.value })}
+                        className="h-9 text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="nrReg" className="text-xs">Nr. REG *</Label>
+                      <Input
+                        id="nrReg"
+                        placeholder="Ex: J29/1111/2017"
+                        value={furnizoriFormData.nrReg}
+                        onChange={(e) => setFurnizoriFormData({ ...furnizoriFormData, nrReg: e.target.value })}
+                        className="h-9 text-sm"
+                      />
+                    </div>
+                  </div>
                </div>
-               <DialogFooter>
-                 <Button variant="outline" onClick={() => setFurnizoriDialog({ ...furnizoriDialog, open: false })}>
+               <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
+                 <Button variant="outline" size="sm" onClick={() => setFurnizoriDialog({ ...furnizoriDialog, open: false })}>
                    Anulează
                  </Button>
                   <Button onClick={async () => {
