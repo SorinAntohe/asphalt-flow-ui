@@ -224,17 +224,24 @@ const Livrari = () => {
     // Fetch prices immediately when cod is selected
     if (value) {
       try {
+        console.log("Fetching prices for cod:", value);
         const response = await fetch(`${API_BASE_URL}/livrari/returneaza_preturi_dupa_cod_livrari/livrari/${value}`);
+        console.log("API response status:", response.status);
         if (response.ok) {
           const data = await response.json();
-          setUnitPrices({
+          console.log("API returned data:", data);
+          const newUnitPrices = {
             pret_fara_tva: data.pret_fara_tva || 0,
             pret_transport: data.pret_transport || 0
-          });
+          };
+          console.log("Setting unit prices:", newUnitPrices);
+          setUnitPrices(newUnitPrices);
           setForm(prev => ({ 
             ...prev,
             produs: data.produs || ""
           }));
+        } else {
+          console.error("API error:", response.status, response.statusText);
         }
       } catch (error) {
         console.error("Error fetching prices:", error);
@@ -248,14 +255,17 @@ const Livrari = () => {
     setForm(prev => ({ ...prev, masa_net }));
   }, [form.masa_brut, form.tara]);
 
-  // Calculate prices when masa_net changes
+  // Calculate prices when masa_net or unit prices change
   useEffect(() => {
+    console.log("Price calculation triggered - masa_net:", form.masa_net, "unitPrices:", unitPrices);
     if (form.masa_net > 0 && (unitPrices.pret_fara_tva > 0 || unitPrices.pret_transport > 0)) {
       // Convert kg to tons for price calculation
       const masa_net_tone = form.masa_net / 1000;
       const pret_produs_total = unitPrices.pret_fara_tva * masa_net_tone;
       const pret_transport_total = unitPrices.pret_transport * masa_net_tone;
       const pret_total = pret_produs_total + pret_transport_total;
+      
+      console.log("Calculated prices - produs:", pret_produs_total, "transport:", pret_transport_total, "total:", pret_total);
       
       setForm(prev => ({
         ...prev,
@@ -909,9 +919,34 @@ const Livrari = () => {
               </div>
             </div>
 
-            {/* Prețuri */}
+            {/* Prețuri Unitare */}
             <div className="space-y-2">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Prețuri (RON)</p>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Prețuri Unitare (RON/tonă)</p>
+              <div className="grid grid-cols-2 gap-3 p-3 rounded-lg border bg-card">
+                <div className="space-y-1">
+                  <Label className="text-xs">Preț Produs/tonă</Label>
+                  <Input
+                    type="number"
+                    value={unitPrices.pret_fara_tva}
+                    disabled
+                    className="h-9 text-sm bg-muted/50 font-mono"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">Preț Transport/tonă</Label>
+                  <Input
+                    type="number"
+                    value={unitPrices.pret_transport}
+                    disabled
+                    className="h-9 text-sm bg-muted/50 font-mono"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Prețuri Totale */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Prețuri Totale (RON)</p>
               <div className="grid grid-cols-3 gap-3 p-3 rounded-lg border bg-card">
                 <div className="space-y-1">
                   <Label htmlFor="pret_produs_total" className="text-xs">Preț Produs</Label>
