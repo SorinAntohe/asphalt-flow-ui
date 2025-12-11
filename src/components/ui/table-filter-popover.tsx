@@ -32,27 +32,28 @@ export const TableFilterPopover = React.memo(({
     setLocalValue(filterValue);
   }, [filterValue]);
 
+  // Apply filter when popover closes
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen && localValue !== filterValue) {
+      onFilterChange(localValue);
+    }
+    setOpen(isOpen);
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setLocalValue(newValue);
-    onFilterChange(newValue);
+    setLocalValue(e.target.value);
   };
 
   return (
     <TableHead className="h-10 text-xs">
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={handleOpenChange}>
         <PopoverTrigger asChild>
           <div className="flex items-center cursor-pointer hover:text-primary">
             <span>{label}</span>
             <ArrowUpDown className="ml-2 h-3 w-3" />
           </div>
         </PopoverTrigger>
-        <PopoverContent 
-          className="w-56 p-2" 
-          onPointerDownOutside={(e) => e.preventDefault()}
-          onInteractOutside={(e) => e.preventDefault()}
-          onFocusOutside={(e) => e.preventDefault()}
-        >
+        <PopoverContent className="w-56 p-2">
           <div className="space-y-2">
             <Input
               value={localValue}
