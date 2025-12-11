@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertTriangle, Check } from "lucide-react";
+import { AlertTriangle, Check, Loader2 } from "lucide-react";
 
 interface ManualWeightDialogProps {
   open: boolean;
@@ -15,31 +15,12 @@ interface ManualWeightDialogProps {
 
 export function ManualWeightDialog({ open, onOpenChange, weightType, onConfirm, isLoading }: ManualWeightDialogProps) {
   const [value, setValue] = useState("");
-  const [confirmValue, setConfirmValue] = useState("");
-  const [step, setStep] = useState<'enter' | 'confirm'>('enter');
   const [error, setError] = useState("");
-
-  const handleNext = () => {
-    const numValue = parseFloat(value);
-    if (!value || isNaN(numValue) || numValue <= 0) {
-      setError("Introduceți o greutate validă (> 0 kg)");
-      return;
-    }
-    setStep('confirm');
-  };
 
   const handleConfirm = () => {
     const numValue = parseFloat(value);
-    const numConfirm = parseFloat(confirmValue);
-    
-    if (!confirmValue || isNaN(numConfirm) || numConfirm <= 0) {
-      setError("Confirmați greutatea");
-      return;
-    }
-
-    const diff = Math.abs(numValue - numConfirm);
-    if (diff > 10) {
-      setError(`Diferență > 10 kg între valori (${diff} kg). Verificați!`);
+    if (!value || isNaN(numValue) || numValue <= 0) {
+      setError("Introduceți o greutate validă (> 0 kg)");
       return;
     }
 
@@ -49,8 +30,6 @@ export function ManualWeightDialog({ open, onOpenChange, weightType, onConfirm, 
 
   const handleClose = () => {
     setValue("");
-    setConfirmValue("");
-    setStep('enter');
     setError("");
     onOpenChange(false);
   };
@@ -63,37 +42,29 @@ export function ManualWeightDialog({ open, onOpenChange, weightType, onConfirm, 
             Introdu {weightType === 'TARA' ? 'TARA' : 'MASA BRUT'}
           </DialogTitle>
           <DialogDescription>
-            {step === 'enter' 
-              ? 'Introduceți greutatea în kilograme' 
-              : 'Confirmați greutatea introducând-o din nou'}
+            Introduceți greutatea în kilograme
           </DialogDescription>
         </DialogHeader>
 
         <div className="py-4">
           <div className="mb-4">
-            <Label className="text-sm text-muted-foreground">
-              {step === 'enter' ? 'Greutate (kg)' : 'Confirmare greutate (kg)'}
-            </Label>
+            <Label className="text-sm text-muted-foreground">Greutate (kg)</Label>
             <Input
               type="number"
               placeholder="0"
-              value={step === 'enter' ? value : confirmValue}
+              value={value}
               onChange={(e) => {
-                if (step === 'enter') {
-                  setValue(e.target.value);
-                } else {
-                  setConfirmValue(e.target.value);
-                }
+                setValue(e.target.value);
                 setError("");
               }}
               className="mt-2 text-2xl font-mono h-14 text-center"
               autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && value) {
+                  handleConfirm();
+                }
+              }}
             />
-            {step === 'confirm' && (
-              <p className="text-sm text-muted-foreground mt-2 text-center">
-                Valoare inițială: <span className="font-mono font-medium">{value} kg</span>
-              </p>
-            )}
           </div>
 
           {error && (
@@ -108,20 +79,17 @@ export function ManualWeightDialog({ open, onOpenChange, weightType, onConfirm, 
           <Button variant="outline" onClick={handleClose} className="flex-1">
             Anulează
           </Button>
-          {step === 'enter' ? (
-            <Button onClick={handleNext} className="flex-1" disabled={!value}>
-              Continuă
-            </Button>
-          ) : (
-            <Button 
-              onClick={handleConfirm} 
-              className="flex-1" 
-              disabled={!confirmValue || isLoading}
-            >
-              <Check className="h-4 w-4 mr-2" />
-              Confirmă
-            </Button>
-          )}
+          <Button 
+            onClick={handleConfirm} 
+            className="flex-1" 
+            disabled={!value || isLoading}
+          >
+            {isLoading ? (
+              <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Se salvează...</>
+            ) : (
+              <><Check className="h-4 w-4 mr-2" /> Confirmă</>
+            )}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
