@@ -606,7 +606,7 @@ const Liste = () => {
                   <TableRow>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>ID</span>
@@ -631,7 +631,7 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Tip Mașină</span>
@@ -656,7 +656,7 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Nr. Auto</span>
@@ -681,7 +681,7 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Sarcină Max</span>
@@ -706,7 +706,7 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Tip Transport</span>
@@ -731,7 +731,7 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Tara</span>
@@ -1081,7 +1081,7 @@ const Liste = () => {
                   <TableRow>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>ID</span>
@@ -1106,7 +1106,7 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Nume Șofer</span>
@@ -1131,7 +1131,7 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>C.I.</span>
@@ -1407,7 +1407,7 @@ const Liste = () => {
                   <TableRow>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>ID</span>
@@ -1432,7 +1432,7 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Denumire</span>
@@ -1693,7 +1693,7 @@ const Liste = () => {
                   <TableRow>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>ID</span>
@@ -1718,7 +1718,7 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Denumire</span>
@@ -1979,7 +1979,7 @@ const Liste = () => {
                   <TableRow>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>ID</span>
@@ -2004,7 +2004,7 @@ const Liste = () => {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Denumire</span>

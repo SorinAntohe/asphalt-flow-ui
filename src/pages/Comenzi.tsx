@@ -760,7 +760,7 @@ export default function Comenzi() {
                   <TableRow>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>ID</span>
@@ -785,7 +785,7 @@ export default function Comenzi() {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Cod</span>
@@ -810,7 +810,7 @@ export default function Comenzi() {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Data</span>
@@ -835,7 +835,7 @@ export default function Comenzi() {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Furnizor</span>
@@ -860,7 +860,7 @@ export default function Comenzi() {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Material</span>
@@ -885,7 +885,7 @@ export default function Comenzi() {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Cantitate</span>
@@ -910,7 +910,7 @@ export default function Comenzi() {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Preț fără TVA</span>
@@ -1044,7 +1044,7 @@ export default function Comenzi() {
                   <TableRow>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>ID</span>
@@ -1069,7 +1069,7 @@ export default function Comenzi() {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Cod</span>
@@ -1094,7 +1094,7 @@ export default function Comenzi() {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Data</span>
@@ -1119,7 +1119,7 @@ export default function Comenzi() {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Client</span>
@@ -1144,7 +1144,7 @@ export default function Comenzi() {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Produs</span>
@@ -1169,7 +1169,7 @@ export default function Comenzi() {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Unitate De Măsură</span>
@@ -1194,7 +1194,7 @@ export default function Comenzi() {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Cantitate</span>
@@ -1219,7 +1219,7 @@ export default function Comenzi() {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Punct Descărcare</span>
@@ -1244,7 +1244,7 @@ export default function Comenzi() {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Preț fără TVA</span>
@@ -1269,7 +1269,7 @@ export default function Comenzi() {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Preț Transport</span>
@@ -1294,7 +1294,7 @@ export default function Comenzi() {
                     </TableHead>
                     <TableHead className="h-10 text-xs">
                       <div className="flex items-center gap-1">
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                               <span>Observații</span>

@@ -105,7 +105,7 @@ const FilterHeader = ({
   onSort: (direction: 'asc' | 'desc') => void;
 }) => {
   return (
-    <Popover>
+    <Popover modal={true}>
       <PopoverTrigger asChild>
         <Button variant="ghost" className="h-8 px-2 hover:bg-muted/50 font-medium text-xs gap-1">
           {label}

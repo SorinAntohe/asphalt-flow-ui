@@ -585,16 +585,13 @@ export default function Receptii() {
     setCurrentPage(1);
   }, [filters]);
 
-  const handleSort = (field: string) => {
-    setSort(prev => ({
-      field,
-      direction: prev.field === field && prev.direction === 'asc' ? 'desc' : 'asc'
-    }));
+  const handleSort = (field: string, direction: 'asc' | 'desc') => {
+    setSort({ field, direction });
   };
 
   const FilterHeader = ({ field, label }: { field: keyof typeof filters; label: string }) => (
     <TableHead className="h-10 text-xs">
-      <Popover>
+      <Popover modal={true}>
         <PopoverTrigger asChild>
           <div className="flex items-center cursor-pointer hover:text-primary">
             <span>{label}</span>
@@ -612,16 +609,16 @@ export default function Receptii() {
             <div className="flex gap-1">
               <Button
                 size="sm"
-                variant="outline"
-                onClick={() => handleSort(field)}
+                variant={sort.field === field && sort.direction === 'asc' ? 'default' : 'outline'}
+                onClick={() => handleSort(field, 'asc')}
                 className="flex-1 h-7 text-xs"
               >
                 Cresc.
               </Button>
               <Button
                 size="sm"
-                variant="outline"
-                onClick={() => handleSort(field)}
+                variant={sort.field === field && sort.direction === 'desc' ? 'default' : 'outline'}
+                onClick={() => handleSort(field, 'desc')}
                 className="flex-1 h-7 text-xs"
               >
                 Descresc.
