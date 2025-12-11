@@ -45,7 +45,6 @@ const DialogContent = React.forwardRef<
         ref={ref}
         className={cn(
           "pointer-events-auto z-[60] grid w-full gap-3",
-          "max-w-[calc(100vw-1rem)] sm:max-w-lg",
           "max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3rem)] overflow-y-auto",
           "border border-border/30 bg-background p-3 sm:p-4 md:p-5 shadow-2xl rounded-xl sm:rounded-2xl",
           "duration-100 ease-out",
