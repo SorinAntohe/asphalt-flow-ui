@@ -157,16 +157,6 @@ export function ActiveWeighPanel({
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs sm:text-sm text-muted-foreground">Id</span>
-                <span className="font-mono text-xs sm:text-sm">{session.rowId}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs sm:text-sm text-muted-foreground">Cod sesiune</span>
-                <Badge variant="premium" className="font-mono text-xs">
-                  {session.sessionCode}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
                 <span className="text-xs sm:text-sm text-muted-foreground">Pas</span>
                 <Badge variant="outline" className="text-xs">{session.step}</Badge>
               </div>
