@@ -266,14 +266,26 @@ export default function ConsolaCantarire() {
       }
     }
 
-    // Move to step 2/2 or complete
+    updatedSession.updatedAt = new Date().toISOString();
+
+    // Move to step 2/2 queue and clear active panel
     if (activeSession.step === '1/2') {
       updatedSession.step = '2/2';
+      // Remove from queue1 if present
+      setQueue1(prev => prev.filter(s => s.id !== activeSession.id));
+      // Add to queue2
       setQueue2(prev => [...prev, updatedSession]);
+      // Clear active session so operator can pick next
+      setActiveSession(null);
+      setNrAuto("");
+      toast({
+        title: "Mutat în coadă pas 2/2",
+        description: `${updatedSession.nrAuto} a fost mutat în coada pentru a doua cântărire.`
+      });
+    } else {
+      setActiveSession(updatedSession);
     }
-
-    updatedSession.updatedAt = new Date().toISOString();
-    setActiveSession(updatedSession);
+    
     return true;
   };
 
