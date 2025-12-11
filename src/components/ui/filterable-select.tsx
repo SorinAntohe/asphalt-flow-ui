@@ -90,7 +90,7 @@ export function FilterableSelect({
             onValueChange={setSearchValue}
             className="h-10 border-b border-border"
           />
-          <CommandList className="max-h-60">
+          <CommandList className="max-h-60 overflow-y-auto overscroll-contain">
             <CommandEmpty>{emptyText}</CommandEmpty>
             <CommandGroup>
               {filteredOptions.map((option) => (
