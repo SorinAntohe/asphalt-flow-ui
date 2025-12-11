@@ -63,17 +63,13 @@ export function SessionCard({ session, isActive, onClick, showWaitTime }: Sessio
           isActive ? "text-primary-foreground/80" : "text-muted-foreground"
         )}>
           <span className="font-mono">{session.nrAuto}</span>
-          <span className="hidden sm:inline">·</span>
-          <span className={cn("font-medium", isActive ? "text-primary-foreground" : "text-primary")}>
-            SC: {session.sessionCode}
-          </span>
         </div>
         <div className={cn(
           "flex items-center gap-1 text-[10px] sm:text-xs",
           isActive ? "text-primary-foreground/80" : "text-muted-foreground"
         )}>
           <User className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-          <span>{session.createdBy}</span>
+          <span>Șofer: {session.createdBy}</span>
         </div>
         {showWaitTime && (
           <div className={cn(
