@@ -181,13 +181,21 @@ export default function ConsolaCantarire() {
     // For INBOUND (Recepție): After TARA is entered (step 2/2), fetch additional data
     if (updatedSession.direction === 'INBOUND' && type === 'TARA' && updatedSession.masaBrut && updatedSession.tara) {
       const cod = updatedSession.poNo || '';
+      const nrAuto = updatedSession.nrAuto || '';
       
       try {
-        // 1. Fetch cantitate_livrata
-        const cantitateResponse = await fetch(`http://192.168.1.23:8002/gestionare/cantar/returneaza_cantitate_dupa_cod/${cod}`);
+        // 1. Fetch cantitate_livrata and tip_masina in parallel
+        const [cantitateResponse, tipMasinaResponse] = await Promise.all([
+          fetch(`http://192.168.1.23:8002/gestionare/cantar/returneaza_cantitate_dupa_cod/${cod}`),
+          fetch(`http://192.168.1.23:8002/gestionare/cantar/returneaza_tip_masina_dupa_nr/${nrAuto}`)
+        ]);
+        
         const cantitateData = await cantitateResponse.json();
+        const tipMasinaData = await tipMasinaResponse.json();
+        
         // API returns array, extract first element
         const cantitateLivrata = Array.isArray(cantitateData) ? cantitateData[0] : (cantitateData?.cantitate || cantitateData || 0);
+        const tipMasina = Array.isArray(tipMasinaData) ? tipMasinaData[0] : (tipMasinaData?.tip_masina || tipMasinaData || '—');
 
         // 2. Calculate masa_net and diferenta
         const masaNet = updatedSession.masaBrut - updatedSession.tara;
@@ -201,6 +209,7 @@ export default function ConsolaCantarire() {
         console.log('=== RECEPȚIE FINALIZATĂ ===');
         console.log('Cod comandă:', cod);
         console.log('Nr. înmatriculare:', updatedSession.nrAuto);
+        console.log('Tip mașină:', tipMasina);
         console.log('Șofer:', updatedSession.createdBy);
         console.log('Nr. aviz provizoriu:', updatedSession.nrAvizProvizoriu || '—');
         console.log('Nr. aviz intrare:', updatedSession.nrAvizIntrare || '—');
