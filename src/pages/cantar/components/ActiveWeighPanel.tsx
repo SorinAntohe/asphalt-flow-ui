@@ -117,35 +117,6 @@ export function ActiveWeighPanel({
       </CardHeader>
 
       <CardContent className="flex-1 flex flex-col gap-3 sm:gap-4 px-3 sm:px-6 pb-4">
-        {/* Nr. Auto Input */}
-        <div className="space-y-2">
-          <Label htmlFor="nr-auto" className="text-sm">Nr. Auto *</Label>
-          <Input
-            id="nr-auto"
-            placeholder="Nr. înmatriculare"
-            value={nrAuto}
-            onChange={handleNrAutoChange}
-            className="font-mono text-base sm:text-lg h-11 sm:h-12"
-          />
-        </div>
-
-        {/* Start/Continue Session Button */}
-        {!session && (
-          <Button 
-            onClick={onStartSession} 
-            disabled={!nrAutoValid || isLoading}
-            className="w-full h-11 sm:h-12 text-sm sm:text-base"
-          >
-            {isLoading ? (
-              <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Se procesează...</>
-            ) : hasExistingSession ? (
-              <><ArrowRight className="h-4 w-4 mr-2" /> Continuă sesiunea</>
-            ) : (
-              <><Play className="h-4 w-4 mr-2" /> Start sesiune</>
-            )}
-          </Button>
-        )}
-
         {/* Active Session Display */}
         {session && (
           <>
