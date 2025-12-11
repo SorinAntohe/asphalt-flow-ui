@@ -919,34 +919,9 @@ const Livrari = () => {
               </div>
             </div>
 
-            {/* Prețuri Unitare */}
+            {/* Prețuri */}
             <div className="space-y-2">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Prețuri Unitare (RON/tonă)</p>
-              <div className="grid grid-cols-2 gap-3 p-3 rounded-lg border bg-card">
-                <div className="space-y-1">
-                  <Label className="text-xs">Preț Produs/tonă</Label>
-                  <Input
-                    type="number"
-                    value={unitPrices.pret_fara_tva}
-                    disabled
-                    className="h-9 text-sm bg-muted/50 font-mono"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">Preț Transport/tonă</Label>
-                  <Input
-                    type="number"
-                    value={unitPrices.pret_transport}
-                    disabled
-                    className="h-9 text-sm bg-muted/50 font-mono"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Prețuri Totale */}
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Prețuri Totale (RON)</p>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Prețuri (RON)</p>
               <div className="grid grid-cols-3 gap-3 p-3 rounded-lg border bg-card">
                 <div className="space-y-1">
                   <Label htmlFor="pret_produs_total" className="text-xs">Preț Produs</Label>
