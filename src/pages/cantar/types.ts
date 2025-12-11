@@ -20,6 +20,13 @@ export interface WeighSession {
   financeApproved?: boolean;
   toleranceExceeded?: boolean;
   tolerancePercent?: number;
+  // Inbound-specific fields
+  nrAvizProvizoriu?: string;
+  nrAvizIntrare?: string;
+  nrFactura?: string;
+  procentUmiditate?: number;
+  // Outbound-specific fields
+  temperatura?: number;
 }
 
 export interface EligibleRow {

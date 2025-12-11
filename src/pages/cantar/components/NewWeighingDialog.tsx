@@ -22,6 +22,13 @@ interface NewWeighingDialogProps {
     rowId: string;
     nrAuto: string;
     sofer: string;
+    // Inbound-specific
+    nrAvizProvizoriu?: string;
+    nrAvizIntrare?: string;
+    nrFactura?: string;
+    procentUmiditate?: number;
+    // Outbound-specific
+    temperatura?: number;
   }) => void;
 }
 
@@ -116,8 +123,17 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
     const sessionData = {
       direction,
       ...(direction === 'INBOUND' 
-        ? { poNo: orderValue }
-        : { orderNo: orderValue }
+        ? { 
+            poNo: orderValue,
+            nrAvizProvizoriu: nrAvizProvizoriu || undefined,
+            nrAvizIntrare: nrAvizIntrare || undefined,
+            nrFactura: nrFactura || undefined,
+            procentUmiditate: procentUmiditate ? parseFloat(procentUmiditate) : undefined
+          }
+        : { 
+            orderNo: orderValue,
+            temperatura: temperatura ? parseFloat(temperatura) : undefined
+          }
       ),
       rowId: orderValue,
       nrAuto: vehicleValue,

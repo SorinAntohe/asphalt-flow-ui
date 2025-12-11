@@ -104,7 +104,19 @@ export default function ConsolaCantarire() {
     }
   };
 
-  const handleNewWeighingCreated = (sessionData: { direction: Direction; orderNo?: string; poNo?: string; rowId: string; nrAuto: string; sofer: string }) => {
+  const handleNewWeighingCreated = (sessionData: { 
+    direction: Direction; 
+    orderNo?: string; 
+    poNo?: string; 
+    rowId: string; 
+    nrAuto: string; 
+    sofer: string;
+    nrAvizProvizoriu?: string;
+    nrAvizIntrare?: string;
+    nrFactura?: string;
+    procentUmiditate?: number;
+    temperatura?: number;
+  }) => {
     console.log('handleNewWeighingCreated called with:', sessionData);
     
     const newSession: WeighSession = {
@@ -121,6 +133,13 @@ export default function ConsolaCantarire() {
       createdBy: sessionData.sofer || '',
       plantId: selectedPlant,
       financeApproved: true,
+      // Inbound-specific
+      nrAvizProvizoriu: sessionData.nrAvizProvizoriu,
+      nrAvizIntrare: sessionData.nrAvizIntrare,
+      nrFactura: sessionData.nrFactura,
+      procentUmiditate: sessionData.procentUmiditate,
+      // Outbound-specific
+      temperatura: sessionData.temperatura,
     };
     
     console.log('New session created:', newSession);
@@ -183,6 +202,10 @@ export default function ConsolaCantarire() {
         console.log('Cod comandă:', cod);
         console.log('Nr. înmatriculare:', updatedSession.nrAuto);
         console.log('Șofer:', updatedSession.createdBy);
+        console.log('Nr. aviz provizoriu:', updatedSession.nrAvizProvizoriu || '—');
+        console.log('Nr. aviz intrare:', updatedSession.nrAvizIntrare || '—');
+        console.log('Nr. factură:', updatedSession.nrFactura || '—');
+        console.log('Umiditate (%):', updatedSession.procentUmiditate ?? '—');
         console.log('---');
         console.log('BRUT:', updatedSession.masaBrut, 'kg');
         console.log('TARA:', updatedSession.tara, 'kg');
