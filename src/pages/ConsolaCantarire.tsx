@@ -137,9 +137,6 @@ export default function ConsolaCantarire() {
   const handleWeightEntered = async (type: 'TARA' | 'BRUT', value: number): Promise<boolean> => {
     if (!activeSession) return false;
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 300));
-
     const updatedSession = { ...activeSession };
     if (type === 'TARA') {
       updatedSession.tara = value;
@@ -159,6 +156,48 @@ export default function ConsolaCantarire() {
           variant: "destructive"
         });
         return false;
+      }
+    }
+
+    // For INBOUND (Recepție): After TARA is entered (step 2/2), fetch additional data
+    if (updatedSession.direction === 'INBOUND' && type === 'TARA' && updatedSession.masaBrut && updatedSession.tara) {
+      const cod = updatedSession.poNo || '';
+      
+      try {
+        // 1. Fetch cantitate_livrata
+        const cantitateResponse = await fetch(`http://192.168.1.23:8002/gestionare/cantar/returneaza_cantitate_dupa_cod/${cod}`);
+        const cantitateData = await cantitateResponse.json();
+        const cantitateLivrata = cantitateData?.cantitate || cantitateData || 0;
+
+        // 2. Calculate masa_net and diferenta
+        const masaNet = updatedSession.masaBrut - updatedSession.tara;
+        const diferenta = cantitateLivrata - masaNet;
+
+        // 3. Fetch prices - convert masaNet from kg to tons for price calculation
+        const masaNetTons = masaNet / 1000;
+        const preturiResponse = await fetch(`http://192.168.1.23:8002/receptii/materiale/returneaza_preturi_dupa_cod/${cod}/${masaNetTons}`);
+        const preturiData = await preturiResponse.json();
+
+        // 4. Console log all reception data
+        console.log('=== RECEPȚIE FINALIZATĂ ===');
+        console.log('Cod comandă:', cod);
+        console.log('Nr. înmatriculare:', updatedSession.nrAuto);
+        console.log('Șofer:', updatedSession.createdBy);
+        console.log('---');
+        console.log('BRUT:', updatedSession.masaBrut, 'kg');
+        console.log('TARA:', updatedSession.tara, 'kg');
+        console.log('MASA NET:', masaNet, 'kg');
+        console.log('---');
+        console.log('Cantitate livrată:', cantitateLivrata, 'kg');
+        console.log('Diferența:', diferenta, 'kg');
+        console.log('---');
+        console.log('Preț transport total:', preturiData.pret_transport_total);
+        console.log('Preț material total:', preturiData.pret_material_total);
+        console.log('Preț total:', preturiData.pret_total);
+        console.log('===========================');
+
+      } catch (error) {
+        console.error('Eroare la obținerea datelor recepției:', error);
       }
     }
 
