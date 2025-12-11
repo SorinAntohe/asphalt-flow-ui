@@ -619,47 +619,47 @@ export default function Pontaj() {
 
       {/* Details Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
-        <DialogContent className="max-w-[95vw] sm:max-w-md mx-auto">
-          <DialogHeader>
-            <DialogTitle className="text-lg">Detalii Pontaj</DialogTitle>
+        <DialogContent className="w-[95vw] max-w-md max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+          <DialogHeader className="px-5 pt-4 pb-2">
+            <DialogTitle className="text-base">Detalii Pontaj</DialogTitle>
           </DialogHeader>
           {viewingDetails && (
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 py-3 sm:py-4">
+            <div className="px-5 py-3 grid grid-cols-2 gap-3">
               <div>
-                <Label className="text-muted-foreground text-[10px] sm:text-xs">ID</Label>
-                <p className="font-medium text-sm sm:text-base">{viewingDetails.id}</p>
+                <Label className="text-xs text-muted-foreground">ID</Label>
+                <p className="text-sm font-medium">{viewingDetails.id}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground text-[10px] sm:text-xs">Angajat</Label>
-                <p className="font-medium text-sm sm:text-base truncate">{viewingDetails.nume_angajat}</p>
+                <Label className="text-xs text-muted-foreground">Angajat</Label>
+                <p className="text-sm font-medium truncate">{viewingDetails.nume_angajat}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground text-[10px] sm:text-xs">Prezență</Label>
-                <p className="font-medium text-sm sm:text-base">{viewingDetails.prezenta}</p>
+                <Label className="text-xs text-muted-foreground">Prezență</Label>
+                <p className="text-sm font-medium">{viewingDetails.prezenta}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground text-[10px] sm:text-xs">Data</Label>
-                <p className="font-medium text-sm sm:text-base">{viewingDetails.data}</p>
+                <Label className="text-xs text-muted-foreground">Data</Label>
+                <p className="text-sm font-medium">{viewingDetails.data}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground text-[10px] sm:text-xs">Ora Start</Label>
-                <p className="font-medium text-sm sm:text-base">{viewingDetails.ora_start}</p>
+                <Label className="text-xs text-muted-foreground">Ora Start</Label>
+                <p className="text-sm font-medium">{viewingDetails.ora_start}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground text-[10px] sm:text-xs">Ora Sfârșit</Label>
-                <p className="font-medium text-sm sm:text-base">{viewingDetails.ora_sfarsit}</p>
+                <Label className="text-xs text-muted-foreground">Ora Sfârșit</Label>
+                <p className="text-sm font-medium">{viewingDetails.ora_sfarsit}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground text-[10px] sm:text-xs">Pauză Masă</Label>
-                <p className="font-medium text-sm sm:text-base">{viewingDetails.pauza_masa} min</p>
+                <Label className="text-xs text-muted-foreground">Pauză Masă</Label>
+                <p className="text-sm font-medium">{viewingDetails.pauza_masa} min</p>
               </div>
               <div>
-                <Label className="text-muted-foreground text-[10px] sm:text-xs">Total Ore</Label>
-                <p className="font-medium text-sm sm:text-base">{viewingDetails.total_ore} ore</p>
+                <Label className="text-xs text-muted-foreground">Total Ore</Label>
+                <p className="text-sm font-medium">{viewingDetails.total_ore} ore</p>
               </div>
             </div>
           )}
-          <DialogFooter className="flex-col sm:flex-row gap-2">
+          <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" onClick={() => { if (viewingDetails) openEditDialog(viewingDetails); setViewingDetails(null); }} className="w-full sm:w-auto">
               <Pencil className="w-4 h-4 mr-2" />
               Editează

@@ -986,15 +986,10 @@ const Livrari = () => {
 
       {/* Details View Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
-        <DialogContent className="max-w-3xl" hideCloseButton>
-          <DialogHeader>
+        <DialogContent className="w-[95vw] max-w-3xl max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+          <DialogHeader className="px-5 pt-4 pb-2">
             <div className="flex items-center justify-between">
-              <div>
-                <DialogTitle>Detalii Livrare - Cod: {viewingDetails?.cod || "-"}</DialogTitle>
-                <DialogDescription>
-                  Informații complete despre livrare
-                </DialogDescription>
-              </div>
+              <DialogTitle className="text-base">Detalii Livrare - Cod: {viewingDetails?.cod || "-"}</DialogTitle>
               <Button
                 variant="secondary"
                 size="sm"
@@ -1043,7 +1038,7 @@ const Livrari = () => {
             </div>
           </DialogHeader>
           {viewingDetails && (
-            <div className="grid gap-4 py-4">
+            <div className="px-5 py-3 space-y-3">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <Label className="text-muted-foreground">ID</Label>
@@ -1120,7 +1115,7 @@ const Livrari = () => {
               </div>
             </div>
           )}
-          <DialogFooter className="flex-col sm:flex-row gap-2">
+          <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
             <Button 
               variant="outline"
               size="sm"

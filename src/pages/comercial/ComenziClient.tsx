@@ -584,13 +584,10 @@ const ComenziClient = () => {
 
       {/* Detail Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
-        <DialogContent className="max-w-2xl" hideCloseButton>
-          <DialogHeader className="pb-2">
+        <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+          <DialogHeader className="px-5 pt-4 pb-2">
             <div className="flex justify-between items-start">
-              <div>
-                <DialogTitle>Detalii Comandă - {viewingDetails?.cod_comanda}</DialogTitle>
-                <DialogDescription>Informații complete despre comandă</DialogDescription>
-              </div>
+              <DialogTitle className="text-base">Detalii Comandă - {viewingDetails?.cod_comanda}</DialogTitle>
               {viewingDetails && (
                 <div className="flex gap-2">
                   <Badge className={statusColors[viewingDetails.status]}>{viewingDetails.status}</Badge>
@@ -601,7 +598,7 @@ const ComenziClient = () => {
           </DialogHeader>
           
           {viewingDetails && (
-            <div className="grid gap-3">
+            <div className="px-5 py-3 space-y-3">
               {/* Rezumat - compact grid */}
               <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm border rounded-lg p-3 bg-muted/30">
                 <div><span className="text-muted-foreground">Client:</span> <span className="font-medium">{viewingDetails.client}</span></div>
@@ -620,7 +617,7 @@ const ComenziClient = () => {
             </div>
           )}
 
-          <DialogFooter className="flex-wrap gap-1 pt-2">
+          <DialogFooter className="px-5 py-3 flex-wrap gap-1">
             <Button variant="outline" size="sm" onClick={() => { if (viewingDetails) { handleStatusChange(viewingDetails, "Planificat"); setViewingDetails(null); } }}>
               <CalendarIcon className="w-4 h-4 mr-1" />Planifică
             </Button>

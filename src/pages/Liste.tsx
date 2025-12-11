@@ -3345,45 +3345,45 @@ const Liste = () => {
       {/* Details Dialogs */}
       {/* Autoturisme Details */}
       <Dialog open={!!viewingAutoturism} onOpenChange={() => setViewingAutoturism(null)}>
-        <DialogContent className="max-w-lg" hideCloseButton>
-          <DialogHeader>
-            <DialogTitle>Detalii Autoturism</DialogTitle>
+        <DialogContent className="w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+          <DialogHeader className="px-5 pt-4 pb-2">
+            <DialogTitle className="text-base">Detalii Autoturism</DialogTitle>
           </DialogHeader>
           {viewingAutoturism && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">ID</Label>
-                  <p className="font-medium">{viewingAutoturism.id}</p>
+            <div className="px-5 py-3 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">ID</Label>
+                  <p className="text-sm font-medium">{viewingAutoturism.id}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Tip Mașină</Label>
-                  <p className="font-medium">{viewingAutoturism.tipMasina}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Nr. Auto</Label>
-                  <p className="font-medium">{viewingAutoturism.nrAuto}</p>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Sarcină Max</Label>
-                  <p className="font-medium">{viewingAutoturism.sarcinaMax}</p>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Tip Mașină</Label>
+                  <p className="text-sm font-medium">{viewingAutoturism.tipMasina}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Tip Transport</Label>
-                  <p className="font-medium">{viewingAutoturism.tipTransport}</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Nr. Auto</Label>
+                  <p className="text-sm font-medium">{viewingAutoturism.nrAuto}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Tara</Label>
-                  <p className="font-medium">{viewingAutoturism.tara}</p>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Sarcină Max</Label>
+                  <p className="text-sm font-medium">{viewingAutoturism.sarcinaMax}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Tip Transport</Label>
+                  <p className="text-sm font-medium">{viewingAutoturism.tipTransport}</p>
+                </div>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Tara</Label>
+                  <p className="text-sm font-medium">{viewingAutoturism.tara}</p>
                 </div>
               </div>
             </div>
           )}
-          <DialogFooter className="flex-col sm:flex-row gap-2">
+          <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" onClick={() => {
               if (viewingAutoturism) {
                 setAutoturismeFormData({ tipMasina: viewingAutoturism.tipMasina, nrAuto: viewingAutoturism.nrAuto, sarcinaMax: viewingAutoturism.sarcinaMax, tipTransport: viewingAutoturism.tipTransport, tara: viewingAutoturism.tara });
@@ -3413,29 +3413,29 @@ const Liste = () => {
 
       {/* Soferi Details */}
       <Dialog open={!!viewingSofer} onOpenChange={() => setViewingSofer(null)}>
-        <DialogContent className="max-w-lg" hideCloseButton>
-          <DialogHeader>
-            <DialogTitle>Detalii Șofer</DialogTitle>
+        <DialogContent className="w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+          <DialogHeader className="px-5 pt-4 pb-2">
+            <DialogTitle className="text-base">Detalii Șofer</DialogTitle>
           </DialogHeader>
           {viewingSofer && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">ID</Label>
-                  <p className="font-medium">{viewingSofer.id}</p>
+            <div className="px-5 py-3 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">ID</Label>
+                  <p className="text-sm font-medium">{viewingSofer.id}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Nume</Label>
-                  <p className="font-medium">{viewingSofer.nume}</p>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Nume</Label>
+                  <p className="text-sm font-medium">{viewingSofer.nume}</p>
                 </div>
               </div>
-              <div className="space-y-1">
-                <Label className="text-muted-foreground">C.I.</Label>
-                <p className="font-medium">{viewingSofer.ci}</p>
+              <div className="space-y-0.5">
+                <Label className="text-xs text-muted-foreground">C.I.</Label>
+                <p className="text-sm font-medium">{viewingSofer.ci}</p>
               </div>
             </div>
           )}
-          <DialogFooter className="flex-col sm:flex-row gap-2">
+          <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" onClick={() => {
               if (viewingSofer) {
                 setSoferiFormData({ numeSofer: viewingSofer.nume, ci: viewingSofer.ci });
@@ -3465,25 +3465,25 @@ const Liste = () => {
 
       {/* Materii Prime Details */}
       <Dialog open={!!viewingMateriePrima} onOpenChange={() => setViewingMateriePrima(null)}>
-        <DialogContent className="max-w-lg" hideCloseButton>
-          <DialogHeader>
-            <DialogTitle>Detalii Materie Primă</DialogTitle>
+        <DialogContent className="w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+          <DialogHeader className="px-5 pt-4 pb-2">
+            <DialogTitle className="text-base">Detalii Materie Primă</DialogTitle>
           </DialogHeader>
           {viewingMateriePrima && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">ID</Label>
-                  <p className="font-medium">{viewingMateriePrima.id}</p>
+            <div className="px-5 py-3 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">ID</Label>
+                  <p className="text-sm font-medium">{viewingMateriePrima.id}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Denumire</Label>
-                  <p className="font-medium">{viewingMateriePrima.denumire}</p>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Denumire</Label>
+                  <p className="text-sm font-medium">{viewingMateriePrima.denumire}</p>
                 </div>
               </div>
             </div>
           )}
-          <DialogFooter className="flex-col sm:flex-row gap-2">
+          <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" onClick={() => {
               if (viewingMateriePrima) {
                 setMateriiPrimeFormData({ denumire: viewingMateriePrima.denumire });
@@ -3513,25 +3513,25 @@ const Liste = () => {
 
       {/* Produse Finite Details */}
       <Dialog open={!!viewingProdusFinit} onOpenChange={() => setViewingProdusFinit(null)}>
-        <DialogContent className="max-w-lg" hideCloseButton>
-          <DialogHeader>
-            <DialogTitle>Detalii Produs Finit</DialogTitle>
+        <DialogContent className="w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+          <DialogHeader className="px-5 pt-4 pb-2">
+            <DialogTitle className="text-base">Detalii Produs Finit</DialogTitle>
           </DialogHeader>
           {viewingProdusFinit && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">ID</Label>
-                  <p className="font-medium">{viewingProdusFinit.id}</p>
+            <div className="px-5 py-3 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">ID</Label>
+                  <p className="text-sm font-medium">{viewingProdusFinit.id}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Denumire</Label>
-                  <p className="font-medium">{viewingProdusFinit.denumire}</p>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Denumire</Label>
+                  <p className="text-sm font-medium">{viewingProdusFinit.denumire}</p>
                 </div>
               </div>
             </div>
           )}
-          <DialogFooter className="flex-col sm:flex-row gap-2">
+          <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" onClick={() => {
               if (viewingProdusFinit) {
                 setProduseFiniteFormData({ denumire: viewingProdusFinit.denumire });
@@ -3561,39 +3561,39 @@ const Liste = () => {
 
       {/* Clienti Details */}
       <Dialog open={!!viewingClient} onOpenChange={() => setViewingClient(null)}>
-        <DialogContent className="max-w-lg" hideCloseButton>
-          <DialogHeader>
-            <DialogTitle>Detalii Client</DialogTitle>
+        <DialogContent className="w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+          <DialogHeader className="px-5 pt-4 pb-2">
+            <DialogTitle className="text-base">Detalii Client</DialogTitle>
           </DialogHeader>
           {viewingClient && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">ID</Label>
-                  <p className="font-medium">{viewingClient.id}</p>
+            <div className="px-5 py-3 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">ID</Label>
+                  <p className="text-sm font-medium">{viewingClient.id}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Denumire</Label>
-                  <p className="font-medium">{viewingClient.denumire}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Sediu</Label>
-                  <p className="font-medium">{viewingClient.sediu}</p>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">CUI</Label>
-                  <p className="font-medium">{viewingClient.cui}</p>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Denumire</Label>
+                  <p className="text-sm font-medium">{viewingClient.denumire}</p>
                 </div>
               </div>
-              <div className="space-y-1">
-                <Label className="text-muted-foreground">Nr. Reg</Label>
-                <p className="font-medium">{viewingClient.nrReg}</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Sediu</Label>
+                  <p className="text-sm font-medium">{viewingClient.sediu}</p>
+                </div>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">CUI</Label>
+                  <p className="text-sm font-medium">{viewingClient.cui}</p>
+                </div>
+              </div>
+              <div className="space-y-0.5">
+                <Label className="text-xs text-muted-foreground">Nr. Reg</Label>
+                <p className="text-sm font-medium">{viewingClient.nrReg}</p>
               </div>
             </div>
           )}
-          <DialogFooter className="flex-col sm:flex-row gap-2">
+          <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" onClick={() => {
               if (viewingClient) {
                 setClientiFormData({ denumire: viewingClient.denumire, sediu: viewingClient.sediu, cui: viewingClient.cui, nrReg: viewingClient.nrReg });
@@ -3623,39 +3623,39 @@ const Liste = () => {
 
       {/* Furnizori Details */}
       <Dialog open={!!viewingFurnizor} onOpenChange={() => setViewingFurnizor(null)}>
-        <DialogContent className="max-w-lg" hideCloseButton>
-          <DialogHeader>
-            <DialogTitle>Detalii Furnizor</DialogTitle>
+        <DialogContent className="w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+          <DialogHeader className="px-5 pt-4 pb-2">
+            <DialogTitle className="text-base">Detalii Furnizor</DialogTitle>
           </DialogHeader>
           {viewingFurnizor && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">ID</Label>
-                  <p className="font-medium">{viewingFurnizor.id}</p>
+            <div className="px-5 py-3 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">ID</Label>
+                  <p className="text-sm font-medium">{viewingFurnizor.id}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Denumire</Label>
-                  <p className="font-medium">{viewingFurnizor.denumire}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Sediu</Label>
-                  <p className="font-medium">{viewingFurnizor.sediu}</p>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">CUI</Label>
-                  <p className="font-medium">{viewingFurnizor.cui}</p>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Denumire</Label>
+                  <p className="text-sm font-medium">{viewingFurnizor.denumire}</p>
                 </div>
               </div>
-              <div className="space-y-1">
-                <Label className="text-muted-foreground">Nr. Reg</Label>
-                <p className="font-medium">{viewingFurnizor.nrReg}</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Sediu</Label>
+                  <p className="text-sm font-medium">{viewingFurnizor.sediu}</p>
+                </div>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">CUI</Label>
+                  <p className="text-sm font-medium">{viewingFurnizor.cui}</p>
+                </div>
+              </div>
+              <div className="space-y-0.5">
+                <Label className="text-xs text-muted-foreground">Nr. Reg</Label>
+                <p className="text-sm font-medium">{viewingFurnizor.nrReg}</p>
               </div>
             </div>
           )}
-          <DialogFooter className="flex-col sm:flex-row gap-2">
+          <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" onClick={() => {
               if (viewingFurnizor) {
                 setFurnizoriFormData({ denumire: viewingFurnizor.denumire, sediu: viewingFurnizor.sediu, cui: viewingFurnizor.cui, nrReg: viewingFurnizor.nrReg });
@@ -3685,55 +3685,55 @@ const Liste = () => {
 
       {/* Angajati Details */}
       <Dialog open={!!viewingAngajat} onOpenChange={() => setViewingAngajat(null)}>
-        <DialogContent className="max-w-lg" hideCloseButton>
-          <DialogHeader>
-            <DialogTitle>Detalii Angajat</DialogTitle>
+        <DialogContent className="w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+          <DialogHeader className="px-5 pt-4 pb-2">
+            <DialogTitle className="text-base">Detalii Angajat</DialogTitle>
           </DialogHeader>
           {viewingAngajat && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">ID</Label>
-                  <p className="font-medium">{viewingAngajat.id}</p>
+            <div className="px-5 py-3 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">ID</Label>
+                  <p className="text-sm font-medium">{viewingAngajat.id}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Nume</Label>
-                  <p className="font-medium">{viewingAngajat.nume}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Funcție</Label>
-                  <p className="font-medium">{viewingAngajat.functie}</p>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Data Angajării</Label>
-                  <p className="font-medium">{viewingAngajat.data_angajari}</p>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Nume</Label>
+                  <p className="text-sm font-medium">{viewingAngajat.nume}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Salariu</Label>
-                  <p className="font-medium">{viewingAngajat.salariu?.toLocaleString("ro-RO")} RON</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Funcție</Label>
+                  <p className="text-sm font-medium">{viewingAngajat.functie}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Zile Concediu Calculate</Label>
-                  <p className="font-medium">{viewingAngajat.zile_concediu_calculate ?? 0}</p>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Data Angajării</Label>
+                  <p className="text-sm font-medium">{viewingAngajat.data_angajari}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Zile Concediu Luate</Label>
-                  <p className="font-medium">{viewingAngajat.zile_concediu_luate ?? 0}</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Salariu</Label>
+                  <p className="text-sm font-medium">{viewingAngajat.salariu?.toLocaleString("ro-RO")} RON</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Zile Concediu Rămase</Label>
-                  <p className="font-medium">{viewingAngajat.zile_concediu_ramase ?? 0}</p>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Zile Concediu Calculate</Label>
+                  <p className="text-sm font-medium">{viewingAngajat.zile_concediu_calculate ?? 0}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Zile Concediu Luate</Label>
+                  <p className="text-sm font-medium">{viewingAngajat.zile_concediu_luate ?? 0}</p>
+                </div>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Zile Concediu Rămase</Label>
+                  <p className="text-sm font-medium">{viewingAngajat.zile_concediu_ramase ?? 0}</p>
                 </div>
               </div>
             </div>
           )}
-          <DialogFooter className="flex-col sm:flex-row gap-2">
+          <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" onClick={() => {
               if (viewingAngajat) {
                 setAngajatiFormData({
@@ -3771,29 +3771,29 @@ const Liste = () => {
 
       {/* Chirii Details */}
       <Dialog open={!!viewingChirie} onOpenChange={() => setViewingChirie(null)}>
-        <DialogContent className="max-w-lg" hideCloseButton>
-          <DialogHeader>
-            <DialogTitle>Detalii Chirie</DialogTitle>
+        <DialogContent className="w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+          <DialogHeader className="px-5 pt-4 pb-2">
+            <DialogTitle className="text-base">Detalii Chirie</DialogTitle>
           </DialogHeader>
           {viewingChirie && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">ID</Label>
-                  <p className="font-medium">{viewingChirie.id}</p>
+            <div className="px-5 py-3 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">ID</Label>
+                  <p className="text-sm font-medium">{viewingChirie.id}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Denumire</Label>
-                  <p className="font-medium">{viewingChirie.denumire}</p>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Denumire</Label>
+                  <p className="text-sm font-medium">{viewingChirie.denumire}</p>
                 </div>
               </div>
-              <div className="space-y-1">
-                <Label className="text-muted-foreground">Preț/Lună</Label>
-                <p className="font-medium">{viewingChirie.pretLuna?.toLocaleString("ro-RO")} RON</p>
+              <div className="space-y-0.5">
+                <Label className="text-xs text-muted-foreground">Preț/Lună</Label>
+                <p className="text-sm font-medium">{viewingChirie.pretLuna?.toLocaleString("ro-RO")} RON</p>
               </div>
             </div>
           )}
-          <DialogFooter className="flex-col sm:flex-row gap-2">
+          <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" onClick={() => {
               if (viewingChirie) {
                 setChiriiFormData({ denumire: viewingChirie.denumire, pretLuna: String(viewingChirie.pretLuna) });

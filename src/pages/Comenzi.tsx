@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown, Download, Package } from "lucide-react";
+import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown, Download, Package, X } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
@@ -1545,15 +1545,12 @@ export default function Comenzi() {
 
       {/* Details Dialog for Materie Prima */}
       <Dialog open={!!viewingDetailsMP} onOpenChange={() => setViewingDetailsMP(null)}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Detalii Comandă Materie Primă</DialogTitle>
-            <DialogDescription>
-              Informații complete despre comanda {viewingDetailsMP?.cod}
-            </DialogDescription>
+        <DialogContent className="w-[95vw] max-w-3xl max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+          <DialogHeader className="px-5 pt-4 pb-2">
+            <DialogTitle className="text-base">Detalii Comandă Materie Primă - {viewingDetailsMP?.cod}</DialogTitle>
           </DialogHeader>
           {viewingDetailsMP && (
-            <div className="grid gap-4 py-4">
+            <div className="px-5 py-3 space-y-3">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <Label className="text-muted-foreground">ID</Label>
@@ -1610,12 +1607,10 @@ export default function Comenzi() {
               </div>
             </div>
           )}
-          <DialogFooter className="flex gap-2">
-            <Button variant="outline" onClick={() => setViewingDetailsMP(null)}>
-              Închide
-            </Button>
+          <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
             <Button 
               variant="outline"
+              size="sm"
               onClick={() => {
                 if (viewingDetailsMP) {
                   handleOpenEditMP(viewingDetailsMP);
@@ -1628,7 +1623,7 @@ export default function Comenzi() {
             </Button>
             <Button 
               variant="destructive"
-              className="bg-red-700 hover:bg-red-600"
+              size="sm"
               onClick={() => {
                 if (viewingDetailsMP) {
                   setDeletingMP(viewingDetailsMP);
@@ -1638,6 +1633,10 @@ export default function Comenzi() {
             >
               <Trash2 className="w-4 h-4 mr-2" />
               Șterge
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setViewingDetailsMP(null)}>
+              <X className="w-4 h-4 mr-2" />
+              Închide
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1805,77 +1804,72 @@ export default function Comenzi() {
 
       {/* Details Dialog for Produs Finit */}
       <Dialog open={!!viewingDetailsPF} onOpenChange={() => setViewingDetailsPF(null)}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Detalii Comandă Produs Finit</DialogTitle>
-            <DialogDescription>
-              Informații complete despre comanda {viewingDetailsPF?.cod}
-            </DialogDescription>
+        <DialogContent className="w-[95vw] max-w-3xl max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+          <DialogHeader className="px-5 pt-4 pb-2">
+            <DialogTitle className="text-base">Detalii Comandă Produs Finit - {viewingDetailsPF?.cod}</DialogTitle>
           </DialogHeader>
           {viewingDetailsPF && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">ID</Label>
-                  <p className="font-medium">{viewingDetailsPF.id}</p>
+            <div className="px-5 py-3 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">ID</Label>
+                  <p className="text-sm font-medium">{viewingDetailsPF.id}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Cod</Label>
-                  <p className="font-medium">{viewingDetailsPF.cod}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Data</Label>
-                  <p className="font-medium">{viewingDetailsPF.data}</p>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Client</Label>
-                  <p className="font-medium">{viewingDetailsPF.client}</p>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Cod</Label>
+                  <p className="text-sm font-medium">{viewingDetailsPF.cod}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Produs</Label>
-                  <p className="font-medium">{viewingDetailsPF.produs}</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Data</Label>
+                  <p className="text-sm font-medium">{viewingDetailsPF.data}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Unitate Măsură</Label>
-                  <p className="font-medium">{viewingDetailsPF.unitate_de_masura}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Cantitate</Label>
-                  <p className="font-medium">{viewingDetailsPF.cantitate}</p>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Punct Descărcare</Label>
-                  <p className="font-medium">{viewingDetailsPF.punct_descarcare || "-"}</p>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Client</Label>
+                  <p className="text-sm font-medium">{viewingDetailsPF.client}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Preț fără TVA</Label>
-                  <p className="font-medium">{viewingDetailsPF.pret_fara_tva}</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Produs</Label>
+                  <p className="text-sm font-medium">{viewingDetailsPF.produs}</p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Preț Transport</Label>
-                  <p className="font-medium">{viewingDetailsPF.pret_transport || "-"}</p>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Unitate Măsură</Label>
+                  <p className="text-sm font-medium">{viewingDetailsPF.unitate_de_masura}</p>
                 </div>
               </div>
-              <div className="space-y-1">
-                <Label className="text-muted-foreground">Observații</Label>
-                <p className="font-medium">{viewingDetailsPF.observatii || "-"}</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Cantitate</Label>
+                  <p className="text-sm font-medium">{viewingDetailsPF.cantitate}</p>
+                </div>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Punct Descărcare</Label>
+                  <p className="text-sm font-medium">{viewingDetailsPF.punct_descarcare || "-"}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Preț fără TVA</Label>
+                  <p className="text-sm font-medium">{viewingDetailsPF.pret_fara_tva}</p>
+                </div>
+                <div className="space-y-0.5">
+                  <Label className="text-xs text-muted-foreground">Preț Transport</Label>
+                  <p className="text-sm font-medium">{viewingDetailsPF.pret_transport || "-"}</p>
+                </div>
+              </div>
+              <div className="space-y-0.5">
+                <Label className="text-xs text-muted-foreground">Observații</Label>
+                <p className="text-sm font-medium">{viewingDetailsPF.observatii || "-"}</p>
               </div>
             </div>
           )}
-          <DialogFooter className="flex gap-2">
-            <Button variant="outline" onClick={() => setViewingDetailsPF(null)}>
-              Închide
-            </Button>
+          <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
             <Button 
               variant="outline"
+              size="sm"
               onClick={() => {
                 if (viewingDetailsPF) {
                   handleOpenEditPF(viewingDetailsPF);
@@ -1888,7 +1882,7 @@ export default function Comenzi() {
             </Button>
             <Button 
               variant="destructive"
-              className="bg-red-700 hover:bg-red-600"
+              size="sm"
               onClick={() => {
                 if (viewingDetailsPF) {
                   setDeletingPF(viewingDetailsPF);
@@ -1898,6 +1892,10 @@ export default function Comenzi() {
             >
               <Trash2 className="w-4 h-4 mr-2" />
               Șterge
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setViewingDetailsPF(null)}>
+              <X className="w-4 h-4 mr-2" />
+              Închide
             </Button>
           </DialogFooter>
         </DialogContent>
