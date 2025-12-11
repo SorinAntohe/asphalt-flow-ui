@@ -80,13 +80,16 @@ const priorityConfig = {
 const AIForecastSection = () => {
   const [simulationOpen, setSimulationOpen] = useState(false);
   const [simParams, setSimParams] = useState({
-    pretBitum: 4200,
-    volumComandat: 2500,
-    pretTransport: 85,
+    pretBitum: "4200",
+    volumComandat: "2500",
+    pretTransport: "85",
   });
 
-  const simulatedCost = ((simParams.pretBitum * 0.055 + 180) * simParams.volumComandat + simParams.pretTransport * simParams.volumComandat * 0.4).toFixed(0);
-  const simulatedMargin = (simParams.volumComandat * 320 - parseFloat(simulatedCost)).toFixed(0);
+  const pretBitumNum = parseFloat(simParams.pretBitum) || 0;
+  const volumComandatNum = parseFloat(simParams.volumComandat) || 0;
+  const pretTransportNum = parseFloat(simParams.pretTransport) || 0;
+  const simulatedCost = ((pretBitumNum * 0.055 + 180) * volumComandatNum + pretTransportNum * volumComandatNum * 0.4).toFixed(0);
+  const simulatedMargin = (volumComandatNum * 320 - parseFloat(simulatedCost)).toFixed(0);
 
   return (
     <div className="space-y-6">
@@ -226,7 +229,7 @@ const AIForecastSection = () => {
                   <Input
                     type="number"
                     value={simParams.pretBitum}
-                    onChange={(e) => setSimParams({ ...simParams, pretBitum: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => setSimParams({ ...simParams, pretBitum: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
@@ -234,7 +237,7 @@ const AIForecastSection = () => {
                   <Input
                     type="number"
                     value={simParams.volumComandat}
-                    onChange={(e) => setSimParams({ ...simParams, volumComandat: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => setSimParams({ ...simParams, volumComandat: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
@@ -242,7 +245,7 @@ const AIForecastSection = () => {
                   <Input
                     type="number"
                     value={simParams.pretTransport}
-                    onChange={(e) => setSimParams({ ...simParams, pretTransport: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => setSimParams({ ...simParams, pretTransport: e.target.value })}
                   />
                 </div>
                 <div className="pt-4 border-t space-y-3">

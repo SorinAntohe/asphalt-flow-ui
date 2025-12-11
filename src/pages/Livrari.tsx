@@ -59,13 +59,13 @@ const Livrari = () => {
     tip_masina: "",
     nume_sofer: "",
     produs: "",
-    temperatura: 0,
-    masa_brut: 0,
-    masa_net: 0,
-    tara: 0,
-    pret_produs_total: 0,
-    pret_transport_total: 0,
-    pret_total: 0,
+    temperatura: "",
+    masa_brut: "",
+    masa_net: "",
+    tara: "",
+    pret_produs_total: "",
+    pret_transport_total: "",
+    pret_total: "",
     observatii: ""
   });
 
@@ -211,9 +211,9 @@ const Livrari = () => {
       ...form, 
       cod: value,
       produs: "",
-      pret_produs_total: 0, 
-      pret_transport_total: 0, 
-      pret_total: 0 
+      pret_produs_total: "", 
+      pret_transport_total: "", 
+      pret_total: "" 
     });
     setUnitPrices({
       pret_fara_tva: 0,
@@ -250,16 +250,19 @@ const Livrari = () => {
 
   // Calculate masa_net when masa_brut or tara changes
   useEffect(() => {
-    const masa_net = form.masa_brut - form.tara;
-    setForm(prev => ({ ...prev, masa_net }));
+    const masaBrutNum = parseFloat(form.masa_brut) || 0;
+    const taraNum = parseFloat(form.tara) || 0;
+    const masa_net = masaBrutNum - taraNum;
+    setForm(prev => ({ ...prev, masa_net: masa_net.toString() }));
   }, [form.masa_brut, form.tara]);
 
   // Calculate prices when masa_net or unit prices change
   useEffect(() => {
-    console.log("Price calculation triggered - masa_net:", form.masa_net, "unitPrices:", unitPrices);
-    if (form.masa_net > 0 && (unitPrices.pret_fara_tva > 0 || unitPrices.pret_transport > 0)) {
+    const masaNetNum = parseFloat(form.masa_net) || 0;
+    console.log("Price calculation triggered - masa_net:", masaNetNum, "unitPrices:", unitPrices);
+    if (masaNetNum > 0 && (unitPrices.pret_fara_tva > 0 || unitPrices.pret_transport > 0)) {
       // Convert kg to tons for price calculation
-      const masa_net_tone = form.masa_net / 1000;
+      const masa_net_tone = masaNetNum / 1000;
       const pret_produs_total = unitPrices.pret_fara_tva * masa_net_tone;
       const pret_transport_total = unitPrices.pret_transport * masa_net_tone;
       const pret_total = pret_produs_total + pret_transport_total;
@@ -268,9 +271,9 @@ const Livrari = () => {
       
       setForm(prev => ({
         ...prev,
-        pret_produs_total,
-        pret_transport_total,
-        pret_total
+        pret_produs_total: pret_produs_total.toString(),
+        pret_transport_total: pret_transport_total.toString(),
+        pret_total: pret_total.toString()
       }));
     }
   }, [form.masa_net, unitPrices.pret_fara_tva, unitPrices.pret_transport]);
@@ -347,13 +350,13 @@ const Livrari = () => {
       tip_masina: "",
       nume_sofer: "",
       produs: "",
-      temperatura: 0,
-      masa_brut: 0,
-      masa_net: 0,
-      tara: 0,
-      pret_produs_total: 0,
-      pret_transport_total: 0,
-      pret_total: 0,
+      temperatura: "0",
+      masa_brut: "0",
+      masa_net: "0",
+      tara: "0",
+      pret_produs_total: "",
+      pret_transport_total: "",
+      pret_total: "",
       observatii: ""
     });
     setOpenAddEdit(true);
@@ -369,13 +372,13 @@ const Livrari = () => {
       tip_masina: livrare.tip_masina || "",
       nume_sofer: livrare.nume_sofer || "",
       produs: "",
-      temperatura: livrare.temperatura || 0,
-      masa_brut: livrare.masa_brut || 0,
-      masa_net: livrare.masa_net || 0,
-      tara: livrare.tara || 0,
-      pret_produs_total: livrare.pret_produs_total || 0,
-      pret_transport_total: livrare.pret_transport_total || 0,
-      pret_total: livrare.pret_total || 0,
+      temperatura: String(livrare.temperatura ?? "0"),
+      masa_brut: String(livrare.masa_brut ?? "0"),
+      masa_net: String(livrare.masa_net ?? "0"),
+      tara: String(livrare.tara ?? "0"),
+      pret_produs_total: String(livrare.pret_produs_total ?? ""),
+      pret_transport_total: String(livrare.pret_transport_total ?? ""),
+      pret_total: String(livrare.pret_total ?? ""),
       observatii: livrare.observatii || ""
     });
     setOpenAddEdit(true);
@@ -398,15 +401,15 @@ const Livrari = () => {
         const updatePayload = {
           cod: form.cod,
           nr_comanda: form.nr_comanda,
-          temperatura: form.temperatura,
-          tara: form.tara,
-          masa_brut: form.masa_brut,
-          masa_net: form.masa_net,
+          temperatura: parseFloat(form.temperatura) || 0,
+          tara: parseFloat(form.tara) || 0,
+          masa_brut: parseFloat(form.masa_brut) || 0,
+          masa_net: parseFloat(form.masa_net) || 0,
           nr_inmatriculare: form.nr_inmatriculare,
           tip_masina: form.tip_masina,
           nume_sofer: form.nume_sofer,
-          pret_produs_total: form.pret_produs_total.toString(),
-          pret_transport_total: form.pret_transport_total.toString(),
+          pret_produs_total: form.pret_produs_total,
+          pret_transport_total: form.pret_transport_total,
           pret_total: form.pret_total,
           observatii: form.observatii
         };
@@ -438,15 +441,15 @@ const Livrari = () => {
           data: currentDate,
           cod: form.cod,
           nr_comanda: form.nr_comanda,
-          temperatura: form.temperatura,
-          tara: form.tara,
-          masa_brut: form.masa_brut,
-          masa_net: form.masa_net,
+          temperatura: parseFloat(form.temperatura) || 0,
+          tara: parseFloat(form.tara) || 0,
+          masa_brut: parseFloat(form.masa_brut) || 0,
+          masa_net: parseFloat(form.masa_net) || 0,
           nr_inmatriculare: form.nr_inmatriculare,
           tip_masina: form.tip_masina,
           nume_sofer: form.nume_sofer,
-          pret_produs_total: form.pret_produs_total.toString(),
-          pret_transport_total: form.pret_transport_total.toString(),
+          pret_produs_total: form.pret_produs_total,
+          pret_transport_total: form.pret_transport_total,
           pret_total: form.pret_total,
           observatii: form.observatii
         };
@@ -842,7 +845,7 @@ const Livrari = () => {
                     type="number"
                     step="0.1"
                     value={form.temperatura}
-                    onChange={(e) => setForm({ ...form, temperatura: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => setForm({ ...form, temperatura: e.target.value })}
                     className="h-9 text-sm font-mono"
                   />
                 </div>
@@ -853,7 +856,7 @@ const Livrari = () => {
                     type="number"
                     step="0.01"
                     value={form.masa_brut}
-                    onChange={(e) => setForm({ ...form, masa_brut: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => setForm({ ...form, masa_brut: e.target.value })}
                     className="h-9 text-sm font-mono"
                   />
                 </div>
@@ -864,7 +867,7 @@ const Livrari = () => {
                     type="number"
                     step="0.01"
                     value={form.tara}
-                    onChange={(e) => setForm({ ...form, tara: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => setForm({ ...form, tara: e.target.value })}
                     className="h-9 text-sm font-mono"
                   />
                 </div>
