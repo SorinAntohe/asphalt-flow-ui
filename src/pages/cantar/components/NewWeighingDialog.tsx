@@ -173,7 +173,7 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="w-[95vw] max-w-xl max-h-[90vh] overflow-hidden p-0" hideCloseButton>
-        <DialogHeader className="px-5 pt-4 pb-3 border-b">
+        <DialogHeader className="px-5 pt-4 pb-3">
           <DialogTitle className="text-lg">Cântărire Nouă</DialogTitle>
         </DialogHeader>
 
@@ -186,7 +186,6 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
             <div className="px-5 py-4 space-y-5">
               {/* Direction Selection */}
               <div className="space-y-2">
-                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Tip Operațiune</Label>
                 <RadioGroup 
                   value={direction} 
                   onValueChange={(v) => {
@@ -199,20 +198,20 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
                     <RadioGroupItem value="INBOUND" id="inbound" className="peer sr-only" />
                     <Label
                       htmlFor="inbound"
-                      className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card p-4 hover:bg-accent/50 hover:border-accent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground cursor-pointer transition-all"
+                      className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card p-2.5 hover:bg-accent/50 hover:border-accent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground cursor-pointer transition-all"
                     >
-                      <Package className="mb-2 h-6 w-6" />
-                      <span className="font-medium">Recepție</span>
+                      <Package className="mb-1 h-5 w-5" />
+                      <span className="font-medium text-sm">Recepție</span>
                     </Label>
                   </div>
                   <div>
                     <RadioGroupItem value="OUTBOUND" id="outbound" className="peer sr-only" />
                     <Label
                       htmlFor="outbound"
-                      className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card p-4 hover:bg-accent/50 hover:border-accent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground cursor-pointer transition-all"
+                      className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card p-2.5 hover:bg-accent/50 hover:border-accent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground cursor-pointer transition-all"
                     >
-                      <Truck className="mb-2 h-6 w-6" />
-                      <span className="font-medium">Livrare</span>
+                      <Truck className="mb-1 h-5 w-5" />
+                      <span className="font-medium text-sm">Livrare</span>
                     </Label>
                   </div>
                 </RadioGroup>
@@ -297,9 +296,9 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
 
               {/* Inbound-specific fields */}
               {direction === 'INBOUND' && (
-                <div className="space-y-4 rounded-lg border bg-blue-500/5 p-4">
+                <div className="space-y-4 rounded-lg border bg-muted/30 p-4">
                   <h4 className="text-sm font-medium flex items-center gap-2">
-                    <Package className="h-4 w-4 text-blue-500" />
+                    <Package className="h-4 w-4 text-muted-foreground" />
                     Detalii Recepție
                   </h4>
                   
@@ -357,9 +356,9 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
 
               {/* Outbound-specific fields */}
               {direction === 'OUTBOUND' && (
-                <div className="space-y-4 rounded-lg border bg-amber-500/5 p-4">
+                <div className="space-y-4 rounded-lg border bg-muted/30 p-4">
                   <h4 className="text-sm font-medium flex items-center gap-2">
-                    <Truck className="h-4 w-4 text-amber-500" />
+                    <Truck className="h-4 w-4 text-muted-foreground" />
                     Detalii Livrare
                   </h4>
                   
@@ -383,7 +382,7 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
           </ScrollArea>
         )}
 
-        <DialogFooter className="px-5 py-3 border-t flex-col sm:flex-row gap-2">
+        <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
           <Button variant="outline" onClick={handleClose} size="sm" className="w-full sm:w-auto">
             Anulează
           </Button>
