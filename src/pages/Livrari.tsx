@@ -581,7 +581,6 @@ const Livrari = () => {
               { key: 'id', label: 'ID' },
               { key: 'data', label: 'Data' },
               { key: 'cod', label: 'Cod' },
-              { key: 'nr_comanda', label: 'Cod Comandă' },
               { key: 'nr_aviz', label: 'Nr. Aviz' },
               { key: 'nr_inmatriculare', label: 'Nr. Înmatr.' },
               { key: 'tip_masina', label: 'Tip Mașină' },
@@ -690,7 +689,6 @@ const Livrari = () => {
                   <FilterHeader field="id" label="ID" />
                   <FilterHeader field="data" label="Data" />
                   <FilterHeader field="cod" label="Cod" />
-                  <FilterHeader field="nr_comanda" label="Cod Comandă" />
                   <FilterHeader field="nr_aviz" label="Nr. Aviz" />
                   <FilterHeader field="nr_inmatriculare" label="Nr. Înmatriculare" />
                   <FilterHeader field="tip_masina" label="Tip Mașină" />
@@ -708,7 +706,7 @@ const Livrari = () => {
               <TableBody key={`livrari-page-${currentPage}`} className="animate-fade-in">
                 {paginatedData.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={16} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={15} className="text-center py-8 text-muted-foreground">
                       Nu există livrări înregistrate
                     </TableCell>
                   </TableRow>
@@ -722,7 +720,6 @@ const Livrari = () => {
                       <TableCell className="py-1 text-xs font-medium">{livrare.id}</TableCell>
                       <TableCell className="py-1 text-xs">{formatDate(livrare.data)}</TableCell>
                       <TableCell className="py-1 text-xs">{livrare.cod || "-"}</TableCell>
-                      <TableCell className="py-1 text-xs">{livrare.nr_comanda || "-"}</TableCell>
                       <TableCell className="py-1 text-xs">{livrare.nr_aviz || "-"}</TableCell>
                       <TableCell className="py-1 text-xs">{livrare.nr_inmatriculare || "-"}</TableCell>
                       <TableCell className="py-1 text-xs">{livrare.tip_masina || "-"}</TableCell>
@@ -802,7 +799,7 @@ const Livrari = () => {
             {/* Identificare */}
             <div className="space-y-2">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Identificare</p>
-              <div className="grid grid-cols-2 gap-3 p-3 rounded-lg border bg-card">
+              <div className="p-3 rounded-lg border bg-card">
                 <div className="space-y-1">
                   <Label htmlFor="cod" className="text-xs">Cod</Label>
                   <FilterableSelect
@@ -813,16 +810,6 @@ const Livrari = () => {
                     placeholder="Cod"
                     searchPlaceholder="Caută..."
                     emptyText="Nu s-au găsit coduri."
-                    className="h-9 text-sm"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="nr_comanda" className="text-xs">Cod Comandă</Label>
-                  <Input
-                    id="nr_comanda"
-                    value={form.nr_comanda}
-                    onChange={(e) => setForm({ ...form, nr_comanda: e.target.value })}
-                    placeholder="Cod comandă"
                     className="h-9 text-sm"
                   />
                 </div>
@@ -1057,14 +1044,10 @@ const Livrari = () => {
                   <p className="font-medium">{formatDate(viewingDetails.data)}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <Label className="text-muted-foreground">Cod</Label>
                   <p className="font-medium">{viewingDetails.cod || "-"}</p>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Cod Comandă</Label>
-                  <p className="font-medium">{viewingDetails.nr_comanda || "-"}</p>
                 </div>
                 <div className="space-y-1">
                   <Label className="text-muted-foreground">Nr. Aviz</Label>
