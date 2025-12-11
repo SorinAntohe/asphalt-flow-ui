@@ -245,11 +245,11 @@ export function ActiveWeighPanel({
         )}
 
         {/* Empty State */}
-        {!session && !nrAuto && (
+        {!session && (
           <div className="flex-1 flex items-center justify-center min-h-[100px]">
             <div className="text-center text-muted-foreground">
               <Scale className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-2 sm:mb-3 opacity-30" />
-              <p className="text-xs sm:text-sm">Introduceți Nr. Auto pentru a începe</p>
+              <p className="text-xs sm:text-sm">Vă rugăm selectați un element din coadă</p>
             </div>
           </div>
         )}
