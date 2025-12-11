@@ -185,7 +185,6 @@ export default function ConsolaCantarire() {
       const sofer = Array.isArray(updatedSession.createdBy) ? updatedSession.createdBy[0] : (updatedSession.createdBy || '');
       const brut = updatedSession.masaBrut;
       const tara = updatedSession.tara;
-      const net = brut - tara;
       const umiditate = updatedSession.procentUmiditate ?? 0;
       const nrAvizProvizoriu = updatedSession.nrAvizProvizoriu || '';
       const nrAvizIntrare = updatedSession.nrAvizIntrare || '';
@@ -194,7 +193,7 @@ export default function ConsolaCantarire() {
       
       try {
         const response = await fetch(
-          `http://192.168.1.23:8002/gestionare/cantar/adauga/receptie/${encodeURIComponent(cod)}/${encodeURIComponent(sofer)}/${encodeURIComponent(nrAuto)}/${brut}/${net}/${tara}/${umiditate}/${encodeURIComponent(nrAvizProvizoriu)}/${encodeURIComponent(nrAvizIntrare)}/${encodeURIComponent(nrFactura)}/${encodeURIComponent(observatii)}`,
+          `http://192.168.1.23:8002/gestionare/cantar/adauga/receptie/${encodeURIComponent(cod)}/${encodeURIComponent(sofer)}/${encodeURIComponent(nrAuto)}/${brut}/${tara}/${umiditate}/${encodeURIComponent(nrAvizProvizoriu)}/${encodeURIComponent(nrAvizIntrare)}/${encodeURIComponent(nrFactura)}/${encodeURIComponent(observatii)}`,
           { method: 'POST' }
         );
         
