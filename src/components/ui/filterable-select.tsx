@@ -92,7 +92,7 @@ export function FilterableSelect({
             className="h-9 text-sm"
           />
           <CommandList className="max-h-[200px] overflow-y-auto overscroll-contain" onWheel={(e) => e.stopPropagation()}>
-            <CommandEmpty className="py-3 text-sm">{emptyText}</CommandEmpty>
+            <CommandEmpty className="py-6 text-sm flex items-center justify-center min-h-[100px]">{emptyText}</CommandEmpty>
             <CommandGroup className="p-1">
               {filteredOptions.map((option) => (
                 <CommandItem
