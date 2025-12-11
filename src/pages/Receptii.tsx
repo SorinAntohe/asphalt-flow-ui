@@ -868,202 +868,179 @@ export default function Receptii() {
 
       {/* Add/Edit Dialog */}
       <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
-        <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto p-0">
-          <DialogHeader className="px-6 pt-6 pb-4 border-b bg-muted/30">
-            <DialogTitle className="text-lg font-semibold flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Package className="h-4 w-4 text-primary" />
+        <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto p-0">
+          <DialogHeader className="px-5 pt-5 pb-3 border-b bg-muted/30">
+            <DialogTitle className="text-base font-semibold flex items-center gap-2">
+              <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Package className="h-3.5 w-3.5 text-primary" />
               </div>
               {editing ? "Editează Recepția" : "Adaugă Recepție Nouă"}
             </DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground">
-              {editing ? "Modifică datele recepției selectate" : "Completează informațiile pentru noua recepție de materiale"}
+            <DialogDescription className="text-xs text-muted-foreground">
+              {editing ? "Modifică datele recepției selectate" : "Completează informațiile pentru noua recepție"}
             </DialogDescription>
           </DialogHeader>
           
-          <div className="px-6 py-4 space-y-6">
-            {/* Secțiunea 1: Identificare Comandă */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <div className="h-6 w-6 rounded-md bg-blue-500/10 flex items-center justify-center">
-                  <span className="text-xs font-bold text-blue-600">1</span>
-                </div>
-                Identificare Comandă
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 rounded-lg border bg-card">
-                <div className="space-y-1.5">
-                  <Label htmlFor="cod" className="text-xs font-medium">Cod Comandă *</Label>
+          <div className="px-5 py-4 space-y-4">
+            {/* Identificare Comandă */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Identificare Comandă</p>
+              <div className="grid grid-cols-3 gap-3 p-3 rounded-lg border bg-card">
+                <div className="space-y-1">
+                  <Label htmlFor="cod" className="text-xs">Cod *</Label>
                   <FilterableSelect
                     id="cod"
                     value={form.cod}
                     onValueChange={(value) => setForm(prev => ({ ...prev, cod: value }))}
                     options={availableCodes.map(code => ({ value: code, label: code }))}
-                    placeholder="Selectează codul"
-                    searchPlaceholder="Caută cod..."
-                    className={`h-10 ${formErrors.cod ? "border-destructive" : ""}`}
+                    placeholder="Cod"
+                    searchPlaceholder="Caută..."
+                    className={`h-9 text-sm ${formErrors.cod ? "border-destructive" : ""}`}
                   />
-                  {formErrors.cod && <p className="text-xs text-destructive">{formErrors.cod}</p>}
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="furnizor" className="text-xs font-medium">Furnizor</Label>
-                  <Input id="furnizor" value={form.furnizor} disabled className="h-10 bg-muted/50" />
+                <div className="space-y-1">
+                  <Label htmlFor="furnizor" className="text-xs">Furnizor</Label>
+                  <Input id="furnizor" value={form.furnizor} disabled className="h-9 text-sm bg-muted/50" />
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="material" className="text-xs font-medium">Material</Label>
-                  <Input id="material" value={form.material} disabled className="h-10 bg-muted/50" />
+                <div className="space-y-1">
+                  <Label htmlFor="material" className="text-xs">Material</Label>
+                  <Input id="material" value={form.material} disabled className="h-9 text-sm bg-muted/50" />
                 </div>
               </div>
             </div>
 
-            {/* Secțiunea 2: Transport */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <div className="h-6 w-6 rounded-md bg-green-500/10 flex items-center justify-center">
-                  <span className="text-xs font-bold text-green-600">2</span>
-                </div>
-                Informații Transport
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 rounded-lg border bg-card">
-                <div className="space-y-1.5">
-                  <Label htmlFor="nume_sofer" className="text-xs font-medium">Șofer *</Label>
+            {/* Transport */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Transport</p>
+              <div className="grid grid-cols-3 gap-3 p-3 rounded-lg border bg-card">
+                <div className="space-y-1">
+                  <Label htmlFor="nume_sofer" className="text-xs">Șofer *</Label>
                   <FilterableSelect
                     id="nume_sofer"
                     value={form.nume_sofer}
                     onValueChange={(value) => setForm({ ...form, nume_sofer: value })}
                     options={availableDrivers.map(driver => ({ value: driver, label: driver }))}
-                    placeholder="Selectează șofer"
-                    searchPlaceholder="Caută șofer..."
-                    className={`h-10 ${formErrors.nume_sofer ? "border-destructive" : ""}`}
+                    placeholder="Șofer"
+                    searchPlaceholder="Caută..."
+                    className={`h-9 text-sm ${formErrors.nume_sofer ? "border-destructive" : ""}`}
                   />
-                  {formErrors.nume_sofer && <p className="text-xs text-destructive">{formErrors.nume_sofer}</p>}
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="nr_inmatriculare" className="text-xs font-medium">Nr. Înmatriculare *</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="nr_inmatriculare" className="text-xs">Nr. Înmatr. *</Label>
                   <FilterableSelect
                     id="nr_inmatriculare"
                     value={form.nr_inmatriculare}
                     onValueChange={(value) => setForm({ ...form, nr_inmatriculare: value })}
                     options={availableRegistrationNumbers.map(regNum => ({ value: regNum, label: regNum }))}
-                    placeholder="Selectează nr. auto"
+                    placeholder="Nr. auto"
                     searchPlaceholder="Caută..."
-                    className={`h-10 ${formErrors.nr_inmatriculare ? "border-destructive" : ""}`}
+                    className={`h-9 text-sm ${formErrors.nr_inmatriculare ? "border-destructive" : ""}`}
                   />
-                  {formErrors.nr_inmatriculare && <p className="text-xs text-destructive">{formErrors.nr_inmatriculare}</p>}
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="tip_masina" className="text-xs font-medium">Tip Mașină</Label>
-                  <Input id="tip_masina" value={form.tip_masina} disabled className="h-10 bg-muted/50" />
+                <div className="space-y-1">
+                  <Label htmlFor="tip_masina" className="text-xs">Tip Mașină</Label>
+                  <Input id="tip_masina" value={form.tip_masina} disabled className="h-9 text-sm bg-muted/50" />
                 </div>
               </div>
             </div>
 
-            {/* Secțiunea 3: Documente */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <div className="h-6 w-6 rounded-md bg-orange-500/10 flex items-center justify-center">
-                  <span className="text-xs font-bold text-orange-600">3</span>
-                </div>
-                Documente
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-lg border bg-card">
-                <div className="space-y-1.5">
-                  <Label htmlFor="nr_aviz_provizoriu" className="text-xs font-medium">Nr. Aviz Provizoriu</Label>
+            {/* Documente */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Documente</p>
+              <div className="grid grid-cols-3 gap-3 p-3 rounded-lg border bg-card">
+                <div className="space-y-1">
+                  <Label htmlFor="nr_aviz_provizoriu" className="text-xs">Nr. Aviz Prov.</Label>
                   <Input
                     id="nr_aviz_provizoriu"
                     value={form.nr_aviz_provizoriu}
                     onChange={(e) => setForm({ ...form, nr_aviz_provizoriu: e.target.value })}
-                    className="h-10"
+                    className="h-9 text-sm"
                     placeholder="Opțional"
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="nr_aviz_intrare" className="text-xs font-medium">Nr. Aviz Intrare</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="nr_aviz_intrare" className="text-xs">Nr. Aviz Intr.</Label>
                   <Input
                     id="nr_aviz_intrare"
                     value={form.nr_aviz_intrare}
                     onChange={(e) => setForm({ ...form, nr_aviz_intrare: e.target.value })}
-                    className="h-10"
+                    className="h-9 text-sm"
                     placeholder="Opțional"
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="nr_factura" className="text-xs font-medium">Nr. Factură</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="nr_factura" className="text-xs">Nr. Factură</Label>
                   <Input
                     id="nr_factura"
                     value={form.nr_factura}
                     onChange={(e) => setForm({ ...form, nr_factura: e.target.value })}
-                    className="h-10"
+                    className="h-9 text-sm"
                     placeholder="Opțional"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Secțiunea 4: Cantități */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <div className="h-6 w-6 rounded-md bg-purple-500/10 flex items-center justify-center">
-                  <span className="text-xs font-bold text-purple-600">4</span>
-                </div>
-                Cantități & Măsurători
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 p-4 rounded-lg border bg-card">
-                <div className="space-y-1.5">
-                  <Label htmlFor="cantitate_livrata" className="text-xs font-medium">Cant. Livrată</Label>
+            {/* Cantități */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Cantități & Măsurători</p>
+              <div className="grid grid-cols-3 gap-3 p-3 rounded-lg border bg-card">
+                <div className="space-y-1">
+                  <Label htmlFor="cantitate_livrata" className="text-xs">Cant. Livrată</Label>
                   <Input
                     id="cantitate_livrata"
                     type="number"
                     step="0.01"
                     value={form.cantitate_livrata}
                     disabled
-                    className="h-10 bg-muted/50 font-mono"
+                    className="h-9 text-sm bg-muted/50 font-mono"
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="cantitate_receptionata" className="text-xs font-medium">Cant. Recepț. *</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="cantitate_receptionata" className="text-xs">Cant. Recepț. *</Label>
                   <Input
                     id="cantitate_receptionata"
                     type="number"
                     step="0.01"
                     value={form.cantitate_receptionata}
                     onChange={(e) => setForm(prev => ({ ...prev, cantitate_receptionata: parseFloat(e.target.value) || 0 }))}
-                    className={`h-10 font-mono ${formErrors.cantitate_receptionata ? "border-destructive" : ""}`}
+                    className={`h-9 text-sm font-mono ${formErrors.cantitate_receptionata ? "border-destructive" : ""}`}
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="tara" className="text-xs font-medium">Tara *</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="tara" className="text-xs">Tara *</Label>
                   <Input
                     id="tara"
                     type="number"
                     step="0.01"
                     value={form.tara}
                     onChange={(e) => setForm(prev => ({ ...prev, tara: parseFloat(e.target.value) || 0 }))}
-                    className={`h-10 font-mono ${formErrors.tara ? "border-destructive" : ""}`}
+                    className={`h-9 text-sm font-mono ${formErrors.tara ? "border-destructive" : ""}`}
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="masa_net" className="text-xs font-medium">Masa Net</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="masa_net" className="text-xs">Masa Net</Label>
                   <Input
                     id="masa_net"
                     type="number"
                     step="0.01"
                     value={form.masa_net}
                     disabled
-                    className="h-10 bg-muted/50 font-mono"
+                    className="h-9 text-sm bg-muted/50 font-mono"
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="diferenta" className="text-xs font-medium">Diferență</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="diferenta" className="text-xs">Diferență</Label>
                   <Input 
                     id="diferenta" 
                     type="number" 
                     value={form.diferenta} 
                     disabled 
-                    className={`h-10 bg-muted/50 font-mono ${form.diferenta !== 0 ? 'text-destructive' : ''}`}
+                    className={`h-9 text-sm bg-muted/50 font-mono ${form.diferenta !== 0 ? 'text-destructive' : ''}`}
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="umiditate" className="text-xs font-medium">Umiditate %</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="umiditate" className="text-xs">Umiditate %</Label>
                   <Input
                     id="umiditate"
                     type="number"
@@ -1072,79 +1049,69 @@ export default function Receptii() {
                     max="100"
                     value={form.umiditate}
                     onChange={(e) => setForm(prev => ({ ...prev, umiditate: parseFloat(e.target.value) || 0 }))}
-                    className={`h-10 font-mono ${formErrors.umiditate ? "border-destructive" : ""}`}
+                    className={`h-9 text-sm font-mono ${formErrors.umiditate ? "border-destructive" : ""}`}
                   />
                 </div>
               </div>
             </div>
 
-            {/* Secțiunea 5: Prețuri */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <div className="h-6 w-6 rounded-md bg-emerald-500/10 flex items-center justify-center">
-                  <span className="text-xs font-bold text-emerald-600">5</span>
-                </div>
-                Prețuri (RON)
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-lg border bg-card">
-                <div className="space-y-1.5">
-                  <Label htmlFor="pret_material_total" className="text-xs font-medium">Preț Material</Label>
+            {/* Prețuri */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Prețuri (RON)</p>
+              <div className="grid grid-cols-3 gap-3 p-3 rounded-lg border bg-card">
+                <div className="space-y-1">
+                  <Label htmlFor="pret_material_total" className="text-xs">Preț Material</Label>
                   <Input 
                     id="pret_material_total" 
                     type="number" 
                     value={form.pret_material_total} 
                     disabled 
-                    className="h-10 bg-muted/50 font-mono" 
+                    className="h-9 text-sm bg-muted/50 font-mono" 
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="pret_transport_total" className="text-xs font-medium">Preț Transport</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="pret_transport_total" className="text-xs">Preț Transport</Label>
                   <Input 
                     id="pret_transport_total" 
                     type="number" 
                     value={form.pret_transport_total} 
                     disabled 
-                    className="h-10 bg-muted/50 font-mono" 
+                    className="h-9 text-sm bg-muted/50 font-mono" 
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="pret_total" className="text-xs font-medium text-primary">Preț Total</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="pret_total" className="text-xs text-primary font-medium">Preț Total</Label>
                   <Input 
                     id="pret_total" 
                     type="number" 
                     value={form.pret_total} 
                     disabled 
-                    className="h-10 bg-primary/5 font-mono font-semibold border-primary/20" 
+                    className="h-9 text-sm bg-primary/5 font-mono font-semibold border-primary/20" 
                   />
                 </div>
               </div>
             </div>
 
-            {/* Secțiunea 6: Observații */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <div className="h-6 w-6 rounded-md bg-slate-500/10 flex items-center justify-center">
-                  <span className="text-xs font-bold text-slate-600">6</span>
-                </div>
-                Observații
-              </div>
-              <div className="p-4 rounded-lg border bg-card">
+            {/* Observații */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Observații</p>
+              <div className="p-3 rounded-lg border bg-card">
                 <Textarea
                   id="observatii"
                   value={form.observatii}
                   onChange={(e) => setForm({ ...form, observatii: e.target.value })}
-                  rows={3}
-                  placeholder="Adaugă observații suplimentare..."
-                  className="resize-none"
+                  rows={2}
+                  placeholder="Observații suplimentare..."
+                  className="resize-none text-sm"
                 />
               </div>
             </div>
           </div>
 
-          <DialogFooter className="px-6 py-4 border-t bg-muted/30 flex-col sm:flex-row gap-2">
-            <Button variant="outline" onClick={() => setOpenAddEdit(false)}>Anulează</Button>
-            <Button onClick={handleSave} className="gap-2">
-              {editing ? "Salvează Modificările" : "Adaugă Recepția"}
+          <DialogFooter className="px-5 py-3 border-t bg-muted/30 flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => setOpenAddEdit(false)}>Anulează</Button>
+            <Button size="sm" onClick={handleSave}>
+              {editing ? "Salvează" : "Adaugă"}
             </Button>
           </DialogFooter>
         </DialogContent>
