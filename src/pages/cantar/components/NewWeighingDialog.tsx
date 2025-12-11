@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { FilterableSelect } from "@/components/ui/filterable-select";
 import { Loader2, Package, Truck, Plus } from "lucide-react";
@@ -60,6 +61,11 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
   const [selectedSofer, setSelectedSofer] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  
+  // Inbound-specific fields
+  const [nrAvizProvizoriu, setNrAvizProvizoriu] = useState("");
+  const [nrAvizIntrare, setNrAvizIntrare] = useState("");
+  const [nrFactura, setNrFactura] = useState("");
   
   // Data
   const [comenziMateriePrima, setComenziMateriePrima] = useState<ComandaMateriePrima[]>([]);
@@ -147,6 +153,9 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
     setSelectedOrder("");
     setSelectedVehicle("");
     setSelectedSofer("");
+    setNrAvizProvizoriu("");
+    setNrAvizIntrare("");
+    setNrFactura("");
     setDirection("INBOUND");
     setIsSaving(false);
     onOpenChange(false);
@@ -156,6 +165,9 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
     setSelectedOrder("");
     setSelectedVehicle("");
     setSelectedSofer("");
+    setNrAvizProvizoriu("");
+    setNrAvizIntrare("");
+    setNrFactura("");
     setDirection("INBOUND");
     onOpenChange(false);
   };
@@ -280,6 +292,39 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
                 emptyText="Nu există șoferi"
               />
             </div>
+
+            {/* Inbound-specific fields */}
+            {direction === 'INBOUND' && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="nrAvizProvizoriu">Nr. Aviz Provizoriu</Label>
+                  <Input
+                    id="nrAvizProvizoriu"
+                    value={nrAvizProvizoriu}
+                    onChange={(e) => setNrAvizProvizoriu(e.target.value)}
+                    placeholder="Introduceți nr. aviz provizoriu"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="nrAvizIntrare">Nr. Aviz Intrare</Label>
+                  <Input
+                    id="nrAvizIntrare"
+                    value={nrAvizIntrare}
+                    onChange={(e) => setNrAvizIntrare(e.target.value)}
+                    placeholder="Introduceți nr. aviz intrare"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="nrFactura">Nr. Factură</Label>
+                  <Input
+                    id="nrFactura"
+                    value={nrFactura}
+                    onChange={(e) => setNrFactura(e.target.value)}
+                    placeholder="Introduceți nr. factură"
+                  />
+                </div>
+              </>
+            )}
           </div>
         )}
 
