@@ -14,94 +14,11 @@ import { NewWeighingDialog } from "./cantar/components/NewWeighingDialog";
 import { WeighSession, EligibleRow, Direction } from "./cantar/types";
 import { toast } from "@/hooks/use-toast";
 
-// Mock data
-
-const mockQueue1: WeighSession[] = [
-  {
-    id: "1",
-    sessionCode: "SC-001",
-    direction: "INBOUND",
-    poNo: "",
-    rowId: "REC-101",
-    nrAuto: "",
-    step: "1/2",
-    createdAt: new Date(Date.now() - 15 * 60000).toISOString(),
-    updatedAt: new Date().toISOString(),
-    createdBy: "",
-    plantId: "1",
-  },
-  {
-    id: "2",
-    sessionCode: "SC-002",
-    direction: "OUTBOUND",
-    orderNo: "",
-    rowId: "LIV-202",
-    nrAuto: "",
-    step: "1/2",
-    createdAt: new Date(Date.now() - 25 * 60000).toISOString(),
-    updatedAt: new Date().toISOString(),
-    createdBy: "",
-    plantId: "1",
-    financeApproved: true,
-  },
-  {
-    id: "3",
-    sessionCode: "SC-003",
-    direction: "INBOUND",
-    poNo: "",
-    rowId: "REC-102",
-    nrAuto: "",
-    step: "1/2",
-    createdAt: new Date(Date.now() - 5 * 60000).toISOString(),
-    updatedAt: new Date().toISOString(),
-    createdBy: "",
-    plantId: "1",
-  },
-];
-
-const mockQueue2: WeighSession[] = [
-  {
-    id: "4",
-    sessionCode: "SC-004",
-    direction: "OUTBOUND",
-    orderNo: "",
-    rowId: "LIV-198",
-    nrAuto: "",
-    step: "2/2",
-    tara: 12500,
-    createdAt: new Date(Date.now() - 45 * 60000).toISOString(),
-    updatedAt: new Date().toISOString(),
-    createdBy: "",
-    plantId: "1",
-    financeApproved: true,
-  },
-  {
-    id: "5",
-    sessionCode: "SC-005",
-    direction: "INBOUND",
-    poNo: "",
-    rowId: "REC-103",
-    nrAuto: "",
-    step: "2/2",
-    masaBrut: 38000,
-    createdAt: new Date(Date.now() - 60 * 60000).toISOString(),
-    updatedAt: new Date().toISOString(),
-    createdBy: "",
-    plantId: "1",
-  },
-];
-
-const mockEligibleRows: EligibleRow[] = [
-  { id: "REC-201", produs: "Bitum 50/70", cantitate: 25000, hasTara: false, hasBrut: false, nrAuto: "", isOnScale: false },
-  { id: "REC-202", produs: "Filler Calcar", cantitate: 18000, hasTara: true, hasBrut: false, nrAuto: "B 999 ZZZ", isOnScale: true, onScaleSessionCode: "SC-099" },
-  { id: "REC-203", produs: "Agregate 0/4", cantitate: 32000, hasTara: false, hasBrut: false, nrAuto: "", isOnScale: false },
-];
-
 export default function ConsolaCantarire() {
   const [selectedPlant, setSelectedPlant] = useState("1");
   
-  const [queue1, setQueue1] = useState<WeighSession[]>(mockQueue1);
-  const [queue2, setQueue2] = useState<WeighSession[]>(mockQueue2);
+  const [queue1, setQueue1] = useState<WeighSession[]>([]);
+  const [queue2, setQueue2] = useState<WeighSession[]>([]);
   const [activeSession, setActiveSession] = useState<WeighSession | null>(null);
   const [nrAuto, setNrAuto] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -156,39 +73,6 @@ export default function ConsolaCantarire() {
         title: "Sesiune reluată",
         description: `Ați reluat sesiunea ${existingSession.sessionCode}`
       });
-    } else {
-      // Check for multiple eligible rows (mock)
-      if (Math.random() > 0.5) {
-        setEligibleRows(mockEligibleRows);
-        setPendingSessionData({
-          direction: Math.random() > 0.5 ? 'INBOUND' : 'OUTBOUND',
-          nrAuto: nrAuto,
-          plantId: selectedPlant,
-        });
-        setRowPickerOpen(true);
-      } else {
-        // Create new session directly
-        const newSession: WeighSession = {
-          id: `new-${Date.now()}`,
-          sessionCode: `SC-${String(Date.now()).slice(-3)}`,
-          direction: Math.random() > 0.5 ? 'INBOUND' : 'OUTBOUND',
-          poNo: `PO-2024-${String(Date.now()).slice(-3)}`,
-          orderNo: `ORD-2024-${String(Date.now()).slice(-3)}`,
-          rowId: `ROW-${String(Date.now()).slice(-3)}`,
-          nrAuto: nrAuto,
-          step: '1/2',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          createdBy: "Current User",
-          plantId: selectedPlant,
-          financeApproved: true,
-        };
-        setActiveSession(newSession);
-        toast({
-          title: "Sesiune creată",
-          description: `Cod sesiune: ${newSession.sessionCode}`
-        });
-      }
     }
     
     setIsLoading(false);
