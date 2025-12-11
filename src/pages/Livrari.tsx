@@ -539,7 +539,7 @@ const Livrari = () => {
             <ArrowUpDown className="ml-2 h-3 w-3" />
           </div>
         </PopoverTrigger>
-        <PopoverContent className="w-56 p-2">
+        <PopoverContent className="w-56 p-2" onPointerDownOutside={(e) => e.preventDefault()} onInteractOutside={(e) => e.preventDefault()}>
           <div className="space-y-2">
             <Input
               value={filters[field]}
