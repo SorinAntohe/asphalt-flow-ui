@@ -1464,58 +1464,58 @@ const OferteContracte = () => {
 
       {/* Add/Edit Dialog */}
       <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
+        <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+          <DialogHeader className="px-5 pt-4 pb-2">
+            <DialogTitle className="text-base font-semibold">
               {editing 
                 ? `Editează ${editing.tip === "oferta" ? "Ofertă" : "Contract"}` 
                 : `Adaugă ${activeTab === "oferte" ? "Ofertă" : "Contract"} ${activeTab === "oferte" ? "Nouă" : "Nou"}`
               }
             </DialogTitle>
-            <DialogDescription>Completează informațiile necesare.</DialogDescription>
+            <DialogDescription className="text-xs text-muted-foreground">Completează informațiile necesare.</DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Client *</Label>
+          <div className="px-5 py-3 space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label className="text-xs">Client *</Label>
                 <Select value={form.client} onValueChange={(v) => setForm({ ...form, client: v })}>
-                  <SelectTrigger><SelectValue placeholder="Selectează client" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Selectează client" /></SelectTrigger>
                   <SelectContent className="z-[200] pointer-events-auto">
                     {clients.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label>Proiect/Șantier</Label>
-                <Input placeholder="Denumire proiect" value={form.proiect} onChange={(e) => setForm({ ...form, proiect: e.target.value })} />
+              <div className="space-y-1">
+                <Label className="text-xs">Proiect/Șantier</Label>
+                <Input placeholder="Denumire proiect" value={form.proiect} onChange={(e) => setForm({ ...form, proiect: e.target.value })} className="h-9 text-sm" />
               </div>
             </div>
 
             {/* Multiple Products Section */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className="text-base font-medium">Produse *</Label>
-                <Button type="button" variant="outline" size="sm" onClick={handleAddProdus}>
-                  <Plus className="w-4 h-4 mr-1" />Adaugă produs
+                <Label className="text-xs font-medium">Produse *</Label>
+                <Button type="button" variant="outline" size="sm" onClick={handleAddProdus} className="h-7 text-xs">
+                  <Plus className="w-3 h-3 mr-1" />Adaugă produs
                 </Button>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-md border bg-muted/30 p-2 space-y-2 max-h-[150px] overflow-y-auto">
                 {form.produse.map((item, index) => (
-                  <div key={index} className="flex gap-2 items-end p-3 border rounded-lg bg-muted/30">
-                    <div className="flex-1 space-y-1">
+                  <div key={index} className="flex gap-2 items-center bg-background rounded-md p-2 border">
+                    <div className="flex-1 space-y-0.5">
                       <Label className="text-xs">Produs</Label>
                       <Select value={item.produs} onValueChange={(v) => handleProdusChange(index, "produs", v)}>
-                        <SelectTrigger className="h-9"><SelectValue placeholder="Selectează" /></SelectTrigger>
+                        <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Selectează" /></SelectTrigger>
                         <SelectContent className="z-[200] pointer-events-auto">
                           {produse.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="w-28 space-y-1">
+                    <div className="w-24 space-y-0.5">
                       <Label className="text-xs">Preț (RON)</Label>
                       <Input 
                         type="number" 
-                        className="h-9"
+                        className="h-8 text-xs"
                         value={item.pret} 
                         onChange={(e) => handleProdusChange(index, "pret", Number(e.target.value))} 
                       />
@@ -1525,10 +1525,10 @@ const OferteContracte = () => {
                         type="button" 
                         variant="ghost" 
                         size="icon" 
-                        className="h-9 w-9 text-destructive hover:text-destructive"
+                        className="h-8 w-8 text-destructive hover:text-destructive shrink-0"
                         onClick={() => handleRemoveProdus(index)}
                       >
-                        <X className="w-4 h-4" />
+                        <X className="w-3.5 h-3.5" />
                       </Button>
                     )}
                   </div>
@@ -1537,8 +1537,8 @@ const OferteContracte = () => {
             </div>
 
             {/* Transport Pricing Section */}
-            <div className="space-y-3 p-3 border rounded-lg bg-muted/30">
-              <Label className="text-base font-medium">Preț Transport</Label>
+            <div className="space-y-2 p-2 border rounded-lg bg-muted/30">
+              <Label className="text-xs font-medium">Preț Transport</Label>
               <Select 
                 value={form.transport.tipTransport} 
                 onValueChange={(v: TransportPricing["tipTransport"]) => setForm({
@@ -1551,7 +1551,7 @@ const OferteContracte = () => {
                   }
                 })}
               >
-                <SelectTrigger className="h-10">
+                <SelectTrigger className="h-9 text-sm">
                   <SelectValue placeholder="Selectează tip transport" />
                 </SelectTrigger>
                 <SelectContent className="z-[200] pointer-events-auto">
@@ -1562,11 +1562,11 @@ const OferteContracte = () => {
               </Select>
               
               {form.transport.tipTransport === "inchiriere" && (
-                <div className="space-y-1 mt-2">
+                <div className="space-y-0.5 mt-2">
                   <Label className="text-xs">Preț chirie transport (RON)</Label>
                   <Input 
                     type="number" 
-                    className="h-9"
+                    className="h-8 text-xs"
                     placeholder="ex: 1500"
                     value={form.transport.pretInchiriere || ""} 
                     onChange={(e) => setForm({ 
@@ -1581,12 +1581,12 @@ const OferteContracte = () => {
               )}
               
               {form.transport.tipTransport === "tona_km" && (
-                <div className="space-y-1 mt-2">
+                <div className="space-y-0.5 mt-2">
                   <Label className="text-xs">Preț tonă/km (RON)</Label>
                   <Input 
                     type="number" 
                     step="0.01"
-                    className="h-9"
+                    className="h-8 text-xs"
                     placeholder="ex: 0.85"
                     value={form.transport.pretTonaKm || ""} 
                     onChange={(e) => setForm({ 
@@ -1601,19 +1601,19 @@ const OferteContracte = () => {
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Valabilitate (max 30 zile)</Label>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label className="text-xs">Valabilitate (max 30 zile)</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
                       className={cn(
-                        "w-full justify-start text-left font-normal h-12",
+                        "w-full justify-start text-left font-normal h-9 text-sm",
                         !form.valabilitate && "text-muted-foreground"
                       )}
                     >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      <CalendarIcon className="mr-2 h-3.5 w-3.5" />
                       {form.valabilitate || "Selectează data"}
                     </Button>
                   </PopoverTrigger>
@@ -1640,22 +1640,23 @@ const OferteContracte = () => {
                   </PopoverContent>
                 </Popover>
               </div>
-              <div className="space-y-2">
-                <Label>Termen plată (zile)</Label>
+              <div className="space-y-1">
+                <Label className="text-xs">Termen plată (zile)</Label>
                 <Input 
                   type="number" 
                   min="1"
                   placeholder="ex: 30"
+                  className="h-9 text-sm"
                   value={form.termenPlata.replace(' zile', '')} 
                   onChange={(e) => setForm({ ...form, termenPlata: e.target.value ? `${e.target.value} zile` : '' })} 
                 />
               </div>
             </div>
             {editing && (
-              <div className="space-y-2">
-                <Label>Status</Label>
+              <div className="space-y-1">
+                <Label className="text-xs">Status</Label>
                 <Select value={form.status} onValueChange={(v: "In curs de aprobare" | "Aprobata" | "Respinsa") => setForm({ ...form, status: v })}>
-                  <SelectTrigger className="h-12">
+                  <SelectTrigger className="h-9 text-sm">
                     <SelectValue placeholder="Selectează status" />
                   </SelectTrigger>
                   <SelectContent className="z-[200] pointer-events-auto">
@@ -1669,18 +1670,18 @@ const OferteContracte = () => {
               </div>
             )}
             {editing?.tip === "contract" && (
-              <div className="space-y-2">
-                <Label>Indexare combustibil</Label>
-                <Input placeholder="ex: Ajustare trimestrială +/- 5%" value={form.indexareCombustibil} onChange={(e) => setForm({ ...form, indexareCombustibil: e.target.value })} />
+              <div className="space-y-1">
+                <Label className="text-xs">Indexare combustibil</Label>
+                <Input placeholder="ex: Ajustare trimestrială +/- 5%" className="h-9 text-sm" value={form.indexareCombustibil} onChange={(e) => setForm({ ...form, indexareCombustibil: e.target.value })} />
               </div>
             )}
 
             {/* Garanție Section */}
-            <div className="space-y-3 p-3 border rounded-lg bg-muted/30">
-              <Label className="text-base font-medium">Garanție</Label>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-xs">Bilet de ordin / Cec (document scanat)</Label>
+            <div className="space-y-2 p-2 border rounded-lg bg-muted/30">
+              <Label className="text-xs font-medium">Garanție</Label>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label className="text-xs">Bilet de ordin / Cec</Label>
                   <input
                     type="file"
                     ref={biletOrdinRef}
@@ -1697,25 +1698,25 @@ const OferteContracte = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full h-12 justify-start"
+                    className="w-full h-9 text-xs justify-start"
                     onClick={() => biletOrdinRef.current?.click()}
                     disabled={isUploadingBiletOrdin}
                   >
                     {isUploadingBiletOrdin ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
                         Se încarcă...
                       </>
                     ) : (
                       <>
-                        <Upload className="mr-2 h-4 w-4" />
-                        {form.garantie.biletOrdin ? form.garantie.biletOrdin.name : "Încarcă document"}
+                        <Upload className="mr-2 h-3.5 w-3.5" />
+                        {form.garantie.biletOrdin ? form.garantie.biletOrdin.name : "Încarcă"}
                       </>
                     )}
                   </Button>
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-xs">Proces verbal predare-primire (document scanat)</Label>
+                <div className="space-y-1">
+                  <Label className="text-xs">Proces verbal predare-primire</Label>
                   <input
                     type="file"
                     ref={procesVerbalRef}
@@ -1732,19 +1733,19 @@ const OferteContracte = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full h-12 justify-start"
+                    className="w-full h-9 text-xs justify-start"
                     onClick={() => procesVerbalRef.current?.click()}
                     disabled={isUploadingProcesVerbal}
                   >
                     {isUploadingProcesVerbal ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
                         Se încarcă...
                       </>
                     ) : (
                       <>
-                        <Upload className="mr-2 h-4 w-4" />
-                        {form.garantie.procesVerbal ? form.garantie.procesVerbal.name : "Încarcă document"}
+                        <Upload className="mr-2 h-3.5 w-3.5" />
+                        {form.garantie.procesVerbal ? form.garantie.procesVerbal.name : "Încarcă"}
                       </>
                     )}
                   </Button>
@@ -1753,26 +1754,27 @@ const OferteContracte = () => {
             </div>
 
             {/* Avans de plată */}
-            <div className="space-y-2">
-              <Label>Avans de plată (RON)</Label>
+            <div className="space-y-1">
+              <Label className="text-xs">Avans de plată (RON)</Label>
               <Input 
                 type="number" 
                 min="0"
                 placeholder="ex: 5000"
+                className="h-9 text-sm"
                 value={form.avansPlata || ""} 
                 onChange={(e) => setForm({ ...form, avansPlata: Number(e.target.value) })} 
               />
             </div>
 
-            <div className="space-y-2">
-              <Label>Observații</Label>
-              <Textarea placeholder="Observații suplimentare..." value={form.observatii} onChange={(e) => setForm({ ...form, observatii: e.target.value })} />
+            <div className="space-y-1">
+              <Label className="text-xs">Observații</Label>
+              <Textarea placeholder="Observații suplimentare..." className="text-sm min-h-[50px]" value={form.observatii} onChange={(e) => setForm({ ...form, observatii: e.target.value })} />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenAddEdit(false)} disabled={isSaving}>Anulează</Button>
-            <Button onClick={handleSave} disabled={isSaving}>
-              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => setOpenAddEdit(false)} disabled={isSaving}>Anulează</Button>
+            <Button size="sm" onClick={handleSave} disabled={isSaving}>
+              {isSaving && <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />}
               {editing ? "Salvează" : "Adaugă"}
             </Button>
           </DialogFooter>
