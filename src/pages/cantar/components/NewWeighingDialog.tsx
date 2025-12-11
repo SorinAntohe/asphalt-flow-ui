@@ -101,18 +101,24 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
 
     setIsSaving(true);
     
+    // Ensure values are strings, not arrays
+    const orderValue = Array.isArray(selectedOrder) ? selectedOrder[0] : selectedOrder;
+    const vehicleValue = Array.isArray(selectedVehicle) ? selectedVehicle[0] : selectedVehicle;
+    const soferValue = Array.isArray(selectedSofer) ? selectedSofer[0] : selectedSofer;
+    
     // Create session data
     const sessionData = {
       direction,
       ...(direction === 'INBOUND' 
-        ? { poNo: selectedOrder }
-        : { orderNo: selectedOrder }
+        ? { poNo: orderValue }
+        : { orderNo: orderValue }
       ),
-      rowId: selectedOrder,
-      nrAuto: selectedVehicle,
-      sofer: selectedSofer
+      rowId: orderValue,
+      nrAuto: vehicleValue,
+      sofer: soferValue
     };
 
+    console.log('Sending session data:', sessionData);
     onSessionCreated(sessionData);
     
     // Reset form
