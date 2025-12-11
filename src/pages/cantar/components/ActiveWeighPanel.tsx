@@ -152,7 +152,7 @@ export function ActiveWeighPanel({
             )}
 
             {/* Weight Summary */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 p-3 sm:p-4 bg-muted/30 rounded-lg">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 p-3 sm:p-4 bg-muted/30 rounded-lg">
               <div className="text-center">
                 <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">TARA</p>
                 <p className="text-sm sm:text-lg font-mono font-medium">
@@ -163,12 +163,6 @@ export function ActiveWeighPanel({
                 <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">BRUT</p>
                 <p className="text-sm sm:text-lg font-mono font-medium">
                   {session.masaBrut ? `${session.masaBrut.toLocaleString('ro-RO')} kg` : '—'}
-                </p>
-              </div>
-              <div className="text-center">
-                <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">NET</p>
-                <p className="text-lg sm:text-2xl font-mono font-bold text-primary">
-                  {masaNet !== null ? `${masaNet.toLocaleString('ro-RO')} kg` : '—'}
                 </p>
               </div>
             </div>
