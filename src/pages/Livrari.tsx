@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Plus, Truck, ArrowUpDown, Pencil, Trash2, FileText, Download, X, Calendar, TrendingUp, Package } from "lucide-react";
+import { Plus, Truck, Pencil, Trash2, FileText, Download, X, Calendar, TrendingUp, Package } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { FilterableSelect } from "@/components/ui/filterable-select";
 import { API_BASE_URL } from "@/lib/api";
@@ -10,18 +10,17 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { TableFilterPopover } from "@/components/ui/table-filter-popover";
 
 interface Livrare {
   id: number;
@@ -530,46 +529,13 @@ const Livrari = () => {
     return { livrariAstazi, valoareTotala, totalLivrari };
   }, [livrari]);
 
-  const FilterHeader = ({ field, label }: { field: keyof typeof filters; label: string }) => (
-    <TableHead className="h-10 text-xs">
-      <Popover modal={true}>
-        <PopoverTrigger asChild>
-          <div className="flex items-center cursor-pointer hover:text-primary">
-            <span>{label}</span>
-            <ArrowUpDown className="ml-2 h-3 w-3" />
-          </div>
-        </PopoverTrigger>
-        <PopoverContent className="w-56 p-2" onPointerDownOutside={(e) => e.preventDefault()} onInteractOutside={(e) => e.preventDefault()}>
-          <div className="space-y-2">
-            <Input
-              value={filters[field]}
-              onChange={(e) => setFilters({ ...filters, [field]: e.target.value })}
-              placeholder={`Caută ${label.toLowerCase()}...`}
-              className="h-7 text-xs"
-            />
-            <div className="flex gap-1">
-              <Button
-                size="sm"
-                variant={sort.field === field && sort.direction === 'asc' ? 'default' : 'outline'}
-                onClick={() => handleSort(field, 'asc')}
-                className="flex-1 h-7 text-xs"
-              >
-                Cresc.
-              </Button>
-              <Button
-                size="sm"
-                variant={sort.field === field && sort.direction === 'desc' ? 'default' : 'outline'}
-                onClick={() => handleSort(field, 'desc')}
-                className="flex-1 h-7 text-xs"
-              >
-                Descresc.
-              </Button>
-            </div>
-          </div>
-        </PopoverContent>
-      </Popover>
-    </TableHead>
-  );
+  const handleFilterChange = useCallback((field: keyof typeof filters) => (value: string) => {
+    setFilters(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  const handleSortChange = useCallback((field: string) => (direction: 'asc' | 'desc') => {
+    handleSort(field, direction);
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -693,21 +659,21 @@ const Livrari = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <FilterHeader field="id" label="ID" />
-                  <FilterHeader field="data" label="Data" />
-                  <FilterHeader field="cod" label="Cod" />
-                  <FilterHeader field="nr_aviz" label="Nr. Aviz" />
-                  <FilterHeader field="nr_inmatriculare" label="Nr. Înmatriculare" />
-                  <FilterHeader field="tip_masina" label="Tip Mașină" />
-                  <FilterHeader field="nume_sofer" label="Nume Șofer" />
-                  <FilterHeader field="temperatura" label="Temperatură" />
-                  <FilterHeader field="masa_brut" label="Masa Brut" />
-                  <FilterHeader field="masa_net" label="Masa Net" />
-                  <FilterHeader field="tara" label="Tara" />
-                  <FilterHeader field="pret_produs_total" label="Preț Produs" />
-                  <FilterHeader field="pret_transport_total" label="Preț Transport" />
-                  <FilterHeader field="pret_total" label="Preț Total" />
-                  <FilterHeader field="observatii" label="Observații" />
+                  <TableFilterPopover field="id" label="ID" filterValue={filters.id} onFilterChange={handleFilterChange("id")} sortField={sort.field} sortDirection={sort.direction} onSort={handleSortChange("id")} />
+                  <TableFilterPopover field="data" label="Data" filterValue={filters.data} onFilterChange={handleFilterChange("data")} sortField={sort.field} sortDirection={sort.direction} onSort={handleSortChange("data")} />
+                  <TableFilterPopover field="cod" label="Cod" filterValue={filters.cod} onFilterChange={handleFilterChange("cod")} sortField={sort.field} sortDirection={sort.direction} onSort={handleSortChange("cod")} />
+                  <TableFilterPopover field="nr_aviz" label="Nr. Aviz" filterValue={filters.nr_aviz} onFilterChange={handleFilterChange("nr_aviz")} sortField={sort.field} sortDirection={sort.direction} onSort={handleSortChange("nr_aviz")} />
+                  <TableFilterPopover field="nr_inmatriculare" label="Nr. Înmatriculare" filterValue={filters.nr_inmatriculare} onFilterChange={handleFilterChange("nr_inmatriculare")} sortField={sort.field} sortDirection={sort.direction} onSort={handleSortChange("nr_inmatriculare")} />
+                  <TableFilterPopover field="tip_masina" label="Tip Mașină" filterValue={filters.tip_masina} onFilterChange={handleFilterChange("tip_masina")} sortField={sort.field} sortDirection={sort.direction} onSort={handleSortChange("tip_masina")} />
+                  <TableFilterPopover field="nume_sofer" label="Nume Șofer" filterValue={filters.nume_sofer} onFilterChange={handleFilterChange("nume_sofer")} sortField={sort.field} sortDirection={sort.direction} onSort={handleSortChange("nume_sofer")} />
+                  <TableFilterPopover field="temperatura" label="Temperatură" filterValue={filters.temperatura} onFilterChange={handleFilterChange("temperatura")} sortField={sort.field} sortDirection={sort.direction} onSort={handleSortChange("temperatura")} />
+                  <TableFilterPopover field="masa_brut" label="Masa Brut" filterValue={filters.masa_brut} onFilterChange={handleFilterChange("masa_brut")} sortField={sort.field} sortDirection={sort.direction} onSort={handleSortChange("masa_brut")} />
+                  <TableFilterPopover field="masa_net" label="Masa Net" filterValue={filters.masa_net} onFilterChange={handleFilterChange("masa_net")} sortField={sort.field} sortDirection={sort.direction} onSort={handleSortChange("masa_net")} />
+                  <TableFilterPopover field="tara" label="Tara" filterValue={filters.tara} onFilterChange={handleFilterChange("tara")} sortField={sort.field} sortDirection={sort.direction} onSort={handleSortChange("tara")} />
+                  <TableFilterPopover field="pret_produs_total" label="Preț Produs" filterValue={filters.pret_produs_total} onFilterChange={handleFilterChange("pret_produs_total")} sortField={sort.field} sortDirection={sort.direction} onSort={handleSortChange("pret_produs_total")} />
+                  <TableFilterPopover field="pret_transport_total" label="Preț Transport" filterValue={filters.pret_transport_total} onFilterChange={handleFilterChange("pret_transport_total")} sortField={sort.field} sortDirection={sort.direction} onSort={handleSortChange("pret_transport_total")} />
+                  <TableFilterPopover field="pret_total" label="Preț Total" filterValue={filters.pret_total} onFilterChange={handleFilterChange("pret_total")} sortField={sort.field} sortDirection={sort.direction} onSort={handleSortChange("pret_total")} />
+                  <TableFilterPopover field="observatii" label="Observații" filterValue={filters.observatii} onFilterChange={handleFilterChange("observatii")} sortField={sort.field} sortDirection={sort.direction} onSort={handleSortChange("observatii")} />
                 </TableRow>
               </TableHeader>
               <TableBody key={`livrari-page-${currentPage}`} className="animate-fade-in">
