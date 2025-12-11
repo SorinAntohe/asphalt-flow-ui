@@ -6,11 +6,11 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { FilterableSelect } from "@/components/ui/filterable-select";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Package, Truck, Plus, FileText, Thermometer, Droplets } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
 import { Direction } from "../types";
-import { Link } from "react-router-dom";
 
 interface NewWeighingDialogProps {
   open: boolean;
@@ -56,6 +56,25 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
   const [coduriComandaProdusFinit, setCoduriComandaProdusFinit] = useState<string[]>([]);
   const [numeSoferi, setNumeSoferi] = useState<string[]>([]);
   const [nrInmatriculare, setNrInmatriculare] = useState<string[]>([]);
+  
+  // Add vehicle dialog state
+  const [addVehicleOpen, setAddVehicleOpen] = useState(false);
+  const [vehicleForm, setVehicleForm] = useState({
+    nrAuto: "",
+    tipMasina: "",
+    tipTransport: "",
+    sarcinaMax: "",
+    tara: ""
+  });
+  const [addingVehicle, setAddingVehicle] = useState(false);
+  
+  // Add driver dialog state
+  const [addDriverOpen, setAddDriverOpen] = useState(false);
+  const [driverForm, setDriverForm] = useState({
+    numeSofer: "",
+    ci: ""
+  });
+  const [addingDriver, setAddingDriver] = useState(false);
 
   // Fetch data on open
   useEffect(() => {
@@ -170,7 +189,109 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
     onOpenChange(false);
   };
 
+  // Handle add vehicle
+  const handleAddVehicle = async () => {
+    if (!vehicleForm.nrAuto || !vehicleForm.tipMasina) {
+      toast({
+        title: "Date incomplete",
+        description: "Completați nr. înmatriculare și tipul mașinii.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setAddingVehicle(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/liste/adauga/masina`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nr_inmatriculare: vehicleForm.nrAuto,
+          tip_masina: vehicleForm.tipMasina,
+          tip_transport: vehicleForm.tipTransport || '',
+          masa_max_admisa: parseInt(vehicleForm.sarcinaMax) || 0,
+          tara: parseInt(vehicleForm.tara) || 0
+        })
+      });
+
+      if (!response.ok) throw new Error('Eroare la adăugare');
+      
+      toast({ title: "Succes", description: "Vehiculul a fost adăugat" });
+      setAddVehicleOpen(false);
+      setVehicleForm({ nrAuto: "", tipMasina: "", tipTransport: "", sarcinaMax: "", tara: "" });
+      
+      // Refresh vehicle list
+      const refreshRes = await fetch(`${API_BASE_URL}/gestionare/cantar/returneaza/nr_inmatriculare`);
+      if (refreshRes.ok) {
+        const data = await refreshRes.json();
+        setNrInmatriculare(Array.isArray(data) ? data : []);
+        setSelectedVehicle(vehicleForm.nrAuto);
+      }
+    } catch (error) {
+      toast({ title: "Eroare", description: "Nu s-a putut adăuga vehiculul", variant: "destructive" });
+    } finally {
+      setAddingVehicle(false);
+    }
+  };
+
+  // Handle add driver
+  const handleAddDriver = async () => {
+    if (!driverForm.numeSofer) {
+      toast({
+        title: "Date incomplete",
+        description: "Completați numele șoferului.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setAddingDriver(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/liste/adauga/sofer`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nume_sofer: driverForm.numeSofer,
+          ci: driverForm.ci || ''
+        })
+      });
+
+      if (!response.ok) throw new Error('Eroare la adăugare');
+      
+      toast({ title: "Succes", description: "Șoferul a fost adăugat" });
+      setAddDriverOpen(false);
+      setDriverForm({ numeSofer: "", ci: "" });
+      
+      // Refresh driver list
+      const refreshRes = await fetch(`${API_BASE_URL}/gestionare/cantar/returneaza/nume_soferi`);
+      if (refreshRes.ok) {
+        const data = await refreshRes.json();
+        setNumeSoferi(Array.isArray(data) ? data : []);
+        setSelectedSofer(driverForm.numeSofer);
+      }
+    } catch (error) {
+      toast({ title: "Eroare", description: "Nu s-a putut adăuga șoferul", variant: "destructive" });
+    } finally {
+      setAddingDriver(false);
+    }
+  };
+
+  // Auto-set sarcinaMax based on tipMasina
+  const handleTipMasinaChange = (value: string) => {
+    const sarcinaMap: Record<string, string> = {
+      'Articulata': '40',
+      '8X4': '30',
+      '4X2': '12'
+    };
+    setVehicleForm(prev => ({
+      ...prev,
+      tipMasina: value,
+      sarcinaMax: sarcinaMap[value] || prev.sarcinaMax
+    }));
+  };
+
   return (
+    <>
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="w-[95vw] max-w-xl max-h-[90vh] overflow-hidden p-0" hideCloseButton>
         <DialogHeader className="px-5 pt-4 pb-3">
@@ -247,11 +368,9 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="vehicle" className="text-xs">Nr. Înmatriculare</Label>
-                    <Button variant="ghost" size="sm" asChild className="h-auto p-0 text-[10px] text-primary hover:text-primary/80">
-                      <Link to="/liste?tab=autoturisme&action=add">
-                        <Plus className="h-3 w-3 mr-0.5" />
-                        Adaugă
-                      </Link>
+                    <Button variant="ghost" size="sm" onClick={() => setAddVehicleOpen(true)} className="h-auto p-0 text-[10px] text-primary hover:text-primary/80">
+                      <Plus className="h-3 w-3 mr-0.5" />
+                      Adaugă
                     </Button>
                   </div>
                   <FilterableSelect
@@ -272,11 +391,9 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="sofer" className="text-xs">Șofer</Label>
-                    <Button variant="ghost" size="sm" asChild className="h-auto p-0 text-[10px] text-primary hover:text-primary/80">
-                      <Link to="/liste?tab=soferi&action=add">
-                        <Plus className="h-3 w-3 mr-0.5" />
-                        Adaugă
-                      </Link>
+                    <Button variant="ghost" size="sm" onClick={() => setAddDriverOpen(true)} className="h-auto p-0 text-[10px] text-primary hover:text-primary/80">
+                      <Plus className="h-3 w-3 mr-0.5" />
+                      Adaugă
                     </Button>
                   </div>
                   <FilterableSelect
@@ -398,5 +515,115 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
         </DialogFooter>
       </DialogContent>
     </Dialog>
+
+    {/* Add Vehicle Dialog */}
+    <Dialog open={addVehicleOpen} onOpenChange={setAddVehicleOpen}>
+      <DialogContent className="w-[95vw] max-w-md max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+        <DialogHeader className="px-5 pt-4 pb-2">
+          <DialogTitle className="text-lg">Adaugă Vehicul</DialogTitle>
+        </DialogHeader>
+        <div className="px-5 py-3 space-y-3">
+          <div className="space-y-1.5">
+            <Label className="text-xs">Nr. Înmatriculare *</Label>
+            <Input
+              value={vehicleForm.nrAuto}
+              onChange={(e) => setVehicleForm(prev => ({ ...prev, nrAuto: e.target.value.toUpperCase() }))}
+              placeholder="ex: B 123 ABC"
+              className="h-9 text-sm"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Tip Mașină *</Label>
+            <Select value={vehicleForm.tipMasina} onValueChange={handleTipMasinaChange}>
+              <SelectTrigger className="h-9 text-sm">
+                <SelectValue placeholder="Selectează tipul" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Articulata">Articulata</SelectItem>
+                <SelectItem value="8X4">8X4</SelectItem>
+                <SelectItem value="4X2">4X2</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs">Sarcină Max (t)</Label>
+              <Input
+                type="number"
+                value={vehicleForm.sarcinaMax}
+                onChange={(e) => setVehicleForm(prev => ({ ...prev, sarcinaMax: e.target.value }))}
+                placeholder="0"
+                className="h-9 text-sm"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Tara (kg)</Label>
+              <Input
+                type="number"
+                value={vehicleForm.tara}
+                onChange={(e) => setVehicleForm(prev => ({ ...prev, tara: e.target.value }))}
+                placeholder="0"
+                className="h-9 text-sm"
+              />
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Tip Transport</Label>
+            <Input
+              value={vehicleForm.tipTransport}
+              onChange={(e) => setVehicleForm(prev => ({ ...prev, tipTransport: e.target.value }))}
+              placeholder="ex: Basculantă"
+              className="h-9 text-sm"
+            />
+          </div>
+        </div>
+        <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
+          <Button variant="outline" onClick={() => setAddVehicleOpen(false)} size="sm" className="w-full sm:w-auto">
+            Anulează
+          </Button>
+          <Button onClick={handleAddVehicle} disabled={addingVehicle} size="sm" className="w-full sm:w-auto">
+            {addingVehicle ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Se adaugă...</> : 'Adaugă'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    {/* Add Driver Dialog */}
+    <Dialog open={addDriverOpen} onOpenChange={setAddDriverOpen}>
+      <DialogContent className="w-[95vw] max-w-md max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+        <DialogHeader className="px-5 pt-4 pb-2">
+          <DialogTitle className="text-lg">Adaugă Șofer</DialogTitle>
+        </DialogHeader>
+        <div className="px-5 py-3 space-y-3">
+          <div className="space-y-1.5">
+            <Label className="text-xs">Nume Șofer *</Label>
+            <Input
+              value={driverForm.numeSofer}
+              onChange={(e) => setDriverForm(prev => ({ ...prev, numeSofer: e.target.value }))}
+              placeholder="Nume complet"
+              className="h-9 text-sm"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Serie CI</Label>
+            <Input
+              value={driverForm.ci}
+              onChange={(e) => setDriverForm(prev => ({ ...prev, ci: e.target.value }))}
+              placeholder="ex: RD123456"
+              className="h-9 text-sm"
+            />
+          </div>
+        </div>
+        <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
+          <Button variant="outline" onClick={() => setAddDriverOpen(false)} size="sm" className="w-full sm:w-auto">
+            Anulează
+          </Button>
+          <Button onClick={handleAddDriver} disabled={addingDriver} size="sm" className="w-full sm:w-auto">
+            {addingDriver ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Se adaugă...</> : 'Adaugă'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }
