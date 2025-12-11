@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Scale, Search, Truck, Package, Plus } from "lucide-react";
+import { Scale, Truck, Package, Plus } from "lucide-react";
 import { SessionCard } from "./cantar/components/SessionCard";
 import { ActiveWeighPanel } from "./cantar/components/ActiveWeighPanel";
 import { RowPickerDialog } from "./cantar/components/RowPickerDialog";
@@ -99,7 +99,6 @@ const mockEligibleRows: EligibleRow[] = [
 
 export default function ConsolaCantarire() {
   const [selectedPlant, setSelectedPlant] = useState("1");
-  const [searchQuery, setSearchQuery] = useState("");
   
   const [queue1, setQueue1] = useState<WeighSession[]>(mockQueue1);
   const [queue2, setQueue2] = useState<WeighSession[]>(mockQueue2);
@@ -301,19 +300,6 @@ export default function ConsolaCantarire() {
     });
   };
 
-  const filteredQueue1 = queue1.filter(s => 
-    !searchQuery || 
-    s.nrAuto.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.orderNo?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.poNo?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const filteredQueue2 = queue2.filter(s => 
-    !searchQuery || 
-    s.nrAuto.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.orderNo?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.poNo?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
     <>
@@ -332,16 +318,6 @@ export default function ConsolaCantarire() {
               Adaugă în coadă
             </Button>
 
-            {/* Search */}
-            <div className="relative w-full sm:w-auto">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Nr. auto / Comandă / PO"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 h-11 w-full sm:w-[200px] lg:w-[240px]"
-              />
-            </div>
           </div>
         </div>
 
@@ -357,12 +333,12 @@ export default function ConsolaCantarire() {
                   <div className="h-2 w-2 rounded-full bg-amber-500" />
                   Coadă Pas 1/2
                 </CardTitle>
-                <Badge variant="outline" className="text-xs">{filteredQueue1.length}</Badge>
+                <Badge variant="outline" className="text-xs">{queue1.length}</Badge>
               </div>
             </CardHeader>
             <CardContent className="flex-1 min-h-0 p-2 sm:p-3">
               <ScrollArea className="h-full max-h-[250px] lg:max-h-none">
-                {filteredQueue1.length === 0 ? (
+                {queue1.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center p-4 sm:p-6">
                     <Truck className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground/30 mb-2" />
                     <p className="text-xs sm:text-sm text-muted-foreground">
@@ -371,7 +347,7 @@ export default function ConsolaCantarire() {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    {filteredQueue1.map(session => (
+                    {queue1.map(session => (
                       <SessionCard
                         key={session.id}
                         session={session}
@@ -405,12 +381,12 @@ export default function ConsolaCantarire() {
                   <div className="h-2 w-2 rounded-full bg-green-500" />
                   Coadă Pas 2/2
                 </CardTitle>
-                <Badge variant="outline" className="text-xs">{filteredQueue2.length}</Badge>
+                <Badge variant="outline" className="text-xs">{queue2.length}</Badge>
               </div>
             </CardHeader>
             <CardContent className="flex-1 min-h-0 p-2 sm:p-3">
               <ScrollArea className="h-full max-h-[250px] lg:max-h-none">
-                {filteredQueue2.length === 0 ? (
+                {queue2.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center p-4 sm:p-6">
                     <Package className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground/30 mb-2" />
                     <p className="text-xs sm:text-sm text-muted-foreground">
@@ -419,7 +395,7 @@ export default function ConsolaCantarire() {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    {filteredQueue2.map(session => (
+                    {queue2.map(session => (
                       <SessionCard
                         key={session.id}
                         session={session}
