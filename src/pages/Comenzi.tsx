@@ -1404,7 +1404,7 @@ export default function Comenzi() {
       {/* Add/Edit Dialog for Materie Prima */}
       <Dialog open={openAddEditMP} onOpenChange={setOpenAddEditMP}>
         <DialogContent className="w-[95vw] max-w-3xl max-h-[90vh] overflow-y-auto p-0">
-          <DialogHeader className="px-5 pt-5 pb-3 border-b bg-muted/30">
+          <DialogHeader className="px-5 pt-5 pb-3">
             <DialogTitle className="text-base font-semibold flex items-center gap-2">
               <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Package className="h-3.5 w-3.5 text-primary" />
@@ -1534,7 +1534,7 @@ export default function Comenzi() {
             </div>
           </div>
 
-          <DialogFooter className="px-5 py-3 border-t bg-muted/30 flex-col sm:flex-row gap-2">
+          <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" onClick={() => setOpenAddEditMP(false)}>Anulează</Button>
             <Button size="sm" onClick={handleSaveMP}>
               {editingMP ? "Salvează" : "Adaugă"}
@@ -1664,7 +1664,7 @@ export default function Comenzi() {
       {/* Add/Edit Dialog for Produs Finit */}
       <Dialog open={openAddEditPF} onOpenChange={setOpenAddEditPF}>
         <DialogContent className="w-[95vw] max-w-3xl max-h-[90vh] overflow-y-auto p-0">
-          <DialogHeader className="px-5 pt-5 pb-3 border-b bg-muted/30">
+          <DialogHeader className="px-5 pt-5 pb-3">
             <DialogTitle className="text-base font-semibold flex items-center gap-2">
               <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Package className="h-3.5 w-3.5 text-primary" />
@@ -1794,7 +1794,7 @@ export default function Comenzi() {
             </div>
           </div>
 
-          <DialogFooter className="px-5 py-3 border-t bg-muted/30 flex-col sm:flex-row gap-2">
+          <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" onClick={() => setOpenAddEditPF(false)}>Anulează</Button>
             <Button size="sm" onClick={handleSavePF}>
               {editingPF ? "Salvează" : "Adaugă"}
