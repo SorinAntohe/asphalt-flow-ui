@@ -178,59 +178,47 @@ export default function ConsolaCantarire() {
       }
     }
 
-    // For INBOUND (Recepție): After TARA is entered (step 2/2), fetch additional data
+    // For INBOUND (Recepție): After TARA is entered (step 2/2), call API to save reception
     if (updatedSession.direction === 'INBOUND' && type === 'TARA' && updatedSession.masaBrut && updatedSession.tara) {
       const cod = updatedSession.poNo || '';
-      // Handle nrAuto as array or string
       const nrAuto = Array.isArray(updatedSession.nrAuto) ? updatedSession.nrAuto[0] : (updatedSession.nrAuto || '');
+      const sofer = Array.isArray(updatedSession.createdBy) ? updatedSession.createdBy[0] : (updatedSession.createdBy || '');
+      const brut = updatedSession.masaBrut;
+      const tara = updatedSession.tara;
+      const net = brut - tara;
+      const umiditate = updatedSession.procentUmiditate ?? 0;
+      const nrAvizProvizoriu = updatedSession.nrAvizProvizoriu || '';
+      const nrAvizIntrare = updatedSession.nrAvizIntrare || '';
+      const nrFactura = updatedSession.nrFactura || '';
+      const observatii = '';
       
       try {
-        // 1. Fetch cantitate_livrata and tip_masina in parallel
-        const [cantitateResponse, tipMasinaResponse] = await Promise.all([
-          fetch(`http://192.168.1.23:8002/gestionare/cantar/returneaza_cantitate_dupa_cod/${cod}`),
-          fetch(`http://192.168.1.23:8002/gestionare/cantar/returneaza_tip_masina_dupa_nr/${encodeURIComponent(nrAuto)}`)
-        ]);
+        const response = await fetch(
+          `http://192.168.1.23:8002/gestionare/cantar/adauga/receptie/${encodeURIComponent(cod)}/${encodeURIComponent(sofer)}/${encodeURIComponent(nrAuto)}/${brut}/${net}/${tara}/${umiditate}/${encodeURIComponent(nrAvizProvizoriu)}/${encodeURIComponent(nrAvizIntrare)}/${encodeURIComponent(nrFactura)}/${encodeURIComponent(observatii)}`,
+          { method: 'POST' }
+        );
         
-        const cantitateData = await cantitateResponse.json();
-        const tipMasinaData = await tipMasinaResponse.json();
+        const result = await response.json();
         
-        // API returns array, extract first element
-        const cantitateLivrata = Array.isArray(cantitateData) ? cantitateData[0] : (cantitateData?.cantitate || cantitateData || 0);
-        const tipMasina = Array.isArray(tipMasinaData) ? tipMasinaData[0] : (tipMasinaData?.tip_masina || tipMasinaData || '—');
-
-        // 2. Calculate masa_net and diferenta
-        const masaNet = updatedSession.masaBrut - updatedSession.tara;
-        const diferenta = masaNet - cantitateLivrata;
-
-        // 3. Fetch prices - send masa_net in kg, backend handles calculation
-        const preturiResponse = await fetch(`http://192.168.1.23:8002/receptii/materiale/returneaza_preturi_dupa_cod/${cod}/${masaNet}`);
-        const preturiData = await preturiResponse.json();
-
-        // 4. Console log all reception data
-        console.log('=== RECEPȚIE FINALIZATĂ ===');
-        console.log('Cod comandă:', cod);
-        console.log('Nr. înmatriculare:', updatedSession.nrAuto);
-        console.log('Tip mașină:', tipMasina);
-        console.log('Șofer:', updatedSession.createdBy);
-        console.log('Nr. aviz provizoriu:', updatedSession.nrAvizProvizoriu || '—');
-        console.log('Nr. aviz intrare:', updatedSession.nrAvizIntrare || '—');
-        console.log('Nr. factură:', updatedSession.nrFactura || '—');
-        console.log('Umiditate (%):', updatedSession.procentUmiditate ?? '—');
-        console.log('---');
-        console.log('BRUT:', updatedSession.masaBrut, 'kg');
-        console.log('TARA:', updatedSession.tara, 'kg');
-        console.log('MASA NET:', masaNet, 'kg');
-        console.log('---');
-        console.log('Cantitate livrată:', cantitateLivrata, 'kg');
-        console.log('Diferența:', diferenta, 'kg');
-        console.log('---');
-        console.log('Preț transport total:', preturiData.pret_transport_total);
-        console.log('Preț material total:', preturiData.pret_material_total);
-        console.log('Preț total:', preturiData.pret_total);
-        console.log('===========================');
-
+        if (result.success) {
+          toast({
+            title: "Recepție salvată",
+            description: `Recepția pentru ${cod} a fost înregistrată cu succes.`
+          });
+        } else {
+          toast({
+            title: "Eroare",
+            description: result.error || "Nu s-a putut salva recepția.",
+            variant: "destructive"
+          });
+        }
       } catch (error) {
-        console.error('Eroare la obținerea datelor recepției:', error);
+        console.error('Eroare la salvarea recepției:', error);
+        toast({
+          title: "Eroare",
+          description: "Nu s-a putut salva recepția. Verificați conexiunea.",
+          variant: "destructive"
+        });
       }
     }
 
