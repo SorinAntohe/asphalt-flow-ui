@@ -55,7 +55,7 @@ export function ManualWeightDialog({ open, onOpenChange, weightType, onConfirm, 
             <Label className="text-sm text-muted-foreground">Greutate (kg)</Label>
             <Input
               type="number"
-              placeholder="0"
+              placeholder=""
               value={value}
               onChange={(e) => {
                 setValue(e.target.value);

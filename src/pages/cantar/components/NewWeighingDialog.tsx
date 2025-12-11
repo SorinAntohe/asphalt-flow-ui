@@ -460,7 +460,7 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
                         type="number"
                         value={procentUmiditate}
                         onChange={(e) => setProcentUmiditate(e.target.value)}
-                        placeholder="0"
+                        placeholder=""
                         className="h-9 text-sm"
                       />
                     </div>
@@ -552,7 +552,7 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
                 type="number"
                 value={vehicleForm.sarcinaMax}
                 onChange={(e) => setVehicleForm(prev => ({ ...prev, sarcinaMax: e.target.value }))}
-                placeholder="0"
+                placeholder=""
                 className="h-9 text-sm"
               />
             </div>
@@ -562,7 +562,7 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
                 type="number"
                 value={vehicleForm.tara}
                 onChange={(e) => setVehicleForm(prev => ({ ...prev, tara: e.target.value }))}
-                placeholder="0"
+                placeholder=""
                 className="h-9 text-sm"
               />
             </div>
