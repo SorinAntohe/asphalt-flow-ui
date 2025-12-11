@@ -72,7 +72,7 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        "relative z-[70] max-h-96 min-w-[8rem] overflow-hidden rounded-2xl border border-border/30 bg-popover text-popover-foreground shadow-xl",
+        "relative z-[9999] max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-lg",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
         "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -83,15 +83,17 @@ const SelectContent = React.forwardRef<
         className,
       )}
       position={position}
+      onWheel={(e) => e.stopPropagation()}
       {...props}
     >
       <SelectScrollUpButton />
       <SelectPrimitive.Viewport
         className={cn(
-          "p-2 max-h-[300px] overflow-y-auto",
+          "p-1 max-h-[250px] overflow-y-auto overscroll-contain",
           position === "popper" &&
             "w-full min-w-[var(--radix-select-trigger-width)]",
         )}
+        onWheel={(e) => e.stopPropagation()}
       >
         {children}
       </SelectPrimitive.Viewport>
@@ -116,19 +118,19 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-pointer select-none items-center rounded-xl py-3 pl-8 pr-3 text-base sm:text-sm outline-none touch-manipulation",
-      "transition-all duration-200 ease-out",
+      "relative flex w-full cursor-pointer select-none items-center rounded-sm py-2 pl-8 pr-3 text-sm outline-none touch-manipulation",
+      "transition-colors duration-150",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      "focus:bg-primary/10 focus:text-foreground",
-      "hover:bg-muted/60",
-      "data-[state=checked]:bg-primary/10 data-[state=checked]:text-foreground data-[state=checked]:font-medium",
+      "focus:bg-accent focus:text-accent-foreground",
+      "hover:bg-accent/50",
+      "data-[state=checked]:font-medium",
       className,
     )}
     {...props}
   >
     <span className="absolute left-2 flex h-4 w-4 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4 text-primary" />
+        <Check className="h-4 w-4 text-foreground" />
       </SelectPrimitive.ItemIndicator>
     </span>
 
