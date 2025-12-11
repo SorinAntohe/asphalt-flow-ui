@@ -66,6 +66,10 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
   const [nrAvizProvizoriu, setNrAvizProvizoriu] = useState("");
   const [nrAvizIntrare, setNrAvizIntrare] = useState("");
   const [nrFactura, setNrFactura] = useState("");
+  const [procentUmiditate, setProcentUmiditate] = useState("");
+  
+  // Outbound-specific fields
+  const [temperatura, setTemperatura] = useState("");
   
   // Data
   const [comenziMateriePrima, setComenziMateriePrima] = useState<ComandaMateriePrima[]>([]);
@@ -156,6 +160,8 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
     setNrAvizProvizoriu("");
     setNrAvizIntrare("");
     setNrFactura("");
+    setProcentUmiditate("");
+    setTemperatura("");
     setDirection("INBOUND");
     setIsSaving(false);
     onOpenChange(false);
@@ -168,6 +174,8 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
     setNrAvizProvizoriu("");
     setNrAvizIntrare("");
     setNrFactura("");
+    setProcentUmiditate("");
+    setTemperatura("");
     setDirection("INBOUND");
     onOpenChange(false);
   };
@@ -323,7 +331,31 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
                     placeholder="Introduceți nr. factură"
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="procentUmiditate">Procent Umiditate (%)</Label>
+                  <Input
+                    id="procentUmiditate"
+                    type="number"
+                    value={procentUmiditate}
+                    onChange={(e) => setProcentUmiditate(e.target.value)}
+                    placeholder="Introduceți procent umiditate"
+                  />
+                </div>
               </>
+            )}
+
+            {/* Outbound-specific fields */}
+            {direction === 'OUTBOUND' && (
+              <div className="space-y-2">
+                <Label htmlFor="temperatura">Temperatură (°C)</Label>
+                <Input
+                  id="temperatura"
+                  type="number"
+                  value={temperatura}
+                  onChange={(e) => setTemperatura(e.target.value)}
+                  placeholder="Introduceți temperatura"
+                />
+              </div>
             )}
           </div>
         )}
