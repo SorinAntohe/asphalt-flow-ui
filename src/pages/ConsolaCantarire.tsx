@@ -112,8 +112,12 @@ export default function ConsolaCantarire() {
 
   // Check if there's an existing session for this nr auto
   const existingSession = useMemo(() => {
-    const normalized = nrAuto.toUpperCase().replace(/\s+/g, ' ').trim();
-    return [...queue1, ...queue2].find(s => s.nrAuto === normalized);
+    const nrAutoStr = Array.isArray(nrAuto) ? nrAuto[0] || '' : nrAuto || '';
+    const normalized = nrAutoStr.toUpperCase().replace(/\s+/g, ' ').trim();
+    return [...queue1, ...queue2].find(s => {
+      const sessionNrAuto = Array.isArray(s.nrAuto) ? s.nrAuto[0] || '' : s.nrAuto || '';
+      return sessionNrAuto === normalized;
+    });
   }, [nrAuto, queue1, queue2]);
 
   const handleCallNext = () => {
