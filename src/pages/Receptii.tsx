@@ -868,7 +868,7 @@ export default function Receptii() {
 
       {/* Add/Edit Dialog */}
       <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
-        <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto p-0">
+        <DialogContent className="w-[95vw] max-w-3xl max-h-[90vh] overflow-y-auto p-0">
           <DialogHeader className="px-5 pt-5 pb-3 border-b bg-muted/30">
             <DialogTitle className="text-base font-semibold flex items-center gap-2">
               <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
