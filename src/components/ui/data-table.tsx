@@ -37,7 +37,7 @@ export function DataTableColumnHeader({
   const direction = isActive ? currentSort.direction : null;
 
   return (
-    <Popover>
+    <Popover modal={true}>
       <PopoverTrigger asChild>
         <Button 
           variant="ghost" 

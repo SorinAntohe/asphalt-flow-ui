@@ -163,7 +163,7 @@ export default function Stocuri() {
               <TableRow>
                 <TableHead className="h-10 text-xs">
                   <div className="flex items-center gap-1">
-                    <Popover>
+                    <Popover modal={true}>
                       <PopoverTrigger asChild>
                         <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                           <span>ID</span>
@@ -193,7 +193,7 @@ export default function Stocuri() {
                 </TableHead>
                 <TableHead className="h-10 text-xs">
                   <div className="flex items-center gap-1">
-                    <Popover>
+                    <Popover modal={true}>
                       <PopoverTrigger asChild>
                         <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                           <span>Tip Material</span>
@@ -223,7 +223,7 @@ export default function Stocuri() {
                 </TableHead>
                 <TableHead className="h-10 text-xs">
                   <div className="flex items-center gap-1">
-                    <Popover>
+                    <Popover modal={true}>
                       <PopoverTrigger asChild>
                         <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
                           <span>Cantitate Stoc</span>

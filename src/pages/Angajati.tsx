@@ -406,7 +406,7 @@ export default function Angajati() {
     const sortDirection = filters[column].sortDirection;
     return (
       <TableHead>
-        <Popover>
+        <Popover modal={true}>
           <PopoverTrigger asChild>
             <Button
               variant="ghost"
