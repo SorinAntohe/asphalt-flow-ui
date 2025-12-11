@@ -482,7 +482,7 @@ const Liste = () => {
 
       <Tabs value={activeTab} className="w-full" onValueChange={setActiveTab}>
         <div className="flex flex-col gap-3 mb-4">
-          <TabsList className="flex flex-wrap h-auto p-1 gap-1 w-full">
+          <TabsList className="flex flex-wrap h-auto p-1 gap-1 w-full sm:w-fit">
             <TabsTrigger value="autoturisme" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 min-w-[calc(33.333%-4px)] sm:min-w-0 sm:flex-none">Autoturisme</TabsTrigger>
             <TabsTrigger value="soferi" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 min-w-[calc(33.333%-4px)] sm:min-w-0 sm:flex-none">Șoferi</TabsTrigger>
             <TabsTrigger value="materii" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 flex-1 min-w-[calc(33.333%-4px)] sm:min-w-0 sm:flex-none">Materii</TabsTrigger>
