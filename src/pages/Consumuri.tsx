@@ -96,14 +96,25 @@ const FilterHeader = ({
   filterValue, 
   onFilterChange, 
   sortDirection, 
-  onSort 
+  onSort,
+  onReset
 }: { 
   label: string; 
   filterValue: string; 
   onFilterChange: (value: string) => void; 
   sortDirection: 'asc' | 'desc' | null; 
   onSort: (direction: 'asc' | 'desc') => void;
+  onReset?: () => void;
 }) => {
+  const hasActiveFilter = filterValue !== "" || sortDirection !== null;
+
+  const handleReset = () => {
+    onFilterChange('');
+    if (onReset) {
+      onReset();
+    }
+  };
+
   return (
     <Popover modal={true}>
       <PopoverTrigger asChild>
@@ -116,7 +127,7 @@ const FilterHeader = ({
           ) : (
             <ArrowUpDown className="h-3 w-3 opacity-50" />
           )}
-          {filterValue && <span className="ml-1 h-2 w-2 rounded-full bg-primary" />}
+          {hasActiveFilter && <span className="ml-1 h-2 w-2 rounded-full bg-primary" />}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-56 p-2 bg-popover border shadow-md z-50" align="start">
@@ -147,15 +158,12 @@ const FilterHeader = ({
               Descresc.
             </Button>
           </div>
-          {(filterValue || sortDirection) && (
+          {hasActiveFilter && (
             <Button
               variant="ghost"
               size="sm"
               className="w-full h-7 text-xs"
-              onClick={() => {
-                onFilterChange('');
-                onSort('asc');
-              }}
+              onClick={handleReset}
             >
               <X className="h-3 w-3 mr-1" />
               Resetează

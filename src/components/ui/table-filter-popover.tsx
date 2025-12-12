@@ -3,7 +3,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TableHead } from "@/components/ui/table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, ArrowUp, ArrowDown, X } from "lucide-react";
 
 interface TableFilterPopoverProps {
   label: string;
@@ -12,6 +12,7 @@ interface TableFilterPopoverProps {
   sortField: string | null;
   sortDirection: 'asc' | 'desc' | null;
   onSort: (direction: 'asc' | 'desc') => void;
+  onReset?: () => void;
   field: string;
 }
 
@@ -22,10 +23,15 @@ export const TableFilterPopover = React.memo(({
   sortField,
   sortDirection,
   onSort,
+  onReset,
   field
 }: TableFilterPopoverProps) => {
   const [open, setOpen] = useState(false);
   const [localValue, setLocalValue] = useState(filterValue);
+  
+  const isActive = sortField === field;
+  const direction = isActive ? sortDirection : null;
+  const hasActiveFilter = filterValue !== "" || direction !== null;
 
   // Sync local value when filter value changes externally
   React.useEffect(() => {
@@ -44,14 +50,29 @@ export const TableFilterPopover = React.memo(({
     setLocalValue(e.target.value);
   };
 
+  const handleReset = () => {
+    setLocalValue("");
+    onFilterChange("");
+    if (onReset) {
+      onReset();
+    }
+  };
+
   return (
     <TableHead className="h-10 text-xs">
-      <Popover open={open} onOpenChange={handleOpenChange}>
+      <Popover open={open} onOpenChange={handleOpenChange} modal={true}>
         <PopoverTrigger asChild>
-          <div className="flex items-center cursor-pointer hover:text-primary">
+          <Button variant="ghost" size="sm" className="h-8 px-2 hover:bg-muted/50 font-medium gap-1">
             <span>{label}</span>
-            <ArrowUpDown className="ml-2 h-3 w-3" />
-          </div>
+            {direction === 'asc' ? (
+              <ArrowUp className="h-3 w-3 text-primary" />
+            ) : direction === 'desc' ? (
+              <ArrowDown className="h-3 w-3 text-primary" />
+            ) : (
+              <ArrowUpDown className="h-3 w-3 opacity-50" />
+            )}
+            {hasActiveFilter && <span className="ml-1 h-2 w-2 rounded-full bg-primary" />}
+          </Button>
         </PopoverTrigger>
         <PopoverContent className="w-56 p-2">
           <div className="space-y-2">
@@ -65,21 +86,34 @@ export const TableFilterPopover = React.memo(({
             <div className="flex gap-1">
               <Button
                 size="sm"
-                variant={sortField === field && sortDirection === 'asc' ? 'default' : 'outline'}
+                variant={direction === 'asc' ? 'default' : 'outline'}
                 onClick={() => onSort('asc')}
                 className="flex-1 h-7 text-xs"
               >
+                <ArrowUp className="h-3 w-3 mr-1" />
                 Cresc.
               </Button>
               <Button
                 size="sm"
-                variant={sortField === field && sortDirection === 'desc' ? 'default' : 'outline'}
+                variant={direction === 'desc' ? 'default' : 'outline'}
                 onClick={() => onSort('desc')}
                 className="flex-1 h-7 text-xs"
               >
+                <ArrowDown className="h-3 w-3 mr-1" />
                 Descresc.
               </Button>
             </div>
+            {hasActiveFilter && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full h-7 text-xs"
+                onClick={handleReset}
+              >
+                <X className="h-3 w-3 mr-1" />
+                Resetează
+              </Button>
+            )}
           </div>
         </PopoverContent>
       </Popover>
