@@ -76,7 +76,7 @@ HR
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">
-                HR2 – Cost salarial lunar
+                Cost salarial lunar
               </CardTitle>
             </CardHeader>
             <CardContent>
