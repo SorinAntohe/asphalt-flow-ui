@@ -13,7 +13,6 @@ import {
 import { cn } from "@/lib/utils";
 
 interface KPICardProps {
-  code: string;
   title: string;
   value: string | number;
   unit?: string;
@@ -23,7 +22,7 @@ interface KPICardProps {
   variant?: "default" | "warning" | "success" | "danger";
 }
 
-const KPICard = ({ code, title, value, unit, trend, trendLabel, icon, variant = "default" }: KPICardProps) => {
+const KPICard = ({ title, value, unit, trend, trendLabel, icon, variant = "default" }: KPICardProps) => {
   const isPositive = trend !== undefined && trend > 0;
   const isNegative = trend !== undefined && trend < 0;
 
@@ -37,8 +36,7 @@ const KPICard = ({ code, title, value, unit, trend, trendLabel, icon, variant = 
       <CardContent className="pt-5 pb-4">
         <div className="flex items-center justify-between">
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-mono text-muted-foreground/60">{code}</p>
-            <p className="text-xs font-medium text-muted-foreground mt-1">{title}</p>
+            <p className="text-xs font-medium text-muted-foreground">{title}</p>
             <div className="flex items-baseline gap-1.5 mt-1">
               <p className="text-2xl font-bold">{value}</p>
               {unit && <p className="text-sm text-muted-foreground">{unit}</p>}
@@ -75,7 +73,6 @@ const ManagementGeneralSection = () => {
       {/* Prima linie de KPI-uri */}
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
         <KPICard
-          code="MG1"
           title="Producție totală"
           value="12,450"
           unit="t"
@@ -85,7 +82,6 @@ const ManagementGeneralSection = () => {
           variant="success"
         />
         <KPICard
-          code="MG2"
           title="Livrări totale"
           value="11,280"
           unit="t"
@@ -95,7 +91,6 @@ const ManagementGeneralSection = () => {
           variant="success"
         />
         <KPICard
-          code="MG3"
           title="Grad realizare plan producție"
           value="94.5"
           unit="%"
@@ -105,7 +100,6 @@ const ManagementGeneralSection = () => {
           variant="success"
         />
         <KPICard
-          code="MG4"
           title="Marjă medie / ton"
           value="48.50"
           unit="lei/t"
@@ -118,14 +112,12 @@ const ManagementGeneralSection = () => {
       {/* A doua linie de KPI-uri */}
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
         <KPICard
-          code="MG5"
           title="Comenzi client deschise"
           value="24"
           unit="nr"
           icon={<FileText className="h-4 w-4" />}
         />
         <KPICard
-          code="MG6"
           title="Loturi respinse"
           value="2.1"
           unit="%"
@@ -135,7 +127,6 @@ const ManagementGeneralSection = () => {
           variant="success"
         />
         <KPICard
-          code="MG7"
           title="Materiale în stoc critic"
           value="3"
           unit="nr"
@@ -143,7 +134,6 @@ const ManagementGeneralSection = () => {
           variant="warning"
         />
         <KPICard
-          code="MG8"
           title="Revizii întârziate"
           value="2"
           unit="nr"
