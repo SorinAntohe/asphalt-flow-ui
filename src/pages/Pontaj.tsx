@@ -1,17 +1,17 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FilterableSelect } from "@/components/ui/filterable-select";
 import { TimePicker } from "@/components/ui/time-picker";
-import { CalendarClock, Plus, Download, Pencil, Trash2, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { TableFilterPopover } from "@/components/ui/table-filter-popover";
+import { CalendarClock, Plus, Download, Pencil, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/api";
 import { exportToCSV } from "@/lib/exportUtils";
@@ -72,7 +72,6 @@ export default function Pontaj() {
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
-  const [activeFilterColumn, setActiveFilterColumn] = useState<string | null>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -165,21 +164,22 @@ export default function Pontaj() {
     currentPage * itemsPerPage
   );
 
-  const handleSort = (column: string) => {
-    if (sortColumn === column) {
-      if (sortDirection === "asc") setSortDirection("desc");
-      else { setSortColumn(null); setSortDirection(null); }
-    } else {
-      setSortColumn(column);
-      setSortDirection("asc");
-    }
-  };
+  const handleSort = useCallback((column: string) => (direction: 'asc' | 'desc') => {
+    setSortColumn(column);
+    setSortDirection(direction);
+  }, []);
 
-  const getSortIcon = (column: string) => {
-    if (sortColumn !== column) return <ArrowUpDown className="h-3 w-3" />;
-    if (sortDirection === "asc") return <ArrowUp className="h-3 w-3" />;
-    return <ArrowDown className="h-3 w-3" />;
-  };
+  const handleFilterChange = useCallback((column: string) => (value: string) => {
+    setFilters(prev => ({ ...prev, [column]: value }));
+  }, []);
+
+  const handleResetFilter = useCallback((column: string) => () => {
+    setFilters(prev => ({ ...prev, [column]: '' }));
+    if (sortColumn === column) {
+      setSortColumn(null);
+      setSortDirection(null);
+    }
+  }, [sortColumn]);
 
   const resetForm = () => {
     setFormData({ angajat_id: "", prezenta: "Prezent", ora_start: "08:30", ora_sfarsit: "17:30", pauza_masa: 60 });
@@ -380,52 +380,17 @@ export default function Pontaj() {
                     <TableHeader className="[&_tr]:border-b bg-muted/30">
                       <TableRow className="border-b hover:bg-transparent">
                         {columns.map((col) => (
-                          <TableHead key={col.key} className="text-[10px] sm:text-xs px-2 sm:px-4 whitespace-nowrap">
-                            <Popover open={activeFilterColumn === col.key} onOpenChange={(open) => setActiveFilterColumn(open ? col.key : null)}>
-                              <PopoverTrigger asChild>
-                                <Button variant="ghost" size="sm" className="h-7 px-2 hover:bg-muted/50 font-medium text-muted-foreground gap-1">
-                                  {col.label}
-                                  {sortColumn === col.key && sortDirection === "asc" ? (
-                                    <ArrowUp className="h-3 w-3 text-primary" />
-                                  ) : sortColumn === col.key && sortDirection === "desc" ? (
-                                    <ArrowDown className="h-3 w-3 text-primary" />
-                                  ) : (
-                                    <ArrowUpDown className="h-3 w-3 opacity-50" />
-                                  )}
-                                </Button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-48 p-2" align="start">
-                                <div className="space-y-2">
-                                  <Input
-                                    placeholder="Filtrare..."
-                                    value={filters[col.key] || ""}
-                                    onChange={(e) => setFilters({ ...filters, [col.key]: e.target.value })}
-                                    className="h-8 text-sm"
-                                  />
-                                  <div className="flex gap-2">
-                                    <Button 
-                                      variant={sortColumn === col.key && sortDirection === "asc" ? "default" : "outline"} 
-                                      size="sm" 
-                                      className="flex-1 h-7 text-xs" 
-                                      onClick={() => { setSortColumn(col.key); setSortDirection("asc"); setActiveFilterColumn(null); }}
-                                    >
-                                      <ArrowUp className="h-3 w-3 mr-1" />
-                                      Cresc.
-                                    </Button>
-                                    <Button 
-                                      variant={sortColumn === col.key && sortDirection === "desc" ? "default" : "outline"} 
-                                      size="sm" 
-                                      className="flex-1 h-7 text-xs" 
-                                      onClick={() => { setSortColumn(col.key); setSortDirection("desc"); setActiveFilterColumn(null); }}
-                                    >
-                                      <ArrowDown className="h-3 w-3 mr-1" />
-                                      Descresc.
-                                    </Button>
-                                  </div>
-                                </div>
-                              </PopoverContent>
-                            </Popover>
-                          </TableHead>
+                          <TableFilterPopover
+                            key={col.key}
+                            field={col.key}
+                            label={col.label}
+                            filterValue={filters[col.key] || ''}
+                            onFilterChange={handleFilterChange(col.key)}
+                            sortField={sortColumn}
+                            sortDirection={sortDirection}
+                            onSort={handleSort(col.key)}
+                            onReset={handleResetFilter(col.key)}
+                          />
                         ))}
                       </TableRow>
                     </TableHeader>
