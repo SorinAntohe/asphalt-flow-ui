@@ -1,19 +1,19 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown, Ticket, Download, X, Package, TrendingUp, Calendar } from "lucide-react";
+import { Plus, Pencil, Trash2, Ticket, Download, Package, TrendingUp, Calendar, X } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FilterableSelect } from "@/components/ui/filterable-select";
+import { TableFilterPopover } from "@/components/ui/table-filter-popover";
 import { z } from "zod";
 import { API_BASE_URL } from "@/lib/api";
 import { flattenApiArray, extractApiValue, toSelectOptions } from "@/lib/utils";
@@ -596,82 +596,18 @@ export default function Receptii() {
     setCurrentPage(1);
   }, [filters]);
 
-  const handleSort = (field: string, direction: 'asc' | 'desc') => {
+  const handleSort = useCallback((field: string) => (direction: 'asc' | 'desc') => {
     setSort({ field, direction });
-  };
+  }, []);
 
-  const handleResetFilter = (field: keyof typeof filters) => {
-    setFilters({ ...filters, [field]: '' });
-    if (sort.field === field) {
-      setSort({ field: '', direction: null });
-    }
-  };
+  const handleFilterChange = useCallback((field: keyof typeof filters) => (value: string) => {
+    setFilters(prev => ({ ...prev, [field]: value }));
+  }, []);
 
-  const FilterHeader = ({ field, label }: { field: keyof typeof filters; label: string }) => {
-    const hasActiveFilter = filters[field] !== '';
-    const isActiveSortField = sort.field === field;
-    
-    return (
-      <TableHead className="h-10 text-xs">
-        <Popover modal={true}>
-          <PopoverTrigger asChild>
-            <Button variant="ghost" className="h-8 px-2 hover:bg-muted/50 font-medium text-xs gap-1">
-              {label}
-              {isActiveSortField && sort.direction === 'asc' ? (
-                <ArrowUp className="h-3 w-3 text-primary" />
-              ) : isActiveSortField && sort.direction === 'desc' ? (
-                <ArrowDown className="h-3 w-3 text-primary" />
-              ) : (
-                <ArrowUpDown className="h-3 w-3 opacity-50" />
-              )}
-              {hasActiveFilter && <span className="ml-1 h-2 w-2 rounded-full bg-primary" />}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-56 p-2 bg-popover border shadow-md z-50" align="start">
-            <div className="space-y-2">
-              <Input
-                value={filters[field]}
-                onChange={(e) => setFilters({ ...filters, [field]: e.target.value })}
-                placeholder={`Caută ${label.toLowerCase()}...`}
-                className="h-7 text-xs"
-              />
-              <div className="flex gap-1">
-                <Button
-                  size="sm"
-                  variant={isActiveSortField && sort.direction === 'asc' ? 'default' : 'outline'}
-                  onClick={() => handleSort(field, 'asc')}
-                  className="flex-1 h-7 text-xs"
-                >
-                  <ArrowUp className="h-3 w-3 mr-1" />
-                  Cresc.
-                </Button>
-                <Button
-                  size="sm"
-                  variant={isActiveSortField && sort.direction === 'desc' ? 'default' : 'outline'}
-                  onClick={() => handleSort(field, 'desc')}
-                  className="flex-1 h-7 text-xs"
-                >
-                  <ArrowDown className="h-3 w-3 mr-1" />
-                  Descresc.
-                </Button>
-              </div>
-              {(hasActiveFilter || isActiveSortField) && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full h-7 text-xs"
-                  onClick={() => handleResetFilter(field)}
-                >
-                  <X className="h-3 w-3 mr-1" />
-                  Resetează
-                </Button>
-              )}
-            </div>
-          </PopoverContent>
-        </Popover>
-      </TableHead>
-    );
-  };
+  const handleResetFilter = useCallback((field: keyof typeof filters) => () => {
+    setFilters(prev => ({ ...prev, [field]: '' }));
+    setSort(prev => prev.field === field ? { field: '', direction: null } : prev);
+  }, []);
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -796,28 +732,28 @@ export default function Receptii() {
             <Table className="min-w-[1800px]">
               <TableHeader>
                 <TableRow>
-                  <FilterHeader field="id" label="ID" />
-                  <FilterHeader field="data" label="Data" />
-                  <FilterHeader field="cod" label="Cod" />
-                  <FilterHeader field="furnizor" label="Furnizor" />
-                  <FilterHeader field="material" label="Material" />
-                  <FilterHeader field="nr_aviz_provizoriu" label="Nr. Aviz Provizoriu" />
-                  <FilterHeader field="nr_aviz_intrare" label="Nr. Aviz Intrare" />
-                  <FilterHeader field="nume_sofer" label="Nume Șofer" />
-                  <FilterHeader field="nr_inmatriculare" label="Nr. Înmatriculare" />
-                  <FilterHeader field="tip_masina" label="Tip Mașină" />
-                  <FilterHeader field="cantitate_livrata" label="Cant. Livrată" />
-                  <FilterHeader field="cantitate_receptionata" label="Cant. Recepționată" />
-                  <FilterHeader field="tara" label="Tara" />
-                  <FilterHeader field="masa_net" label="Masa Net" />
-                  <FilterHeader field="diferenta" label="Diferență" />
-                  <FilterHeader field="umiditate" label="Umiditate (%)" />
-                  <FilterHeader field="pret_material_total" label="Preț Material" />
-                  <FilterHeader field="pret_transport_total" label="Preț Transport" />
-                  <FilterHeader field="pret_total" label="Preț Total" />
-                  <FilterHeader field="observatii" label="Observații" />
-                  <FilterHeader field="nr_factura" label="Nr. Factură" />
-                  <FilterHeader field="nr_tichet" label="Nr. Tichet" />
+                  <TableFilterPopover field="id" label="ID" filterValue={filters.id} onFilterChange={handleFilterChange('id')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('id')} onReset={handleResetFilter('id')} />
+                  <TableFilterPopover field="data" label="Data" filterValue={filters.data} onFilterChange={handleFilterChange('data')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('data')} onReset={handleResetFilter('data')} />
+                  <TableFilterPopover field="cod" label="Cod" filterValue={filters.cod} onFilterChange={handleFilterChange('cod')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('cod')} onReset={handleResetFilter('cod')} />
+                  <TableFilterPopover field="furnizor" label="Furnizor" filterValue={filters.furnizor} onFilterChange={handleFilterChange('furnizor')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('furnizor')} onReset={handleResetFilter('furnizor')} />
+                  <TableFilterPopover field="material" label="Material" filterValue={filters.material} onFilterChange={handleFilterChange('material')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('material')} onReset={handleResetFilter('material')} />
+                  <TableFilterPopover field="nr_aviz_provizoriu" label="Nr. Aviz Provizoriu" filterValue={filters.nr_aviz_provizoriu} onFilterChange={handleFilterChange('nr_aviz_provizoriu')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('nr_aviz_provizoriu')} onReset={handleResetFilter('nr_aviz_provizoriu')} />
+                  <TableFilterPopover field="nr_aviz_intrare" label="Nr. Aviz Intrare" filterValue={filters.nr_aviz_intrare} onFilterChange={handleFilterChange('nr_aviz_intrare')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('nr_aviz_intrare')} onReset={handleResetFilter('nr_aviz_intrare')} />
+                  <TableFilterPopover field="nume_sofer" label="Nume Șofer" filterValue={filters.nume_sofer} onFilterChange={handleFilterChange('nume_sofer')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('nume_sofer')} onReset={handleResetFilter('nume_sofer')} />
+                  <TableFilterPopover field="nr_inmatriculare" label="Nr. Înmatriculare" filterValue={filters.nr_inmatriculare} onFilterChange={handleFilterChange('nr_inmatriculare')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('nr_inmatriculare')} onReset={handleResetFilter('nr_inmatriculare')} />
+                  <TableFilterPopover field="tip_masina" label="Tip Mașină" filterValue={filters.tip_masina} onFilterChange={handleFilterChange('tip_masina')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('tip_masina')} onReset={handleResetFilter('tip_masina')} />
+                  <TableFilterPopover field="cantitate_livrata" label="Cant. Livrată" filterValue={filters.cantitate_livrata} onFilterChange={handleFilterChange('cantitate_livrata')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('cantitate_livrata')} onReset={handleResetFilter('cantitate_livrata')} />
+                  <TableFilterPopover field="cantitate_receptionata" label="Cant. Recepționată" filterValue={filters.cantitate_receptionata} onFilterChange={handleFilterChange('cantitate_receptionata')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('cantitate_receptionata')} onReset={handleResetFilter('cantitate_receptionata')} />
+                  <TableFilterPopover field="tara" label="Tara" filterValue={filters.tara} onFilterChange={handleFilterChange('tara')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('tara')} onReset={handleResetFilter('tara')} />
+                  <TableFilterPopover field="masa_net" label="Masa Net" filterValue={filters.masa_net} onFilterChange={handleFilterChange('masa_net')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('masa_net')} onReset={handleResetFilter('masa_net')} />
+                  <TableFilterPopover field="diferenta" label="Diferență" filterValue={filters.diferenta} onFilterChange={handleFilterChange('diferenta')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('diferenta')} onReset={handleResetFilter('diferenta')} />
+                  <TableFilterPopover field="umiditate" label="Umiditate (%)" filterValue={filters.umiditate} onFilterChange={handleFilterChange('umiditate')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('umiditate')} onReset={handleResetFilter('umiditate')} />
+                  <TableFilterPopover field="pret_material_total" label="Preț Material" filterValue={filters.pret_material_total} onFilterChange={handleFilterChange('pret_material_total')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('pret_material_total')} onReset={handleResetFilter('pret_material_total')} />
+                  <TableFilterPopover field="pret_transport_total" label="Preț Transport" filterValue={filters.pret_transport_total} onFilterChange={handleFilterChange('pret_transport_total')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('pret_transport_total')} onReset={handleResetFilter('pret_transport_total')} />
+                  <TableFilterPopover field="pret_total" label="Preț Total" filterValue={filters.pret_total} onFilterChange={handleFilterChange('pret_total')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('pret_total')} onReset={handleResetFilter('pret_total')} />
+                  <TableFilterPopover field="observatii" label="Observații" filterValue={filters.observatii} onFilterChange={handleFilterChange('observatii')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('observatii')} onReset={handleResetFilter('observatii')} />
+                  <TableFilterPopover field="nr_factura" label="Nr. Factură" filterValue={filters.nr_factura} onFilterChange={handleFilterChange('nr_factura')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('nr_factura')} onReset={handleResetFilter('nr_factura')} />
+                  <TableFilterPopover field="nr_tichet" label="Nr. Tichet" filterValue={filters.nr_tichet} onFilterChange={handleFilterChange('nr_tichet')} sortField={sort.field} sortDirection={sort.direction} onSort={handleSort('nr_tichet')} onReset={handleResetFilter('nr_tichet')} />
                 </TableRow>
               </TableHeader>
               <TableBody key={`receptii-page-${currentPage}`} className="animate-fade-in">
