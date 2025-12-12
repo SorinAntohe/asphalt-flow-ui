@@ -179,7 +179,7 @@ const ProductieCalitateSection = () => {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">
-                PC3 – Consum specific materie primă
+                Consum specific materie primă
               </CardTitle>
             </CardHeader>
             <CardContent>
