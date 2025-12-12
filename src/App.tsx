@@ -3,10 +3,20 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { Layout } from "./components/Layout";
-import { Skeleton } from "@/components/ui/skeleton";
+import {
+  DashboardSkeleton,
+  TablePageSkeleton,
+  CardsGridSkeleton,
+  CalendarSkeleton,
+  FinanciarSkeleton,
+  CantarSkeleton,
+  CalculatorSkeleton,
+  TrasabilitateSkeleton,
+  AuthSkeleton,
+} from "@/components/ui/page-skeletons";
 
 // Lazy load pages for better performance
 const Auth = lazy(() => import("./pages/Auth"));
@@ -63,19 +73,25 @@ const queryClient = new QueryClient({
   },
 });
 
-// Page loading fallback
-const PageLoader = () => (
-  <div className="p-4 sm:p-6 space-y-4 animate-pulse">
-    <Skeleton className="h-8 w-48" />
-    <Skeleton className="h-4 w-32" />
-    <div className="grid gap-4 grid-cols-2 lg:grid-cols-4 mt-6">
-      {[...Array(4)].map((_, i) => (
-        <Skeleton key={i} className="h-24 rounded-lg" />
-      ))}
-    </div>
-    <Skeleton className="h-64 mt-4 rounded-lg" />
-  </div>
-);
+// Smart skeleton selector based on route
+const getSkeletonForRoute = (pathname: string) => {
+  if (pathname === "/dashboard") return <DashboardSkeleton />;
+  if (pathname === "/cantar") return <CantarSkeleton />;
+  if (pathname === "/comercial/calculator") return <CalculatorSkeleton />;
+  if (pathname === "/productie/calendar") return <CalendarSkeleton />;
+  if (pathname === "/productie/trasabilitate") return <TrasabilitateSkeleton />;
+  if (pathname.startsWith("/rapoarte") && pathname !== "/rapoarte") return <TablePageSkeleton />;
+  if (pathname === "/rapoarte") return <CardsGridSkeleton />;
+  if (pathname.startsWith("/financiar")) return <FinanciarSkeleton />;
+  if (pathname === "/auth" || pathname === "/") return <AuthSkeleton />;
+  return <TablePageSkeleton />;
+};
+
+// Page loader with smart skeleton selection
+const PageLoader = () => {
+  const location = useLocation();
+  return getSkeletonForRoute(location.pathname);
+};
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -95,7 +111,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const AppRoutes = () => (
-  <Suspense fallback={<PageLoader />}>
+  <Suspense fallback={<AuthSkeleton />}>
     <Routes>
       <Route path="/auth" element={<Auth />} />
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
