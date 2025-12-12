@@ -6,6 +6,7 @@ import { Plus, Truck, Pencil, Trash2, FileText, Download, X, Calendar, TrendingU
 import { exportToCSV } from "@/lib/exportUtils";
 import { FilterableSelect } from "@/components/ui/filterable-select";
 import { API_BASE_URL } from "@/lib/api";
+import { toSelectOptions, extractApiValue } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -147,10 +148,7 @@ const Livrari = () => {
         const codResponse = await fetch(`${API_BASE_URL}/livrari/returneaza_coduri_comenzi_produs_finit/livrari`);
         if (codResponse.ok) {
           const codData = await codResponse.json();
-          setCodOptions(codData.map((item: any) => ({ 
-            value: item.cod || item, 
-            label: item.cod || item 
-          })));
+          setCodOptions(toSelectOptions(codData));
         }
       } catch (error) {
         console.error("Error fetching cod options:", error);
@@ -161,10 +159,7 @@ const Livrari = () => {
         const nrInmatriculareResponse = await fetch(`${API_BASE_URL}/livrari/returneaza_numere_inmatriculare/livrari`);
         if (nrInmatriculareResponse.ok) {
           const nrInmatriculareData = await nrInmatriculareResponse.json();
-          setNrInmatriculareOptions(nrInmatriculareData.map((item: any) => ({ 
-            value: item.nr_inmatriculare || item, 
-            label: item.nr_inmatriculare || item 
-          })));
+          setNrInmatriculareOptions(toSelectOptions(nrInmatriculareData));
         }
       } catch (error) {
         console.error("Error fetching nr_inmatriculare options:", error);
@@ -175,10 +170,7 @@ const Livrari = () => {
         const numeSoferResponse = await fetch(`${API_BASE_URL}/livrari/returneaza_soferii/livrari`);
         if (numeSoferResponse.ok) {
           const numeSoferData = await numeSoferResponse.json();
-          setNumeSoferOptions(numeSoferData.map((item: any) => ({ 
-            value: item.nume_sofer || item, 
-            label: item.nume_sofer || item 
-          })));
+          setNumeSoferOptions(toSelectOptions(numeSoferData));
         }
       } catch (error) {
         console.error("Error fetching nume_sofer options:", error);

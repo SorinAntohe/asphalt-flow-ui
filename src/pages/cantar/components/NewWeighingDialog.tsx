@@ -11,6 +11,7 @@ import { Loader2, Package, Truck, Plus, FileText, Thermometer, Droplets } from "
 import { API_BASE_URL } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
 import { Direction } from "../types";
+import { flattenApiArray, toSelectOptions } from "@/lib/utils";
 
 interface NewWeighingDialogProps {
   open: boolean;
@@ -95,19 +96,19 @@ export function NewWeighingDialog({ open, onOpenChange, onSessionCreated }: NewW
 
       if (coduriMaterialRes.ok) {
         const data = await coduriMaterialRes.json();
-        setCoduriComandaMaterial(Array.isArray(data) ? data : []);
+        setCoduriComandaMaterial(Array.isArray(data) ? flattenApiArray(data) : []);
       }
       if (coduriProdusRes.ok) {
         const data = await coduriProdusRes.json();
-        setCoduriComandaProdusFinit(Array.isArray(data) ? data : []);
+        setCoduriComandaProdusFinit(Array.isArray(data) ? flattenApiArray(data) : []);
       }
       if (soferiRes.ok) {
         const data = await soferiRes.json();
-        setNumeSoferi(Array.isArray(data) ? data : []);
+        setNumeSoferi(Array.isArray(data) ? flattenApiArray(data) : []);
       }
       if (nrAutoRes.ok) {
         const data = await nrAutoRes.json();
-        setNrInmatriculare(Array.isArray(data) ? data : []);
+        setNrInmatriculare(Array.isArray(data) ? flattenApiArray(data) : []);
       }
     } catch (error) {
       console.error('Error fetching data:', error);

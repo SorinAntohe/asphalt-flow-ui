@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { API_BASE_URL } from "@/lib/api";
 import { toast } from "sonner";
+import { toSelectOptions, extractApiValue } from "@/lib/utils";
 
 interface Reteta {
   cod_reteta: string;
@@ -225,9 +226,9 @@ const CalculatorPret = () => {
         if (response.ok) {
           const data = await response.json();
           if (Array.isArray(data)) {
-            // API returns [{produs: 'BAD 22.4'}, ...] - extract produs values
-            const produseList = data.map((item: { produs: string }) => item.produs);
-            setProduse(produseList);
+            // API returns tuples or [{produs: 'BAD 22.4'}, ...] - extract produs values
+            const produseList = data.map((item: any) => extractApiValue(item.produs || item));
+            setProduse(produseList.filter(Boolean));
           }
         }
       } catch (error) {
