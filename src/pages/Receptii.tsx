@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FilterableSelect } from "@/components/ui/filterable-select";
 import { z } from "zod";
 import { API_BASE_URL } from "@/lib/api";
+import { flattenApiArray, extractApiValue, toSelectOptions } from "@/lib/utils";
 
 interface ReceptieMaterial {
   id: number;
@@ -158,14 +159,6 @@ export default function Receptii() {
     setLoading(false);
   };
   
-  // Helper to flatten and extract strings from API responses
-  const flattenArray = (arr: any[]): string[] => {
-    return arr.map(item => {
-      if (Array.isArray(item)) return item[0];
-      return item;
-    }).filter(item => item != null && item !== '');
-  };
-
   useEffect(() => {
     fetchReceptii();
     
@@ -174,7 +167,7 @@ export default function Receptii() {
         const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_coduri`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setAvailableCodes(Array.isArray(data) ? flattenArray(data) : []);
+        setAvailableCodes(Array.isArray(data) ? flattenApiArray(data) : []);
       } catch (error) {
         console.error('Error fetching codes:', error);
         setAvailableCodes([]);
@@ -186,7 +179,7 @@ export default function Receptii() {
         const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_nume_soferi`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setAvailableDrivers(Array.isArray(data) ? flattenArray(data) : []);
+        setAvailableDrivers(Array.isArray(data) ? flattenApiArray(data) : []);
       } catch (error) {
         console.error('Error fetching drivers:', error);
         setAvailableDrivers([]);
@@ -198,7 +191,7 @@ export default function Receptii() {
         const response = await fetch(`${API_BASE_URL}/receptii/materiale/returneaza_nr_inmatriculare`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setAvailableRegistrationNumbers(Array.isArray(data) ? flattenArray(data) : []);
+        setAvailableRegistrationNumbers(Array.isArray(data) ? flattenApiArray(data) : []);
       } catch (error) {
         console.error('Error fetching registration numbers:', error);
         setAvailableRegistrationNumbers([]);

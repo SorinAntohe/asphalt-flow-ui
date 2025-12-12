@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FilterableSelect } from "@/components/ui/filterable-select";
 import { useToast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/api";
+import { toSelectOptions, extractApiValue } from "@/lib/utils";
 
 interface ListeClient {
   id: number;
@@ -50,9 +51,16 @@ export const AddFacturaClientDialog = ({ open, onOpenChange }: AddFacturaClientD
       fetch(`${API_BASE_URL}/livrari/returneaza/livrari`)
         .then(res => res.json())
         .then(data => {
-          const options = data.map((l: LivrareData) => ({ value: l.cod, label: l.cod }));
+          // Handle tuple format - extract cod values
+          const processedData = Array.isArray(data) ? data.map((l: any) => ({
+            ...l,
+            cod: extractApiValue(l.cod),
+            client: extractApiValue(l.client),
+            total: typeof l.total === 'number' ? l.total : parseFloat(extractApiValue(l.total)) || 0
+          })) : [];
+          const options = processedData.map((l: LivrareData) => ({ value: l.cod, label: l.cod }));
           setLivrariOptions(options);
-          setLivrariData(data);
+          setLivrariData(processedData);
         })
         .catch(console.error);
     }

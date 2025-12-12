@@ -18,6 +18,7 @@ import { FilterableSelect } from "@/components/ui/filterable-select";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { z } from "zod";
 import { API_BASE_URL } from "@/lib/api";
+import { toSelectOptions, extractApiValue } from "@/lib/utils";
 
 interface Furnizor {
   id: number;
@@ -158,7 +159,12 @@ export default function Comenzi() {
       const response = await fetch(`${API_BASE_URL}/comenzi/returneaza_furnizori/material`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      setFurnizori(Array.isArray(data) ? data : []);
+      // Handle tuple format - extract values
+      const processed = Array.isArray(data) ? data.map((item: any) => {
+        const nume = extractApiValue(item.nume || item);
+        return { ...item, nume };
+      }) : [];
+      setFurnizori(processed);
     } catch (error) {
       console.error('Error fetching furnizori:', error);
       setFurnizori([]);
@@ -171,7 +177,12 @@ export default function Comenzi() {
       const response = await fetch(`${API_BASE_URL}/comenzi/returneaza_clienti/produs`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      setClienti(Array.isArray(data) ? data : []);
+      // Handle tuple format - extract values
+      const processed = Array.isArray(data) ? data.map((item: any) => {
+        const nume = extractApiValue(item.nume || item);
+        return { ...item, nume };
+      }) : [];
+      setClienti(processed);
     } catch (error) {
       console.error('Error fetching clienti:', error);
       setClienti([]);
@@ -184,7 +195,12 @@ export default function Comenzi() {
       const response = await fetch(`${API_BASE_URL}/comenzi/returneaza_materiale/material`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      setMateriale(Array.isArray(data) ? data : []);
+      // Handle tuple format - extract values
+      const processed = Array.isArray(data) ? data.map((item: any) => {
+        const materiale_prime = extractApiValue(item.materiale_prime || item);
+        return { ...item, materiale_prime };
+      }) : [];
+      setMateriale(processed);
     } catch (error) {
       console.error('Error fetching materiale:', error);
       setMateriale([]);
@@ -197,7 +213,12 @@ export default function Comenzi() {
       const response = await fetch(`${API_BASE_URL}/comenzi/returneaza_produse/produs`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      setProduse(Array.isArray(data) ? data : []);
+      // Handle tuple format - extract values
+      const processed = Array.isArray(data) ? data.map((item: any) => {
+        const produs = extractApiValue(item.produs || item);
+        return { ...item, produs };
+      }) : [];
+      setProduse(processed);
     } catch (error) {
       console.error('Error fetching produse:', error);
       setProduse([]);

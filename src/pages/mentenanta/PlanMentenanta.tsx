@@ -17,7 +17,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { exportToCSV } from "@/lib/exportUtils";
 import { toast } from "sonner";
 import { API_BASE_URL } from "@/lib/api";
-import { cn } from "@/lib/utils";
+import { cn, toSelectOptions } from "@/lib/utils";
 
 interface PlanMentenanta {
   id: number;
@@ -106,10 +106,14 @@ const PlanMentenanta = () => {
         const response = await fetch(`${API_BASE_URL}/mentenanta/returneaza/echipamente`);
         if (response.ok) {
           const result = await response.json();
-          const mapped = result.map((item: any) => ({
-            cod: item.cod || item.cod_echipament || "",
-            denumire: item.denumire || ""
-          }));
+          const mapped = result.map((item: any) => {
+            // Handle tuple format - extract values
+            const cod = typeof item.cod === 'string' ? item.cod : 
+                       (Array.isArray(item.cod) ? item.cod[0] : (item.cod_echipament || ""));
+            const denumire = typeof item.denumire === 'string' ? item.denumire :
+                            (Array.isArray(item.denumire) ? item.denumire[0] : "");
+            return { cod, denumire };
+          });
           setEchipamente(mapped);
         }
       } catch (error) {

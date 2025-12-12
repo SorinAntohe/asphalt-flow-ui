@@ -17,7 +17,7 @@ import { API_BASE_URL } from "@/lib/api";
 import { exportToCSV } from "@/lib/exportUtils";
 import { format } from "date-fns";
 import { ro } from "date-fns/locale";
-import { cn } from "@/lib/utils";
+import { cn, toSelectOptions } from "@/lib/utils";
 
 interface Pontaj {
   id: number;
@@ -83,7 +83,12 @@ export default function Pontaj() {
         const response = await fetch(`${API_BASE_URL}/liste/returneaza/angajati`);
         if (response.ok) {
           const data = await response.json();
-          setAngajati(data);
+          // Handle tuple format if needed
+          const processed = Array.isArray(data) ? data.map((item: any) => ({
+            id: item.id,
+            nume: typeof item.nume === 'string' ? item.nume : (Array.isArray(item.nume) ? item.nume[0] : String(item.nume || ''))
+          })) : [];
+          setAngajati(processed);
         }
       } catch (error) {
         console.error("Error fetching angajati:", error);
