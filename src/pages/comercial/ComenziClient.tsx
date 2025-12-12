@@ -165,7 +165,6 @@ const ComenziClient = () => {
     avans: 0,
     punct_descarcare: "",
     observatii: "",
-    fereastra_incarcare: "",
     status: "Planificat" as OrderStatus,
   });
   
@@ -252,7 +251,6 @@ const ComenziClient = () => {
       avans: 0,
       punct_descarcare: "",
       observatii: "",
-      fereastra_incarcare: "",
       status: "Planificat",
     });
     setOpenAddEdit(true);
@@ -269,7 +267,6 @@ const ComenziClient = () => {
       avans: item.avans || 0,
       punct_descarcare: item.punct_descarcare || "",
       observatii: item.observatii || "",
-      fereastra_incarcare: item.fereastra_incarcare || "",
       status: item.status || "Preaprobat",
     });
     setOpenAddEdit(true);
@@ -299,7 +296,6 @@ const ComenziClient = () => {
               avans: form.avans,
               punct_descarcare: form.punct_descarcare,
               observatii: form.observatii,
-              fereastra_incarcare: form.fereastra_incarcare,
               status: form.status,
             }
           })
@@ -314,7 +310,6 @@ const ComenziClient = () => {
           cantitate: form.cantitate,
           avans: form.avans,
           unitate_masura: form.unitate_masura,
-          fereastra_incarcare: form.fereastra_incarcare,
           prioritate: form.prioritate,
           punct_descarcare: form.punct_descarcare,
           observatii: form.observatii,
@@ -698,13 +693,6 @@ const ComenziClient = () => {
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Fereastră încărcare</Label>
-              <TimeRangePicker
-                value={form.fereastra_incarcare || "08:00 - 12:00"}
-                onChange={(v) => setForm({ ...form, fereastra_incarcare: v })}
-              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
