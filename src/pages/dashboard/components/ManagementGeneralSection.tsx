@@ -33,51 +33,48 @@ const KPICard = ({ title, value, unit, trend, trendLabel, icon, variant = "defau
   const isPositive = trend !== undefined && trend > 0;
   const isNegative = trend !== undefined && trend < 0;
 
-  const variantStyles = {
-    default: "border-border/50 bg-card hover:border-primary/30",
-    warning: "border-yellow-500/40 bg-gradient-to-br from-yellow-500/5 to-yellow-500/10",
-    danger: "border-destructive/40 bg-gradient-to-br from-destructive/5 to-destructive/10",
-    success: "border-green-500/40 bg-gradient-to-br from-green-500/5 to-green-500/10"
+  const indicatorStyles = {
+    default: "bg-primary",
+    warning: "bg-yellow-500",
+    danger: "bg-destructive",
+    success: "bg-green-500"
   };
 
   const iconStyles = {
-    default: "bg-primary/10 text-primary ring-primary/20",
-    warning: "bg-yellow-500/15 text-yellow-600 ring-yellow-500/20",
-    danger: "bg-destructive/15 text-destructive ring-destructive/20",
-    success: "bg-green-500/15 text-green-600 ring-green-500/20"
+    default: "text-muted-foreground",
+    warning: "text-yellow-600",
+    danger: "text-destructive",
+    success: "text-green-600"
   };
 
   return (
-    <Card className={cn(
-      "relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border",
-      variantStyles[variant]
-    )}>
-      <CardContent className="pt-5 pb-4 px-5">
+    <Card className="relative overflow-hidden transition-all duration-200 hover:shadow-md border-border/50 bg-card">
+      {/* Indicator bar */}
+      <div className={cn("absolute left-0 top-0 bottom-0 w-1", indicatorStyles[variant])} />
+      
+      <CardContent className="pt-4 pb-3 pl-5 pr-4">
         <div className="flex items-start justify-between gap-3">
-          <div className="flex-1 min-w-0 space-y-1">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{title}</p>
+          <div className="flex-1 min-w-0 space-y-0.5">
+            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide truncate">{title}</p>
             <div className="flex items-baseline gap-1.5">
               <p className="text-2xl font-bold tracking-tight">{value}</p>
-              {unit && <p className="text-sm font-medium text-muted-foreground">{unit}</p>}
+              {unit && <p className="text-xs font-medium text-muted-foreground">{unit}</p>}
             </div>
             {subtitle && (
-              <p className="text-[11px] text-muted-foreground/80 mt-0.5">{subtitle}</p>
+              <p className="text-[10px] text-muted-foreground/70">{subtitle}</p>
             )}
             {trend !== undefined && (
               <div className={cn(
-                "flex items-center gap-1 pt-1 text-xs font-semibold",
+                "flex items-center gap-1 pt-0.5 text-[11px] font-medium",
                 isPositive && "text-green-600",
                 isNegative && "text-destructive"
               )}>
-                {isPositive ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
+                {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                 {isPositive ? "+" : ""}{trend}% {trendLabel || "vs anterior"}
               </div>
             )}
           </div>
-          <div className={cn(
-            "h-11 w-11 rounded-xl flex items-center justify-center shrink-0 ring-1",
-            iconStyles[variant]
-          )}>
+          <div className={cn("shrink-0 mt-1", iconStyles[variant])}>
             {icon}
           </div>
         </div>
@@ -88,9 +85,9 @@ const KPICard = ({ title, value, unit, trend, trendLabel, icon, variant = "defau
 
 const ManagementGeneralSection = () => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Prima linie de KPI-uri */}
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
         <KPICard
           title="Producție totală"
           value="12,450"
@@ -110,7 +107,7 @@ const ManagementGeneralSection = () => {
           variant="success"
         />
         <KPICard
-          title="Grad realizare plan producție"
+          title="Grad realizare plan"
           value="94.5"
           unit="%"
           trend={2.1}
@@ -129,9 +126,9 @@ const ManagementGeneralSection = () => {
       </div>
 
       {/* A doua linie de KPI-uri */}
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
         <KPICard
-          title="Comenzi client deschise"
+          title="Comenzi deschise"
           value="24"
           unit="nr"
           icon={<FileText className="h-5 w-5" />}
@@ -146,7 +143,7 @@ const ManagementGeneralSection = () => {
           variant="success"
         />
         <KPICard
-          title="Materiale în stoc critic"
+          title="Materiale stoc critic"
           value="3"
           unit="nr"
           icon={<Package className="h-5 w-5" />}
@@ -162,7 +159,7 @@ const ManagementGeneralSection = () => {
       </div>
 
       {/* A treia linie de KPI-uri */}
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
         <KPICard
           title="Cifra de afaceri"
           value="3,214,800"
@@ -173,7 +170,7 @@ const ManagementGeneralSection = () => {
           variant="success"
         />
         <KPICard
-          title="Preț mediu de vânzare"
+          title="Preț mediu vânzare"
           value="285"
           unit="lei/t"
           trend={2.8}
@@ -181,7 +178,7 @@ const ManagementGeneralSection = () => {
           icon={<Tag className="h-5 w-5" />}
         />
         <KPICard
-          title="Grad acoperire comenzi client"
+          title="Grad acoperire comenzi"
           value="87.5"
           unit="%"
           trend={-3.2}
@@ -201,9 +198,9 @@ const ManagementGeneralSection = () => {
       </div>
 
       {/* A patra linie de KPI-uri */}
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 grid-cols-2 lg:grid-cols-3">
         <KPICard
-          title="Consum specific energie"
+          title="Consum energie"
           value="8.2"
           unit="kWh/t"
           trend={-1.5}
@@ -221,7 +218,7 @@ const ManagementGeneralSection = () => {
           variant="success"
         />
         <KPICard
-          title="Produs dominant în mix"
+          title="Produs dominant"
           value="62"
           unit="%"
           subtitle="BA 16"
