@@ -66,7 +66,7 @@ const MentenantaUtilitatiSection = () => {
             <CardContent>
               <div className="text-center py-4">
                 <p className="text-4xl font-bold text-yellow-600">{reviziiScadente.length}</p>
-                <p className="text-sm text-muted-foreground mt-1">nr echipamente</p>
+                <p className="text-sm text-muted-foreground mt-1">Cost estimat revizii 30 zile</p>
                 <div className="flex items-center justify-center gap-1 mt-2 text-xs text-muted-foreground">
                   <Calendar className="h-3 w-3" />
                   Prima revizie: 15 Feb
