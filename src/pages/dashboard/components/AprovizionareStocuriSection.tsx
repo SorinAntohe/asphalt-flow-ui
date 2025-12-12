@@ -176,7 +176,7 @@ const AprovizionareStocuriSection = () => {
       <div>
         <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
           <Package className="h-4 w-4" />
-          Secțiune B – Prețuri & stocuri
+          Prețuri & stocuri
         </h3>
 
         <div className="grid gap-4 lg:grid-cols-2">
