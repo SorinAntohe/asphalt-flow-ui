@@ -647,7 +647,7 @@ const ComenziClient = () => {
 
       {/* Add/Edit Dialog */}
       <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
-        <DialogContent className="w-[95vw] max-w-md max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+        <DialogContent className="w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
           <DialogHeader className="px-4 pt-3 pb-2">
             <DialogTitle className="text-base">{editing ? "Editează Comandă" : "Adaugă Comandă Nouă"}</DialogTitle>
           </DialogHeader>
