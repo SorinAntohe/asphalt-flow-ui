@@ -49,14 +49,6 @@ const Trasabilitate = lazy(() => import("./pages/productie/Trasabilitate"));
 const Echipamente = lazy(() => import("./pages/mentenanta/Echipamente"));
 const PlanMentenanta = lazy(() => import("./pages/mentenanta/PlanMentenanta"));
 
-// Rapoarte module pages
-const GalerieRapoarte = lazy(() => import("./pages/rapoarte/GalerieRapoarte"));
-const RapoarteProductie = lazy(() => import("./pages/rapoarte/RapoarteProductie"));
-const RapoarteComercial = lazy(() => import("./pages/rapoarte/RapoarteComercial"));
-const RapoarteStocuri = lazy(() => import("./pages/rapoarte/RapoarteStocuri"));
-const RapoarteCalitate = lazy(() => import("./pages/rapoarte/RapoarteCalitate"));
-const RapoarteMentenanta = lazy(() => import("./pages/rapoarte/RapoarteMentenanta"));
-const RapoarteFinanciar = lazy(() => import("./pages/rapoarte/RapoarteFinanciar"));
 
 // Financiar module pages
 const ParteneriSolduri = lazy(() => import("./pages/financiar/ParteneriSolduri"));
@@ -80,8 +72,6 @@ const getSkeletonForRoute = (pathname: string) => {
   if (pathname === "/comercial/calculator") return <CalculatorSkeleton />;
   if (pathname === "/productie/calendar") return <CalendarSkeleton />;
   if (pathname === "/productie/trasabilitate") return <TrasabilitateSkeleton />;
-  if (pathname.startsWith("/rapoarte") && pathname !== "/rapoarte") return <TablePageSkeleton />;
-  if (pathname === "/rapoarte") return <CardsGridSkeleton />;
   if (pathname.startsWith("/financiar")) return <FinanciarSkeleton />;
   if (pathname === "/auth" || pathname === "/") return <AuthSkeleton />;
   return <TablePageSkeleton />;
@@ -143,14 +133,6 @@ const AppRoutes = () => (
       {/* Mentenanta module routes */}
       <Route path="/mentenanta/echipamente" element={<ProtectedRoute><Echipamente /></ProtectedRoute>} />
       <Route path="/mentenanta/plan" element={<ProtectedRoute><PlanMentenanta /></ProtectedRoute>} />
-      {/* Rapoarte module routes */}
-      <Route path="/rapoarte" element={<ProtectedRoute><GalerieRapoarte /></ProtectedRoute>} />
-      <Route path="/rapoarte/productie" element={<ProtectedRoute><RapoarteProductie /></ProtectedRoute>} />
-      <Route path="/rapoarte/comercial" element={<ProtectedRoute><RapoarteComercial /></ProtectedRoute>} />
-      <Route path="/rapoarte/stocuri" element={<ProtectedRoute><RapoarteStocuri /></ProtectedRoute>} />
-      <Route path="/rapoarte/calitate" element={<ProtectedRoute><RapoarteCalitate /></ProtectedRoute>} />
-      <Route path="/rapoarte/mentenanta" element={<ProtectedRoute><RapoarteMentenanta /></ProtectedRoute>} />
-      <Route path="/rapoarte/financiar" element={<ProtectedRoute><RapoarteFinanciar /></ProtectedRoute>} />
       <Route path="/" element={<Auth />} />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
