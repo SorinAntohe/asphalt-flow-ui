@@ -2,51 +2,90 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { 
-  DollarSign, 
-  Package, 
-  AlertTriangle,
-  TrendingUp,
-  TrendingDown,
-  CheckCircle,
-  XCircle
-} from "lucide-react";
+import { DollarSign, Package, AlertTriangle, TrendingUp, TrendingDown, CheckCircle, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Mock data
-const topFurnizori = [
-  { furnizor: "Holcim Romania", valoare: 285000, receptii: 42 },
-  { furnizor: "Lafarge", valoare: 198000, receptii: 35 },
-  { furnizor: "CRH Ciment", valoare: 156000, receptii: 28 },
-  { furnizor: "Carpatcement", valoare: 124000, receptii: 22 },
-  { furnizor: "OMV Petrom", valoare: 98000, receptii: 18 },
-];
-
-const pretMediuAchizitie = [
-  { material: "Bitum 50/70", pret: 3250, volum: 180 },
-  { material: "0/4 NAT", pret: 45, volum: 2500 },
-  { material: "4/8 CONC", pret: 52, volum: 1800 },
-  { material: "Filler", pret: 280, volum: 420 },
-  { material: "CTL", pret: 6.80, volum: 12000 },
-];
-
-const stocCurent = [
-  { material: "Bitum 50/70", stoc: 45, acoperire: 12, status: "OK" },
-  { material: "0/4 NAT", stoc: 850, acoperire: 8, status: "OK" },
-  { material: "4/8 CONC", stoc: 120, acoperire: 3, status: "Critic" },
-  { material: "Filler", stoc: 85, acoperire: 15, status: "OK" },
-  { material: "CTL", stoc: 2500, acoperire: 5, status: "Critic" },
-  { material: "8/16 CRIBLURI", stoc: 320, acoperire: 7, status: "OK" },
-];
-
+const topFurnizori = [{
+  furnizor: "Holcim Romania",
+  valoare: 285000,
+  receptii: 42
+}, {
+  furnizor: "Lafarge",
+  valoare: 198000,
+  receptii: 35
+}, {
+  furnizor: "CRH Ciment",
+  valoare: 156000,
+  receptii: 28
+}, {
+  furnizor: "Carpatcement",
+  valoare: 124000,
+  receptii: 22
+}, {
+  furnizor: "OMV Petrom",
+  valoare: 98000,
+  receptii: 18
+}];
+const pretMediuAchizitie = [{
+  material: "Bitum 50/70",
+  pret: 3250,
+  volum: 180
+}, {
+  material: "0/4 NAT",
+  pret: 45,
+  volum: 2500
+}, {
+  material: "4/8 CONC",
+  pret: 52,
+  volum: 1800
+}, {
+  material: "Filler",
+  pret: 280,
+  volum: 420
+}, {
+  material: "CTL",
+  pret: 6.80,
+  volum: 12000
+}];
+const stocCurent = [{
+  material: "Bitum 50/70",
+  stoc: 45,
+  acoperire: 12,
+  status: "OK"
+}, {
+  material: "0/4 NAT",
+  stoc: 850,
+  acoperire: 8,
+  status: "OK"
+}, {
+  material: "4/8 CONC",
+  stoc: 120,
+  acoperire: 3,
+  status: "Critic"
+}, {
+  material: "Filler",
+  stoc: 85,
+  acoperire: 15,
+  status: "OK"
+}, {
+  material: "CTL",
+  stoc: 2500,
+  acoperire: 5,
+  status: "Critic"
+}, {
+  material: "8/16 CRIBLURI",
+  stoc: 320,
+  acoperire: 7,
+  status: "OK"
+}];
 const AprovizionareStocuriSection = () => {
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Secțiune A - Financiar aprovizionare */}
       <div>
         <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
           <DollarSign className="h-4 w-4" />
-          Secțiune A – Financiar aprovizionare
+          Financiar aprovizionare
         </h3>
         
         <div className="grid gap-4 lg:grid-cols-3">
@@ -122,13 +161,11 @@ const AprovizionareStocuriSection = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {topFurnizori.map((item) => (
-                  <TableRow key={item.furnizor}>
+                {topFurnizori.map(item => <TableRow key={item.furnizor}>
                     <TableCell className="text-xs font-medium">{item.furnizor}</TableCell>
                     <TableCell className="text-xs text-right">{item.valoare.toLocaleString()}</TableCell>
                     <TableCell className="text-xs text-right">{item.receptii}</TableCell>
-                  </TableRow>
-                ))}
+                  </TableRow>)}
               </TableBody>
             </Table>
           </CardContent>
@@ -160,13 +197,11 @@ const AprovizionareStocuriSection = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {pretMediuAchizitie.map((item) => (
-                    <TableRow key={item.material}>
+                  {pretMediuAchizitie.map(item => <TableRow key={item.material}>
                       <TableCell className="text-xs font-medium">{item.material}</TableCell>
                       <TableCell className="text-xs text-right">{item.pret.toLocaleString()}</TableCell>
                       <TableCell className="text-xs text-right">{item.volum.toLocaleString()}</TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                 </TableBody>
               </Table>
             </CardContent>
@@ -190,34 +225,26 @@ const AprovizionareStocuriSection = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {stocCurent.map((item) => (
-                    <TableRow key={item.material}>
+                  {stocCurent.map(item => <TableRow key={item.material}>
                       <TableCell className="text-xs font-medium">{item.material}</TableCell>
                       <TableCell className="text-xs text-right">{item.stoc.toLocaleString()}</TableCell>
                       <TableCell className="text-xs text-right">{item.acoperire}</TableCell>
                       <TableCell className="text-center">
-                        {item.status === "OK" ? (
-                          <Badge variant="outline" className="text-xs gap-1 text-green-600 border-green-600/30">
+                        {item.status === "OK" ? <Badge variant="outline" className="text-xs gap-1 text-green-600 border-green-600/30">
                             <CheckCircle className="h-3 w-3" />
                             OK
-                          </Badge>
-                        ) : (
-                          <Badge variant="destructive" className="text-xs gap-1">
+                          </Badge> : <Badge variant="destructive" className="text-xs gap-1">
                             <AlertTriangle className="h-3 w-3" />
                             Critic
-                          </Badge>
-                        )}
+                          </Badge>}
                       </TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                 </TableBody>
               </Table>
             </CardContent>
           </Card>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default AprovizionareStocuriSection;
