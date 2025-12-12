@@ -79,7 +79,7 @@ const MentenantaUtilitatiSection = () => {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">
-                MU2 – Cost estimat revizii 30 zile
+                Cost estimat revizii 30 zile
               </CardTitle>
             </CardHeader>
             <CardContent>
