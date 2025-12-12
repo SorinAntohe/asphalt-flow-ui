@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2, ArrowUpDown, Ticket, Download, X, Package, TrendingUp, Calendar } from "lucide-react";
+import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown, Ticket, Download, X, Package, TrendingUp, Calendar } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
@@ -600,46 +600,78 @@ export default function Receptii() {
     setSort({ field, direction });
   };
 
-  const FilterHeader = ({ field, label }: { field: keyof typeof filters; label: string }) => (
-    <TableHead className="h-10 text-xs">
-      <Popover modal={true}>
-        <PopoverTrigger asChild>
-          <div className="flex items-center cursor-pointer hover:text-primary">
-            <span>{label}</span>
-            <ArrowUpDown className="ml-2 h-3 w-3" />
-          </div>
-        </PopoverTrigger>
-        <PopoverContent className="w-56 p-2">
-          <div className="space-y-2">
-            <Input
-              value={filters[field]}
-              onChange={(e) => setFilters({ ...filters, [field]: e.target.value })}
-              placeholder={`Caută ${label.toLowerCase()}...`}
-              className="h-7 text-xs"
-            />
-            <div className="flex gap-1">
-              <Button
-                size="sm"
-                variant={sort.field === field && sort.direction === 'asc' ? 'default' : 'outline'}
-                onClick={() => handleSort(field, 'asc')}
-                className="flex-1 h-7 text-xs"
-              >
-                Cresc.
-              </Button>
-              <Button
-                size="sm"
-                variant={sort.field === field && sort.direction === 'desc' ? 'default' : 'outline'}
-                onClick={() => handleSort(field, 'desc')}
-                className="flex-1 h-7 text-xs"
-              >
-                Descresc.
-              </Button>
+  const handleResetFilter = (field: keyof typeof filters) => {
+    setFilters({ ...filters, [field]: '' });
+    if (sort.field === field) {
+      setSort({ field: '', direction: null });
+    }
+  };
+
+  const FilterHeader = ({ field, label }: { field: keyof typeof filters; label: string }) => {
+    const hasActiveFilter = filters[field] !== '';
+    const isActiveSortField = sort.field === field;
+    
+    return (
+      <TableHead className="h-10 text-xs">
+        <Popover modal={true}>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" className="h-8 px-2 hover:bg-muted/50 font-medium text-xs gap-1">
+              {label}
+              {isActiveSortField && sort.direction === 'asc' ? (
+                <ArrowUp className="h-3 w-3 text-primary" />
+              ) : isActiveSortField && sort.direction === 'desc' ? (
+                <ArrowDown className="h-3 w-3 text-primary" />
+              ) : (
+                <ArrowUpDown className="h-3 w-3 opacity-50" />
+              )}
+              {hasActiveFilter && <span className="ml-1 h-2 w-2 rounded-full bg-primary" />}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-56 p-2 bg-popover border shadow-md z-50" align="start">
+            <div className="space-y-2">
+              <Input
+                value={filters[field]}
+                onChange={(e) => setFilters({ ...filters, [field]: e.target.value })}
+                placeholder={`Caută ${label.toLowerCase()}...`}
+                className="h-7 text-xs"
+              />
+              <div className="flex gap-1">
+                <Button
+                  size="sm"
+                  variant={isActiveSortField && sort.direction === 'asc' ? 'default' : 'outline'}
+                  onClick={() => handleSort(field, 'asc')}
+                  className="flex-1 h-7 text-xs"
+                >
+                  <ArrowUp className="h-3 w-3 mr-1" />
+                  Cresc.
+                </Button>
+                <Button
+                  size="sm"
+                  variant={isActiveSortField && sort.direction === 'desc' ? 'default' : 'outline'}
+                  onClick={() => handleSort(field, 'desc')}
+                  className="flex-1 h-7 text-xs"
+                >
+                  <ArrowDown className="h-3 w-3 mr-1" />
+                  Descresc.
+                </Button>
+              </div>
+              {(hasActiveFilter || isActiveSortField) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full h-7 text-xs"
+                  onClick={() => handleResetFilter(field)}
+                >
+                  <X className="h-3 w-3 mr-1" />
+                  Resetează
+                </Button>
+              )}
             </div>
-          </div>
-        </PopoverContent>
-      </Popover>
-    </TableHead>
-  );
+          </PopoverContent>
+        </Popover>
+      </TableHead>
+    );
+  };
 
   return (
     <div className="space-y-4 sm:space-y-6">
