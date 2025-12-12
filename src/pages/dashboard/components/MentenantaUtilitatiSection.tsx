@@ -52,7 +52,7 @@ const MentenantaUtilitatiSection = () => {
       <div>
         <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
           <Wrench className="h-4 w-4" />
-          Secțiune A – Mentenanță planificată
+          Mentenanță planificată
         </h3>
         
         <div className="grid gap-4 lg:grid-cols-2 mb-4">
