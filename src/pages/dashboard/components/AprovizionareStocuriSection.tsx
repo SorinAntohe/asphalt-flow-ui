@@ -92,8 +92,8 @@ const AprovizionareStocuriSection = () => {
           {/* AS1 - Valoare totală achiziții */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm">
-                AS1 – Valoare totală achiziții
+            <CardTitle className="text-sm">
+                Valoare totală achiziții
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -111,8 +111,8 @@ const AprovizionareStocuriSection = () => {
           {/* AS5 - Recepții cu diferențe */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm">
-                AS5 – Recepții cu diferențe
+            <CardTitle className="text-sm">
+                Recepții cu diferențe
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -127,8 +127,8 @@ const AprovizionareStocuriSection = () => {
           {/* AS6 - Valoare comenzi materiale */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm">
-                AS6 – Valoare comenzi materiale
+            <CardTitle className="text-sm">
+                Valoare comenzi materiale
               </CardTitle>
             </CardHeader>
             <CardContent>
