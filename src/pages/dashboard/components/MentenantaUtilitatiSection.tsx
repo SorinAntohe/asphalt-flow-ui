@@ -137,7 +137,7 @@ const MentenantaUtilitatiSection = () => {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">
-                MU3 – Consum total energie electrică
+                Consum total energie electrică
               </CardTitle>
             </CardHeader>
             <CardContent>
