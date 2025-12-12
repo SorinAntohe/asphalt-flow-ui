@@ -1,5 +1,145 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
+// ============= Dialog & Popup Skeletons =============
+
+// Form dialog skeleton (Add/Edit dialogs)
+export const FormDialogSkeleton = ({ fields = 4 }: { fields?: number }) => (
+  <div className="p-5 space-y-4 animate-pulse">
+    <div className="space-y-1">
+      <Skeleton className="h-5 w-32" />
+      <Skeleton className="h-3 w-48" />
+    </div>
+    <div className="grid grid-cols-2 gap-3">
+      {Array.from({ length: fields }).map((_, i) => (
+        <div key={i} className="space-y-1.5">
+          <Skeleton className="h-3 w-20" />
+          <Skeleton className="h-9 w-full" />
+        </div>
+      ))}
+    </div>
+    <div className="flex justify-end gap-2 pt-2">
+      <Skeleton className="h-8 w-20" />
+      <Skeleton className="h-8 w-24" />
+    </div>
+  </div>
+);
+
+// Detail dialog skeleton (view details)
+export const DetailDialogSkeleton = () => (
+  <div className="p-5 space-y-4 animate-pulse">
+    <div className="flex items-center justify-between">
+      <Skeleton className="h-6 w-40" />
+      <Skeleton className="h-5 w-20 rounded-full" />
+    </div>
+    <div className="grid grid-cols-2 gap-4">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="space-y-1">
+          <Skeleton className="h-3 w-16" />
+          <Skeleton className="h-4 w-28" />
+        </div>
+      ))}
+    </div>
+    <Skeleton className="h-20 w-full rounded-lg" />
+    <div className="flex justify-end gap-2">
+      <Skeleton className="h-8 w-20" />
+      <Skeleton className="h-8 w-20" />
+      <Skeleton className="h-8 w-24" />
+    </div>
+  </div>
+);
+
+// Table dialog skeleton (drill-down with table)
+export const TableDialogSkeleton = ({ rows = 5 }: { rows?: number }) => (
+  <div className="p-5 space-y-4 animate-pulse">
+    <Skeleton className="h-6 w-48" />
+    <div className="space-y-2">
+      <div className="flex gap-2">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-8 flex-1" />
+        ))}
+      </div>
+      {Array.from({ length: rows }).map((_, i) => (
+        <div key={i} className="flex gap-2">
+          {Array.from({ length: 4 }).map((_, j) => (
+            <Skeleton key={j} className="h-10 flex-1" />
+          ))}
+        </div>
+      ))}
+    </div>
+    <div className="flex justify-end">
+      <Skeleton className="h-8 w-24" />
+    </div>
+  </div>
+);
+
+// Chart dialog skeleton (drill-down with chart)
+export const ChartDialogSkeleton = () => (
+  <div className="p-5 space-y-4 animate-pulse">
+    <div className="flex items-center justify-between">
+      <Skeleton className="h-6 w-40" />
+      <Skeleton className="h-8 w-32" />
+    </div>
+    <Skeleton className="h-64 w-full rounded-lg" />
+    <div className="flex justify-center gap-4">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div key={i} className="flex items-center gap-2">
+          <Skeleton className="h-3 w-3 rounded-full" />
+          <Skeleton className="h-3 w-16" />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+// Popover skeleton
+export const PopoverSkeleton = () => (
+  <div className="p-3 space-y-2 min-w-[200px] animate-pulse">
+    {Array.from({ length: 4 }).map((_, i) => (
+      <div key={i} className="flex items-center gap-2">
+        <Skeleton className="h-4 w-4" />
+        <Skeleton className="h-4 flex-1" />
+      </div>
+    ))}
+  </div>
+);
+
+// Dropdown menu skeleton
+export const DropdownSkeleton = () => (
+  <div className="p-1 space-y-1 min-w-[160px] animate-pulse">
+    {Array.from({ length: 5 }).map((_, i) => (
+      <Skeleton key={i} className="h-8 w-full rounded-sm" />
+    ))}
+  </div>
+);
+
+// Select options skeleton
+export const SelectOptionsSkeleton = () => (
+  <div className="p-1 space-y-1 animate-pulse">
+    {Array.from({ length: 6 }).map((_, i) => (
+      <Skeleton key={i} className="h-8 w-full rounded-sm" />
+    ))}
+  </div>
+);
+
+// Confirmation dialog skeleton
+export const ConfirmDialogSkeleton = () => (
+  <div className="p-5 space-y-4 animate-pulse">
+    <div className="flex items-center gap-3">
+      <Skeleton className="h-10 w-10 rounded-full" />
+      <div className="flex-1">
+        <Skeleton className="h-5 w-40" />
+        <Skeleton className="h-3 w-64 mt-2" />
+      </div>
+    </div>
+    <div className="flex justify-end gap-2 pt-2">
+      <Skeleton className="h-9 w-20" />
+      <Skeleton className="h-9 w-24" />
+    </div>
+  </div>
+);
+
+// ============= Page Skeletons =============
+
 // Dashboard skeleton with KPI cards and charts
 export const DashboardSkeleton = () => (
   <div className="space-y-6 animate-pulse">
