@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { exportToCSV } from "@/lib/exportUtils";
+import { extractApiValue } from "@/lib/utils";
 import { format } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -99,7 +100,13 @@ const ComenziClient = () => {
       if (!response.ok) throw new Error("Eroare la încărcarea clienților");
       const data = await response.json();
       console.log("Clienti data:", data);
-      setClientsList(data || []);
+      // Handle tuple format from API
+      const clientsArray = Array.isArray(data) ? data : [];
+      const extracted = clientsArray.map((item: any) => ({
+        id: item.id || 0,
+        denumire: extractApiValue(item.denumire ?? item.nume ?? item)
+      })).filter(c => c.denumire);
+      setClientsList(extracted);
     } catch (error) {
       console.error("Error fetching clienti:", error);
     }
@@ -111,24 +118,29 @@ const ComenziClient = () => {
       if (!response.ok) throw new Error("Eroare la încărcarea produselor");
       const data = await response.json();
       console.log("Produse data:", data);
-      setProduseList(data || []);
+      // Handle tuple format from API
+      const produseArray = Array.isArray(data) ? data : [];
+      const extracted = produseArray.map((item: any) => ({
+        id: item.id || 0,
+        denumire: extractApiValue(item.produs ?? item.denumire ?? item)
+      })).filter(p => p.denumire);
+      setProduseList(extracted);
     } catch (error) {
       console.error("Error fetching produse:", error);
     }
   };
 
-  // Transform API data to options format for FilterableSelect
   const clientOptions = useMemo(() => {
-    return clientsList.map((client: any) => ({
-      value: client.denumire || client.nume || client.name || String(client.id),
-      label: client.denumire || client.nume || client.name || String(client.id)
+    return clientsList.map((client) => ({
+      value: client.denumire,
+      label: client.denumire
     }));
   }, [clientsList]);
 
   const produsOptions = useMemo(() => {
-    return produseList.map((produs: any) => ({
-      value: produs.produs || produs.produse || produs.denumire || produs.nume || String(produs.id),
-      label: produs.produs || produs.produse || produs.denumire || produs.nume || String(produs.id)
+    return produseList.map((produs) => ({
+      value: produs.denumire,
+      label: produs.denumire
     }));
   }, [produseList]);
   
