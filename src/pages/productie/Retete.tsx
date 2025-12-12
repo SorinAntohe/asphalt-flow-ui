@@ -19,7 +19,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { NumericInput } from "@/components/ui/numeric-input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
@@ -370,7 +369,7 @@ const Retete = () => {
     const newComponent: Component = {
       id: Date.now(),
       material: "",
-      cantitate: "0" as any
+      cantitate: 0
     };
     setEditorComponents([...editorComponents, newComponent]);
   };
@@ -389,7 +388,7 @@ const Retete = () => {
 
   // Calculate total cantitate for validation
   const getTotalCantitate = (componente: Component[]) => {
-    const total = componente.reduce((sum, c) => sum + (parseFloat(String(c.cantitate)) || 0), 0);
+    const total = componente.reduce((sum, c) => sum + c.cantitate, 0);
     return parseFloat(total.toFixed(3));
   };
 
@@ -722,9 +721,11 @@ const Retete = () => {
                         searchPlaceholder="Caută..."
                         className="h-8 text-xs flex-1"
                       />
-                      <NumericInput 
+                      <Input 
+                        type="number" 
+                        step="0.001"
                         value={comp.cantitate} 
-                        onChange={(value) => handleUpdateComponent(comp.id, "cantitate", value as any)}
+                        onChange={(e) => handleUpdateComponent(comp.id, "cantitate", parseFloat(parseFloat(e.target.value).toFixed(3)) || 0)}
                         className="h-8 w-20 text-xs text-right" 
                         placeholder="kg"
                       />
