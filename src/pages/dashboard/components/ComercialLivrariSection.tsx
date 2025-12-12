@@ -244,7 +244,7 @@ const ComercialLivrariSection = () => {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">
-              CL5 – Grad utilizare flotă
+              Grad utilizare flotă
             </CardTitle>
           </CardHeader>
           <CardContent>
