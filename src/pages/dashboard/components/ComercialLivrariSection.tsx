@@ -59,9 +59,8 @@ const ComercialLivrariSection = () => {
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <span className="text-[10px] font-mono text-muted-foreground">CL1</span>
-              Ofertă → Contract → Comandă client
+            <CardTitle className="text-sm">
+              CL1 – Ofertă → Contract → Comandă client
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -90,15 +89,15 @@ const ComercialLivrariSection = () => {
               </div>
               <div className="flex flex-col justify-center space-y-4">
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                  <span className="text-sm">Rată conversie Oferte → Contracte</span>
+                  <p className="text-sm">Rată conversie Oferte → Contracte</p>
                   <Badge variant="secondary" className="text-sm">62.2%</Badge>
                 </div>
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                  <span className="text-sm">Rată conversie Contracte → Comenzi</span>
+                  <p className="text-sm">Rată conversie Contracte → Comenzi</p>
                   <Badge variant="secondary" className="text-sm">78.6%</Badge>
                 </div>
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                  <span className="text-sm">Rată conversie totală</span>
+                  <p className="text-sm">Rată conversie totală</p>
                   <Badge className="text-sm">48.9%</Badge>
                 </div>
               </div>
@@ -118,10 +117,9 @@ const ComercialLivrariSection = () => {
           {/* CL2 - Tonaj livrat pe client */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">CL2</span>
-                Tonaj livrat pe client (Top 5)
-              </CardTitle>
+            <CardTitle className="text-sm">
+              CL2 – Tonaj livrat pe client (Top 5)
+            </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-[220px]">
@@ -147,10 +145,9 @@ const ComercialLivrariSection = () => {
           {/* CL3 - Preț mediu de vânzare */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">CL3</span>
-                Preț mediu de vânzare / produs
-              </CardTitle>
+            <CardTitle className="text-sm">
+              CL3 – Preț mediu de vânzare / produs
+            </CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
@@ -178,9 +175,8 @@ const ComercialLivrariSection = () => {
         {/* CL4 - Comparativ prețuri */}
         <Card className="mt-4">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <span className="text-[10px] font-mono text-muted-foreground">CL4</span>
-              Preț mediu vs concurență / produs
+            <CardTitle className="text-sm">
+              CL4 – Preț mediu vs concurență / produs
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -225,9 +221,8 @@ const ComercialLivrariSection = () => {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <span className="text-[10px] font-mono text-muted-foreground">CL5</span>
-              Grad utilizare flotă
+            <CardTitle className="text-sm">
+              CL5 – Grad utilizare flotă
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -237,7 +232,7 @@ const ComercialLivrariSection = () => {
                 <p className="text-sm text-muted-foreground mt-1">Grad utilizare</p>
                 <div className="flex items-center justify-center gap-1 mt-2 text-xs text-green-600">
                   <TrendingUp className="h-3 w-3" />
-                  <span>+4.2% vs săptămâna anterioară</span>
+                  +4.2% vs săptămâna anterioară
                 </div>
               </div>
               <div className="flex-1 grid grid-cols-3 gap-4">

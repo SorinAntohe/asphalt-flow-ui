@@ -44,18 +44,15 @@ const HRAdminSection = () => {
           {/* HR1 - Număr angajați */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">HR1</span>
-                Număr angajați
+              <CardTitle className="text-sm">
+                HR1 – Număr angajați
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center py-4">
                 <p className="text-4xl font-bold">{totalAngajati}</p>
                 <p className="text-sm text-muted-foreground mt-1">persoane</p>
-                <div className="flex items-center justify-center gap-1 mt-2 text-xs text-muted-foreground">
-                  <span>Fără modificări vs anterior</span>
-                </div>
+                <p className="mt-2 text-xs text-muted-foreground">Fără modificări vs anterior</p>
               </div>
             </CardContent>
           </Card>
@@ -63,9 +60,8 @@ const HRAdminSection = () => {
           {/* HR2 - Cost salarial lunar */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">HR2</span>
-                Cost salarial lunar
+              <CardTitle className="text-sm">
+                HR2 – Cost salarial lunar
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -74,7 +70,7 @@ const HRAdminSection = () => {
                 <p className="text-sm text-muted-foreground mt-1">lei</p>
                 <div className="flex items-center justify-center gap-1 mt-2 text-xs text-green-600">
                   <TrendingDown className="h-3 w-3" />
-                  <span>Stabil vs anterior</span>
+                  Stabil vs anterior
                 </div>
               </div>
             </CardContent>
@@ -83,9 +79,8 @@ const HRAdminSection = () => {
           {/* HR3 - Zile concediu rămase */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">HR3</span>
-                Zile concediu rămase
+              <CardTitle className="text-sm">
+                HR3 – Zile concediu rămase
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -94,7 +89,7 @@ const HRAdminSection = () => {
                 <p className="text-sm text-muted-foreground mt-1">zile total</p>
                 <div className="flex items-center justify-center gap-1 mt-2 text-xs text-muted-foreground">
                   <Calendar className="h-3 w-3" />
-                  <span>~{Math.round(totalZileConcediu / totalAngajati)} zile/angajat</span>
+                  ~{Math.round(totalZileConcediu / totalAngajati)} zile/angajat
                 </div>
               </div>
             </CardContent>
@@ -146,9 +141,8 @@ const HRAdminSection = () => {
           {/* HR4 - Cheltuieli chirii lunare */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">HR4</span>
-                Cheltuieli chirii lunare
+              <CardTitle className="text-sm">
+                HR4 – Cheltuieli chirii lunare
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -157,7 +151,7 @@ const HRAdminSection = () => {
                 <p className="text-sm text-muted-foreground mt-1">lei</p>
                 <div className="flex items-center justify-center gap-1 mt-2 text-xs text-muted-foreground">
                   <Home className="h-3 w-3" />
-                  <span>Cost fix lunar</span>
+                  Cost fix lunar
                 </div>
               </div>
             </CardContent>
@@ -166,9 +160,8 @@ const HRAdminSection = () => {
           {/* HR5 - Cost fix per ton */}
           <Card className="lg:col-span-2">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">HR5</span>
-                Cost fix (salarii + chirii) / ton
+              <CardTitle className="text-sm">
+                HR5 – Cost fix (salarii + chirii) / ton
               </CardTitle>
             </CardHeader>
             <CardContent>

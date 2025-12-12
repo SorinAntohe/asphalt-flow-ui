@@ -37,33 +37,27 @@ const Dashboard = () => {
         <TabsList className="flex flex-wrap h-auto gap-1 bg-muted/70 p-1 border border-border">
           <TabsTrigger value="management-general" className="gap-1.5 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <LayoutDashboard className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Management General</span>
-            <span className="sm:hidden">General</span>
+            Management General
           </TabsTrigger>
           <TabsTrigger value="productie-calitate" className="gap-1.5 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Factory className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Producție & Calitate</span>
-            <span className="sm:hidden">Producție</span>
+            Producție & Calitate
           </TabsTrigger>
           <TabsTrigger value="comercial-livrari" className="gap-1.5 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <ShoppingCart className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Comercial & Livrări</span>
-            <span className="sm:hidden">Comercial</span>
+            Comercial & Livrări
           </TabsTrigger>
           <TabsTrigger value="aprovizionare-stocuri" className="gap-1.5 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Package className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Aprovizionare & Stocuri</span>
-            <span className="sm:hidden">Stocuri</span>
+            Aprovizionare & Stocuri
           </TabsTrigger>
           <TabsTrigger value="mentenanta-utilitati" className="gap-1.5 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Wrench className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Mentenanță & Utilități</span>
-            <span className="sm:hidden">Mentenanță</span>
+            Mentenanță & Utilități
           </TabsTrigger>
           <TabsTrigger value="hr-admin" className="gap-1.5 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Users className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">HR & Admin</span>
-            <span className="sm:hidden">HR</span>
+            HR & Admin
           </TabsTrigger>
         </TabsList>
 

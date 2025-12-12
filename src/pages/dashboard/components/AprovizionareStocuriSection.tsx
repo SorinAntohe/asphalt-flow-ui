@@ -53,9 +53,8 @@ const AprovizionareStocuriSection = () => {
           {/* AS1 - Valoare totală achiziții */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">AS1</span>
-                Valoare totală achiziții
+              <CardTitle className="text-sm">
+                AS1 – Valoare totală achiziții
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -64,7 +63,7 @@ const AprovizionareStocuriSection = () => {
                 <p className="text-sm text-muted-foreground mt-1">lei</p>
                 <div className="flex items-center justify-center gap-1 mt-2 text-xs text-green-600">
                   <TrendingDown className="h-3 w-3" />
-                  <span>-3.2% vs luna anterioară</span>
+                  -3.2% vs luna anterioară
                 </div>
               </div>
             </CardContent>
@@ -73,18 +72,15 @@ const AprovizionareStocuriSection = () => {
           {/* AS5 - Recepții cu diferențe */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">AS5</span>
-                Recepții cu diferențe
+              <CardTitle className="text-sm">
+                AS5 – Recepții cu diferențe
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center py-4">
                 <p className="text-3xl font-bold text-yellow-600">8</p>
                 <p className="text-sm text-muted-foreground mt-1">nr recepții</p>
-                <div className="flex items-center justify-center gap-1 mt-2 text-xs text-muted-foreground">
-                  <span>din 145 total (5.5%)</span>
-                </div>
+                <p className="mt-2 text-xs text-muted-foreground">din 145 total (5.5%)</p>
               </div>
             </CardContent>
           </Card>
@@ -92,9 +88,8 @@ const AprovizionareStocuriSection = () => {
           {/* AS6 - Valoare comenzi materiale */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">AS6</span>
-                Valoare comenzi materiale
+              <CardTitle className="text-sm">
+                AS6 – Valoare comenzi materiale
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -103,7 +98,7 @@ const AprovizionareStocuriSection = () => {
                 <p className="text-sm text-muted-foreground mt-1">lei (perioadă selectată)</p>
                 <div className="flex items-center justify-center gap-1 mt-2 text-xs text-green-600">
                   <TrendingUp className="h-3 w-3" />
-                  <span>+12% vs anterior</span>
+                  +12% vs anterior
                 </div>
               </div>
             </CardContent>
@@ -113,9 +108,8 @@ const AprovizionareStocuriSection = () => {
         {/* AS2 - Top furnizori */}
         <Card className="mt-4">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <span className="text-[10px] font-mono text-muted-foreground">AS2</span>
-              Top furnizori după valoare achiziții
+            <CardTitle className="text-sm">
+              AS2 – Top furnizori după valoare achiziții
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -152,9 +146,8 @@ const AprovizionareStocuriSection = () => {
           {/* AS3 - Preț mediu achiziție */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">AS3</span>
-                Preț mediu achiziție / material
+              <CardTitle className="text-sm">
+                AS3 – Preț mediu achiziție / material
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -182,9 +175,8 @@ const AprovizionareStocuriSection = () => {
           {/* AS4 - Stoc curent & zile acoperire */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">AS4</span>
-                Stoc curent & zile de acoperire
+              <CardTitle className="text-sm">
+                AS4 – Stoc curent & zile de acoperire
               </CardTitle>
             </CardHeader>
             <CardContent>
