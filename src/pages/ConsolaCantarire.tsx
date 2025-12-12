@@ -221,8 +221,8 @@ export default function ConsolaCantarire() {
       }
     }
 
-    // For OUTBOUND (Livrare): After TARA is entered (step 2/2), call API to save delivery
-    if (updatedSession.direction === 'OUTBOUND' && type === 'TARA' && updatedSession.masaBrut && updatedSession.tara) {
+    // For OUTBOUND (Livrare): After BRUT is entered (step 2/2), call API to save delivery
+    if (updatedSession.direction === 'OUTBOUND' && type === 'BRUT' && updatedSession.masaBrut && updatedSession.tara) {
       const cod = updatedSession.orderNo || '';
       const nrAuto = Array.isArray(updatedSession.nrAuto) ? updatedSession.nrAuto[0] : (updatedSession.nrAuto || '');
       const sofer = Array.isArray(updatedSession.createdBy) ? updatedSession.createdBy[0] : (updatedSession.createdBy || '');
