@@ -20,7 +20,7 @@ import { exportToCSV } from "@/lib/exportUtils";
 import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
 import { format, addDays } from "date-fns";
 import { ro } from "date-fns/locale";
-import { cn } from "@/lib/utils";
+import { cn, extractApiValue, flattenApiArray } from "@/lib/utils";
 
 // Types
 interface ProdusItem {
@@ -247,7 +247,7 @@ const OferteContracte = () => {
     }
   };
   
-  // Clients and Products lists from API
+  // Clients and Products lists from API (may come as tuples)
   const [clientsList, setClientsList] = useState<string[]>([]);
   const [produseFiniteList, setProduseFiniteList] = useState<string[]>([]);
   
@@ -257,9 +257,11 @@ const OferteContracte = () => {
       if (!response.ok) throw new Error("Eroare la încărcarea clienților");
       const data = await response.json();
       console.log("API clienti response:", data);
-      // Handle both array and wrapped response formats
+      // Handle both wrapped responses and tuple format [('Client1',), ...]
       const clientsArray = Array.isArray(data) ? data : (data.data || data.items || []);
-      const clientNames = clientsArray.map((item: any) => item.nume || "").filter(Boolean);
+      const clientNames = clientsArray
+        .map((item: any) => extractApiValue(item.nume ?? item))
+        .filter(Boolean);
       console.log("Extracted client names:", clientNames);
       setClientsList(clientNames);
     } catch (error) {
@@ -273,9 +275,11 @@ const OferteContracte = () => {
       if (!response.ok) throw new Error("Eroare la încărcarea produselor");
       const data = await response.json();
       console.log("API produse response:", data);
-      // Handle both array and wrapped response formats
+      // Handle both wrapped responses and tuple format
       const produseArray = Array.isArray(data) ? data : (data.data || data.items || []);
-      const productNames = produseArray.map((item: any) => item.produs || "").filter(Boolean);
+      const productNames = produseArray
+        .map((item: any) => extractApiValue(item.produs ?? item))
+        .filter(Boolean);
       console.log("Extracted product names:", productNames);
       setProduseFiniteList(productNames);
     } catch (error) {
