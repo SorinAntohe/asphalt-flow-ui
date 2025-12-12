@@ -252,7 +252,7 @@ const ProductieCalitateSection = () => {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">
-                PC4 – Temperatură medie la încărcare pe produs (°C)
+                 Temperatură medie la încărcare pe produs (°C)
               </CardTitle>
             </CardHeader>
             <CardContent>
