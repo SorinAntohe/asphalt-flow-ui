@@ -202,7 +202,7 @@ const MentenantaUtilitatiSection = () => {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">
-              MU5 – Cost utilități per ton produs (lei/t)
+              Cost utilități per ton produs (lei/t)
             </CardTitle>
           </CardHeader>
           <CardContent>
