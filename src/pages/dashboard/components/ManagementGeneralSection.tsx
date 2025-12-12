@@ -34,17 +34,17 @@ const KPICard = ({ title, value, unit, trend, trendLabel, icon, variant = "defau
   const isNegative = trend !== undefined && trend < 0;
 
   const indicatorStyles = {
-    default: "bg-primary",
-    warning: "bg-yellow-500",
-    danger: "bg-destructive",
-    success: "bg-green-500"
+    default: "bg-primary/60",
+    warning: "bg-yellow-400/70",
+    danger: "bg-red-400/70",
+    success: "bg-emerald-400/70"
   };
 
   const iconStyles = {
-    default: "text-muted-foreground",
-    warning: "text-yellow-600",
-    danger: "text-destructive",
-    success: "text-green-600"
+    default: "text-muted-foreground/70",
+    warning: "text-yellow-500/70",
+    danger: "text-red-400/70",
+    success: "text-emerald-500/70"
   };
 
   return (
