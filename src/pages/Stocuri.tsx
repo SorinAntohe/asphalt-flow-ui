@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { ArrowUp, ArrowDown, ArrowUpDown, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/api";
+import { TableFilterHeader } from "@/components/ui/table-filter-header";
 
 interface StocItem {
   id: number;
@@ -161,96 +160,38 @@ export default function Stocuri() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="h-10 text-xs">
-                  <div className="flex items-center gap-1">
-                    <Popover modal={true}>
-                      <PopoverTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
-                          <span>ID</span>
-                          {sortConfig?.key === 'id' ? (sortConfig.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-56 p-2">
-                        <div className="space-y-2">
-                          <Input 
-                            placeholder="Caută ID..." 
-                            value={filters.id}
-                            onChange={(e) => setFilters({ ...filters, id: e.target.value })} 
-                            className="h-7 text-xs" 
-                          />
-                          <div className="flex gap-1">
-                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'id', direction: 'asc' })}>
-                              <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
-                            </Button>
-                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'id', direction: 'desc' })}>
-                              <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
-                            </Button>
-                          </div>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                </TableHead>
-                <TableHead className="h-10 text-xs">
-                  <div className="flex items-center gap-1">
-                    <Popover modal={true}>
-                      <PopoverTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
-                          <span>Tip Material</span>
-                          {sortConfig?.key === 'materiale_prime' ? (sortConfig.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-56 p-2">
-                        <div className="space-y-2">
-                          <Input 
-                            placeholder="Caută material..." 
-                            value={filters.tipMaterial}
-                            onChange={(e) => setFilters({ ...filters, tipMaterial: e.target.value })} 
-                            className="h-7 text-xs" 
-                          />
-                          <div className="flex gap-1">
-                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'materiale_prime', direction: 'asc' })}>
-                              <ArrowUp className="h-3 w-3 mr-1" /> A-Z
-                            </Button>
-                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'materiale_prime', direction: 'desc' })}>
-                              <ArrowDown className="h-3 w-3 mr-1" /> Z-A
-                            </Button>
-                          </div>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                </TableHead>
-                <TableHead className="h-10 text-xs">
-                  <div className="flex items-center gap-1">
-                    <Popover modal={true}>
-                      <PopoverTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
-                          <span>Cantitate Stoc</span>
-                          {sortConfig?.key === 'stoc' ? (sortConfig.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-56 p-2">
-                        <div className="space-y-2">
-                          <Input 
-                            placeholder="Caută cantitate..." 
-                            value={filters.cantitateStoc}
-                            onChange={(e) => setFilters({ ...filters, cantitateStoc: e.target.value })} 
-                            className="h-7 text-xs" 
-                          />
-                          <div className="flex gap-1">
-                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'stoc', direction: 'asc' })}>
-                              <ArrowUp className="h-3 w-3 mr-1" /> Cresc.
-                            </Button>
-                            <Button variant="outline" size="sm" className="flex-1 h-7 text-xs" onClick={() => setSortConfig({ key: 'stoc', direction: 'desc' })}>
-                              <ArrowDown className="h-3 w-3 mr-1" /> Descresc.
-                            </Button>
-                          </div>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                </TableHead>
+                <TableFilterHeader
+                  field="id"
+                  label="ID"
+                  filterValue={filters.id}
+                  onFilterChange={(value) => setFilters({ ...filters, id: value })}
+                  sortField={sortConfig?.key || ""}
+                  sortDirection={sortConfig?.direction || null}
+                  onSort={(field, direction) => setSortConfig({ key: field, direction })}
+                  onReset={() => setSortConfig(null)}
+                />
+                <TableFilterHeader
+                  field="materiale_prime"
+                  label="Tip Material"
+                  filterValue={filters.tipMaterial}
+                  onFilterChange={(value) => setFilters({ ...filters, tipMaterial: value })}
+                  sortField={sortConfig?.key || ""}
+                  sortDirection={sortConfig?.direction || null}
+                  onSort={(field, direction) => setSortConfig({ key: field, direction })}
+                  onReset={() => setSortConfig(null)}
+                  sortAscLabel="A-Z"
+                  sortDescLabel="Z-A"
+                />
+                <TableFilterHeader
+                  field="stoc"
+                  label="Cantitate Stoc"
+                  filterValue={filters.cantitateStoc}
+                  onFilterChange={(value) => setFilters({ ...filters, cantitateStoc: value })}
+                  sortField={sortConfig?.key || ""}
+                  sortDirection={sortConfig?.direction || null}
+                  onSort={(field, direction) => setSortConfig({ key: field, direction })}
+                  onReset={() => setSortConfig(null)}
+                />
               </TableRow>
             </TableHeader>
             <TableBody key={`stocuri-page-${currentPage}`} className="animate-fade-in">

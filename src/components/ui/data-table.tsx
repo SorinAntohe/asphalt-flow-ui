@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ArrowUp, ArrowDown, ArrowUpDown, Database, Search } from "lucide-react";
+import { ArrowUp, ArrowDown, ArrowUpDown, Database, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,7 @@ interface DataTableColumnHeaderProps {
   onSort: (key: string, direction: "asc" | "desc") => void;
   filterValue: string;
   onFilterChange: (value: string) => void;
+  onReset?: () => void;
   filterPlaceholder?: string;
   sortAscLabel?: string;
   sortDescLabel?: string;
@@ -29,12 +30,21 @@ export function DataTableColumnHeader({
   onSort,
   filterValue,
   onFilterChange,
+  onReset,
   filterPlaceholder = "Caută...",
   sortAscLabel = "Cresc.",
   sortDescLabel = "Descresc.",
 }: DataTableColumnHeaderProps) {
   const isActive = currentSort?.key === sortKey;
   const direction = isActive ? currentSort.direction : null;
+  const hasActiveFilter = filterValue !== "" || direction !== null;
+
+  const handleReset = () => {
+    onFilterChange("");
+    if (onReset) {
+      onReset();
+    }
+  };
 
   return (
     <Popover modal={true}>
@@ -55,6 +65,7 @@ export function DataTableColumnHeader({
           ) : (
             <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />
           )}
+          {hasActiveFilter && <span className="ml-1 h-2 w-2 rounded-full bg-primary" />}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-60 p-3" align="start">
@@ -85,6 +96,17 @@ export function DataTableColumnHeader({
               {sortDescLabel}
             </Button>
           </div>
+          {hasActiveFilter && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full h-7 text-xs"
+              onClick={handleReset}
+            >
+              <X className="h-3 w-3 mr-1" />
+              Resetează
+            </Button>
+          )}
         </div>
       </PopoverContent>
     </Popover>

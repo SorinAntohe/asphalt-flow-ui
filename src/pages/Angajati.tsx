@@ -43,7 +43,7 @@ import {
 } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { UserCheck, Plus, ArrowUp, ArrowDown, ArrowUpDown, ChevronLeft, ChevronRight, Download, Pencil, Trash2 } from "lucide-react";
+import { UserCheck, Plus, ArrowUp, ArrowDown, ArrowUpDown, ChevronLeft, ChevronRight, Download, Pencil, Trash2, X } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api";
 import { exportToCSV } from "@/lib/exportUtils";
 
@@ -404,6 +404,14 @@ export default function Angajati() {
     label: string;
   }) => {
     const sortDirection = filters[column].sortDirection;
+    const filterValue = filters[column].value;
+    const hasActiveFilter = filterValue !== "" || sortDirection !== null;
+
+    const handleReset = () => {
+      handleFilterChange(column, "");
+      handleSortChange(column, null);
+    };
+
     return (
       <TableHead>
         <Popover modal={true}>
@@ -421,13 +429,14 @@ export default function Angajati() {
               ) : (
                 <ArrowUpDown className="h-3 w-3 opacity-50" />
               )}
+              {hasActiveFilter && <span className="ml-1 h-2 w-2 rounded-full bg-primary" />}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-56 p-3" align="start">
             <div className="space-y-3">
               <Input
                 placeholder={`Filtrează ${label.toLowerCase()}...`}
-                value={filters[column].value}
+                value={filterValue}
                 onChange={(e) => handleFilterChange(column, e.target.value)}
                 className="h-8 text-sm"
               />
@@ -451,6 +460,17 @@ export default function Angajati() {
                   Descresc.
                 </Button>
               </div>
+              {hasActiveFilter && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full h-7 text-xs"
+                  onClick={handleReset}
+                >
+                  <X className="h-3 w-3 mr-1" />
+                  Resetează
+                </Button>
+              )}
             </div>
           </PopoverContent>
         </Popover>
