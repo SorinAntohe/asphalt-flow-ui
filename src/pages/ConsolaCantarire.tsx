@@ -229,7 +229,7 @@ export default function ConsolaCantarire() {
       const temperatura = updatedSession.temperatura ?? 0;
       const masaBrut = updatedSession.masaBrut;
       const tara = updatedSession.tara;
-      const obs = observatii || '';
+      const obs = observatii?.trim() || '.';
       
       try {
         const response = await fetch(
