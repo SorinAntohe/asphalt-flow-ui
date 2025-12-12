@@ -33,44 +33,64 @@ const TimeIntervalSelector = ({ onIntervalChange }: TimeIntervalSelectorProps) =
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-1.5 p-1 bg-muted/40 rounded-lg border border-border/50">
       <Button
-        variant={selectedInterval === "today" ? "default" : "outline"}
+        variant={selectedInterval === "today" ? "default" : "ghost"}
         size="sm"
         onClick={() => handleIntervalChange("today")}
+        className={cn(
+          "h-8 px-3 text-xs font-medium transition-all",
+          selectedInterval === "today" && "shadow-sm"
+        )}
       >
         Azi
       </Button>
       <Button
-        variant={selectedInterval === "yesterday" ? "default" : "outline"}
+        variant={selectedInterval === "yesterday" ? "default" : "ghost"}
         size="sm"
         onClick={() => handleIntervalChange("yesterday")}
+        className={cn(
+          "h-8 px-3 text-xs font-medium transition-all",
+          selectedInterval === "yesterday" && "shadow-sm"
+        )}
       >
         Ieri
       </Button>
       <Button
-        variant={selectedInterval === "week" ? "default" : "outline"}
+        variant={selectedInterval === "week" ? "default" : "ghost"}
         size="sm"
         onClick={() => handleIntervalChange("week")}
+        className={cn(
+          "h-8 px-3 text-xs font-medium transition-all",
+          selectedInterval === "week" && "shadow-sm"
+        )}
       >
         Săptămână
       </Button>
       <Button
-        variant={selectedInterval === "month" ? "default" : "outline"}
+        variant={selectedInterval === "month" ? "default" : "ghost"}
         size="sm"
         onClick={() => handleIntervalChange("month")}
+        className={cn(
+          "h-8 px-3 text-xs font-medium transition-all",
+          selectedInterval === "month" && "shadow-sm"
+        )}
       >
         Lună
       </Button>
+      <div className="w-px h-5 bg-border/60 mx-1" />
       <Popover>
         <PopoverTrigger asChild>
           <Button
-            variant={selectedInterval === "custom" ? "default" : "outline"}
+            variant={selectedInterval === "custom" ? "default" : "ghost"}
             size="sm"
             onClick={() => handleIntervalChange("custom")}
-            className="gap-2"
+            className={cn(
+              "h-8 px-3 text-xs font-medium gap-1.5 transition-all",
+              selectedInterval === "custom" && "shadow-sm"
+            )}
           >
-            <CalendarIcon className="h-4 w-4" />
+            <CalendarIcon className="h-3.5 w-3.5" />
             {dateRange?.from ? (
               dateRange.to ? (
                 <>
@@ -85,7 +105,7 @@ const TimeIntervalSelector = ({ onIntervalChange }: TimeIntervalSelectorProps) =
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent className="w-auto p-0" align="end">
           <Calendar
             mode="range"
             selected={dateRange}
