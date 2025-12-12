@@ -175,7 +175,7 @@ const ComercialLivrariSection = () => {
           <Card>
             <CardHeader className="pb-2">
             <CardTitle className="text-sm">
-              CL3 – Preț mediu de vânzare / produs
+               Preț mediu de vânzare / produs
             </CardTitle>
             </CardHeader>
             <CardContent>
