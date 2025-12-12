@@ -174,7 +174,7 @@ HR
           <Card className="lg:col-span-2">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">
-                HR5 – Cost fix (salarii + chirii) / ton
+                Cost fix (salarii + chirii) / ton
               </CardTitle>
             </CardHeader>
             <CardContent>
