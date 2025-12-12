@@ -148,7 +148,7 @@ const AprovizionareStocuriSection = () => {
         <Card className="mt-4">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">
-              AS2 – Top furnizori după valoare achiziții
+              Top furnizori după valoare achiziții
             </CardTitle>
           </CardHeader>
           <CardContent>
