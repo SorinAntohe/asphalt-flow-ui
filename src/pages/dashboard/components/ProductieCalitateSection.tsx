@@ -315,7 +315,7 @@ Marshall mediu pe produs
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">
-                PC6 – Consum energie electrică per ton (kWh/t)
+                Consum energie electrică per ton (kWh/t)
               </CardTitle>
             </CardHeader>
             <CardContent>
