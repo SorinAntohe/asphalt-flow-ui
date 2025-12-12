@@ -81,29 +81,29 @@ const Auth = () => {
       <div className="absolute inset-0 bg-black/50" />
       
       {/* Login Card */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-        <Card className="w-full max-w-md shadow-2xl bg-card/80 backdrop-blur-xl border border-border/30">
-          <CardHeader className="space-y-4 text-center">
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-3 sm:p-4">
+        <Card className="w-full max-w-[calc(100%-1.5rem)] xs:max-w-sm sm:max-w-md shadow-2xl bg-card/80 backdrop-blur-xl border border-border/30">
+          <CardHeader className="space-y-3 sm:space-y-4 text-center p-4 sm:p-6">
             <div className="mx-auto animate-fade-in">
               <img 
                 src={logo} 
                 alt="Duotip Solutions" 
-                className="h-20 object-contain mx-auto hover:scale-110 transition-transform duration-300" 
+                className="h-16 sm:h-20 object-contain mx-auto hover:scale-110 transition-transform duration-300" 
               />
             </div>
-            <CardTitle className="text-2xl font-bold">Management Producție</CardTitle>
-            <CardDescription>Autentificare în sistem</CardDescription>
+            <CardTitle className="text-xl sm:text-2xl font-bold">Management Producție</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">Autentificare în sistem</CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
+          <CardContent className="p-4 sm:p-6 pt-0">
+            <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
               {error && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{error}</AlertDescription>
+                  <AlertDescription className="text-xs sm:text-sm">{error}</AlertDescription>
                 </Alert>
               )}
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+              <div className="space-y-1.5 sm:space-y-2">
+                <Label htmlFor="email" className="text-xs sm:text-sm">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -111,10 +111,11 @@ const Auth = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  className="h-10 sm:h-9 text-base sm:text-sm"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Parolă</Label>
+              <div className="space-y-1.5 sm:space-y-2">
+                <Label htmlFor="password" className="text-xs sm:text-sm">Parolă</Label>
                 <Input
                   id="password"
                   type="password"
@@ -122,10 +123,11 @@ const Auth = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  className="h-10 sm:h-9 text-base sm:text-sm"
                 />
               </div>
-              <div className="flex items-center justify-between py-2">
-                <Label htmlFor="rememberMe" className="text-sm font-medium cursor-pointer text-foreground/80">
+              <div className="flex items-center justify-between py-1.5 sm:py-2">
+                <Label htmlFor="rememberMe" className="text-xs sm:text-sm font-medium cursor-pointer text-foreground/80">
                   Ține-mă minte
                 </Label>
                 <Switch
@@ -134,7 +136,7 @@ const Auth = () => {
                   onCheckedChange={setRememberMe}
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button type="submit" className="w-full h-10 sm:h-9 text-sm" disabled={isLoading}>
                 {isLoading ? "Se autentifică..." : "Autentificare"}
               </Button>
             </form>
