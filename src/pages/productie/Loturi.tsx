@@ -35,7 +35,7 @@ import { exportToCSV } from "@/lib/exportUtils";
 import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
 import { API_BASE_URL } from "@/lib/api";
 import { FilterableSelect } from "@/components/ui/filterable-select";
-import { extractApiValue, toSelectOptions } from "@/lib/utils";
+import { extractApiValue, flattenApiArray } from "@/lib/utils";
 
 // Types
 interface Lot {
