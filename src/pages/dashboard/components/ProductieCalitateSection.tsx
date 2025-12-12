@@ -347,7 +347,7 @@ Marshall mediu pe produs
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">
-                PC7 – Consum CTL per ton (L/t)
+                Consum CTL per ton (L/t)
               </CardTitle>
             </CardHeader>
             <CardContent>
