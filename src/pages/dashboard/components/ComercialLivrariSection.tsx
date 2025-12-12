@@ -145,7 +145,7 @@ const ComercialLivrariSection = () => {
           <Card>
             <CardHeader className="pb-2">
             <CardTitle className="text-sm">
-              CL2 – Tonaj livrat pe client (Top 5)
+              Tonaj livrat pe client (Top 5)
             </CardTitle>
             </CardHeader>
             <CardContent>
