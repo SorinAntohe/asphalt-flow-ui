@@ -184,7 +184,7 @@ const AprovizionareStocuriSection = () => {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">
-                AS3 – Preț mediu achiziție / material
+                Preț mediu achiziție / material
               </CardTitle>
             </CardHeader>
             <CardContent>
