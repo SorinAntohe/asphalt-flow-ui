@@ -203,7 +203,7 @@ const ComercialLivrariSection = () => {
         <Card className="mt-4">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">
-              CL4 – Preț mediu vs concurență / produs
+              Preț mediu vs concurență / produs
             </CardTitle>
           </CardHeader>
           <CardContent>
