@@ -22,6 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -966,10 +967,9 @@ const Loturi = () => {
               </div>
               <div>
                 <Label className="text-xs">Cantitate *</Label>
-                <Input
-                  type="number"
+                <NumericInput
                   value={addFormData.cantitate}
-                  onChange={(e) => setAddFormData(prev => ({ ...prev, cantitate: e.target.value }))}
+                  onChange={(value) => setAddFormData(prev => ({ ...prev, cantitate: value }))}
                   placeholder="Ex: 50"
                   className="h-9 text-sm"
                 />
@@ -992,21 +992,19 @@ const Loturi = () => {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-xs">Temperatură (°C)</Label>
-                <Input
-                  type="number"
+                <NumericInput
                   value={addFormData.temperatura}
-                  onChange={(e) => setAddFormData(prev => ({ ...prev, temperatura: e.target.value }))}
+                  onChange={(value) => setAddFormData(prev => ({ ...prev, temperatura: value }))}
                   placeholder="Ex: 160"
                   className="h-9 text-sm"
+                  allowNegative={true}
                 />
               </div>
               <div>
                 <Label className="text-xs">Marshall (kN)</Label>
-                <Input
-                  type="number"
-                  step="0.1"
+                <NumericInput
                   value={addFormData.marshall}
-                  onChange={(e) => setAddFormData(prev => ({ ...prev, marshall: e.target.value }))}
+                  onChange={(value) => setAddFormData(prev => ({ ...prev, marshall: value }))}
                   placeholder="Ex: 12.0"
                   className="h-9 text-sm"
                 />

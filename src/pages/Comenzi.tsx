@@ -8,6 +8,7 @@ import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown, Download, Packag
 import { exportToCSV } from "@/lib/exportUtils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -1495,11 +1496,9 @@ export default function Comenzi() {
               <div className="grid grid-cols-3 gap-3 p-3 rounded-lg border bg-card">
                 <div className="space-y-1">
                   <Label htmlFor="cantitate" className="text-xs">Cantitate *</Label>
-                  <Input
-                    id="cantitate"
-                    type="number"
+                  <NumericInput
                     value={formMP.cantitate}
-                    onChange={(e) => setFormMP({ ...formMP, cantitate: e.target.value })}
+                    onChange={(value) => setFormMP({ ...formMP, cantitate: value })}
                     className={`h-9 text-sm font-mono ${formErrorsMP.cantitate ? "border-destructive" : ""}`}
                   />
                 </div>
@@ -1531,23 +1530,17 @@ export default function Comenzi() {
               <div className="grid grid-cols-2 gap-3 p-3 rounded-lg border bg-card">
                 <div className="space-y-1">
                   <Label htmlFor="pret_fara_tva" className="text-xs">Preț fără TVA *</Label>
-                  <Input
-                    id="pret_fara_tva"
-                    type="number"
-                    step="0.01"
+                  <NumericInput
                     value={formMP.pret_fara_tva}
-                    onChange={(e) => setFormMP({ ...formMP, pret_fara_tva: e.target.value })}
+                    onChange={(value) => setFormMP({ ...formMP, pret_fara_tva: value })}
                     className={`h-9 text-sm font-mono ${formErrorsMP.pret_fara_tva ? "border-destructive" : ""}`}
                   />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="pret_transport" className="text-xs">Preț Transport</Label>
-                  <Input
-                    id="pret_transport"
-                    type="number"
-                    step="0.01"
+                  <NumericInput
                     value={formMP.pret_transport}
-                    onChange={(e) => setFormMP({ ...formMP, pret_transport: e.target.value })}
+                    onChange={(value) => setFormMP({ ...formMP, pret_transport: value })}
                     className="h-9 text-sm font-mono"
                   />
                 </div>
@@ -1754,11 +1747,9 @@ export default function Comenzi() {
               <div className="grid grid-cols-3 gap-3 p-3 rounded-lg border bg-card">
                 <div className="space-y-1">
                   <Label htmlFor="cantitate_pf" className="text-xs">Cantitate *</Label>
-                  <Input
-                    id="cantitate_pf"
-                    type="number"
+                  <NumericInput
                     value={formPF.cantitate}
-                    onChange={(e) => setFormPF({ ...formPF, cantitate: e.target.value })}
+                    onChange={(value) => setFormPF({ ...formPF, cantitate: value })}
                     className={`h-9 text-sm font-mono ${formErrorsPF.cantitate ? "border-destructive" : ""}`}
                   />
                 </div>
@@ -1790,23 +1781,17 @@ export default function Comenzi() {
               <div className="grid grid-cols-2 gap-3 p-3 rounded-lg border bg-card">
                 <div className="space-y-1">
                   <Label htmlFor="pret_fara_tva_pf" className="text-xs">Preț fără TVA *</Label>
-                  <Input
-                    id="pret_fara_tva_pf"
-                    type="number"
-                    step="0.01"
+                  <NumericInput
                     value={formPF.pret_fara_tva}
-                    onChange={(e) => setFormPF({ ...formPF, pret_fara_tva: e.target.value })}
+                    onChange={(value) => setFormPF({ ...formPF, pret_fara_tva: value })}
                     className={`h-9 text-sm font-mono ${formErrorsPF.pret_fara_tva ? "border-destructive" : ""}`}
                   />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="pret_transport_pf" className="text-xs">Preț Transport</Label>
-                  <Input
-                    id="pret_transport_pf"
-                    type="number"
-                    step="0.01"
+                  <NumericInput
                     value={formPF.pret_transport}
-                    onChange={(e) => setFormPF({ ...formPF, pret_transport: e.target.value })}
+                    onChange={(value) => setFormPF({ ...formPF, pret_transport: value })}
                     className="h-9 text-sm font-mono"
                   />
                 </div>

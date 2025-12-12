@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { Switch } from "@/components/ui/switch";
 import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown, X, Eye, Download, Upload, FileText, FileSpreadsheet, File, Camera, Image as ImageIcon } from "lucide-react";
 import { exportToCSV } from "@/lib/exportUtils";
@@ -1878,13 +1879,11 @@ const Consumuri = () => {
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs">Index Nou</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
+                  <NumericInput
                     className="h-9"
                     value={contorCurentFormData.index_nou || ''}
-                    onChange={(e) => {
-                      const indexNou = Number(e.target.value);
+                    onChange={(value) => {
+                      const indexNou = Number(value);
                       const indexVechi = contorCurentFormData.index_vechi || 0;
                       const consum = (indexNou - indexVechi) * 200;
                       setContorCurentFormData({ 
@@ -1907,15 +1906,13 @@ const Consumuri = () => {
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs">Preț unitar (RON/kW)</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
+                  <NumericInput
                     className="h-9"
                     value={contorCurentFormData.pret || ''}
-                    onChange={(e) => {
+                    onChange={(value) => {
                       setContorCurentFormData({ 
                         ...contorCurentFormData, 
-                        pret: Number(e.target.value)
+                        pret: Number(value)
                       });
                     }}
                   />
@@ -2194,13 +2191,11 @@ const Consumuri = () => {
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs">Index Nou Tur</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
+                  <NumericInput
                     className="h-9"
                     value={contorCTLFormData.index_nou_tur || ''}
-                    onChange={(e) => {
-                      const indexNouTur = Number(e.target.value);
+                    onChange={(value) => {
+                      const indexNouTur = Number(value);
                       const indexVechiTur = contorCTLFormData.index_vechi_tur || 0;
                       const returExcesNou = contorCTLFormData.retur_exces_nou || 0;
                       const returExcesVechi = contorCTLFormData.retur_exces_vechi || 0;
@@ -2227,13 +2222,11 @@ const Consumuri = () => {
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs">Retur Exces Nou</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
+                  <NumericInput
                     className="h-9"
                     value={contorCTLFormData.retur_exces_nou || ''}
-                    onChange={(e) => {
-                      const returExcesNou = Number(e.target.value);
+                    onChange={(value) => {
+                      const returExcesNou = Number(value);
                       const returExcesVechi = contorCTLFormData.retur_exces_vechi || 0;
                       const indexNouTur = contorCTLFormData.index_nou_tur || 0;
                       const indexVechiTur = contorCTLFormData.index_vechi_tur || 0;

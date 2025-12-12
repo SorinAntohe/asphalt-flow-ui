@@ -17,6 +17,7 @@ import {
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -832,46 +833,36 @@ const Livrari = () => {
               <div className="grid grid-cols-4 gap-3 p-3 rounded-lg border bg-card">
                 <div className="space-y-1">
                   <Label htmlFor="temperatura" className="text-xs">Temperatură</Label>
-                  <Input
-                    id="temperatura"
-                    type="number"
-                    step="0.1"
+                  <NumericInput
                     value={form.temperatura}
-                    onChange={(e) => setForm({ ...form, temperatura: e.target.value })}
+                    onChange={(value) => setForm({ ...form, temperatura: value })}
                     className="h-9 text-sm font-mono"
+                    allowNegative={true}
                   />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="masa_brut" className="text-xs">Masa Brut</Label>
-                  <Input
-                    id="masa_brut"
-                    type="number"
-                    step="0.01"
+                  <NumericInput
                     value={form.masa_brut}
-                    onChange={(e) => setForm({ ...form, masa_brut: e.target.value })}
+                    onChange={(value) => setForm({ ...form, masa_brut: value })}
                     className="h-9 text-sm font-mono"
                   />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="tara" className="text-xs">Tara</Label>
-                  <Input
-                    id="tara"
-                    type="number"
-                    step="0.01"
+                  <NumericInput
                     value={form.tara}
-                    onChange={(e) => setForm({ ...form, tara: e.target.value })}
+                    onChange={(value) => setForm({ ...form, tara: value })}
                     className="h-9 text-sm font-mono"
                   />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="masa_net" className="text-xs">Masa Net</Label>
-                  <Input
-                    id="masa_net"
-                    type="number"
-                    step="0.01"
+                  <NumericInput
                     value={form.masa_net}
-                    disabled
+                    onChange={() => {}}
                     className="h-9 text-sm bg-muted/50 font-mono"
+                    disabled
                   />
                 </div>
               </div>
@@ -883,35 +874,29 @@ const Livrari = () => {
               <div className="grid grid-cols-3 gap-3 p-3 rounded-lg border bg-card">
                 <div className="space-y-1">
                   <Label htmlFor="pret_produs_total" className="text-xs">Preț Produs</Label>
-                  <Input
-                    id="pret_produs_total"
-                    type="number"
-                    step="0.01"
+                  <NumericInput
                     value={form.pret_produs_total}
-                    disabled
+                    onChange={() => {}}
                     className="h-9 text-sm bg-muted/50 font-mono"
+                    disabled
                   />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="pret_transport_total" className="text-xs">Preț Transport</Label>
-                  <Input
-                    id="pret_transport_total"
-                    type="number"
-                    step="0.01"
+                  <NumericInput
                     value={form.pret_transport_total}
-                    disabled
+                    onChange={() => {}}
                     className="h-9 text-sm bg-muted/50 font-mono"
+                    disabled
                   />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="pret_total" className="text-xs text-primary font-medium">Preț Total</Label>
-                  <Input
-                    id="pret_total"
-                    type="number"
-                    step="0.01"
+                  <NumericInput
                     value={form.pret_total}
-                    disabled
+                    onChange={() => {}}
                     className="h-9 text-sm bg-primary/5 font-mono font-semibold border-primary/20"
+                    disabled
                   />
                 </div>
               </div>

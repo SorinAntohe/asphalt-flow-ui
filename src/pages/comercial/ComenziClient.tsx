@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -159,10 +160,10 @@ const ComenziClient = () => {
   const [form, setForm] = useState({
     client: "",
     produs: "",
-    cantitate: 0,
+    cantitate: "0",
     unitate_masura: "tone",
     prioritate: "Normala" as Priority,
-    avans: 0,
+    avans: "0",
     punct_descarcare: "",
     observatii: "",
     status: "Planificat" as OrderStatus,
@@ -245,10 +246,10 @@ const ComenziClient = () => {
     setForm({
       client: "",
       produs: "",
-      cantitate: 0,
+      cantitate: "0",
       unitate_masura: "tone",
       prioritate: "Normala",
-      avans: 0,
+      avans: "0",
       punct_descarcare: "",
       observatii: "",
       status: "Planificat",
@@ -261,10 +262,10 @@ const ComenziClient = () => {
     setForm({
       client: item.client || "",
       produs: item.produs || "",
-      cantitate: item.cantitate || 0,
+      cantitate: String(item.cantitate || 0),
       unitate_masura: item.unitate_masura || "tone",
       prioritate: item.prioritate || "Normala",
-      avans: item.avans || 0,
+      avans: String(item.avans || 0),
       punct_descarcare: item.punct_descarcare || "",
       observatii: item.observatii || "",
       status: item.status || "Preaprobat",
@@ -681,7 +682,7 @@ const ComenziClient = () => {
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
                 <Label className="text-xs">Cantitate *</Label>
-                <Input type="number" className="h-8 text-sm" value={form.cantitate} onChange={(e) => setForm({ ...form, cantitate: Number(e.target.value) })} />
+                <NumericInput className="h-8 text-sm" value={form.cantitate} onChange={(value) => setForm({ ...form, cantitate: value })} />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Unitate măsură</Label>
@@ -710,7 +711,7 @@ const ComenziClient = () => {
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Avans</Label>
-                <Input type="number" className="h-8 text-sm" placeholder="0" value={form.avans} onChange={(e) => setForm({ ...form, avans: Number(e.target.value) })} />
+                <NumericInput className="h-8 text-sm" placeholder="0" value={form.avans} onChange={(value) => setForm({ ...form, avans: value })} />
               </div>
             </div>
             <div className="space-y-1">
