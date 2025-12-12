@@ -1,4 +1,4 @@
-import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog, Users, UserCheck, CalendarClock, Briefcase, Factory, Wrench, FileText, FileCheck, ShoppingCart, CalendarDays, FileBox, FlaskConical, ClipboardCheck, Layers, Calendar, GitBranch, Settings, CalendarRange, HardHat, PieChart, Clock, Scale, Calculator, Wallet } from "lucide-react";
+import { LayoutDashboard, ListChecks, PackageCheck, Truck, BarChart3, ClipboardList, Package, FolderCog, Users, UserCheck, CalendarClock, Briefcase, Factory, Wrench, FileText, FileCheck, ShoppingCart, CalendarDays, FileBox, FlaskConical, ClipboardCheck, Layers, Calendar, GitBranch, Settings, CalendarRange, HardHat, Clock, Scale, Calculator, Wallet } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -67,8 +67,6 @@ const mentenantaItems = [
   { title: "Plan Mentenanță", url: "/mentenanta/plan", icon: CalendarRange },
 ];
 
-// Rapoarte - single link to gallery
-const rapoarteItem = { title: "Rapoarte", url: "/rapoarte", icon: PieChart };
 
 export function AppSidebar() {
   const { state, isMobile } = useSidebar();
@@ -633,22 +631,6 @@ export function AppSidebar() {
                 </CollapsibleContent>
               </Collapsible>
 
-              {/* Rapoarte - Simple Link */}
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={isActive(rapoarteItem.url)}>
-                  <NavLink
-                    to={rapoarteItem.url}
-                    className={`flex items-center rounded-lg transition-colors hover:bg-sidebar-accent text-sidebar-foreground ${
-                      isOpen ? 'gap-3 px-4 py-2.5' : 'justify-center py-2.5 w-full'
-                    }`}
-                    activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                    title={!isOpen ? rapoarteItem.title : undefined}
-                  >
-                    <rapoarteItem.icon className="w-5 h-5 flex-shrink-0" />
-                    {isOpen && <span>{rapoarteItem.title}</span>}
-                  </NavLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
 
               {/* Liste - Simple Link at bottom */}
               <SidebarMenuItem>
