@@ -13,7 +13,10 @@ import {
   Clock,
   XCircle,
   AlertCircle,
-  FileCode
+  FileCode,
+  ArrowUp,
+  ArrowDown,
+  ArrowUpDown
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,7 +28,9 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
-import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
+import { DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
 
 // Types
 interface Aviz {
@@ -375,52 +380,100 @@ const Documente = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>
-                        <DataTableColumnHeader
-                          title="Nr."
-                          sortKey="nr"
-                          currentSort={avizeSort}
-                          onSort={(key, dir) => setAvizeSort({ key, direction: dir })}
-                          filterValue={avizeFilters.nr}
-                          onFilterChange={(val) => { setAvizeFilters(f => ({ ...f, nr: val })); setAvizePage(1); }}
-                          filterPlaceholder="Caută nr..."
-                        />
+                      <TableHead className="h-10 text-xs">
+                        <Popover modal={true}>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Nr.</span>
+                              {avizeSort.key === 'nr' ? (avizeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută nr..." value={avizeFilters.nr} onChange={(e) => { setAvizeFilters(f => ({ ...f, nr: e.target.value })); setAvizePage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant={avizeSort.key === 'nr' && avizeSort.direction === 'asc' ? 'default' : 'outline'} size="sm" className="flex-1 h-7 text-xs" onClick={() => setAvizeSort({ key: 'nr', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant={avizeSort.key === 'nr' && avizeSort.direction === 'desc' ? 'default' : 'outline'} size="sm" className="flex-1 h-7 text-xs" onClick={() => setAvizeSort({ key: 'nr', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </TableHead>
-                      <TableHead>
-                        <DataTableColumnHeader
-                          title="Client"
-                          sortKey="client"
-                          currentSort={avizeSort}
-                          onSort={(key, dir) => setAvizeSort({ key, direction: dir })}
-                          filterValue={avizeFilters.client}
-                          onFilterChange={(val) => { setAvizeFilters(f => ({ ...f, client: val })); setAvizePage(1); }}
-                          filterPlaceholder="Caută client..."
-                        />
+                      <TableHead className="h-10 text-xs">
+                        <Popover modal={true}>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Client</span>
+                              {avizeSort.key === 'client' ? (avizeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută client..." value={avizeFilters.client} onChange={(e) => { setAvizeFilters(f => ({ ...f, client: e.target.value })); setAvizePage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant={avizeSort.key === 'client' && avizeSort.direction === 'asc' ? 'default' : 'outline'} size="sm" className="flex-1 h-7 text-xs" onClick={() => setAvizeSort({ key: 'client', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant={avizeSort.key === 'client' && avizeSort.direction === 'desc' ? 'default' : 'outline'} size="sm" className="flex-1 h-7 text-xs" onClick={() => setAvizeSort({ key: 'client', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </TableHead>
                       <TableHead>Comandă</TableHead>
                       <TableHead>Data</TableHead>
-                      <TableHead>
-                        <DataTableColumnHeader
-                          title="Produs"
-                          sortKey="produs"
-                          currentSort={avizeSort}
-                          onSort={(key, dir) => setAvizeSort({ key, direction: dir })}
-                          filterValue={avizeFilters.produs}
-                          onFilterChange={(val) => { setAvizeFilters(f => ({ ...f, produs: val })); setAvizePage(1); }}
-                          filterPlaceholder="Caută produs..."
-                        />
+                      <TableHead className="h-10 text-xs">
+                        <Popover modal={true}>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Produs</span>
+                              {avizeSort.key === 'produs' ? (avizeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută produs..." value={avizeFilters.produs} onChange={(e) => { setAvizeFilters(f => ({ ...f, produs: e.target.value })); setAvizePage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant={avizeSort.key === 'produs' && avizeSort.direction === 'asc' ? 'default' : 'outline'} size="sm" className="flex-1 h-7 text-xs" onClick={() => setAvizeSort({ key: 'produs', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant={avizeSort.key === 'produs' && avizeSort.direction === 'desc' ? 'default' : 'outline'} size="sm" className="flex-1 h-7 text-xs" onClick={() => setAvizeSort({ key: 'produs', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </TableHead>
                       <TableHead className="text-right">Cantitate</TableHead>
-                      <TableHead>
-                        <DataTableColumnHeader
-                          title="Șofer"
-                          sortKey="sofer"
-                          currentSort={avizeSort}
-                          onSort={(key, dir) => setAvizeSort({ key, direction: dir })}
-                          filterValue={avizeFilters.sofer}
-                          onFilterChange={(val) => { setAvizeFilters(f => ({ ...f, sofer: val })); setAvizePage(1); }}
-                          filterPlaceholder="Caută șofer..."
-                        />
+                      <TableHead className="h-10 text-xs">
+                        <Popover modal={true}>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Șofer</span>
+                              {avizeSort.key === 'sofer' ? (avizeSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută șofer..." value={avizeFilters.sofer} onChange={(e) => { setAvizeFilters(f => ({ ...f, sofer: e.target.value })); setAvizePage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant={avizeSort.key === 'sofer' && avizeSort.direction === 'asc' ? 'default' : 'outline'} size="sm" className="flex-1 h-7 text-xs" onClick={() => setAvizeSort({ key: 'sofer', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant={avizeSort.key === 'sofer' && avizeSort.direction === 'desc' ? 'default' : 'outline'} size="sm" className="flex-1 h-7 text-xs" onClick={() => setAvizeSort({ key: 'sofer', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead className="text-right">Acțiuni</TableHead>
@@ -534,27 +587,51 @@ const Documente = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>
-                        <DataTableColumnHeader
-                          title="Nr."
-                          sortKey="nr"
-                          currentSort={facturiSort}
-                          onSort={(key, dir) => setFacturiSort({ key, direction: dir })}
-                          filterValue={facturiFilters.nr}
-                          onFilterChange={(val) => { setFacturiFilters(f => ({ ...f, nr: val })); setFacturiPage(1); }}
-                          filterPlaceholder="Caută nr..."
-                        />
+                      <TableHead className="h-10 text-xs">
+                        <Popover modal={true}>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Nr.</span>
+                              {facturiSort.key === 'nr' ? (facturiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută nr..." value={facturiFilters.nr} onChange={(e) => { setFacturiFilters(f => ({ ...f, nr: e.target.value })); setFacturiPage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant={facturiSort.key === 'nr' && facturiSort.direction === 'asc' ? 'default' : 'outline'} size="sm" className="flex-1 h-7 text-xs" onClick={() => setFacturiSort({ key: 'nr', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant={facturiSort.key === 'nr' && facturiSort.direction === 'desc' ? 'default' : 'outline'} size="sm" className="flex-1 h-7 text-xs" onClick={() => setFacturiSort({ key: 'nr', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </TableHead>
-                      <TableHead>
-                        <DataTableColumnHeader
-                          title="Client"
-                          sortKey="client"
-                          currentSort={facturiSort}
-                          onSort={(key, dir) => setFacturiSort({ key, direction: dir })}
-                          filterValue={facturiFilters.client}
-                          onFilterChange={(val) => { setFacturiFilters(f => ({ ...f, client: val })); setFacturiPage(1); }}
-                          filterPlaceholder="Caută client..."
-                        />
+                      <TableHead className="h-10 text-xs">
+                        <Popover modal={true}>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Client</span>
+                              {facturiSort.key === 'client' ? (facturiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută client..." value={facturiFilters.client} onChange={(e) => { setFacturiFilters(f => ({ ...f, client: e.target.value })); setFacturiPage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant={facturiSort.key === 'client' && facturiSort.direction === 'asc' ? 'default' : 'outline'} size="sm" className="flex-1 h-7 text-xs" onClick={() => setFacturiSort({ key: 'client', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant={facturiSort.key === 'client' && facturiSort.direction === 'desc' ? 'default' : 'outline'} size="sm" className="flex-1 h-7 text-xs" onClick={() => setFacturiSort({ key: 'client', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </TableHead>
                       <TableHead>Data</TableHead>
                       <TableHead className="text-right">Suma</TableHead>
@@ -673,27 +750,51 @@ const Documente = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>
-                        <DataTableColumnHeader
-                          title="Nr. Factură"
-                          sortKey="nr_factura"
-                          currentSort={eFacturiSort}
-                          onSort={(key, dir) => setEFacturiSort({ key, direction: dir })}
-                          filterValue={eFacturiFilters.nr}
-                          onFilterChange={(val) => { setEFacturiFilters(f => ({ ...f, nr: val })); setEFacturiPage(1); }}
-                          filterPlaceholder="Caută nr..."
-                        />
+                      <TableHead className="h-10 text-xs">
+                        <Popover modal={true}>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Nr. Factură</span>
+                              {eFacturiSort.key === 'nr_factura' ? (eFacturiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută nr..." value={eFacturiFilters.nr} onChange={(e) => { setEFacturiFilters(f => ({ ...f, nr: e.target.value })); setEFacturiPage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant={eFacturiSort.key === 'nr_factura' && eFacturiSort.direction === 'asc' ? 'default' : 'outline'} size="sm" className="flex-1 h-7 text-xs" onClick={() => setEFacturiSort({ key: 'nr_factura', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant={eFacturiSort.key === 'nr_factura' && eFacturiSort.direction === 'desc' ? 'default' : 'outline'} size="sm" className="flex-1 h-7 text-xs" onClick={() => setEFacturiSort({ key: 'nr_factura', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </TableHead>
-                      <TableHead>
-                        <DataTableColumnHeader
-                          title="Client"
-                          sortKey="client"
-                          currentSort={eFacturiSort}
-                          onSort={(key, dir) => setEFacturiSort({ key, direction: dir })}
-                          filterValue={eFacturiFilters.client}
-                          onFilterChange={(val) => { setEFacturiFilters(f => ({ ...f, client: val })); setEFacturiPage(1); }}
-                          filterPlaceholder="Caută client..."
-                        />
+                      <TableHead className="h-10 text-xs">
+                        <Popover modal={true}>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-6 px-2 gap-1">
+                              <span>Client</span>
+                              {eFacturiSort.key === 'client' ? (eFacturiSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3" />}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-2">
+                            <div className="space-y-2">
+                              <Input placeholder="Caută client..." value={eFacturiFilters.client} onChange={(e) => { setEFacturiFilters(f => ({ ...f, client: e.target.value })); setEFacturiPage(1); }} className="h-7 text-xs" />
+                              <div className="flex gap-1">
+                                <Button variant={eFacturiSort.key === 'client' && eFacturiSort.direction === 'asc' ? 'default' : 'outline'} size="sm" className="flex-1 h-7 text-xs" onClick={() => setEFacturiSort({ key: 'client', direction: 'asc' })}>
+                                  <ArrowUp className="h-3 w-3 mr-1" /> A-Z
+                                </Button>
+                                <Button variant={eFacturiSort.key === 'client' && eFacturiSort.direction === 'desc' ? 'default' : 'outline'} size="sm" className="flex-1 h-7 text-xs" onClick={() => setEFacturiSort({ key: 'client', direction: 'desc' })}>
+                                  <ArrowDown className="h-3 w-3 mr-1" /> Z-A
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </TableHead>
                       <TableHead>Data Transmitere</TableHead>
                       <TableHead className="text-right">Suma</TableHead>
