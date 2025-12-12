@@ -35,6 +35,7 @@ import { exportToCSV } from "@/lib/exportUtils";
 import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
 import { API_BASE_URL } from "@/lib/api";
 import { FilterableSelect } from "@/components/ui/filterable-select";
+import { extractApiValue, toSelectOptions } from "@/lib/utils";
 
 // Types
 interface Lot {
@@ -149,11 +150,13 @@ const Loturi = () => {
         const response = await fetch(`${API_BASE_URL}/productie/returneaza/coduri_ordin`);
         if (response.ok) {
           const data = await response.json();
+          console.log("Coduri ordin API response:", data);
           const uniqueCodes = new Set<string>();
           const options: { value: string; label: string }[] = [];
           if (Array.isArray(data)) {
             data.forEach((r: any) => {
-              const code = typeof r === 'string' ? r.trim() : (r.cod_ordin?.trim() || '');
+              // Handle tuple format [('ORD001',), ...]
+              const code = extractApiValue(typeof r === 'string' ? r : (r.cod_ordin || r));
               if (code && code.length > 0 && !uniqueCodes.has(code)) {
                 uniqueCodes.add(code);
                 options.push({ value: code, label: code });
@@ -162,6 +165,7 @@ const Loturi = () => {
           }
           // Sort alphabetically
           options.sort((a, b) => a.label.localeCompare(b.label));
+          console.log("Processed ordine options:", options);
           setOrdineDisponibile(options);
         }
       } catch (error) {
@@ -178,17 +182,20 @@ const Loturi = () => {
         const response = await fetch(`${API_BASE_URL}/productie/returneaza/coduri_retete`);
         if (response.ok) {
           const data = await response.json();
+          console.log("Coduri retete API response:", data);
           const uniqueCodes = new Set<string>();
           const options: { value: string; label: string }[] = [];
           if (Array.isArray(data)) {
             data.forEach((r: any) => {
-              const code = r.cod_reteta || r;
+              // Handle tuple format
+              const code = extractApiValue(r.cod_reteta || r);
               if (code && !uniqueCodes.has(code)) {
                 uniqueCodes.add(code);
                 options.push({ value: code, label: code });
               }
             });
           }
+          console.log("Processed retete options:", options);
           setReteteDisponibile(options);
         }
       } catch (error) {
@@ -205,12 +212,15 @@ const Loturi = () => {
         const response = await fetch(`${API_BASE_URL}/productie/returneaza/operator`);
         if (response.ok) {
           const data = await response.json();
+          console.log("Operatori API response:", data);
           const options = Array.isArray(data) 
-            ? data.map((op: any) => ({
-                value: op.operator || op.nume || op,
-                label: op.operator || op.nume || op
-              }))
+            ? data.map((op: any) => {
+                // Handle tuple format
+                const value = extractApiValue(op.operator || op.nume || op);
+                return { value, label: value };
+              }).filter((o: any) => o.value)
             : [];
+          console.log("Processed operatori options:", options);
           setOperatoriDisponibili(options);
         }
       } catch (error) {
@@ -231,12 +241,15 @@ const Loturi = () => {
         const response = await fetch(`${API_BASE_URL}/productie/returneaza/produse_pt_cod_ordin/${addFormData.cod_ordin}`);
         if (response.ok) {
           const data = await response.json();
+          console.log("Produse pt cod ordin API response:", data);
           const options = Array.isArray(data) 
-            ? data.map((m: any) => ({
-                value: m.produse || String(m),
-                label: m.produse || String(m)
-              }))
+            ? data.map((m: any) => {
+                // Handle tuple format [('BAD 22.4',), ...]
+                const value = extractApiValue(m.produse || m);
+                return { value, label: value };
+              }).filter((o: any) => o.value)
             : [];
+          console.log("Processed produse options:", options);
           setMaterialeDisponibile(options);
         } else {
           setMaterialeDisponibile([]);
