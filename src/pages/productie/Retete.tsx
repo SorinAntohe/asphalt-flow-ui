@@ -31,6 +31,7 @@ import { toast } from "sonner";
 import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
 import { FilterableSelect } from "@/components/ui/filterable-select";
 import { API_BASE_URL } from "@/lib/api";
+import { toSelectOptions, extractApiValue } from "@/lib/utils";
 
 // Types
 interface Component {
@@ -118,31 +119,20 @@ const Retete = () => {
         if (!response.ok) throw new Error("Eroare la încărcarea materialelor");
         const data = await response.json();
         console.log("API response:", data);
-        // API returns array of objects: [{materiale_prime: "..."}, ...]
-        const materiale = Array.isArray(data) 
-          ? data.map((item: any) => item.materiale_prime).filter(Boolean)
-          : [];
-        console.log("Parsed materiale:", materiale);
-        setMateriiPrimeList(materiale);
+        // API returns array of tuples like [('0/4 Conc',), ('0/4 Nat',), ...]
+        // Use toSelectOptions to handle this format automatically
+        setMateriiPrimeList(data);
       } catch (error) {
         console.error("Error fetching materiale:", error);
-        // Fallback pentru testare când API-ul nu este accesibil
-        setMateriiPrimeList([
-          "0/4 NAT", "0/4 CONC", "0/4 CRIBLURI", "4/8 CONC", "4/8 CRIBLURI",
-          "BITUM 50/70", "FILLER", "CTL", "MOTORINA", "CURENT ELECTRIC"
-        ]);
+        setMateriiPrimeList([]);
       }
     };
     fetchMateriiPrime();
   }, []);
   
-  // Transform to options for FilterableSelect
+  // Transform to options for FilterableSelect - handles tuple format automatically
   const materiiPrimeOptions = useMemo(() => {
-    return materiiPrimeList.map((mp: any) => {
-      // Handle both string array and object array
-      const value = typeof mp === 'string' ? mp : (mp.denumire || mp.material || mp.nume || String(mp.id));
-      return { value, label: value };
-    });
+    return toSelectOptions(materiiPrimeList);
   }, [materiiPrimeList]);
   
   // Dialogs & Drawers
