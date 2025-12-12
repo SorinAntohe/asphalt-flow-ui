@@ -40,7 +40,7 @@ const DrillDownDialog = ({ open, onOpenChange, data }: DrillDownDialogProps) => 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] max-w-3xl max-h-[85vh] overflow-hidden p-0">
+      <DialogContent className="w-[95vw] max-w-3xl max-h-[85vh] overflow-hidden p-0" hideCloseButton>
         <DialogHeader className="px-5 pt-4 pb-3 border-b border-border/50">
           <div className="flex items-center justify-between">
             <div>
