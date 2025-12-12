@@ -95,7 +95,7 @@ HR
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">
-                HR3 – Zile concediu rămase
+                Zile concediu rămase
               </CardTitle>
             </CardHeader>
             <CardContent>
