@@ -1,60 +1,94 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  FunnelChart,
-  Funnel,
-  LabelList
-} from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, FunnelChart, Funnel, LabelList } from "recharts";
 import { ShoppingCart, Users, Truck, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Mock data
-const funnelData = [
-  { name: "Oferte noi", value: 45, fill: "hsl(var(--chart-1))" },
-  { name: "Contracte noi", value: 28, fill: "hsl(var(--chart-2))" },
-  { name: "Comenzi client", value: 22, fill: "hsl(var(--chart-3))" },
-];
-
-const tonajPerClient = [
-  { client: "Strabag", tonaj: 2850 },
-  { client: "Colas", tonaj: 2200 },
-  { client: "Porr", tonaj: 1850 },
-  { client: "Euroconst", tonaj: 1420 },
-  { client: "Drumex", tonaj: 980 },
-];
-
-const pretMediuVanzare = [
-  { produs: "BA 16", pret: 285, tonaj: 3200 },
-  { produs: "BAD 22.4", pret: 310, tonaj: 2800 },
-  { produs: "MASF 16", pret: 295, tonaj: 2100 },
-  { produs: "AB 16", pret: 275, tonaj: 1850 },
-  { produs: "BAR 16", pret: 265, tonaj: 1500 },
-];
-
-const pretComparativ = [
-  { produs: "BA 16", pretPropriu: 285, pretConcurenta: 290, diferenta: -5 },
-  { produs: "BAD 22.4", pretPropriu: 310, pretConcurenta: 305, diferenta: 5 },
-  { produs: "MASF 16", pretPropriu: 295, pretConcurenta: 298, diferenta: -3 },
-  { produs: "AB 16", pretPropriu: 275, pretConcurenta: 280, diferenta: -5 },
-  { produs: "BAR 16", pretPropriu: 265, pretConcurenta: 262, diferenta: 3 },
-];
-
+const funnelData = [{
+  name: "Oferte noi",
+  value: 45,
+  fill: "hsl(var(--chart-1))"
+}, {
+  name: "Contracte noi",
+  value: 28,
+  fill: "hsl(var(--chart-2))"
+}, {
+  name: "Comenzi client",
+  value: 22,
+  fill: "hsl(var(--chart-3))"
+}];
+const tonajPerClient = [{
+  client: "Strabag",
+  tonaj: 2850
+}, {
+  client: "Colas",
+  tonaj: 2200
+}, {
+  client: "Porr",
+  tonaj: 1850
+}, {
+  client: "Euroconst",
+  tonaj: 1420
+}, {
+  client: "Drumex",
+  tonaj: 980
+}];
+const pretMediuVanzare = [{
+  produs: "BA 16",
+  pret: 285,
+  tonaj: 3200
+}, {
+  produs: "BAD 22.4",
+  pret: 310,
+  tonaj: 2800
+}, {
+  produs: "MASF 16",
+  pret: 295,
+  tonaj: 2100
+}, {
+  produs: "AB 16",
+  pret: 275,
+  tonaj: 1850
+}, {
+  produs: "BAR 16",
+  pret: 265,
+  tonaj: 1500
+}];
+const pretComparativ = [{
+  produs: "BA 16",
+  pretPropriu: 285,
+  pretConcurenta: 290,
+  diferenta: -5
+}, {
+  produs: "BAD 22.4",
+  pretPropriu: 310,
+  pretConcurenta: 305,
+  diferenta: 5
+}, {
+  produs: "MASF 16",
+  pretPropriu: 295,
+  pretConcurenta: 298,
+  diferenta: -3
+}, {
+  produs: "AB 16",
+  pretPropriu: 275,
+  pretConcurenta: 280,
+  diferenta: -5
+}, {
+  produs: "BAR 16",
+  pretPropriu: 265,
+  pretConcurenta: 262,
+  diferenta: 3
+}];
 const ComercialLivrariSection = () => {
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Secțiune A - Funnel comercial */}
       <div>
         <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
           <ShoppingCart className="h-4 w-4" />
-          Secțiune A – Funnel comercial
+           Funnel comercial
         </h3>
         
         <Card>
@@ -68,19 +102,12 @@ const ComercialLivrariSection = () => {
               <div className="h-[250px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <FunnelChart>
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'hsl(var(--background))', 
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '6px'
-                      }} 
-                    />
-                    <Funnel
-                      data={funnelData}
-                      dataKey="value"
-                      nameKey="name"
-                      isAnimationActive
-                    >
+                    <Tooltip contentStyle={{
+                    backgroundColor: 'hsl(var(--background))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '6px'
+                  }} />
+                    <Funnel data={funnelData} dataKey="value" nameKey="name" isAnimationActive>
                       <LabelList position="right" fill="#888" stroke="none" dataKey="name" fontSize={11} />
                       <LabelList position="center" fill="#fff" stroke="none" dataKey="value" fontSize={14} fontWeight="bold" />
                     </Funnel>
@@ -126,15 +153,17 @@ const ComercialLivrariSection = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={tonajPerClient} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis type="number" tick={{ fontSize: 11 }} />
-                    <YAxis dataKey="client" type="category" tick={{ fontSize: 11 }} width={80} />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'hsl(var(--background))', 
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '6px'
-                      }} 
-                    />
+                    <XAxis type="number" tick={{
+                    fontSize: 11
+                  }} />
+                    <YAxis dataKey="client" type="category" tick={{
+                    fontSize: 11
+                  }} width={80} />
+                    <Tooltip contentStyle={{
+                    backgroundColor: 'hsl(var(--background))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '6px'
+                  }} />
                     <Bar dataKey="tonaj" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -159,13 +188,11 @@ const ComercialLivrariSection = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {pretMediuVanzare.map((item) => (
-                    <TableRow key={item.produs}>
+                  {pretMediuVanzare.map(item => <TableRow key={item.produs}>
                       <TableCell className="text-xs font-medium">{item.produs}</TableCell>
                       <TableCell className="text-xs text-right">{item.pret.toLocaleString()}</TableCell>
                       <TableCell className="text-xs text-right">{item.tonaj.toLocaleString()}</TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                 </TableBody>
               </Table>
             </CardContent>
@@ -190,22 +217,17 @@ const ComercialLivrariSection = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {pretComparativ.map((item) => (
-                  <TableRow key={item.produs}>
+                {pretComparativ.map(item => <TableRow key={item.produs}>
                     <TableCell className="text-xs font-medium">{item.produs}</TableCell>
                     <TableCell className="text-xs text-right">{item.pretPropriu.toLocaleString()}</TableCell>
                     <TableCell className="text-xs text-right">{item.pretConcurenta.toLocaleString()}</TableCell>
                     <TableCell className="text-right">
-                      <div className={cn(
-                        "flex items-center justify-end gap-1 text-xs",
-                        item.diferenta < 0 ? "text-green-600" : "text-destructive"
-                      )}>
+                      <div className={cn("flex items-center justify-end gap-1 text-xs", item.diferenta < 0 ? "text-green-600" : "text-destructive")}>
                         {item.diferenta < 0 ? <TrendingDown className="h-3 w-3" /> : <TrendingUp className="h-3 w-3" />}
                         {item.diferenta > 0 ? "+" : ""}{item.diferenta}
                       </div>
                     </TableCell>
-                  </TableRow>
-                ))}
+                  </TableRow>)}
               </TableBody>
             </Table>
           </CardContent>
@@ -253,8 +275,6 @@ const ComercialLivrariSection = () => {
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ComercialLivrariSection;
