@@ -284,7 +284,8 @@ const ProductieCalitateSection = () => {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">
-                PC5 – Marshall mediu pe produs
+                
+Marshall mediu pe produs
               </CardTitle>
             </CardHeader>
             <CardContent>
