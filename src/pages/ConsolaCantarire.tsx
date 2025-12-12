@@ -221,6 +221,46 @@ export default function ConsolaCantarire() {
       }
     }
 
+    // For OUTBOUND (Livrare): After TARA is entered (step 2/2), call API to save delivery
+    if (updatedSession.direction === 'OUTBOUND' && type === 'TARA' && updatedSession.masaBrut && updatedSession.tara) {
+      const cod = updatedSession.orderNo || '';
+      const nrAuto = Array.isArray(updatedSession.nrAuto) ? updatedSession.nrAuto[0] : (updatedSession.nrAuto || '');
+      const sofer = Array.isArray(updatedSession.createdBy) ? updatedSession.createdBy[0] : (updatedSession.createdBy || '');
+      const temperatura = updatedSession.temperatura ?? 0;
+      const masaBrut = updatedSession.masaBrut;
+      const tara = updatedSession.tara;
+      const obs = observatii || '';
+      
+      try {
+        const response = await fetch(
+          `http://192.168.1.23:8002/gestionare/cantar/adauga/livrare/${encodeURIComponent(cod)}/${encodeURIComponent(nrAuto)}/${encodeURIComponent(sofer)}/${temperatura}/${masaBrut}/${tara}/${encodeURIComponent(obs)}`,
+          { method: 'POST' }
+        );
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          toast({
+            title: "Livrare salvată",
+            description: `Livrarea pentru ${cod} a fost înregistrată cu succes.`
+          });
+        } else {
+          toast({
+            title: "Eroare",
+            description: result.error || "Nu s-a putut salva livrarea.",
+            variant: "destructive"
+          });
+        }
+      } catch (error) {
+        console.error('Eroare la salvarea livrării:', error);
+        toast({
+          title: "Eroare",
+          description: "Nu s-a putut salva livrarea. Verificați conexiunea.",
+          variant: "destructive"
+        });
+      }
+    }
+
     updatedSession.updatedAt = new Date().toISOString();
 
     // Move to step 2/2 queue and clear active panel
