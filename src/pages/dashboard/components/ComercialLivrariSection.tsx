@@ -94,7 +94,7 @@ const ComercialLivrariSection = () => {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">
-              CL1 – Ofertă → Contract → Comandă client
+              Ofertă → Contract → Comandă client
             </CardTitle>
           </CardHeader>
           <CardContent>
