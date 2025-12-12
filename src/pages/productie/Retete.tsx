@@ -19,6 +19,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
@@ -37,7 +38,7 @@ import { toSelectOptions, extractApiValue } from "@/lib/utils";
 interface Component {
   id: number;
   material: string;
-  cantitate: number;
+  cantitate: string;
 }
 
 interface Reteta {
@@ -54,11 +55,11 @@ interface Reteta {
 const parseComponents = (materiale: string, cantitati: string): Component[] => {
   if (!materiale || !cantitati) return [];
   const materials = materiale.split(",").map(m => m.trim());
-  const quantities = cantitati.split(",").map(q => parseFloat(q.trim()) || 0);
+  const quantities = cantitati.split(",").map(q => q.trim() || "0");
   return materials.map((material, idx) => ({
     id: idx + 1,
     material,
-    cantitate: quantities[idx] || 0
+    cantitate: quantities[idx] || "0"
   }));
 };
 
@@ -369,7 +370,7 @@ const Retete = () => {
     const newComponent: Component = {
       id: Date.now(),
       material: "",
-      cantitate: 0
+      cantitate: "0"
     };
     setEditorComponents([...editorComponents, newComponent]);
   };
@@ -388,7 +389,7 @@ const Retete = () => {
 
   // Calculate total cantitate for validation
   const getTotalCantitate = (componente: Component[]) => {
-    const total = componente.reduce((sum, c) => sum + c.cantitate, 0);
+    const total = componente.reduce((sum, c) => sum + (parseFloat(c.cantitate) || 0), 0);
     return parseFloat(total.toFixed(3));
   };
 
@@ -721,13 +722,12 @@ const Retete = () => {
                         searchPlaceholder="Caută..."
                         className="h-8 text-xs flex-1"
                       />
-                      <Input 
-                        type="number" 
-                        step="0.001"
+                      <NumericInput 
                         value={comp.cantitate} 
-                        onChange={(e) => handleUpdateComponent(comp.id, "cantitate", parseFloat(parseFloat(e.target.value).toFixed(3)) || 0)}
+                        onChange={(value) => handleUpdateComponent(comp.id, "cantitate", value)}
                         className="h-8 w-20 text-xs text-right" 
                         placeholder="kg"
+                        allowDecimal={true}
                       />
                       <Button 
                         variant="ghost" 
