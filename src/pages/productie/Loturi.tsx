@@ -925,111 +925,111 @@ const Loturi = () => {
 
       {/* Add Dialog */}
       <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
-        <DialogContent hideCloseButton className="max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Adaugă Lot</DialogTitle>
-            <DialogDescription>
-              Înregistrați un nou lot de producție
-            </DialogDescription>
+        <DialogContent hideCloseButton className="w-[95vw] max-w-md max-h-[90vh] overflow-y-auto p-0">
+          <DialogHeader className="px-5 pt-4 pb-2">
+            <DialogTitle className="text-base">Adaugă Lot</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+          <div className="px-5 py-3 space-y-3">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label>Cod Ordin *</Label>
+                <Label className="text-xs">Cod Ordin *</Label>
                 <FilterableSelect
                   options={ordineDisponibile}
                   value={addFormData.cod_ordin}
                   onValueChange={(v) => setAddFormData(prev => ({ ...prev, cod_ordin: v }))}
                   placeholder="Selectează ordin"
+                  className="h-9 text-sm"
                 />
               </div>
               <div>
-                <Label>Produs *</Label>
+                <Label className="text-xs">Produs *</Label>
                 <FilterableSelect
                   options={materialeDisponibile}
                   value={addFormData.material}
                   onValueChange={(v) => setAddFormData(prev => ({ ...prev, material: v }))}
                   placeholder="Selectează produs"
+                  className="h-9 text-sm"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label>Rețetă</Label>
+                <Label className="text-xs">Rețetă</Label>
                 <FilterableSelect
                   options={reteteDisponibile}
                   value={addFormData.cod_reteta}
                   onValueChange={(v) => setAddFormData(prev => ({ ...prev, cod_reteta: v }))}
                   placeholder="Selectează rețetă"
+                  className="h-9 text-sm"
                 />
               </div>
               <div>
-                <Label>Cantitate *</Label>
+                <Label className="text-xs">Cantitate *</Label>
                 <Input
                   type="number"
                   value={addFormData.cantitate}
                   onChange={(e) => setAddFormData(prev => ({ ...prev, cantitate: e.target.value }))}
                   placeholder="Ex: 50"
+                  className="h-9 text-sm"
                 />
               </div>
             </div>
 
             <div>
-              <Label>Operator *</Label>
+              <Label className="text-xs">Operator *</Label>
               <FilterableSelect
                 options={operatoriDisponibili}
                 value={addFormData.operator}
                 onValueChange={(v) => setAddFormData(prev => ({ ...prev, operator: v }))}
                 placeholder="Selectează operator"
+                className="h-9 text-sm"
               />
             </div>
 
-            <Separator />
+            <Separator className="my-2" />
 
-            <div className="space-y-3">
-              <Label>Parametri Măsurați</Label>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label className="text-xs">Temperatură (°C)</Label>
-                  <Input
-                    type="number"
-                    value={addFormData.temperatura}
-                    onChange={(e) => setAddFormData(prev => ({ ...prev, temperatura: e.target.value }))}
-                    placeholder="Ex: 160"
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs">Marshall (kN)</Label>
-                  <Input
-                    type="number"
-                    step="0.1"
-                    value={addFormData.marshall}
-                    onChange={(e) => setAddFormData(prev => ({ ...prev, marshall: e.target.value }))}
-                    placeholder="Ex: 12.0"
-                  />
-                </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs">Temperatură (°C)</Label>
+                <Input
+                  type="number"
+                  value={addFormData.temperatura}
+                  onChange={(e) => setAddFormData(prev => ({ ...prev, temperatura: e.target.value }))}
+                  placeholder="Ex: 160"
+                  className="h-9 text-sm"
+                />
+              </div>
+              <div>
+                <Label className="text-xs">Marshall (kN)</Label>
+                <Input
+                  type="number"
+                  step="0.1"
+                  value={addFormData.marshall}
+                  onChange={(e) => setAddFormData(prev => ({ ...prev, marshall: e.target.value }))}
+                  placeholder="Ex: 12.0"
+                  className="h-9 text-sm"
+                />
               </div>
             </div>
 
             <div>
-              <Label>Observații</Label>
+              <Label className="text-xs">Observații</Label>
               <Textarea
                 value={addFormData.observatii}
                 onChange={(e) => setAddFormData(prev => ({ ...prev, observatii: e.target.value }))}
                 placeholder="Observații opționale..."
+                className="text-sm min-h-[60px]"
               />
             </div>
 
-            <Separator />
-
             {/* File Upload Section */}
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2">
-                <Upload className="h-4 w-4" />
+            <div>
+              <Label className="text-xs flex items-center gap-1">
+                <Upload className="h-3 w-3" />
                 Atașamente
               </Label>
-              <label className="cursor-pointer block">
+              <label className="cursor-pointer block mt-1">
                 <input
                   type="file"
                   accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
@@ -1043,26 +1043,26 @@ const Loturi = () => {
                     }
                   }}
                 />
-                <div className="border-2 border-dashed border-muted-foreground/30 rounded-lg p-6 flex flex-col items-center justify-center gap-2 hover:border-primary hover:bg-muted/50 transition-colors">
-                  <Upload className="h-8 w-8 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Click pentru a încărca fișiere</span>
-                  <span className="text-xs text-muted-foreground">Poze, PDF, DOC, XLS (max 10MB)</span>
+                <div className="border-2 border-dashed border-muted-foreground/30 rounded-lg p-3 flex flex-col items-center justify-center gap-1 hover:border-primary hover:bg-muted/50 transition-colors">
+                  <Upload className="h-5 w-5 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">Click pentru a încărca</span>
                 </div>
               </label>
               {uploadedFiles.length > 0 && (
-                <div className="space-y-1">
+                <div className="space-y-1 mt-2">
                   {uploadedFiles.map((file, idx) => (
                     <div key={idx} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
                       <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-blue-500" />
-                        <span className="text-sm">{file.name}</span>
+                        <FileText className="h-3 w-3 text-blue-500" />
+                        <span className="text-xs truncate max-w-[200px]">{file.name}</span>
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
+                        className="h-6 w-6 p-0"
                         onClick={() => setUploadedFiles(prev => prev.filter((_, i) => i !== idx))}
                       >
-                        <X className="h-4 w-4" />
+                        <X className="h-3 w-3" />
                       </Button>
                     </div>
                   ))}
@@ -1070,12 +1070,12 @@ const Loturi = () => {
               )}
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setAddDialogOpen(false)} disabled={isSubmitting}>
+          <DialogFooter className="px-5 py-3 flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => setAddDialogOpen(false)} disabled={isSubmitting}>
               Anulează
             </Button>
-            <Button onClick={handleAddLot} disabled={isSubmitting}>
-              {isSubmitting ? "Se salvează..." : "Salvează Lot"}
+            <Button size="sm" onClick={handleAddLot} disabled={isSubmitting}>
+              {isSubmitting ? "Se salvează..." : "Salvează"}
             </Button>
           </DialogFooter>
         </DialogContent>
