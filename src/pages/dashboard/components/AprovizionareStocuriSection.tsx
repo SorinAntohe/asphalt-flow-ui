@@ -211,7 +211,7 @@ const AprovizionareStocuriSection = () => {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">
-                AS4 – Stoc curent & zile de acoperire
+                Stoc curent & zile de acoperire
               </CardTitle>
             </CardHeader>
             <CardContent>
