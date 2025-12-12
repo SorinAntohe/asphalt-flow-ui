@@ -647,15 +647,14 @@ const ComenziClient = () => {
 
       {/* Add/Edit Dialog */}
       <Dialog open={openAddEdit} onOpenChange={setOpenAddEdit}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{editing ? "Editează Comandă" : "Adaugă Comandă Nouă"}</DialogTitle>
-            <DialogDescription>Completează informațiile comenzii.</DialogDescription>
+        <DialogContent className="w-[95vw] max-w-md max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
+          <DialogHeader className="px-4 pt-3 pb-2">
+            <DialogTitle className="text-base">{editing ? "Editează Comandă" : "Adaugă Comandă Nouă"}</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Client *</Label>
+          <div className="px-4 py-2 space-y-3">
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1">
+                <Label className="text-xs">Client *</Label>
                 <FilterableSelect
                   value={form.client}
                   onValueChange={(v) => setForm({ ...form, client: v })}
@@ -663,10 +662,11 @@ const ComenziClient = () => {
                   placeholder="Selectează client"
                   searchPlaceholder="Caută client..."
                   emptyText="Nu s-au găsit clienți"
+                  className="h-8 text-sm"
                 />
               </div>
-              <div className="space-y-2">
-                <Label>Produs *</Label>
+              <div className="space-y-1">
+                <Label className="text-xs">Produs *</Label>
                 <FilterableSelect
                   value={form.produs}
                   onValueChange={(v) => setForm({ ...form, produs: v })}
@@ -674,18 +674,19 @@ const ComenziClient = () => {
                   placeholder="Selectează produs"
                   searchPlaceholder="Caută produs..."
                   emptyText="Nu s-au găsit produse"
+                  className="h-8 text-sm"
                 />
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label>Cantitate *</Label>
-                <Input type="number" value={form.cantitate} onChange={(e) => setForm({ ...form, cantitate: Number(e.target.value) })} />
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1">
+                <Label className="text-xs">Cantitate *</Label>
+                <Input type="number" className="h-8 text-sm" value={form.cantitate} onChange={(e) => setForm({ ...form, cantitate: Number(e.target.value) })} />
               </div>
-              <div className="space-y-2">
-                <Label>Unitate măsură</Label>
+              <div className="space-y-1">
+                <Label className="text-xs">Unitate măsură</Label>
                 <Select value={form.unitate_masura} onValueChange={(v) => setForm({ ...form, unitate_masura: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="tone">tone</SelectItem>
                     <SelectItem value="mc">mc</SelectItem>
@@ -694,11 +695,11 @@ const ComenziClient = () => {
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Prioritate</Label>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1">
+                <Label className="text-xs">Prioritate</Label>
                 <Select value={form.prioritate} onValueChange={(v) => setForm({ ...form, prioritate: v as Priority })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Scazut">Scazut</SelectItem>
                     <SelectItem value="Normala">Normala</SelectItem>
@@ -707,20 +708,20 @@ const ComenziClient = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label>Avans</Label>
-                <Input type="number" placeholder="0" value={form.avans} onChange={(e) => setForm({ ...form, avans: Number(e.target.value) })} />
+              <div className="space-y-1">
+                <Label className="text-xs">Avans</Label>
+                <Input type="number" className="h-8 text-sm" placeholder="0" value={form.avans} onChange={(e) => setForm({ ...form, avans: Number(e.target.value) })} />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label>Punct descărcare</Label>
-              <Input placeholder="Adresa/locația de descărcare" value={form.punct_descarcare} onChange={(e) => setForm({ ...form, punct_descarcare: e.target.value })} />
+            <div className="space-y-1">
+              <Label className="text-xs">Punct descărcare</Label>
+              <Input className="h-8 text-sm" placeholder="Adresa/locația de descărcare" value={form.punct_descarcare} onChange={(e) => setForm({ ...form, punct_descarcare: e.target.value })} />
             </div>
             {editing && (
-              <div className="space-y-2">
-                <Label>Status</Label>
+              <div className="space-y-1">
+                <Label className="text-xs">Status</Label>
                 <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v as OrderStatus })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Preaprobat">Preaprobat</SelectItem>
                     <SelectItem value="Aprobat">Aprobat</SelectItem>
@@ -731,14 +732,14 @@ const ComenziClient = () => {
                 </Select>
               </div>
             )}
-            <div className="space-y-2">
-              <Label>Observații</Label>
-              <Textarea placeholder="Observații suplimentare..." value={form.observatii} onChange={(e) => setForm({ ...form, observatii: e.target.value })} />
+            <div className="space-y-1">
+              <Label className="text-xs">Observații</Label>
+              <Textarea className="text-sm min-h-[60px]" placeholder="Observații suplimentare..." value={form.observatii} onChange={(e) => setForm({ ...form, observatii: e.target.value })} />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenAddEdit(false)}>Anulează</Button>
-            <Button onClick={handleSave}>{editing ? "Salvează" : "Adaugă"}</Button>
+          <DialogFooter className="px-4 py-3 flex-col sm:flex-row gap-2">
+            <Button variant="outline" size="sm" onClick={() => setOpenAddEdit(false)}>Anulează</Button>
+            <Button size="sm" onClick={handleSave}>{editing ? "Salvează" : "Adaugă"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
