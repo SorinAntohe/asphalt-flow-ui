@@ -107,16 +107,17 @@ export default function Stocuri() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Stocuri</h1>
-          <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-foreground">Stocuri</h1>
+          <p className="text-muted-foreground mt-0.5 sm:mt-1 text-xs sm:text-sm hidden xs:block">
             Vizualizează stocurile de materii prime
           </p>
         </div>
         <Button 
           variant="outline" 
           size="sm"
+          className="self-start xs:self-auto"
           onClick={() => exportToCSV(filteredAndSortedStocuri, 'stocuri', [
             { key: 'id', label: 'ID' },
             { key: 'materiale_prime', label: 'Tip Material' },
@@ -130,11 +131,11 @@ export default function Stocuri() {
       </div>
 
       <Card>
-        <CardHeader className="p-3 sm:p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <CardTitle className="text-base sm:text-lg">Stocuri Materiale</CardTitle>
+        <CardHeader className="p-3 sm:p-4 md:p-6">
+          <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-2">
+            <CardTitle className="text-sm sm:text-base md:text-lg">Stocuri Materiale</CardTitle>
             <div className="flex items-center gap-2">
-              <Label className="text-xs sm:text-sm whitespace-nowrap">Per pagină:</Label>
+              <Label className="text-[10px] sm:text-xs whitespace-nowrap">Per pagină:</Label>
               <Select
                 value={itemsPerPage.toString()}
                 onValueChange={(value) => {
@@ -142,7 +143,7 @@ export default function Stocuri() {
                   setCurrentPage(1);
                 }}
               >
-                <SelectTrigger className="w-[60px] sm:w-[70px] h-8">
+                <SelectTrigger className="w-14 sm:w-16 h-7 sm:h-8 text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -156,7 +157,7 @@ export default function Stocuri() {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="overflow-x-auto">
+        <CardContent className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0 p-0 sm:p-3 md:p-6 pt-0">
           <Table>
             <TableHeader>
               <TableRow>
@@ -222,10 +223,10 @@ export default function Stocuri() {
           </Table>
           
           {/* Pagination Controls */}
-          <div className="flex items-center justify-between px-2 py-4">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">
-                Afișare {startIndex + 1}-{Math.min(endIndex, filteredAndSortedStocuri.length)} din {filteredAndSortedStocuri.length}
+          <div className="flex flex-col xs:flex-row items-center justify-between gap-3 px-2 py-3 sm:py-4">
+            <div className="flex items-center gap-2 order-2 xs:order-1">
+              <span className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">
+                {startIndex + 1}-{Math.min(endIndex, filteredAndSortedStocuri.length)} din {filteredAndSortedStocuri.length}
               </span>
             </div>
             

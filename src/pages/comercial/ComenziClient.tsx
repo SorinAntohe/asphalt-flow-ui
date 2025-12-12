@@ -388,12 +388,12 @@ const ComenziClient = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Comenzi Client</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">Comenzi Client</h1>
+          <p className="text-muted-foreground mt-0.5 sm:mt-1 text-xs sm:text-sm hidden xs:block">
             Gestionare și urmărire comenzi de la clienți
           </p>
         </div>
