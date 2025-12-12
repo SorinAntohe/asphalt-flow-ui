@@ -1,43 +1,58 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Users, 
-  DollarSign, 
-  Calendar, 
-  Home,
-  TrendingUp,
-  TrendingDown
-} from "lucide-react";
+import { Users, DollarSign, Calendar, Home, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Mock data
-const angajati = [
-  { nume: "Ion Popescu", functie: "Operator stație", salariu: 5200, zileConcediu: 12 },
-  { nume: "Vasile Georgescu", functie: "Operator stație", salariu: 5200, zileConcediu: 8 },
-  { nume: "Andrei Marin", functie: "Șofer", salariu: 4800, zileConcediu: 15 },
-  { nume: "Mihai Ionescu", functie: "Șef schimb", salariu: 6500, zileConcediu: 10 },
-  { nume: "Dan Popa", functie: "Șef schimb", salariu: 6500, zileConcediu: 5 },
-  { nume: "George Radu", functie: "Mecanic", salariu: 5500, zileConcediu: 18 },
-];
-
+const angajati = [{
+  nume: "Ion Popescu",
+  functie: "Operator stație",
+  salariu: 5200,
+  zileConcediu: 12
+}, {
+  nume: "Vasile Georgescu",
+  functie: "Operator stație",
+  salariu: 5200,
+  zileConcediu: 8
+}, {
+  nume: "Andrei Marin",
+  functie: "Șofer",
+  salariu: 4800,
+  zileConcediu: 15
+}, {
+  nume: "Mihai Ionescu",
+  functie: "Șef schimb",
+  salariu: 6500,
+  zileConcediu: 10
+}, {
+  nume: "Dan Popa",
+  functie: "Șef schimb",
+  salariu: 6500,
+  zileConcediu: 5
+}, {
+  nume: "George Radu",
+  functie: "Mecanic",
+  salariu: 5500,
+  zileConcediu: 18
+}];
 const HRAdminSection = () => {
   const totalAngajati = angajati.length;
   const totalSalariu = angajati.reduce((sum, a) => sum + a.salariu, 0);
   const totalZileConcediu = angajati.reduce((sum, a) => sum + a.zileConcediu, 0);
-  
+
   // Mock cheltuieli fixe
   const cheltuieliChirii = 15000;
   const productieEstimata = 2450; // tone
   const costFixPerTon = ((totalSalariu + cheltuieliChirii) / productieEstimata).toFixed(2);
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Secțiune A - HR */}
       <div>
         <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
           <Users className="h-4 w-4" />
-          Secțiune A – HR
+          
+
+HR
         </h3>
         
         <div className="grid gap-4 lg:grid-cols-3 mb-4">
@@ -112,8 +127,7 @@ const HRAdminSection = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {angajati.map((angajat, index) => (
-                  <TableRow key={index}>
+                {angajati.map((angajat, index) => <TableRow key={index}>
                     <TableCell className="text-xs font-medium">{angajat.nume}</TableCell>
                     <TableCell className="text-xs">{angajat.functie}</TableCell>
                     <TableCell className="text-xs text-right">{angajat.salariu.toLocaleString()}</TableCell>
@@ -122,8 +136,7 @@ const HRAdminSection = () => {
                         {angajat.zileConcediu}
                       </Badge>
                     </TableCell>
-                  </TableRow>
-                ))}
+                  </TableRow>)}
               </TableBody>
             </Table>
           </CardContent>
@@ -190,8 +203,6 @@ const HRAdminSection = () => {
           </Card>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default HRAdminSection;
