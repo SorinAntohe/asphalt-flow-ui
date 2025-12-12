@@ -400,9 +400,13 @@ const ProductieCalitateSection = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="h-[220px]">
+              <div className="h-[220px] cursor-pointer">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={temperaturaPerProdus} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                  <LineChart 
+                    data={temperaturaPerProdus} 
+                    margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
+                    onClick={(e) => e?.activePayload?.[0]?.payload && handleTemperaturaClick(e.activePayload[0].payload)}
+                  >
                     <CartesianGrid strokeDasharray="3 3" className="stroke-muted/50" vertical={false} />
                     <XAxis dataKey="produs" tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
                     <YAxis domain={[150, 180]} tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
@@ -419,8 +423,8 @@ const ProductieCalitateSection = () => {
                       dataKey="temperatura" 
                       stroke="hsl(var(--primary))" 
                       strokeWidth={2.5} 
-                      dot={{ fill: 'hsl(var(--primary))', strokeWidth: 0, r: 4, cursor: 'pointer' }}
-                      activeDot={{ r: 6, onClick: (_, payload: any) => handleTemperaturaClick(payload.payload) }}
+                      dot={{ fill: 'hsl(var(--primary))', strokeWidth: 0, r: 5 }}
+                      activeDot={{ r: 7, strokeWidth: 2, stroke: 'hsl(var(--background))' }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -473,9 +477,13 @@ const ProductieCalitateSection = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="h-[220px]">
+              <div className="h-[220px] cursor-pointer">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={consumEnergieZilnic} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                  <LineChart 
+                    data={consumEnergieZilnic} 
+                    margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
+                    onClick={(e) => e?.activePayload?.[0]?.payload && handleEnergieClick(e.activePayload[0].payload)}
+                  >
                     <CartesianGrid strokeDasharray="3 3" className="stroke-muted/50" vertical={false} />
                     <XAxis dataKey="zi" tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
@@ -492,8 +500,8 @@ const ProductieCalitateSection = () => {
                       dataKey="kwh" 
                       stroke="hsl(var(--chart-3))" 
                       strokeWidth={2.5} 
-                      dot={{ fill: 'hsl(var(--chart-3))', strokeWidth: 0, r: 4, cursor: 'pointer' }}
-                      activeDot={{ r: 6, onClick: (_, payload: any) => handleEnergieClick(payload.payload) }}
+                      dot={{ fill: 'hsl(var(--chart-3))', strokeWidth: 0, r: 5 }}
+                      activeDot={{ r: 7, strokeWidth: 2, stroke: 'hsl(var(--background))' }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -510,9 +518,13 @@ const ProductieCalitateSection = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="h-[220px]">
+              <div className="h-[220px] cursor-pointer">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={consumCTLZilnic} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                  <LineChart 
+                    data={consumCTLZilnic} 
+                    margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
+                    onClick={(e) => e?.activePayload?.[0]?.payload && handleCTLClick(e.activePayload[0].payload)}
+                  >
                     <CartesianGrid strokeDasharray="3 3" className="stroke-muted/50" vertical={false} />
                     <XAxis dataKey="zi" tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
@@ -529,8 +541,8 @@ const ProductieCalitateSection = () => {
                       dataKey="litri" 
                       stroke="hsl(var(--chart-4))" 
                       strokeWidth={2.5} 
-                      dot={{ fill: 'hsl(var(--chart-4))', strokeWidth: 0, r: 4, cursor: 'pointer' }}
-                      activeDot={{ r: 6, onClick: (_, payload: any) => handleCTLClick(payload.payload) }}
+                      dot={{ fill: 'hsl(var(--chart-4))', strokeWidth: 0, r: 5 }}
+                      activeDot={{ r: 7, strokeWidth: 2, stroke: 'hsl(var(--background))' }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
