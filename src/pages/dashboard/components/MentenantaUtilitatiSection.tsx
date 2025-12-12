@@ -47,9 +47,8 @@ const MentenantaUtilitatiSection = () => {
           {/* MU1 - Revizii scadente */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">MU1</span>
-                Revizii scadente în 30 zile
+              <CardTitle className="text-sm">
+                MU1 – Revizii scadente în 30 zile
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -58,7 +57,7 @@ const MentenantaUtilitatiSection = () => {
                 <p className="text-sm text-muted-foreground mt-1">nr echipamente</p>
                 <div className="flex items-center justify-center gap-1 mt-2 text-xs text-muted-foreground">
                   <Calendar className="h-3 w-3" />
-                  <span>Prima revizie: 15 Feb</span>
+                  Prima revizie: 15 Feb
                 </div>
               </div>
             </CardContent>
@@ -67,9 +66,8 @@ const MentenantaUtilitatiSection = () => {
           {/* MU2 - Cost estimat revizii */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">MU2</span>
-                Cost estimat revizii 30 zile
+              <CardTitle className="text-sm">
+                MU2 – Cost estimat revizii 30 zile
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -78,7 +76,7 @@ const MentenantaUtilitatiSection = () => {
                 <p className="text-sm text-muted-foreground mt-1">lei</p>
                 <div className="flex items-center justify-center gap-1 mt-2 text-xs text-green-600">
                   <TrendingDown className="h-3 w-3" />
-                  <span>-8% vs luna anterioară</span>
+                  -8% vs luna anterioară
                 </div>
               </div>
             </CardContent>
@@ -128,9 +126,8 @@ const MentenantaUtilitatiSection = () => {
           {/* MU3 - Consum energie electrică */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">MU3</span>
-                Consum total energie electrică
+              <CardTitle className="text-sm">
+                MU3 – Consum total energie electrică
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -139,7 +136,7 @@ const MentenantaUtilitatiSection = () => {
                 <p className="text-sm text-muted-foreground mt-1">kWh</p>
                 <div className="flex items-center justify-center gap-1 mt-2 text-xs text-green-600">
                   <TrendingDown className="h-3 w-3" />
-                  <span>-2.5% vs anterior</span>
+                  -2.5% vs anterior
                 </div>
               </div>
             </CardContent>
@@ -148,9 +145,8 @@ const MentenantaUtilitatiSection = () => {
           {/* MU4 - Consum CTL */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">MU4</span>
-                Consum CTL & cost
+              <CardTitle className="text-sm">
+                MU4 – Consum CTL & cost
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -168,7 +164,7 @@ const MentenantaUtilitatiSection = () => {
                 </div>
                 <div className="flex items-center justify-center gap-1 mt-3 text-xs text-destructive">
                   <TrendingUp className="h-3 w-3" />
-                  <span>+5.2% vs anterior</span>
+                  +5.2% vs anterior
                 </div>
               </div>
             </CardContent>
@@ -185,7 +181,7 @@ const MentenantaUtilitatiSection = () => {
                 <p className="text-sm text-muted-foreground mt-1">lei/t</p>
                 <div className="flex items-center justify-center gap-1 mt-2 text-xs text-green-600">
                   <TrendingDown className="h-3 w-3" />
-                  <span>-1.2% vs anterior</span>
+                  -1.2% vs anterior
                 </div>
               </div>
             </CardContent>
@@ -195,9 +191,8 @@ const MentenantaUtilitatiSection = () => {
         {/* MU5 - Grafic cost utilități */}
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <span className="text-[10px] font-mono text-muted-foreground">MU5</span>
-              Cost utilități per ton produs (lei/t)
+            <CardTitle className="text-sm">
+              MU5 – Cost utilități per ton produs (lei/t)
             </CardTitle>
           </CardHeader>
           <CardContent>

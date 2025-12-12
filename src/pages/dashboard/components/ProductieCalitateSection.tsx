@@ -92,9 +92,8 @@ const ProductieCalitateSection = () => {
           {/* PC1 - Grafic bară producție pe produs */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">PC1</span>
-                Producție pe produs (t)
+              <CardTitle className="text-sm">
+                PC1 – Producție pe produs (t)
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -121,9 +120,8 @@ const ProductieCalitateSection = () => {
           {/* PC3 - Card KPI Consum specific */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">PC3</span>
-                Consum specific materie primă
+              <CardTitle className="text-sm">
+                PC3 – Consum specific materie primă
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -133,7 +131,7 @@ const ProductieCalitateSection = () => {
                   <p className="text-lg text-muted-foreground mt-1">kg/t</p>
                   <div className="flex items-center justify-center gap-1 mt-2 text-sm text-green-600">
                     <TrendingUp className="h-4 w-4" />
-                    <span>-0.8% vs target (1,020 kg/t)</span>
+                    -0.8% vs target (1,020 kg/t)
                   </div>
                 </div>
               </div>
@@ -144,10 +142,9 @@ const ProductieCalitateSection = () => {
         {/* PC2 - Tabel Plan vs Realizat */}
         <Card className="mt-4">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <span className="text-[10px] font-mono text-muted-foreground">PC2</span>
-              Plan vs realizat pe ordin de producție
-            </CardTitle>
+              <CardTitle className="text-sm">
+                PC2 – Plan vs realizat pe ordin de producție
+              </CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
@@ -198,9 +195,8 @@ const ProductieCalitateSection = () => {
           {/* PC4 - Temperatură medie */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">PC4</span>
-                Temperatură medie la încărcare pe produs (°C)
+              <CardTitle className="text-sm">
+                PC4 – Temperatură medie la încărcare pe produs (°C)
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -227,9 +223,8 @@ const ProductieCalitateSection = () => {
           {/* PC5 - Marshall mediu */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">PC5</span>
-                Marshall mediu pe produs
+              <CardTitle className="text-sm">
+                PC5 – Marshall mediu pe produs
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -256,9 +251,8 @@ const ProductieCalitateSection = () => {
           {/* PC6 - Consum energie */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">PC6</span>
-                Consum energie electrică per ton (kWh/t)
+              <CardTitle className="text-sm">
+                PC6 – Consum energie electrică per ton (kWh/t)
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -285,9 +279,8 @@ const ProductieCalitateSection = () => {
           {/* PC7 - Consum CTL */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground">PC7</span>
-                Consum CTL per ton (L/t)
+              <CardTitle className="text-sm">
+                PC7 – Consum CTL per ton (L/t)
               </CardTitle>
             </CardHeader>
             <CardContent>

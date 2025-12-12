@@ -37,13 +37,11 @@ const KPICard = ({ code, title, value, unit, trend, trendLabel, icon, variant = 
       <CardContent className="pt-5 pb-4">
         <div className="flex items-center justify-between">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono text-muted-foreground/60">{code}</span>
-            </div>
+            <p className="text-[10px] font-mono text-muted-foreground/60">{code}</p>
             <p className="text-xs font-medium text-muted-foreground mt-1">{title}</p>
             <div className="flex items-baseline gap-1.5 mt-1">
               <p className="text-2xl font-bold">{value}</p>
-              {unit && <span className="text-sm text-muted-foreground">{unit}</span>}
+              {unit && <p className="text-sm text-muted-foreground">{unit}</p>}
             </div>
             {trend !== undefined && (
               <div className={cn(
@@ -52,7 +50,7 @@ const KPICard = ({ code, title, value, unit, trend, trendLabel, icon, variant = 
                 isNegative && "text-destructive"
               )}>
                 {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                <span>{isPositive ? "+" : ""}{trend}% {trendLabel || "vs anterior"}</span>
+                {isPositive ? "+" : ""}{trend}% {trendLabel || "vs anterior"}
               </div>
             )}
           </div>
