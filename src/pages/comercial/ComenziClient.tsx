@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { exportToCSV } from "@/lib/exportUtils";
-import { extractApiValue } from "@/lib/utils";
+import { extractApiValue, cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -592,56 +592,94 @@ const ComenziClient = () => {
 
       {/* Detail Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
-        <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto p-0" hideCloseButton>
-          <DialogHeader className="px-5 pt-4 pb-2">
-            <div className="flex justify-between items-start">
-              <DialogTitle className="text-base">Detalii Comandă - {viewingDetails?.cod_comanda}</DialogTitle>
+        <DialogContent className="max-w-2xl p-0" hideCloseButton>
+          <DialogHeader className="px-6 pt-5 pb-4 border-b bg-muted/30">
+            <div className="flex justify-between items-center">
+              <div>
+                <DialogTitle className="text-lg font-semibold">
+                  Comandă {viewingDetails?.cod_comanda}
+                </DialogTitle>
+                <DialogDescription className="text-sm mt-0.5">
+                  {viewingDetails?.data}
+                </DialogDescription>
+              </div>
               {viewingDetails && (
                 <div className="flex gap-2">
-                  <Badge className={statusColors[viewingDetails.status]}>{viewingDetails.status}</Badge>
-                  <Badge className={priorityColors[viewingDetails.prioritate]}>{viewingDetails.prioritate}</Badge>
+                  <Badge className={cn(statusColors[viewingDetails.status], "px-3 py-1 text-sm font-medium")}>{viewingDetails.status}</Badge>
+                  <Badge className={cn(priorityColors[viewingDetails.prioritate], "px-3 py-1 text-sm font-medium")}>{viewingDetails.prioritate}</Badge>
                 </div>
               )}
             </div>
           </DialogHeader>
           
           {viewingDetails && (
-            <div className="px-5 py-3 space-y-3">
-              {/* Rezumat - compact grid */}
-              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm border rounded-lg p-3 bg-muted/30">
-                <div><span className="text-muted-foreground">Client:</span> <span className="font-medium">{viewingDetails.client}</span></div>
-                <div><span className="text-muted-foreground">Produs:</span> <span className="font-medium">{viewingDetails.produs}</span></div>
-                <div><span className="text-muted-foreground">Cantitate:</span> <span className="font-medium">{viewingDetails.cantitate} {viewingDetails.unitate_masura}</span></div>
-                <div><span className="text-muted-foreground">Data:</span> <span className="font-medium">{viewingDetails.data}</span></div>
-                <div><span className="text-muted-foreground">Fereastră:</span> <span className="font-medium">{viewingDetails.fereastra_incarcare}</span></div>
-                <div><span className="text-muted-foreground">Punct descărcare:</span> <span className="font-medium">{viewingDetails.punct_descarcare}</span></div>
-                <div><span className="text-muted-foreground">Avans:</span> <span className="font-medium">{viewingDetails.avans}</span></div>
-                {viewingDetails.observatii && (
-                  <div className="col-span-2 pt-2 border-t mt-1">
-                    <span className="text-muted-foreground">Observații:</span> <span className="font-medium">{viewingDetails.observatii}</span>
+            <div className="px-6 py-5 space-y-5">
+              {/* Informații principale */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-foreground uppercase tracking-wide">Informații Generale</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1 p-3 rounded-lg bg-muted/40 border">
+                    <p className="text-xs text-muted-foreground font-medium">Client</p>
+                    <p className="font-semibold text-foreground">{viewingDetails.client}</p>
                   </div>
-                )}
+                  <div className="space-y-1 p-3 rounded-lg bg-muted/40 border">
+                    <p className="text-xs text-muted-foreground font-medium">Produs</p>
+                    <p className="font-semibold text-foreground">{viewingDetails.produs}</p>
+                  </div>
+                  <div className="space-y-1 p-3 rounded-lg bg-muted/40 border">
+                    <p className="text-xs text-muted-foreground font-medium">Cantitate</p>
+                    <p className="font-semibold text-foreground">{viewingDetails.cantitate} {viewingDetails.unitate_masura}</p>
+                  </div>
+                  <div className="space-y-1 p-3 rounded-lg bg-muted/40 border">
+                    <p className="text-xs text-muted-foreground font-medium">Fereastră Încărcare</p>
+                    <p className="font-semibold text-foreground">{viewingDetails.fereastra_incarcare || "-"}</p>
+                  </div>
+                  <div className="space-y-1 p-3 rounded-lg bg-muted/40 border">
+                    <p className="text-xs text-muted-foreground font-medium">Punct Descărcare</p>
+                    <p className="font-semibold text-foreground">{viewingDetails.punct_descarcare || "-"}</p>
+                  </div>
+                  <div className="space-y-1 p-3 rounded-lg bg-muted/40 border">
+                    <p className="text-xs text-muted-foreground font-medium">Avans</p>
+                    <p className="font-semibold text-foreground">{viewingDetails.avans || 0} RON</p>
+                  </div>
+                </div>
               </div>
+
+              {/* Observații */}
+              {viewingDetails.observatii && (
+                <div className="space-y-2">
+                  <h4 className="text-sm font-semibold text-foreground uppercase tracking-wide">Observații</h4>
+                  <div className="p-3 rounded-lg bg-muted/40 border">
+                    <p className="text-sm">{viewingDetails.observatii}</p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
-          <DialogFooter className="px-5 py-3 flex-wrap gap-1">
-            <Button variant="outline" size="sm" onClick={() => { if (viewingDetails) { handleStatusChange(viewingDetails, "Planificat"); setViewingDetails(null); } }}>
-              <CalendarIcon className="w-4 h-4 mr-1" />Planifică
-            </Button>
-            <Button variant="outline" size="sm" onClick={handleRezervaStoc}>
-              <Package className="w-4 h-4 mr-1" />Rezervă stoc
-            </Button>
-            <Button variant="outline" size="sm" onClick={handleGenereazaAviz}>
-              <FileText className="w-4 h-4 mr-1" />Generează aviz
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => { if (viewingDetails) { handleOpenEdit(viewingDetails); setViewingDetails(null); } }}>
-              <Pencil className="w-4 h-4 mr-1" />Editează
-            </Button>
-            <Button variant="destructive" size="sm" onClick={() => { if (viewingDetails) { setDeleting(viewingDetails); setViewingDetails(null); } }}>
-              <Trash2 className="w-4 h-4 mr-1" />Șterge
-            </Button>
-            <Button variant="secondary" size="sm" onClick={() => setViewingDetails(null)}>Închide</Button>
+          <DialogFooter className="px-6 py-4 border-t bg-muted/20 gap-2">
+            <div className="flex flex-wrap gap-2 w-full justify-between">
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={() => { if (viewingDetails) { handleStatusChange(viewingDetails, "Planificat"); setViewingDetails(null); } }}>
+                  <CalendarIcon className="w-4 h-4 mr-1.5" />Planifică
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleRezervaStoc}>
+                  <Package className="w-4 h-4 mr-1.5" />Rezervă stoc
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleGenereazaAviz}>
+                  <FileText className="w-4 h-4 mr-1.5" />Generează aviz
+                </Button>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={() => { if (viewingDetails) { handleOpenEdit(viewingDetails); setViewingDetails(null); } }}>
+                  <Pencil className="w-4 h-4 mr-1.5" />Editează
+                </Button>
+                <Button variant="destructive" size="sm" onClick={() => { if (viewingDetails) { setDeleting(viewingDetails); setViewingDetails(null); } }}>
+                  <Trash2 className="w-4 h-4 mr-1.5" />Șterge
+                </Button>
+                <Button size="sm" onClick={() => setViewingDetails(null)}>Închide</Button>
+              </div>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
