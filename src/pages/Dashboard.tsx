@@ -119,18 +119,7 @@ const Dashboard = () => {
             Vizualizare generală a operațiunilor
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <TimeIntervalSelector />
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleGoToDetail}
-            className="gap-2"
-          >
-            Detaliu
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        </div>
+        <TimeIntervalSelector />
       </div>
 
       {/* KPI Cards - rând principal */}
@@ -176,10 +165,6 @@ const Dashboard = () => {
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20">
               <FileText className="h-4 w-4 text-yellow-600" />
               <span className="text-sm font-medium text-yellow-600">12 avize nefacturate</span>
-            </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
-              <Truck className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium text-primary">5 camioane în așteptare</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20">
               <AlertTriangle className="h-4 w-4 text-orange-600" />
