@@ -201,7 +201,7 @@ const ProductieCalitateSection = () => {
         <Card className="mt-4">
           <CardHeader className="pb-2">
               <CardTitle className="text-sm">
-                PC2 – Plan vs realizat pe ordin de producție
+                 Plan vs realizat pe ordin de producție
               </CardTitle>
           </CardHeader>
           <CardContent>
