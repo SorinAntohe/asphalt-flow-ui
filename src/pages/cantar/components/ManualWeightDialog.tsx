@@ -27,7 +27,8 @@ export function ManualWeightDialog({ open, onOpenChange, weightType, onConfirm, 
       return;
     }
 
-    onConfirm(numValue, isStep2 ? observatii : undefined);
+    const finalObservatii = isStep2 ? (observatii.trim() || ".") : undefined;
+    onConfirm(numValue, finalObservatii);
     handleClose();
   };
 
