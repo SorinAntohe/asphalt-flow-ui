@@ -156,7 +156,7 @@ const MentenantaUtilitatiSection = () => {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">
-                MU4 – Consum CTL & cost
+                Consum CTL & cost
               </CardTitle>
             </CardHeader>
             <CardContent>
