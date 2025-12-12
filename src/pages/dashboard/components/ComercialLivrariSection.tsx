@@ -238,7 +238,7 @@ const ComercialLivrariSection = () => {
       <div>
         <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
           <Truck className="h-4 w-4" />
-          Secțiune C – Flotă & livrări
+           Flotă & livrări
         </h3>
 
         <Card>
