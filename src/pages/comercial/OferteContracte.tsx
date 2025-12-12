@@ -1375,67 +1375,104 @@ const OferteContracte = () => {
 
       {/* Detail Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
-        <DialogContent className="max-w-2xl" hideCloseButton>
-          <DialogHeader className="pb-2">
-            <div className="flex justify-between items-start">
+        <DialogContent className="max-w-2xl p-0" hideCloseButton>
+          <DialogHeader className="px-6 pt-5 pb-4 border-b bg-muted/30">
+            <div className="flex justify-between items-center">
               <div>
-                <DialogTitle>
-                  Detalii {viewingDetails?.tip === "oferta" ? "Ofertă" : "Contract"} - {viewingDetails?.nr}
+                <DialogTitle className="text-lg font-semibold">
+                  {viewingDetails?.tip === "oferta" ? "Ofertă" : "Contract"} {viewingDetails?.nr}
                 </DialogTitle>
-                <DialogDescription>
-                  Informații complete
+                <DialogDescription className="text-sm mt-0.5">
+                  Creat la {viewingDetails?.dataCreare}
                 </DialogDescription>
               </div>
               {viewingDetails && (
-                <Badge className={cn(statusColors[viewingDetails.status], "px-2 py-0.5")}>{viewingDetails.status}</Badge>
+                <Badge className={cn(statusColors[viewingDetails.status], "px-3 py-1 text-sm font-medium")}>{viewingDetails.status}</Badge>
               )}
             </div>
           </DialogHeader>
           
           {viewingDetails && (
-            <div className="grid gap-3">
-              <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm border rounded-lg p-3 bg-muted/30">
-                <div><span className="text-muted-foreground">Client:</span> <span className="font-medium">{viewingDetails.client}</span></div>
-                <div><span className="text-muted-foreground">Proiect:</span> <span className="font-medium">{viewingDetails.proiect}</span></div>
-                <div><span className="text-muted-foreground">Valabilitate:</span> <span className="font-medium">{viewingDetails.valabilitate}</span></div>
-                <div><span className="text-muted-foreground">Termen plată:</span> <span className="font-medium">{viewingDetails.termenPlata}</span></div>
-                <div><span className="text-muted-foreground">Data creare:</span> <span className="font-medium">{viewingDetails.dataCreare}</span></div>
-                <div><span className="text-muted-foreground">Transport:</span> <span className="font-medium">{viewingDetails.transport ? getTransportLabel(viewingDetails.transport) : "-"}</span></div>
-                {viewingDetails.tip === "contract" && (
-                  <div className="col-span-2"><span className="text-muted-foreground">Indexare:</span> <span className="font-medium">{(viewingDetails as Contract).indexareCombustibil || "-"}</span></div>
-                )}
+            <div className="px-6 py-5 space-y-5">
+              {/* Informații principale */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-foreground uppercase tracking-wide">Informații Generale</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1 p-3 rounded-lg bg-muted/40 border">
+                    <p className="text-xs text-muted-foreground font-medium">Client</p>
+                    <p className="font-semibold text-foreground">{viewingDetails.client}</p>
+                  </div>
+                  <div className="space-y-1 p-3 rounded-lg bg-muted/40 border">
+                    <p className="text-xs text-muted-foreground font-medium">Proiect / Șantier</p>
+                    <p className="font-semibold text-foreground">{viewingDetails.proiect || "-"}</p>
+                  </div>
+                  <div className="space-y-1 p-3 rounded-lg bg-muted/40 border">
+                    <p className="text-xs text-muted-foreground font-medium">Valabilitate</p>
+                    <p className="font-semibold text-foreground">{viewingDetails.valabilitate}</p>
+                  </div>
+                  <div className="space-y-1 p-3 rounded-lg bg-muted/40 border">
+                    <p className="text-xs text-muted-foreground font-medium">Termen Plată</p>
+                    <p className="font-semibold text-foreground">{viewingDetails.termenPlata}</p>
+                  </div>
+                  <div className="space-y-1 p-3 rounded-lg bg-muted/40 border">
+                    <p className="text-xs text-muted-foreground font-medium">Transport</p>
+                    <p className="font-semibold text-foreground">{viewingDetails.transport ? getTransportLabel(viewingDetails.transport) : "-"}</p>
+                  </div>
+                  {viewingDetails.tip === "contract" && (
+                    <div className="space-y-1 p-3 rounded-lg bg-muted/40 border">
+                      <p className="text-xs text-muted-foreground font-medium">Indexare Combustibil</p>
+                      <p className="font-semibold text-foreground">{(viewingDetails as Contract).indexareCombustibil || "-"}</p>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Products List */}
+              {/* Produse */}
               {viewingDetails.produse && viewingDetails.produse.length > 0 && (
-                <div className="border rounded-lg p-3">
-                  <p className="text-muted-foreground text-sm mb-2">Produse:</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {viewingDetails.produse.map((p, idx) => (
-                      <div key={idx} className="flex justify-between items-center bg-muted/50 rounded px-3 py-2 text-sm">
-                        <span className="font-medium">{p.produs}</span>
-                        <span>{p.pret.toLocaleString()} RON</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex justify-end mt-2 pt-2 border-t">
-                    <span className="text-sm"><span className="text-muted-foreground">Total:</span> <span className="font-semibold">{viewingDetails.pret.toLocaleString()} RON</span></span>
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-foreground uppercase tracking-wide">Produse</h4>
+                  <div className="border rounded-lg overflow-hidden">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-muted/50">
+                          <TableHead className="text-xs font-semibold">Produs</TableHead>
+                          <TableHead className="text-xs font-semibold text-right">Preț (RON)</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {viewingDetails.produse.map((p, idx) => (
+                          <TableRow key={idx}>
+                            <TableCell className="font-medium">{p.produs}</TableCell>
+                            <TableCell className="text-right font-mono">{p.pret.toLocaleString()}</TableCell>
+                          </TableRow>
+                        ))}
+                        <TableRow className="bg-primary/5 border-t-2">
+                          <TableCell className="font-semibold">Total</TableCell>
+                          <TableCell className="text-right font-mono font-bold text-primary">{viewingDetails.pret.toLocaleString()} RON</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
                   </div>
                 </div>
               )}
               
+              {/* Condiții și Observații */}
               {(viewingDetails.conditiiComerciale || viewingDetails.observatii) && (
-                <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="grid grid-cols-2 gap-4">
                   {viewingDetails.conditiiComerciale && (
-                    <div className="border rounded-lg p-3">
-                      <p className="text-muted-foreground mb-1">Condiții comerciale:</p>
-                      <p>{viewingDetails.conditiiComerciale}</p>
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-semibold text-foreground uppercase tracking-wide">Condiții Comerciale</h4>
+                      <div className="p-3 rounded-lg bg-muted/40 border min-h-[60px]">
+                        <p className="text-sm">{viewingDetails.conditiiComerciale}</p>
+                      </div>
                     </div>
                   )}
                   {viewingDetails.observatii && (
-                    <div className="border rounded-lg p-3">
-                      <p className="text-muted-foreground mb-1">Observații:</p>
-                      <p>{viewingDetails.observatii}</p>
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-semibold text-foreground uppercase tracking-wide">Observații</h4>
+                      <div className="p-3 rounded-lg bg-muted/40 border min-h-[60px]">
+                        <p className="text-sm">{viewingDetails.observatii}</p>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -1443,25 +1480,31 @@ const OferteContracte = () => {
             </div>
           )}
 
-          <DialogFooter className="flex-wrap gap-1 pt-2">
-            <Button variant="outline" size="sm" onClick={handleDuplicate}>
-              <Copy className="w-4 h-4 mr-1" />Duplichează
-            </Button>
-            <Button variant="outline" size="sm" onClick={handleSendEmail}>
-              <Mail className="w-4 h-4 mr-1" />Trimite pe email
-            </Button>
-            {viewingDetails?.tip === "oferta" && viewingDetails?.status === "Aprobata" && (
-              <Button variant="outline" size="sm" onClick={handleGenerateContract}>
-                <FileText className="w-4 h-4 mr-1" />Generează contract
-              </Button>
-            )}
-            <Button variant="outline" size="sm" onClick={() => { if (viewingDetails) { handleOpenEdit(viewingDetails); setViewingDetails(null); } }}>
-              <Pencil className="w-4 h-4 mr-1" />Editează
-            </Button>
-            <Button variant="destructive" size="sm" onClick={() => { if (viewingDetails) { setDeleting(viewingDetails); setViewingDetails(null); } }}>
-              <Trash2 className="w-4 h-4 mr-1" />Șterge
-            </Button>
-            <Button variant="secondary" size="sm" onClick={() => setViewingDetails(null)}>Închide</Button>
+          <DialogFooter className="px-6 py-4 border-t bg-muted/20 gap-2">
+            <div className="flex flex-wrap gap-2 w-full justify-between">
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={handleDuplicate}>
+                  <Copy className="w-4 h-4 mr-1.5" />Duplichează
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleSendEmail}>
+                  <Mail className="w-4 h-4 mr-1.5" />Email
+                </Button>
+                {viewingDetails?.tip === "oferta" && viewingDetails?.status === "Aprobata" && (
+                  <Button variant="outline" size="sm" onClick={handleGenerateContract}>
+                    <FileText className="w-4 h-4 mr-1.5" />Generează contract
+                  </Button>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={() => { if (viewingDetails) { handleOpenEdit(viewingDetails); setViewingDetails(null); } }}>
+                  <Pencil className="w-4 h-4 mr-1.5" />Editează
+                </Button>
+                <Button variant="destructive" size="sm" onClick={() => { if (viewingDetails) { setDeleting(viewingDetails); setViewingDetails(null); } }}>
+                  <Trash2 className="w-4 h-4 mr-1.5" />Șterge
+                </Button>
+                <Button size="sm" onClick={() => setViewingDetails(null)}>Închide</Button>
+              </div>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
