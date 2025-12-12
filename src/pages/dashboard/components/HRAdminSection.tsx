@@ -60,7 +60,7 @@ HR
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">
-                HR1 – Număr angajați
+                Număr angajați
               </CardTitle>
             </CardHeader>
             <CardContent>
