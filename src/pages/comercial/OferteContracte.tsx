@@ -1375,7 +1375,7 @@ const OferteContracte = () => {
 
       {/* Detail Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={() => setViewingDetails(null)}>
-        <DialogContent className="max-w-2xl p-0" hideCloseButton>
+        <DialogContent className="max-w-4xl p-0" hideCloseButton>
           <DialogHeader className="px-6 pt-5 pb-4 border-b bg-muted/30">
             <div className="flex justify-between items-center">
               <div>
