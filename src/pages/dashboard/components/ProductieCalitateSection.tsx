@@ -242,8 +242,8 @@ const ProductieCalitateSection = () => {
 
       {/* Secțiune B - Calitate */}
       <div>
-        <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">Calitate<Zap className="h-4 w-4" />
-          Secțiune B – Calitate
+        <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">​<Zap className="h-4 w-4" />
+          Calitate
         </h3>
 
         <div className="grid gap-4 lg:grid-cols-2">
