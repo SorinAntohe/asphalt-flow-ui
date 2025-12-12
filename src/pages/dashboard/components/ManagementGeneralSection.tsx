@@ -8,7 +8,13 @@ import {
   FileText,
   AlertTriangle,
   Wrench,
-  Package
+  Package,
+  Banknote,
+  Tag,
+  ClipboardCheck,
+  Gauge,
+  Zap,
+  PieChart
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,9 +26,10 @@ interface KPICardProps {
   trendLabel?: string;
   icon: React.ReactNode;
   variant?: "default" | "warning" | "success" | "danger";
+  subtitle?: string;
 }
 
-const KPICard = ({ title, value, unit, trend, trendLabel, icon, variant = "default" }: KPICardProps) => {
+const KPICard = ({ title, value, unit, trend, trendLabel, icon, variant = "default", subtitle }: KPICardProps) => {
   const isPositive = trend !== undefined && trend > 0;
   const isNegative = trend !== undefined && trend < 0;
 
@@ -41,6 +48,9 @@ const KPICard = ({ title, value, unit, trend, trendLabel, icon, variant = "defau
               <p className="text-2xl font-bold">{value}</p>
               {unit && <p className="text-sm text-muted-foreground">{unit}</p>}
             </div>
+            {subtitle && (
+              <p className="text-[10px] text-muted-foreground mt-1">{subtitle}</p>
+            )}
             {trend !== undefined && (
               <div className={cn(
                 "flex items-center gap-1 mt-1.5 text-xs font-medium",
@@ -139,6 +149,74 @@ const ManagementGeneralSection = () => {
           unit="nr"
           icon={<Wrench className="h-4 w-4" />}
           variant="danger"
+        />
+      </div>
+
+      {/* A treia linie de KPI-uri */}
+      <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
+        <KPICard
+          title="Cifra de afaceri"
+          value="3,214,800"
+          unit="lei"
+          trend={12.3}
+          trendLabel="vs anterior"
+          icon={<Banknote className="h-4 w-4" />}
+          variant="success"
+        />
+        <KPICard
+          title="Preț mediu de vânzare"
+          value="285"
+          unit="lei/t"
+          trend={2.8}
+          trendLabel="vs anterior"
+          icon={<Tag className="h-4 w-4" />}
+        />
+        <KPICard
+          title="Grad acoperire comenzi client"
+          value="87.5"
+          unit="%"
+          trend={-3.2}
+          trendLabel="vs anterior"
+          icon={<ClipboardCheck className="h-4 w-4" />}
+          variant="warning"
+        />
+        <KPICard
+          title="Grad utilizare flotă"
+          value="78.5"
+          unit="%"
+          trend={4.2}
+          trendLabel="vs anterior"
+          icon={<Gauge className="h-4 w-4" />}
+          variant="success"
+        />
+      </div>
+
+      {/* A patra linie de KPI-uri */}
+      <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
+        <KPICard
+          title="Consum specific energie"
+          value="8.2"
+          unit="kWh/t"
+          trend={-1.5}
+          trendLabel="vs anterior"
+          icon={<Zap className="h-4 w-4" />}
+          variant="success"
+        />
+        <KPICard
+          title="Cost fix / ton"
+          value="19.50"
+          unit="lei/t"
+          trend={-0.8}
+          trendLabel="vs anterior"
+          icon={<DollarSign className="h-4 w-4" />}
+          variant="success"
+        />
+        <KPICard
+          title="Produs dominant în mix"
+          value="62"
+          unit="%"
+          subtitle="BA 16"
+          icon={<PieChart className="h-4 w-4" />}
         />
       </div>
     </div>
