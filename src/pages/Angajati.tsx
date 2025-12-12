@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { Label } from "@/components/ui/label";
 import {
   Table,
@@ -644,11 +645,9 @@ export default function Angajati() {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="salariu">Salariu (RON)</Label>
-              <Input
-                id="salariu"
-                type="number"
+              <NumericInput
                 value={formData.salariu}
-                onChange={(e) => setFormData({ ...formData, salariu: e.target.value })}
+                onChange={(value) => setFormData({ ...formData, salariu: value })}
               />
             </div>
           </div>
@@ -696,29 +695,25 @@ export default function Angajati() {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="edit-salariu">Salariu (RON)</Label>
-              <Input
-                id="edit-salariu"
-                type="number"
+              <NumericInput
                 value={formData.salariu}
-                onChange={(e) => setFormData({ ...formData, salariu: e.target.value })}
+                onChange={(value) => setFormData({ ...formData, salariu: value })}
               />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="edit-zile_concediu_calculate">Zile Concediu Calculate</Label>
-              <Input
-                id="edit-zile_concediu_calculate"
-                type="number"
+              <NumericInput
                 value={formData.zile_concediu_calculate}
-                onChange={(e) => setFormData({ ...formData, zile_concediu_calculate: e.target.value })}
+                onChange={(value) => setFormData({ ...formData, zile_concediu_calculate: value })}
+                allowDecimal={false}
               />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="edit-zile_concediu_luate">Zile Concediu Luate</Label>
-              <Input
-                id="edit-zile_concediu_luate"
-                type="number"
+              <NumericInput
                 value={formData.zile_concediu_luate}
-                onChange={(e) => setFormData({ ...formData, zile_concediu_luate: e.target.value })}
+                onChange={(value) => setFormData({ ...formData, zile_concediu_luate: value })}
+                allowDecimal={false}
               />
             </div>
             <div className="grid gap-2">

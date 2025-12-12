@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { Label } from "@/components/ui/label";
 import { FilterableSelect } from "@/components/ui/filterable-select";
 import { Separator } from "@/components/ui/separator";
@@ -643,12 +644,9 @@ const CalculatorPret = () => {
 
             <div>
               <Label>Cantitate (tone)</Label>
-              <Input
-                type="number"
-                step="0.01"
-                min="0"
+              <NumericInput
                 value={cantitate}
-                onChange={(e) => setCantitate(e.target.value)}
+                onChange={(value) => setCantitate(value)}
                 placeholder="Ex: 100"
               />
             </div>
@@ -1206,11 +1204,10 @@ const CalculatorPret = () => {
             </div>
             <div className="space-y-2">
               <Label>Preț (RON/tonă)</Label>
-              <Input
-                type="number"
+              <NumericInput
                 placeholder="Preț"
                 value={newConcurent.pret}
-                onChange={(e) => setNewConcurent(prev => ({ ...prev, pret: e.target.value }))}
+                onChange={(value) => setNewConcurent(prev => ({ ...prev, pret: value }))}
               />
             </div>
           </div>
@@ -1255,13 +1252,10 @@ const CalculatorPret = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <Label className="text-xs whitespace-nowrap">Preț (RON/t):</Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      min="0"
+                    <NumericInput
                       placeholder="Preț..."
                       value={shortage.pretUnitar}
-                      onChange={(e) => updateShortagePrice(shortage.material, e.target.value)}
+                      onChange={(value) => updateShortagePrice(shortage.material, value)}
                       className="h-9"
                     />
                   </div>

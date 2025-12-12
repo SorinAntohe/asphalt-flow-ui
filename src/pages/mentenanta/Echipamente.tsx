@@ -5,6 +5,7 @@ import { API_BASE_URL } from "@/lib/api";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { Label } from "@/components/ui/label";
 import { 
   Table, TableBody, TableCell, TableHead, 
@@ -545,11 +546,10 @@ const Echipamente = () => {
             </div>
             <div className="space-y-2">
               <Label>Cost (RON)</Label>
-              <Input 
-                type="number"
+              <NumericInput 
                 placeholder="ex: 2500"
                 value={servisareFormData.cost}
-                onChange={(e) => setServisareFormData(prev => ({ ...prev, cost: e.target.value }))}
+                onChange={(value) => setServisareFormData(prev => ({ ...prev, cost: value }))}
               />
             </div>
           </div>
@@ -597,31 +597,30 @@ const Echipamente = () => {
               </div>
               <div className="space-y-2">
                 <Label>An Fabricație</Label>
-                <Input 
-                  type="number" 
+                <NumericInput 
                   placeholder="2024"
                   value={addFormData.anFabricatie}
-                  onChange={(e) => setAddFormData(prev => ({ ...prev, anFabricatie: e.target.value }))}
+                  onChange={(value) => setAddFormData(prev => ({ ...prev, anFabricatie: value }))}
+                  allowDecimal={false}
                 />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Valoare Achiziție (RON)</Label>
-                <Input 
-                  type="number" 
+                <NumericInput 
                   placeholder="100000"
                   value={addFormData.valoareAchizitie}
-                  onChange={(e) => setAddFormData(prev => ({ ...prev, valoareAchizitie: e.target.value }))}
+                  onChange={(value) => setAddFormData(prev => ({ ...prev, valoareAchizitie: value }))}
                 />
               </div>
               <div className="space-y-2">
                 <Label>Durată Amortizare (luni)</Label>
-                <Input 
-                  type="number" 
+                <NumericInput 
                   placeholder="60"
                   value={addFormData.durataAmortizare}
-                  onChange={(e) => setAddFormData(prev => ({ ...prev, durataAmortizare: e.target.value }))}
+                  onChange={(value) => setAddFormData(prev => ({ ...prev, durataAmortizare: value }))}
+                  allowDecimal={false}
                 />
               </div>
             </div>
@@ -670,31 +669,30 @@ const Echipamente = () => {
               </div>
               <div className="space-y-2">
                 <Label>An Fabricație</Label>
-                <Input 
-                  type="number" 
+                <NumericInput 
                   placeholder="2024"
                   value={editFormData.anFabricatie}
-                  onChange={(e) => setEditFormData(prev => ({ ...prev, anFabricatie: e.target.value }))}
+                  onChange={(value) => setEditFormData(prev => ({ ...prev, anFabricatie: value }))}
+                  allowDecimal={false}
                 />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Valoare Achiziție (RON)</Label>
-                <Input 
-                  type="number" 
+                <NumericInput 
                   placeholder="100000"
                   value={editFormData.valoareAchizitie}
-                  onChange={(e) => setEditFormData(prev => ({ ...prev, valoareAchizitie: e.target.value }))}
+                  onChange={(value) => setEditFormData(prev => ({ ...prev, valoareAchizitie: value }))}
                 />
               </div>
               <div className="space-y-2">
                 <Label>Durată Amortizare (luni)</Label>
-                <Input 
-                  type="number" 
+                <NumericInput 
                   placeholder="60"
                   value={editFormData.durataAmortizare}
-                  onChange={(e) => setEditFormData(prev => ({ ...prev, durataAmortizare: e.target.value }))}
+                  onChange={(value) => setEditFormData(prev => ({ ...prev, durataAmortizare: value }))}
+                  allowDecimal={false}
                 />
               </div>
             </div>
