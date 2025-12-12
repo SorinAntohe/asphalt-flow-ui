@@ -1,41 +1,53 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer 
-} from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Wrench, Zap, Fuel, TrendingUp, TrendingDown, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Mock data
-const reviziiScadente = [
-  { echipament: "Stație asfalt - Uscător", dataRevizie: "2024-02-15", costEstimat: 4500 },
-  { echipament: "Încărcător frontal CAT 950", dataRevizie: "2024-02-18", costEstimat: 2800 },
-  { echipament: "Camion MAN TGS 8x4", dataRevizie: "2024-02-22", costEstimat: 1950 },
-  { echipament: "Generator Diesel 250kVA", dataRevizie: "2024-02-28", costEstimat: 1200 },
-];
-
-const costUtilitatiZilnic = [
-  { zi: "Lun", cost: 12.5 },
-  { zi: "Mar", cost: 11.8 },
-  { zi: "Mie", cost: 13.2 },
-  { zi: "Joi", cost: 12.1 },
-  { zi: "Vin", cost: 11.5 },
-  { zi: "Sam", cost: 14.8 },
-  { zi: "Dum", cost: 0 },
-];
-
+const reviziiScadente = [{
+  echipament: "Stație asfalt - Uscător",
+  dataRevizie: "2024-02-15",
+  costEstimat: 4500
+}, {
+  echipament: "Încărcător frontal CAT 950",
+  dataRevizie: "2024-02-18",
+  costEstimat: 2800
+}, {
+  echipament: "Camion MAN TGS 8x4",
+  dataRevizie: "2024-02-22",
+  costEstimat: 1950
+}, {
+  echipament: "Generator Diesel 250kVA",
+  dataRevizie: "2024-02-28",
+  costEstimat: 1200
+}];
+const costUtilitatiZilnic = [{
+  zi: "Lun",
+  cost: 12.5
+}, {
+  zi: "Mar",
+  cost: 11.8
+}, {
+  zi: "Mie",
+  cost: 13.2
+}, {
+  zi: "Joi",
+  cost: 12.1
+}, {
+  zi: "Vin",
+  cost: 11.5
+}, {
+  zi: "Sam",
+  cost: 14.8
+}, {
+  zi: "Dum",
+  cost: 0
+}];
 const MentenantaUtilitatiSection = () => {
   const totalCostRevizii = reviziiScadente.reduce((sum, item) => sum + item.costEstimat, 0);
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Secțiune A - Mentenanță planificată */}
       <div>
         <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
@@ -48,7 +60,7 @@ const MentenantaUtilitatiSection = () => {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">
-                MU1 – Revizii scadente în 30 zile
+                Revizii scadente în 30 zile
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -98,8 +110,7 @@ const MentenantaUtilitatiSection = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {reviziiScadente.map((item, index) => (
-                  <TableRow key={index}>
+                {reviziiScadente.map((item, index) => <TableRow key={index}>
                     <TableCell className="text-xs font-medium">{item.echipament}</TableCell>
                     <TableCell className="text-xs text-center">
                       <Badge variant="outline" className="text-xs">
@@ -107,8 +118,7 @@ const MentenantaUtilitatiSection = () => {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-xs text-right">{item.costEstimat.toLocaleString()}</TableCell>
-                  </TableRow>
-                ))}
+                  </TableRow>)}
               </TableBody>
             </Table>
           </CardContent>
@@ -200,30 +210,26 @@ const MentenantaUtilitatiSection = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={costUtilitatiZilnic}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="zi" tick={{ fontSize: 11 }} />
-                  <YAxis tick={{ fontSize: 11 }} />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'hsl(var(--background))', 
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '6px'
-                    }} 
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="cost" 
-                    stroke="hsl(var(--primary))" 
-                    strokeWidth={2} 
-                    dot={{ fill: 'hsl(var(--primary))' }} 
-                  />
+                  <XAxis dataKey="zi" tick={{
+                  fontSize: 11
+                }} />
+                  <YAxis tick={{
+                  fontSize: 11
+                }} />
+                  <Tooltip contentStyle={{
+                  backgroundColor: 'hsl(var(--background))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: '6px'
+                }} />
+                  <Line type="monotone" dataKey="cost" stroke="hsl(var(--primary))" strokeWidth={2} dot={{
+                  fill: 'hsl(var(--primary))'
+                }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default MentenantaUtilitatiSection;
