@@ -155,7 +155,7 @@ HR
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">
-                HR4 – Cheltuieli chirii lunare
+                Cheltuieli chirii lunare
               </CardTitle>
             </CardHeader>
             <CardContent>
