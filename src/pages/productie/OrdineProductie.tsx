@@ -42,6 +42,7 @@ import { toast } from "sonner";
 import { exportToCSV } from "@/lib/exportUtils";
 import { DataTableColumnHeader, DataTablePagination, DataTableEmpty } from "@/components/ui/data-table";
 import { API_BASE_URL } from "@/lib/api";
+import { extractApiValue, flattenApiArray } from "@/lib/utils";
 
 // Types
 interface ProdusOrdin {
@@ -150,7 +151,12 @@ const OrdineProductie = () => {
         const response = await fetch(`${API_BASE_URL}/productie/returneaza/operator`);
         if (response.ok) {
           const data = await response.json();
-          setOperatori(data);
+          // Handle tuple format for operator names
+          const operatoriList = data.map((o: any) => ({
+            id: o.id,
+            nume: extractApiValue(o.nume || o)
+          }));
+          setOperatori(operatoriList);
         }
       } catch (error) {
         console.error("Error fetching operatori:", error);
@@ -162,7 +168,12 @@ const OrdineProductie = () => {
         const response = await fetch(`${API_BASE_URL}/productie/returneaza/sefi_schimb`);
         if (response.ok) {
           const data = await response.json();
-          setSefiSchimb(data);
+          // Handle tuple format for sefi schimb names
+          const sefiList = data.map((s: any) => ({
+            id: s.id,
+            nume: extractApiValue(s.nume || s)
+          }));
+          setSefiSchimb(sefiList);
         }
       } catch (error) {
         console.error("Error fetching sefi schimb:", error);
@@ -174,7 +185,13 @@ const OrdineProductie = () => {
         const response = await fetch(`${API_BASE_URL}/returneaza_produse_finite`);
         if (response.ok) {
           const data = await response.json();
-          setProduseFinite(data.map((p: { produs: string }) => p.produs).filter(Boolean));
+          console.log("Produse finite API response:", data);
+          // Handle tuple format [('BAD 22.4',), ...] or [{produs: 'BAD 22.4'}, ...]
+          const produseList = flattenApiArray(
+            data.map((p: any) => p.produs || p)
+          ).filter(Boolean);
+          console.log("Processed produse:", produseList);
+          setProduseFinite(produseList);
         }
       } catch (error) {
         console.error("Error fetching produse finite:", error);
@@ -186,7 +203,9 @@ const OrdineProductie = () => {
         const response = await fetch(`${API_BASE_URL}/productie/returneaza/retete`);
         if (response.ok) {
           const data = await response.json();
-          setRetete(data.map((r: { cod_reteta: string; denumire: string }) => r.cod_reteta));
+          // Handle tuple format for cod_reteta
+          const reteteList = data.map((r: any) => extractApiValue(r.cod_reteta)).filter(Boolean);
+          setRetete(reteteList);
         }
       } catch (error) {
         console.error("Error fetching retete:", error);
@@ -198,12 +217,10 @@ const OrdineProductie = () => {
         const response = await fetch(`${API_BASE_URL}/productie/returneaza/comenzi`);
         if (response.ok) {
           const data = await response.json();
-          // API returns array of cod_comanda values or objects with cod_comanda field
-          const coduri = Array.isArray(data) 
-            ? data.map((c: string | { cod_comanda: string }) => 
-                typeof c === 'string' ? c : c.cod_comanda
-              ).filter(Boolean)
-            : [];
+          // Handle tuple format - API returns array of cod_comanda values or objects
+          const coduri = flattenApiArray(
+            data.map((c: any) => typeof c === 'string' ? c : (c.cod_comanda || c))
+          ).filter(Boolean);
           setComenziDisponibile(coduri);
         }
       } catch (error) {
