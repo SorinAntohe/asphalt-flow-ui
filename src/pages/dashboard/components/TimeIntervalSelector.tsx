@@ -8,7 +8,7 @@ import { ro } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { DateRange } from "react-day-picker";
 
-type IntervalType = "today" | "week" | "month" | "custom";
+type IntervalType = "today" | "yesterday" | "week" | "month" | "custom";
 
 interface TimeIntervalSelectorProps {
   onIntervalChange?: (interval: IntervalType, dateRange?: DateRange) => void;
@@ -40,6 +40,13 @@ const TimeIntervalSelector = ({ onIntervalChange }: TimeIntervalSelectorProps) =
         onClick={() => handleIntervalChange("today")}
       >
         Azi
+      </Button>
+      <Button
+        variant={selectedInterval === "yesterday" ? "default" : "outline"}
+        size="sm"
+        onClick={() => handleIntervalChange("yesterday")}
+      >
+        Ieri
       </Button>
       <Button
         variant={selectedInterval === "week" ? "default" : "outline"}
