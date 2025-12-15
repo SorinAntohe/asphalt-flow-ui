@@ -87,7 +87,13 @@ export const TableFilterPopover = React.memo(({
               <Button
                 size="sm"
                 variant={direction === 'asc' ? 'default' : 'outline'}
-                onClick={() => onSort('asc')}
+                onClick={() => {
+                  if (direction === 'asc' && onReset) {
+                    onReset();
+                  } else {
+                    onSort('asc');
+                  }
+                }}
                 className="flex-1 h-7 text-xs"
               >
                 <ArrowUp className="h-3 w-3 mr-1" />
@@ -96,7 +102,13 @@ export const TableFilterPopover = React.memo(({
               <Button
                 size="sm"
                 variant={direction === 'desc' ? 'default' : 'outline'}
-                onClick={() => onSort('desc')}
+                onClick={() => {
+                  if (direction === 'desc' && onReset) {
+                    onReset();
+                  } else {
+                    onSort('desc');
+                  }
+                }}
                 className="flex-1 h-7 text-xs"
               >
                 <ArrowDown className="h-3 w-3 mr-1" />
