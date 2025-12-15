@@ -31,7 +31,9 @@ export const TableFilterPopover = React.memo(({
   
   const isActive = sortField === field;
   const direction = isActive ? sortDirection : null;
-  const hasActiveFilter = filterValue !== "" || direction !== null;
+  const hasTextFilter = filterValue !== "";
+  const hasSortFilter = direction !== null;
+  const hasActiveFilter = hasTextFilter || hasSortFilter;
 
   // Sync local value when filter value changes externally
   React.useEffect(() => {
@@ -71,18 +73,30 @@ export const TableFilterPopover = React.memo(({
             ) : (
               <ArrowUpDown className="h-3 w-3 opacity-50" />
             )}
-            {hasActiveFilter && <span className="ml-1 h-2 w-2 rounded-full bg-primary" />}
+            {hasTextFilter && <span className="ml-1 h-1.5 w-1.5 rounded-full bg-primary" />}
+            {hasSortFilter && <span className="ml-0.5 h-1.5 w-1.5 rounded-full bg-blue-500" />}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-56 p-2">
           <div className="space-y-2">
-            <Input
-              value={localValue}
-              onChange={handleInputChange}
-              placeholder={`Caută ${label.toLowerCase()}...`}
-              className="h-7 text-xs"
-              autoFocus
-            />
+            <div className="relative">
+              <Input
+                value={localValue}
+                onChange={handleInputChange}
+                placeholder={`Caută ${label.toLowerCase()}...`}
+                className={`h-7 text-xs pr-7 ${hasTextFilter ? 'ring-2 ring-primary ring-offset-1' : ''}`}
+                autoFocus
+              />
+              {localValue && (
+                <button
+                  type="button"
+                  onClick={() => setLocalValue("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              )}
+            </div>
             <div className="flex gap-1">
               <Button
                 size="sm"
